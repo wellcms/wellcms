@@ -26,12 +26,12 @@ WellCMS 采用 MIT 协议发布，您可以自由修改、派生版本、商用�
 
 1. 确认您的主机支持 PHP，并且已经开通并且配置好了 MySQL。
 3. 设置如下目录和文件为可写(Linux: 目录权限为 0777，Windows 设置用户 everyone 可读写）
-	./upload
-	./plugin
-	./tmp
-	./log
-	./conf
-	./view/template
+    ./upload
+    ./plugin
+    ./tmp
+    ./log
+    ./conf
+    ./view/template
 4. 上传所有文件到你的网站根目录
 5. 访问 http://www.domain.com/install/, 根据提示安装。
 6. 删除 install 目录
