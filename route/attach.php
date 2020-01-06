@@ -170,9 +170,9 @@ if ($action == 'create') {
         $attach['uid'] != $uid AND !$allowdelete AND message(0, lang('insufficient_privilege'));
         if (empty($t)) {
             well_attach_delete($aid) === FALSE AND message(-1, lang('delete_failed'));
+            well_thread_update($thread['tid'], array('files-' => 1));
         }
         // hook attach_delete_aid_after.php
-        well_thread_update($thread['fid'], array('files-' => 1));
     }
 
     // hook attach_delete_end.php
