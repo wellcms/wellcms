@@ -1,0 +1,204 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_column_list_start.htm}-->
+<div class="container px-0">
+<div class="row">
+	<div class="col-12">
+        <ol class="breadcrumb d-none d-md-flex text-muted">
+            <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><?php echo lang('website');?></li>
+            <li class="breadcrumb-item"><?php echo lang('column'),lang('list');?></li>
+            <!--{hook admin_column_list_breadcrumb.htm}-->
+        </ol>
+
+		<div class="card">
+			<div class="card-body">
+				<form action="<?php echo url('column-list');?>" method="post" id="form">
+                    <table class="table table-bordered table-hover text-center bg-white">
+                        <tbody>
+                        <tr>
+                            <td class="text-right" colspan="7">
+                                <a class="btn btn-info btn-sm" href="<?php echo url('column-create');?>"><?php echo lang('increase').lang('column'); ?></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <?php echo lang('forum_rank');?>
+                            </td>
+                            <td>
+                                <?php echo lang('forum_name');?>
+                            </td>
+                            <td class="hidden-sm">
+                                <?php echo lang('nav');?>
+                            </td>
+                            <td class="hidden-sm">
+                                <?php echo lang('comment');?>
+                            </td>
+                            <td>
+                                <?php echo lang('create');?>
+                            </td>
+                            <td>
+                                <?php echo lang('update');?>
+                            </td>
+                            <td>
+                                <?php echo lang('delete');?>
+                            </td>
+                        </tr>
+
+                        <?php if ($arrlist) { foreach($arrlist as $_fid=>$_forum) { ?>
+                        <input type="hidden" class="form-control" name="fid[<?php echo $_fid;?>]" value="<?php echo $_forum['fid']; ?>" placeholder="<?php echo lang('forum_id');?>" />
+                        <!--频道-->
+                        <?php if ($_forum['category'] == 1) { ?>
+
+                        <tr fid="<?php echo $_forum['fid']; ?>">
+                            <td>
+                                <input type="text" class="form-control" name="rank[<?php echo $_fid;?>]" value="<?php echo $_forum['rank']; ?>" placeholder="<?php echo lang('forum_rank');?>" style="width:60px;display: inherit;" />
+                            </td>
+                            <td class="text-left font-weight-bold">
+                                <?php echo $_forum['name'].' <span class="font-weight-bold text-danger small hidden-sm">('.lang('channel').')</span>'; ?>
+                            </td>
+                            <td class="hidden-sm">
+                                <?php if ($_forum['nav_display']) {echo lang('yes');} else {echo lang('no');} ?>
+                            </td>
+                            <td class="hidden-sm">
+                                <?php if ($_forum['comment']) {echo lang('yes');} else {echo lang('no');} ?>
+                            </td>
+                            <td>
+                                <a class="small" href="<?php echo url('column-create-'.$_forum['fid']);?>"><?php echo lang('increase'); ?></a>
+                            </td>
+                            <td>
+                                <a href="<?php echo url('column-update-'.$_forum['fid']);?>"><?php echo lang('edit'); ?></a>
+                            </td>
+                            <td>
+                                <a data-href="<?php echo url('column-delete-'.$_forum['fid']);?>" href="javascript:void(0);" class="delete"><?php echo lang('delete'); ?></a>
+                            </td>
+                        </tr>
+                        <!--子栏目-->
+                        <?php if (isset($_forum['sonlist'])) { foreach($_forum['sonlist'] as $son_fid=>$_son) { ?>
+                        <input type="hidden" class="form-control" name="fid[<?php echo $son_fid;?>]" value="<?php echo $_son['fid']; ?>" placeholder="<?php echo lang('forum_id');?>" />
+                        <tr fid="<?php echo $_son['fid']; ?>">
+                            <td>
+                                <input type="text" class="form-control" name="rank[<?php echo $son_fid;?>]" value="<?php echo $_son['rank']; ?>" placeholder="<?php echo lang('forum_rank');?>" style="width:60px;display:inherit;" />
+                            </td>
+                            <td class="text-left pl-4">
+                                <i class="icon-angle-double-right ml-2 mr-1"></i><?php echo $_son['name']; ?>
+                            </td>
+                            <td class="hidden-sm">
+                                <?php if ($_son['nav_display']) {echo lang('yes');} else {echo lang('no');} ?>
+                            </td>
+                            <td class="hidden-sm">
+                                <?php if ($_son['comment']) {echo lang('yes');} else {echo lang('no');} ?>
+                            </td>
+                            <td>
+                                &nbsp;
+                            </td>
+                            <td>
+                                <a href="<?php echo url('column-update-'.$_son['fid']);?>"><?php echo lang('edit'); ?></a>
+                            </td>
+                            <td>
+                                <a data-href="<?php echo url('column-delete-'.$_son['fid']);?>" href="javascript:void(0);" class="delete"><?php echo lang('delete'); ?></a>
+                            </td>
+                        </tr>
+
+                        <?php }} ?>
+                        <?php } else { ?>
+
+                        <!--顶级栏目-->
+                        <tr fid="<?php echo $_forum['fid']; ?>">
+                            <td>
+                                <input type="text" class="form-control" name="rank[<?php echo $_fid;?>]" value="<?php echo $_forum['rank']; ?>" placeholder="<?php echo lang('forum_rank');?>" style="width:60px;display:inherit;" />
+                            </td>
+                            <td class="text-left font-weight-bold">
+                                <?php echo $_forum['name']; ?>
+                            </td>
+                            <td class="hidden-sm">
+                                <?php if ($_forum['nav_display']) {echo lang('yes');} else {echo lang('no');} ?>
+                            </td>
+                            <td class="hidden-sm">
+                                <?php if ($_forum['comment']) {echo lang('yes');} else {echo lang('no');} ?>
+                            </td>
+                            <td>
+                                &nbsp;
+                            </td>
+                            <td>
+                                <a href="<?php echo url('column-update-'.$_forum['fid']);?>"><?php echo lang('edit'); ?></a>
+                            </td>
+                            <td>
+                                <a data-href="<?php echo url('column-delete-'.$_forum['fid']);?>" href="javascript:void(0);" class="delete"><?php echo lang('delete'); ?></a>
+                            </td>
+                        </tr>
+
+                        <?php } ?>
+                        <?php }} else { ?>
+
+                        <tr>
+                            <td colspan="7"><?php echo lang('none');?></td>
+                        </tr>
+
+                        <?php } ?>
+
+                        </tbody>
+                    </table>
+
+					<p class="text-center">
+						<button type="submit" class="btn btn-primary btn-lock col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+					</p>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<!--{hook admin_column_list_end.htm}-->
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+var jform = $("#form");
+var jsubmit = $("#submit");
+
+jform.on('submit', function(){
+	jform.reset();
+	var postdata = jform.serialize();
+	jsubmit.button('loading');
+	$.xpost(jform.attr('action'), postdata, function(code, message) {
+		if(code == 0) {
+			$.alert(message);
+			jsubmit.text(message).delay(1000).location();
+		} else {
+			alert(message);
+			jsubmit.button('reset');
+		}
+	});
+	return false;
+});
+
+/*编辑*/
+var jarrlist = $('.arrlist');
+jarrlist.on('click', 'a.row_edit', function() {
+	var jthis = $(this);
+	var jtr = jthis.parents('tr');
+	var rowid = jtr.attr('rowid');
+	window.location = xn.url('column-update-'+rowid);
+});
+
+/*删除*/
+$('table').on('click', 'a.delete', function() {
+    var jthis = $(this);
+    var href = $(this).data('href');
+    var jtr = jthis.parents('tr');
+    $.xpost(href, function (code, message) {
+        if (code == 0) {
+            jtr.remove();
+        } else {
+            $.alert(message);
+        }
+    });
+    return false;
+});
+
+$('#forum').addClass('show');
+$('.sidebar-sticky li.menu-website').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+</script>
+
+<!--{hook admin_column_list_js.htm}-->
