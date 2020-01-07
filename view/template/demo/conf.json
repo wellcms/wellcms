@@ -1,0 +1,13 @@
+{
+    "name": "演示模板",
+    "brief": "演示模板简单介绍",
+    "version": "1.0.0",
+    "software_version": "2.0.0",
+    "type": 1,
+    "installed": 0,
+    "author": "燃烧的冰",
+    "domain": "http://www.wellcms.cn",
+    "qq": "",
+    "price": "",
+    "dependencies": []
+}
