@@ -29,7 +29,7 @@ if (empty($action) || $action == 'index') {
 
     $threadlist = well_thread_find_by_uid($uid, $page, $pagesize);
 
-    $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'managedeletethread') || 1;
+    $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || $gid == 1;
 
     $pagination = pagination(url('home-index-{page}', $extra), $user['articles'], $page, $pagesize);
 
