@@ -1,0 +1,35 @@
+<?php if(group_access($gid, 'allowdelete') || group_access($gid, 'managedeletethread')) { ?>
+<div class="text-center">
+	<?php if(param(0) != 'thread') { ?>
+	<label class="mr-1">
+		<input type="checkbox" data-target='input[name="modtid"]' class="checkall mt-2 mr-2" value="" aria-label="<?php echo lang('checkall');?>" />
+		<?php echo lang('checkall');?>
+	</label>
+	<?php } ?>
+	
+	<div class="btn-group mod-button my-3" role="group" aria-label="">
+		<!--{hook thread_list_mod_inc_delete_before.htm}-->
+		<button class="btn btn-secondary delete" data-modal-url="<?php echo url('operate-delete', $extra);?>" data-modal-title="<?php echo lang('delete');?>" data-modal-arg=".threadlist" data-modal-size="md">
+            <?php echo lang('delete');?>
+        </button>
+		<!--{hook thread_list_mod_inc_delete_after.htm}-->
+		<button class="btn btn-secondary move" data-modal-url="<?php echo url('operate-move', $extra);?>" data-modal-title="<?php echo lang('move');?>" data-modal-arg=".threadlist" data-modal-size="md">
+            <?php echo lang('move');?>
+        </button>
+		<!--{hook thread_list_mod_inc_sticky_before.htm}-->
+		<button class="btn btn-secondary top" data-modal-url="<?php echo url('operate-sticky', $extra);?>" data-modal-title="<?php echo lang('sticky');?>" data-modal-arg=".threadlist" data-modal-size="md">
+            <?php echo lang('sticky');?>
+        </button>
+		<!--{hook thread_list_mod_inc_sticky_after.htm}-->
+        <!-- 主题排序 -->
+        <?php //if (!empty($forum['well_thread_rank']) && isset($_thread['rank'])) {?>
+        <!-- <button class="btn btn-secondary rank"><?php echo lang('rank');?></button> -->
+        <?php //}?>
+        <!--{hook thread_list_mod_inc_rank_after.htm}-->
+		<button class="btn btn-secondary _close" data-modal-url="<?php echo url('operate-close', $extra);?>" data-modal-title="<?php echo lang('close');?>" data-modal-arg=".threadlist" data-modal-size="md">
+            <?php echo lang('close');?>
+        </button>
+		<!--{hook thread_list_mod_inc_close_after.htm}-->
+	</div>
+</div>
+<?php } ?>

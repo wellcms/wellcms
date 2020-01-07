@@ -1,0 +1,106 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook website_search_start.htm}-->
+
+<div class="row">
+	<div class="col-lg-10 mx-auto">
+		<div class="card">
+			<div class="card-body">
+				<form action="<?php echo url('operate-search');?>" id="form">
+					<div class="input-group mb-3">
+						<input type="text" class="form-control" placeholder="<?php echo lang('keyword');?>" name="keyword" value="<?php echo $keyword_decode;?>">
+						<div class="input-group-append">
+							<button class="btn btn-primary" type="submit" id="submit">
+								<?php echo lang('search');?>
+							</button>
+						</div>
+					</div>
+				
+					<?php if($search_type == 'like') { ?>
+					<div class="form-group">
+						<label class="form-check-inline">
+							<input class="form-check-input" type="radio" name="range" value="1" <?php echo $range == '1' ? 'checked' : '';?>> 主题
+						</label>
+					</div>
+					<?php } ?>
+				</form>
+			</div>
+		</div>
+
+		<?php if($keyword) { ?>
+		<?php if($range == 1) { ?>
+		<?php if(!empty($threadlist)) { ?>
+		
+		<div class="card">
+			<div class="card-header">
+				<ul class="nav nav-tabs card-header-tabs">
+					<li class="nav-item">
+						<a class="nav-link <?php echo $active == 'default' ? 'active' : '';?>" href="./">
+							<?php echo lang('thread_list');?>
+						</a>
+					</li>
+					<!--{hook search_thread_list_nav_item_after.htm}-->
+				</ul>
+			</div>
+			<div class="card-body">
+				<ul class="list-unstyled threadlist mb-0">
+					<!--{hook website_search_threadlist_before.htm}-->
+					<?php include _include(APP_PATH.'view/htm/thread_list.inc.htm');?>
+					<!--{hook website_search_threadlist_after.htm}-->
+				</ul>
+			</div>
+		</div>
+		
+		<?php }} else { ?>
+		
+		<div class="card">
+			<div class="card-body">
+				<?php echo lang('none');?>
+			</div>
+		</div>
+		
+		<?php } ?>
+		
+		<?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+		
+		<!--{hook website_search_page_before.htm}-->
+		<?php if($pagination) { ?>
+		<nav>
+            <ul class="pagination justify-content-center">
+                <?php echo $pagination; ?>
+            </ul>
+        </nav>
+		<?php } ?>
+		<!--{hook website_search_page_end.htm}-->
+
+		<?php } ?>
+	</div>
+	<div class="col-lg-3 hidden-sm hidden-md">
+		<!--
+		<div class="card card-body">
+			<h4 class="card-title">筛选条件</h4>
+		</div>
+		-->
+	</div>
+</div>
+
+<!--{hook website_search_end.htm}-->
+
+<?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+var jform = $('#form');
+var jsubmit = $('#submit');
+var jrange = jform.find('input[name="range"]');
+var jkeyword = jform.find('input[name="keyword"]');
+jform.on('submit', function() {
+	var range = jrange.checked();
+	var keyword = jkeyword.val();
+	window.location = xn.url('operate-search-' + xn.urlencode(keyword) + '-' + range);
+	return false;
+});
+
+$('#nav_pc li[fid="<?php echo $fid;?>"]').addClass('active');
+</script>
+
+<!--{hook website_search_js.htm}-->

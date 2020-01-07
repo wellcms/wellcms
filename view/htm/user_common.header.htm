@@ -1,0 +1,25 @@
+<template include="./view/htm/user_common.template.htm">
+	<slot name="nav">
+        <!-- nav -->
+        <div class="card-header bg-light shadow">
+            <div class="nav-scroller overflow-hidden position-relative p-1">
+                <ul class="nav nav-pills small">
+                    <!--用户首页-->
+                    <!--{hook user_common_header_nav_thread_before.htm}-->
+                    <li class="nav-item pb-2 mx-1">
+                        <a class="nav-link" href="<?php echo url('user-'.$_uid);?>" data-active="user-home">
+                            <?php echo lang('thread');?>
+                        </a>
+                    </li>
+                    <!--{hook user_common_header_nav_thread_after.htm}-->
+                    <li class="nav-item pb-2 mx-1">
+                        <a class="nav-link" href="<?php echo url('user-comment-'.$_uid);?>" data-active="user-comment">
+                            <?php echo lang('comment');?>
+                        </a>
+                    </li>
+                    <!--{hook user_common_header_nav_comment_after.htm}-->
+                </ul>
+            </div>
+        </div>
+	</slot>
+</template>

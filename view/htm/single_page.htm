@@ -1,0 +1,125 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook single_page_start.htm}-->
+
+<div class="row">
+	<?php if($threadlist){ ?>
+	<div class="col-lg-2 d-none d-lg-block pr-0">
+		<!--{hook single_page_list_start.htm}-->
+        <div class="threadlist list-group nowrap shadow text-center">
+            <?php foreach($threadlist as $_thread) { ?>
+            <a data-active="tid-<?php echo $_thread['tid'];?>" href="<?php echo $_thread['url'];?>" class=" list-group-item list-group-item-action d-block ellipsis" <?php echo ($_thread['type']==10?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
+            	<?php echo $_thread['subject'];?>
+            </a>
+            <?php } ?>
+        </div>
+		<!--{hook single_page_list_end.htm}-->
+	</div>
+	<?php } ?>
+	<div class="col-lg-10 mx-auto main">
+		<div class="card card-thread shadow border-white">
+			<div class="card-body">
+				<div class="d-flex justify-content-between small">
+					<div>
+						<!--{hook single_page_username_before.htm}-->
+						<span class="username">
+							<a href="<?php echo url('user-'.$thread['uid']);?>" class="text-muted font-weight-bold">
+								<?php echo $thread['username'];?>
+							</a>
+						</span>
+						<!--{hook single_page_date_before.htm}-->
+						<span class="date text-grey ml-2">
+                            <?php echo $thread['create_date_text'];?>
+                        </span>
+						<!--{hook single_page_date_after.htm}-->
+						<span class="text-grey ml-2"><i class="icon-eye"></i>&nbsp;
+                            <?php echo $thread['views'];?>
+                        </span>
+						<!--{hook single_page_views_after.htm}-->
+					</div>
+					<div>
+						<!--{hook single_page_update_before.htm}-->
+					</div>
+				</div>
+				<hr />
+				<div class="message break-all">
+					<!--{hook single_page_message_before.htm}-->
+					<?php echo $data['message'];?>
+					<!--{hook single_page_message_after.htm}-->
+
+					<?php echo data_file_list_html($thread['filelist']);?>
+					<!--{hook single_page_filelist_after.htm}-->
+				</div>
+
+				<!--{hook single_page_plugin_before.htm}-->
+				<div class="plugin d-flex justify-content-center mt-3">
+					<!--{hook single_page_plugin_body.htm}-->
+				</div>
+				<!--{hook single_page_plugin_after.htm}-->
+			</div>
+		</div>
+		<!--{hook single_page_page_after.htm}-->
+	</div>
+</div>
+
+<!--{hook single_page_end.htm}-->
+
+<?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
+
+<script>
+/*缩放图片，适应屏幕大小*/
+function resize_image() {
+	var jmessagelist = $('div.message');
+	var first_width = jmessagelist.width(); /* 815 : 746; 734 746*/
+	jmessagelist.each(function() {
+		var jdiv = $(this);
+		var maxwidth = jdiv.attr('isfirst') ? first_width : jdiv.width();
+		var jmessage_width = Math.min(jdiv.width(), maxwidth);
+		jdiv.find('img, embed, iframe, video').each(function() {
+			var jimg = $(this);
+			var img_width = this.org_width;
+			var img_height = this.org_height;
+			if(!img_width) {
+				var img_width = jimg.attr('width');
+				var img_height = jimg.attr('height');
+				this.org_width = img_width;
+				this.org_height = img_height;
+			}
+			/*var percent = xn.min(100, xn.ceil((img_width / jmessage_width) * 100));*/
+			if(img_width > jmessage_width) {
+				if(this.tagName == 'IMG') {
+					jimg.width(jmessage_width);
+					jimg.css('height', 'auto');
+					jimg.css('cursor', 'pointer');
+					jimg.on('click', function() {
+						/*window.open(jimg.attr('src'));*/
+					});
+				} else {
+					jimg.width(jmessage_width);
+					var height = (img_height / img_width) * jimg.width();
+					jimg.height(height);
+				}
+			}
+		});
+	});
+}
+
+/*对于超宽的表格，加上响应式*/
+function resize_table() {
+	$('div.message').each(function() {
+		var jdiv = $(this);
+		jdiv.find('table').addClass('table').wrap('<div class="table-responsive"></div>'); 
+	});
+}
+
+$(function() {
+	resize_image();
+	resize_table();
+	$(window).on('resize', resize_image);
+});
+
+$('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
+$('.threadlist a[data-active="tid-<?php echo $tid;?>"]').addClass('active');
+</script>
+
+<!--{hook single_page_js.htm}-->

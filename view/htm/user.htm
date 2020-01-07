@@ -1,0 +1,20 @@
+<template include="./view/htm/user_common.header.htm">
+	<slot name="body">
+        <ul class="threadlist list-group list-group-flush shadow">
+            <?php include _include(APP_PATH . 'view/htm/thread_list.inc.htm');?>
+        </ul>
+
+        <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+
+        <?php if ($pagination) { ?>
+        <nav class="my-3"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
+        <?php } ?>
+		
+	</slot>
+</template>
+
+<script>
+$('a[data-active="user-home"]').addClass('active');
+<!--{hook user_home_js.htm}-->
+</script>
+<!--{hook user_home_js_after.htm}-->

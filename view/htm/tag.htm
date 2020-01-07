@@ -1,0 +1,63 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook tag__start.htm}-->
+
+<div class="row">
+	<div class="col-lg-9 mx-auto main">
+		<div class="d-flex justify-content-between">
+			<ol class="breadcrumb col">
+				<!--{hook tag__breadcrumb_li_startd.htm}-->
+				<li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+				<!--{hook tag__breadcrumb_li_before.htm}-->
+				<li class="breadcrumb-item">
+					<a href="<?php echo url('tag-list');?>">
+						<?php echo lang('well_tag').lang('list');?>
+                    </a>
+				</li>
+				<li class="breadcrumb-item">
+					<a href="<?php echo url('tag-' . $tagid);?>">
+                        <?php echo $read['name'];?>
+                    </a>
+				</li>
+				<!--{hook tag__breadcrumb_li_end.htm}-->
+			</ol>
+			<!--{hook tag__breadcrumb_ol.htm}-->
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card card-threadlist">
+					<div class="card-body">
+						<ul class="list-unstyled threadlist mb-0">
+							<!--{hook tag__threadlist_before.htm}-->
+							<?php include _include(APP_PATH . 'view/htm/thread_list.inc.htm');?>
+							<!--{hook tag__threadlist_after.htm}-->
+						</ul>
+					</div>
+				</div>
+
+				<!--{hook tag__list_mod_before.htm}-->
+
+				<?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+
+				<!--{hook tag__page_before.htm}-->
+
+				<?php if ($pagination) { ?>
+				<nav class="my-3">
+					<ul class="pagination justify-content-center flex-wrap">
+						<?php echo $pagination; ?>
+					</ul>
+				</nav>
+				<?php } ?>
+				<!--{hook tag__page_after.htm}-->
+			</div>
+		</div>
+	</div>
+    <!--<div class="col-lg-3 d-none d-lg-block aside"></div>-->
+    <!--{hook tag__after.htm}-->
+</div>
+
+<!--{hook tag__end.htm}-->
+
+<?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
+
+<!--{hook tag__js.htm}-->
