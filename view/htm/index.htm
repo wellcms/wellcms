@@ -1,0 +1,28 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook website_index_flat_start.htm}-->
+
+<div class="row">
+    <div class="col-lg-12">
+        <!--{hook website_index_flat_main_start.htm}-->
+        <div class="card card-threadlist">
+            <div class="card-body">
+                <div class="col-lg-12 text-center">
+                    <h1>请开发自己的主页</h1>
+                    <br>
+                    <br>
+                    <h1>Please develop your own homepage</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--{hook website_index_flat_end.htm}-->
+
+<?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
+
+<script>
+    $('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
+</script>
+<!--{hook website_index_flat_js.htm}-->

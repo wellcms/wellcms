@@ -1,0 +1,153 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook index_flat_start.htm}-->
+
+<div class="row">
+    <div class="col-lg-9 main">
+        <!--{hook index_flat_main_start.htm}-->
+        <div class="card-header bg-light shadow">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link <?php echo $active == 'default' ? 'active' : '';?>" href="./">
+                        <?php echo lang('new_thread');?>
+                    </a>
+                </li>
+                <!--{hook index_flat_thread_list_nav_item_after.htm}-->
+            </ul>
+        </div>
+        <ul class="threadlist list-group list-group-flush shadow">
+            <!--{hook index_flat_threadlist_before.htm}-->
+            <?php include _include(APP_PATH . 'view/htm/thread_list.inc.htm');?>
+            <!--{hook index_flat_threadlist_after.htm}-->
+        </ul>
+
+        <!--{hook index_flat_mod_before.htm}-->
+
+        <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+
+        <!--{hook index_flat_page_before.htm}-->
+        <?php if ($pagination) { ?>
+        <nav class="my-3">
+            <ul class="pagination justify-content-center flex-wrap">
+                <?php echo $pagination; ?>
+            </ul>
+        </nav>
+        <?php } ?>
+        <!--{hook index_flat_page_end.htm}-->
+    </div>
+
+    <div class="col-lg-3 d-none d-lg-block aside">
+        <!--{hook index_flat_before.htm}-->
+        <div class="card-site-info bg-white shadow">
+            <!--{hook index_flat_site_start.htm}-->
+            <div class="mx-3 pt-3">
+                <h5 class="text-center">
+                    <?php echo $conf['sitename'];?>
+                </h5>
+                <!--{hook index_flat_sitename_after.htm}-->
+                <div class="small line-height-3">
+                    <?php echo $conf['sitebrief'];?>
+                </div>
+                <!--{hook index_flat_sitebrief_after.htm}-->
+            </div>
+            <!--{hook index_flat_site_before.htm}-->
+            <div class="card-footer p-2">
+                <table class="w-100 small">
+                    <tr align="center">
+                        <td>
+                            <span class="text-muted">
+                                <?php echo lang('threads');?>
+                            </span>
+                            <br>
+                            <b>
+                                <?php echo $runtime['articles'];?>
+                            </b>
+                        </td>
+                        <td>
+                            <span class="text-muted">
+                                <?php echo lang('comments');?>
+                            </span>
+                            <br>
+                            <b>
+                                <?php echo $runtime['comments'];?>
+                            </b>
+                        </td>
+                        <td>
+                            <span class="text-muted">
+                                <?php echo lang('users');?>
+                            </span>
+                            <br>
+                            <b>
+                                <?php echo $runtime['users'];?>
+                            </b>
+                        </td>
+                        <?php if($runtime['onlines'] > 0) { ?>
+                        <td>
+                            <span class="text-muted">
+                                <?php echo lang('online');?>
+                            </span>
+                            <br>
+                            <b>
+                                <?php echo $runtime['onlines'];?>
+                            </b>
+                        </td>
+                        <?php } ?>
+                    </tr>
+                </table>
+            </div>
+            <!--{hook index_flat_site_end.htm}-->
+        </div>
+        <!--{hook index_flat_middle.htm}-->
+
+        <?php if($flaglist){foreach($flaglist as &$_flag) { ?>
+        <div class="d-none d-lg-block aside shadow mt-3">
+            <div class="card-header bg-light">
+                <h3 class="font-weight-bold my-0">
+                    <a href="<?php echo $_flag['url'];?>" title='<?php echo $_flag['name'];?>' aria-label='<?php echo $_flag['name'];?>'>
+                        <?php echo $_flag['name']; ?>
+                    </a>
+                </h3>
+            </div>
+            <ul class="list-group list-group-flush nowrap">
+                <?php if($_flag['list']){foreach($_flag['list'] as $_thread) { ?>
+                <li class="list-group-item bg-white">
+                    <h4 class="my-0">
+                        <a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo ($_thread['type']==10?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
+                            <?php echo $_thread['subject'];?>
+                        </a>
+                    </h4>
+                </li>
+                <?php }} ?>
+            </ul>
+        </div>
+        <?php }} ?>
+
+        <?php if(!empty($linklist)){ ?>
+        <div class="d-none d-lg-block aside shadow mt-3">
+            <div class="card-header bg-light">
+                <h3 class="font-weight-bold my-0">
+                    <?php echo lang('friends_link');?>
+                </h3>
+            </div>
+            <ul class="list-group list-group-flush nowrap">
+                <?php foreach($linklist as &$_link) { ?>
+                <li class="list-group-item">
+                    <a href="<?php echo $_link['url'];?>" class="d-block"  target="_blank" aria-label='<?php echo $_link['name'];?>'>
+                        <?php echo $_link['name'];?>
+                    </a>
+                </li>
+                <?php } ?>
+            </ul>
+        </div>
+        <?php } ?>
+    </div>
+</div>
+
+<!--{hook index_flat_end.htm}-->
+
+<?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
+
+<script>
+    $('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
+</script>
+<!--{hook index_flat_js.htm}-->

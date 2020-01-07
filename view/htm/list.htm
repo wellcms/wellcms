@@ -1,0 +1,135 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook list_start.htm}-->
+
+<div class="row">
+    <div class="col-lg-9 main">
+        <?php if($forum['announcement']) { ?>
+        <div class="card card-mod-info">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <?php echo lang('forum_anouncement');?>：
+                </h6>
+                <p class="small">
+                    <?php echo $forum['announcement'];?>
+                </p>
+            </div>
+        </div>
+        <?php  } ?>
+        <!--{hook list_main_start.htm}-->
+        <div class="card-header bg-light shadow">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link <?php echo $active == 'default' ? 'active' : '';?>" href="./">
+                        <?php echo lang('new_thread');?>
+                    </a>
+                </li>
+                <!--{hook list_main_nav_item_after.htm}-->
+            </ul>
+        </div>
+
+        <ul class="threadlist list-group list-group-flush shadow">
+            <!--{hook list_main_threadlist_before.htm}-->
+            <?php include _include(APP_PATH . 'view/htm/thread_list.inc.htm');?>
+            <!--{hook list_main_threadlist_after.htm}-->
+        </ul>
+
+        <!--{hook list_thread_list_mod_before.htm}-->
+
+        <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+
+        <!--{hook list_main_page_before.htm}-->
+        <?php if ($pagination) { ?>
+        <nav class="my-3">
+            <ul class="pagination justify-content-center flex-wrap">
+                <?php echo $pagination; ?>
+            </ul>
+        </nav>
+        <?php } ?>
+        <!--{hook list_main_page_after.htm}-->
+    </div>
+
+    <div class="col-lg-3 d-none d-lg-block aside">
+        <!--{hook list_site_brief_start.htm}-->
+        <div class="card-site-info bg-white shadow">
+            <!--{hook list_site_brief_before.htm}-->
+            <div class="mx-3 pt-3">
+                <h5 class="text-center">
+                    <?php echo $forum['name'];?>
+                </h5>
+                <div class="small line-height-3">
+                    <?php echo $forum['brief'];?>
+                </div>
+            </div>
+            <!--{hook list_site_brief_middle.htm}-->
+            <div class="card-footer p-2">
+                <table class="w-100 small">
+                    <tr align="center">
+                        <td>
+                            <span class="text-muted">
+                                <?php echo lang('threads');?>
+                            </span>
+                            <br>
+                            <b>
+                                <?php echo $forum['threads'];?>
+                            </b>
+                        </td>
+                        <td>
+                            <span class="text-muted">
+                                <?php echo lang('today_comment');?>
+                            </span>
+                            <br>
+                            <b>
+                                <?php echo $forum['todayposts'];?>
+                            </b>
+                        </td>
+                        <td>
+                            <span class="text-muted">
+                                <?php echo lang('today_threads');?>
+                            </span>
+                            <br>
+                            <b>
+                                <?php echo $forum['todaythreads'];?>
+                            </b>
+                        </td>
+                        <!--{hook list_todaythreads_after.htm}-->
+                    </tr>
+                </table>
+            </div>
+            <!--{hook list_site_brief_end.htm}-->
+        </div>
+        <!--{hook list_site_brief_end.htm}-->
+
+        <?php if($flaglist){foreach($flaglist as $_flag) { ?>
+        <div class="d-none d-lg-block aside shadow mt-3">
+            <div class="card-header bg-light">
+                <h3 class="font-weight-bold my-0">
+                    <a href="<?php echo $_flag['url'];?>" title='<?php echo $_flag['name'];?>' aria-label='<?php echo $_flag['name'];?>'>
+                        <?php echo $_flag['name']; ?>
+                    </a>
+                </h3>
+            </div>
+            <ul class="list-group list-group-flush nowrap">
+                <?php if(isset($_flag['list'])){foreach($_flag['list'] as $_thread) { ?>
+                <li class="list-group-item bg-white">
+                    <h4 class="my-0">
+                        <a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo ($_thread['type']==10?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
+                            <?php echo $_thread['subject'];?>
+                        </a>
+                    </h4>
+                </li>
+                <?php }} ?>
+            </ul>
+        </div>
+        <?php }} ?>
+    </div>
+</div>
+
+<!--{hook list_end.htm}-->
+
+<?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
+
+<script>
+    $('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
+</script>
+<!--{hook list_js.htm}-->

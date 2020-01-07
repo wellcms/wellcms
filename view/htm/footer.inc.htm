@@ -1,0 +1,73 @@
+<?php $db = GLOBALS('db');?>
+<?php $starttime = GLOBALS('starttime');?>
+<?php $time = GLOBALS('time');?>
+<?php $ip = GLOBALS('ip');?>
+<?php $useragent = GLOBALS('useragent');?>
+<?php $forumlist = GLOBALS('forumlist');?>
+<?php $forumarr = GLOBALS('forumarr');?>
+<?php $fid = GLOBALS('fid');?>
+<?php $conf = GLOBALS('conf');?>
+<?php $config = GLOBALS('config');?>
+<?php $static_version = $conf['static_version'];?>
+				
+			<!--{hook footer_start.htm}-->
+		
+			<?php  echo xn_debug_info(); ?>
+
+        </div>
+	</main>
+	
+	<!--{hook footer_nav_before.htm}-->
+	
+	<?php include _include(APP_PATH.'view/htm/footer_nav.inc.htm');?>
+	
+	<!--{hook footer_nav_after.htm}-->
+	
+	<!--[if ltg IE 9]>
+	<script>window.location = '<?php echo url('browser');?>';</script>
+	<![endif]-->
+	
+	<!--{hook footer_js_before.htm}-->
+
+<?php $browser = get__browser();?>
+<?php if($browser['name'] == 'ie') { ?>
+<script src="<?php echo view_path();?>js/es6-shim.js<?php echo $static_version;?>"></script>
+<?php } ?>
+<script src="<?php echo $conf['path'];?>lang/<?php echo $conf['lang'];?>/lang.js<?php echo $static_version;?>"></script>
+<script src="<?php echo view_path();?>js/jquery-3.4.1.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo view_path();?>js/popper.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo view_path();?>js/bootstrap.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo view_path();?>js/xiuno.js<?php echo $static_version;?>"></script>
+<script src="<?php echo view_path();?>js/bootstrap-plugin.js<?php echo $static_version;?>"></script>
+<script src="<?php echo view_path();?>js/async.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo view_path();?>js/form.js<?php echo $static_version;?>"></script>
+	<script>
+	var debug = DEBUG = <?php echo DEBUG; ?>;
+	var url_rewrite_on = <?php echo $conf['url_rewrite_on'];?>;
+	var forumarr = <?php echo xn_json_encode($forumarr);?>;
+	var fid = <?php echo $fid;?>;
+	var uid = <?php echo intval($uid);?>;
+	var gid = <?php echo intval($gid);?>;
+	xn.options.water_image_url = '<?php echo view_path(),$conf['logo_water_url'];?>';	/*水印图片 / watermark image*/
+	</script>
+	<script src="<?php echo view_path();?>js/wellcms.js<?php echo $static_version;?>"></script>
+
+<!--图片赖加载需要的自己删掉注释
+<script src="<?php echo view_path();?>js/echo.min.js<?php echo $static_version;?>"></script>
+<script>
+    (function ($) {
+        path = "<?php echo $conf['path'];?>";
+        $("body img").each(function(k, v){var img = $("img").get(k).outerHTML;img = img.replace('src', 'data-echo');$(this).replaceWith(img);});
+    })(jQuery);
+    echo.init({offset: 100,throttle: 250,unload: false});
+</script>
+-->
+
+	<!--{hook footer_js_after.htm}-->
+
+</body>
+<!--{hook footer_body_after.htm}-->
+</html>
+<!--{hook footer_end.htm}-->
+
+<?php echo cron_run();?>

@@ -1,0 +1,24 @@
+<footer class="text-muted small bg-dark py-4 mt-3" id="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<!--{hook footer_footer_left_start.htm}-->
+				<!-- 你真的忍心把保留版权干掉，多支持官方 -->
+				Powered by <a href="http://www.wellcms.cn/" target="_blank" class="text-muted"><b>WellCMS X</b></a>
+                <!-- 其他信息请追加此处 -->
+				<!--{hook footer_footer_left_end.htm}-->
+			</div>
+			<div class="col text-right">
+				<!--{hook footer_footer_right_start.htm}-->
+				Processed:
+                <b>
+                    <?php echo substr(microtime(1) - $starttime, 0, 5);?>
+                </b>, SQL:
+                <b>
+                    <?php echo count($db->sqls);?>
+                </b>
+				<!--{hook footer_footer_right_end.htm}-->
+			</div>
+		</div>
+	</div>
+</footer>
