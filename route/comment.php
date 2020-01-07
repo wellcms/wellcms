@@ -109,6 +109,10 @@ if ($action == 'create') {
 
     include _include(APP_PATH . 'model/operate.func.php');
 
+    $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || $gid == 1;
+
+    empty($allowdelete) AND message(-1, lang('user_group_insufficient_privilege'));
+
     if ($type) {
 
         // hook comment_delete_pids_start.php
@@ -134,12 +138,8 @@ if ($action == 'create') {
 
             // hook comment_delete_pids_access_before.php
 
-            $forum_access = forum_access_user($val['fid'], $gid, 'allowpost');
-            $allowdelete = forum_access_mod($val['fid'], $gid, 'allowdelete');
+            if (!$val['closed'] && $val['allowdelete'] && $forum['comment']) {
 
-            // hook comment_delete_pids_access_center.php
-
-            if ($forum_access && $allowdelete && $val['allowdelete'] && !$val['closed'] && $forum['comment']) {
                 $pidarr[] = $val['pid'];
                 $tidarr[$val['pid']] = $val['tid'];
                 isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
@@ -155,7 +155,7 @@ if ($action == 'create') {
         }
 
         // hook comment_delete_pids_center.php
-
+        
         empty($pidarr) AND message(1, lang('data_malformation'));
 
         $r = comment_delete($pidarr);
