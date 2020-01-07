@@ -1,0 +1,194 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_group_update_start.htm}-->
+<div class="container px-0">
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-body">
+				<form action="<?php echo url('group-update-'.$_gid);?>" method="post" id="form">
+					<h4 class="card-title"><?php echo lang('group_edit');?> - <?php echo $_group['name'];?></h4>
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('group_name');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['name'];?>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('group_credits_from');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['creditsfrom'];?>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('group_credits_to');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['creditsto'];?>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('user_privileges');?>：</label>
+						<div class="col-sm-10">
+                            <div class="form-group">
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowread'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowthread'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowpost'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowuserdelete'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowattach'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowdown'];?>
+                                </label>
+                            </div>
+						</div>
+					</div>
+					<?php if($_group['gid'] >= 1 AND $_group['gid'] <= 5) { ?>
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('admin_privilege');?>：</label>
+						<div class="col-sm-10">
+                            <div class="form-group">
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowtop'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowupdate'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowdelete'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowmove'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowbanuser'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowdeleteuser'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['allowviewip'];?>
+                                </label>
+                            </div>
+						</div>
+					</div>
+					<?php } ?>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 form-control-label"><?php echo lang('admin_access');?>：</label>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['intoadmin'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managecontent'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managecreatethread'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['manageupdatethread'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managedeletethread'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managesticky'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managecomment'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managepage'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['manageforum'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managecategory'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['manageuser'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managecreateuser'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['manageupdateuser'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managedeleteuser'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managegroup'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['manageupdategroup'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['manageplugin'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['manageother'];?>
+                                </label>
+                                <label class="custom-input custom-checkbox">
+                                    <?php echo $input['managesetting'];?>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+					<div class="form-group row">
+						<div class="col-sm-12">
+							<button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+							<a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<!--{hook admin_group_update_end.htm}-->
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+
+var jform = $("#form");
+var jsubmit = $("#submit");
+jform.on('submit', function(){
+	jform.reset();
+	jsubmit.button('loading');
+	var postdata = jform.serialize();
+	$.xpost(jform.attr('action'), postdata, function(code, message) {
+		if(code == 0) {
+			$.alert(message);
+			jsubmit.text(message).delay(3000).button('reset');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+		} else {
+			$.alert(message);
+			jsubmit.button('reset');
+		}
+	});
+	return false;
+});
+
+$('#user').addClass('show');
+$('.sidebar-sticky li.menu-group').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+</script>
+
+<!--{hook admin_group_update_js.htm}-->

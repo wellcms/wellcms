@@ -1,0 +1,132 @@
+<?php $header = GLOBALS('header');
+$conf= GLOBALS('conf');
+$user = GLOBALS('user');
+isset($user['avatar_url']) || $user['avatar_url'] = '';
+$menu = GLOBALS('menu');
+$forumlist_show = GLOBALS('forumlist_show');
+$route = GLOBALS('route');
+$action = GLOBALS('action');
+$config = GLOBALS('config');
+$static_version = $conf['static_version'];
+$path = $conf['url_rewrite_on'] <= 1 ? '../' : '';
+?>
+<html lang="<?php echo $conf['lang'];?>">
+<head>
+
+	<!--{hook admin_header_meta_before.htm}-->
+	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<meta name="author" content="WellCMS X" />
+	<meta name="keywords" content="<?php echo strip_tags($header['keywords']);?>" />
+	<meta name="description" content="<?php echo strip_tags($header['description']);?>" />
+	<meta name="renderer" content="webkit" />
+	<title><?php echo $header['title'];?> - WellCMS</title>
+	
+	<link rel="shortcut icon" href="<?php echo admin_view_path();?>img/favicon.ico" />
+	<link rel="icon" sizes="32x32" href="<?php echo admin_view_path();?>img/favicon.ico">
+	<link rel="Bookmark" href="<?php echo admin_view_path();?>img/favicon.ico" />
+	
+	<!--{hook admin_header_css_start.htm}-->
+
+	<link rel="stylesheet" href="<?php echo admin_view_path();?>css/bootstrap.min.css<?php echo $static_version;?>">
+    <!--{hook admin_header_css_before.htm}-->
+	<link rel="stylesheet" href="<?php echo admin_view_path();?>css/font-awesome.min.css<?php echo $static_version;?>">
+    <!--{hook admin_header_css_after.htm}-->
+	<link rel="stylesheet" href="<?php echo admin_view_path();?>css/wellcms_x.css<?php echo $static_version;?>">
+    <!--{hook admin_header_css_end.htm}-->
+</head>
+
+<body>
+
+    <!--{hook admin_header_start.htm}-->
+
+    <header class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark-blue">
+        <!-- 左：折叠菜单的图标 ☰ -->
+        <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#nav" aria-controls="navbar_collapse" aria-expanded="false" aria-label="<?php echo lang('toggler_menu');?>">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- LOGO -->
+        <div class="navbar-brand col-2 hidden-lg hidden-xl">
+            <img class="logo-2 mx-auto d-block" src="<?php echo admin_view_path();?>img/logo.png">
+        </div>
+        <div class="navbar-brand col-2 hidden-md hidden-sm">
+            <img class="logo-2 mx-auto d-block" src="<?php echo admin_view_path();?>img/admin.logo.png">
+        </div>
+
+        <!--- index page --->
+        <a class="navbar-brand d-md-none" href="<?php echo $conf['path'];?>" title="<?php echo lang('front_index_page');?>"><i class="icon-home"></i></a>
+
+        <!--{hook admin_header_logo_after.htm}-->
+        <div class="collapse navbar-collapse">
+
+            <!-- right -->
+            <ul class="navbar-nav ml-auto">
+                <!--{hook admin_header_user_start.htm}-->
+
+                <li class="nav-item">
+                    <a class="nav-link my-url" href="<?php echo url('my');?>">
+                        <img class="avatar-1 mr-1" src="<?php echo $user['avatar_url'];?>">&nbsp;<?php echo isset($user['username']) ? $user['username'] : '';?>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo url_path();?>"><i class="icon-home"></i>&nbsp;<?php echo lang('front_index_page');?></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo url('index-logout');?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a>
+                </li>
+
+                <!--{hook admin_header_user_end.htm}-->
+            </ul>
+        </div>
+    </header>
+
+    <!--{hook admin_header_end.htm}-->
+    <main id="body">
+        <div class="container-fluid">
+            <div class="row">
+                <?php if ($action!='login') { ?>
+                <nav id="nav" class="admin-nav collapse navbar-collapse col-lg-2 d-lg-block navbar-expand-lg navbar-dark bg-dark-blue sidebar" style="z-index: 1020;">
+                    <div class="sidebar-sticky" id="wellcms-nav">
+                        <!--{hook admin_header_nav_start.htm}-->
+                        <ul class="navbar-nav flex-column">
+                            <li class="nav-item home">
+                                <a class="nav-link" href="./"><i class="icon-home"></i>&nbsp;<?php echo lang('admin_index_page');?></a>
+                            </li>
+                            <li class="nav-item upgrade">
+                                <a class="nav-link" href="<?php echo url('other-upgrade');?>"><i class="icon-cloud-upload <?php if(array_value($config, 'upgrade', 0)){echo 'text-danger';}?>"></i>&nbsp;<?php echo lang('online_upgrade');?></a>
+                            </li>
+                            <!--{hook admin_header_nav_before.htm}-->
+                            <?php foreach ($menu as $k=>$v) { ?>
+                            <li class="nav-item nav-item-<?php echo $k;?>">
+                                <a class="nav-link" data-toggle="collapse" data-target="#<?php echo $k;?>" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);"><i class="<?php echo $v['icon'];?>"></i>&nbsp;<?php echo $v['text'];?></a>
+                                <div id="<?php echo $k;?>" class="collapse bg-dark" aria-labelledby="heading" data-parent="#wellcms-nav">
+                                    <ul class="navbar-nav flex-column">
+                                        <?php foreach ($v['tab'] as $key=>$val) { ?>
+                                        <li class="nav-item menu-<?php echo $key;?>">
+                                            <a class="nav-link text-white pl-5" href="<?php echo $val['url'];?>">
+                                                <i class="icon-angle-double-right"></i>&nbsp;<?php echo $val['text'];?>
+                                            </a>
+                                        </li>
+                                        <?php  } ?>
+                                    </ul>
+                                </div>
+                            </li>
+                            <?php  } ?>
+                            <!--{hook admin_header_nav_after.htm}-->
+                            <!--以下代码无需改动-->
+                            <li class="nav-item d-flex justify-content-between d-md-none">
+                                <a class="nav-link my-url" href="<?php echo url('my');?>">
+                                    <img class="avatar-1 mr-1" src="<?php echo (strpos($user['avatar_url'], '//') === FALSE ? $path : '').$user['avatar_url'];?>">&nbsp;<?php echo isset($user['username']) ? $user['username'] : '';?>
+                                </a>
+                                <a class="nav-link" href="<?php echo url('index-logout');?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a>
+                            </li>
+                        </ul>
+                        <!--{hook admin_header_nav_end.htm}-->
+                    </div>
+                </nav>
+                <?php } ?>
+
+                <div role="main" class="<?php if ($action=='login') {echo 'col-md-12';} else {echo 'admin-content ';} ?> px-4">

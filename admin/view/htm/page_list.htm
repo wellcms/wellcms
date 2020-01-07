@@ -1,0 +1,170 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_page_list_start.htm}-->
+<div class="container px-0">
+<div class="row">
+    <div class="col-lg-12">
+        <!--{hook admin_page_list_breadcrumb_before.htm}-->
+        <?php if(empty($hide_breadcrumb)) { ?>
+        <ol class="breadcrumb d-none d-md-flex text-muted">
+            <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><?php echo lang('single_page');?></li>
+            <li class="breadcrumb-item"><?php echo lang('list');?></li>
+            <!--{hook admin_page_list_breadcrumb.htm}-->
+        </ol>
+        <?php } ?>
+        <!--{hook admin_page_list_breadcrumb_after.htm}-->
+
+        <!--{hook admin_page_list_before.htm}-->
+        <div class="card card-threadlist">
+            <div class="card-body">
+                <div class="row d-flex justify-content-between mx-0 mb-3">
+                    <!--{hook admin_page_list_menu_start.htm}-->
+                    <div>
+                        <select class="custom-select mr-1 w-auto" name="fid">
+                            <!--{hook admin_page_list_select_strat.htm}-->
+                            <option value="0"><?php echo $route=='sticky'?lang('top_3'):lang('select'); ?></option>
+                            <!--{hook admin_page_list_select_before.htm}-->
+                            <?php foreach ($columnlist as $v) { ?>
+                            <option value="<?php echo $v['fid']; ?>"><?php echo $v['name']; ?></option>
+                            <?php } ?>
+                            <!--{hook admin_page_list_select_end.htm}-->
+                        </select>
+                    </div>
+                    <!--{hook admin_page_list_menu_end.htm}-->
+                    <div>
+                        <?php if (empty($columnlist)) { ?>
+                        <a class="btn btn-info btn-sm" href="<?php echo url('column-list');?>"><?php echo lang('create').lang('column'); ?></a>
+                        <?php } else { ?>
+                        <a class="btn btn-info btn-sm" href="<?php echo url('page-create-'.$fid);?>"><?php echo lang('increase').lang('content'); ?></a>
+                        <?php } ?>
+                    </div>
+                    <!--{hook admin_page_list_menu_end.htm}-->
+                </div>
+                <ul class="list-unstyled threadlist mb-0">
+
+                    <?php if($threadlist) { foreach($threadlist as &$_thread) { ?>
+                    <li class="thread" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
+
+                        <div class="subject d-flex justify-content-between">
+                            <div class="d-flex flex-row bd-highlight">
+                                <?php if ($fid) { ?>
+                                <input type="text" placeholder="<?php echo lang('well_rank');?>" name="rank" value="<?php echo $_thread['rank']; ?>" class="form-control small mr-2" rank="<?php echo $_thread['rank'];?>" tid="<?php echo $_thread['tid'];?>" style="width:45px;">
+                                <?php } ?>
+                                <h2 class="break-all font-weight-bold mt-2 mb-0">
+                                    <a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>"><?php echo $_thread['subject'];?></a>
+                                </h2>
+                            </div>
+
+                            <div class="small">
+                                <?php if( $_thread['allowupdate']) { ?>
+                                <span data-href="<?php echo url('page-update-' . $_thread['tid']); ?>" class="text-grey update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></span>
+                                <?php } ?>
+                                <?php if($_thread['allowdelete']) { ?>
+                                <span data-href="<?php echo url('page-delete-' . $_thread['tid']);?>" class="text-grey delete-thread ml-2"><i class="icon-remove"></i> <?php echo lang('delete');?></span>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </li>
+                    <?php }} else { ?>
+                    <li class="list-group-item">
+                        <div><?php echo lang('none');?></div>
+                    </li>
+                    <?php } ?>
+
+                </ul>
+            </div>
+        </div>
+        <?php if ($fid) { ?>
+        <div class="text-center">
+            <div class="btn-group mod-button my-3" role="group" aria-label="">
+                <button class="btn btn-secondary rank"><?php echo lang('rank');?></button>
+            </div>
+        </div>
+        <?php } ?>
+        <!--{hook admin_page_list_page_before.htm}-->
+        <?php if ($pagination) { ?>
+        <nav class="my-3"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
+        <?php } ?>
+        <!--{hook admin_page_list_page_after.htm}-->
+    </div>
+</div>
+</div>
+<!--{hook admin_page_list_end.htm}-->
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+    $('ul.threadlist').base_href('<?php echo $conf['path'];?>');
+    $('ul.threadlist a').attr('target','_blank');
+
+    var body = $('body');
+    body.on('click', 'button.delete', function() {
+        var jthis = $(this);
+        var pidarr = $('input[name="pid"]').checked();
+        var href = jthis.data('href');
+        if (window.confirm(lang.confirm_delete)) {
+            $.xpost(href, {type:1,pid:pidarr}, function(code, message) {
+                if(code == 0) {
+                    window.location.reload();
+                } else {
+                    $.alert(message);
+                }
+            });
+        }
+        return false;
+    });
+
+    var select = $('select[name="fid"]');
+    select.val(<?php echo $fid;?>);
+    select.change(function () {
+        var fid = $(this).val();
+        window.location = xn.url('page-list-' + fid);
+    });
+
+    $('.update-thread').on('click', function () {
+        var href = $(this).data('href');
+        if (href) {
+            window.location = href;
+        }
+    });
+
+    $('.delete-thread').on('click', function () {
+        var jthis = $(this);
+        var href = jthis.data('href');
+        if (window.confirm(lang.confirm_delete)) {
+            $.xpost(href, function (code, message) {
+                if (code == 0) {
+                    jthis.parents('li').removeDeep();
+                } else {
+                    $.alert(message);
+                }
+            });
+        }
+    });
+    <?php if ($fid) { ?>
+    $('button.rank').on('click', function () {
+        var rankarr = new Array();
+        $('input[name="rank"]').each(function(){
+            var tid = xn.intval($(this).attr('tid'));
+            var oldrank = xn.intval($(this).attr('rank'));
+            var rank = xn.intval($(this).val());
+            rankarr.push({tid:tid,oldrank:oldrank,rank:rank});
+        });
+        $.xpost(xn.url('page-list'), {data:rankarr}, function (code, message) {
+            if (code == 0) {
+                $.alert(message);
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                $.alert(message);
+            }
+        });
+    });
+    <?php } ?>
+    $('#content').addClass('show');
+    $('.sidebar-sticky li.menu-page').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+</script>
+
+<!--{hook admin_page_list_js.htm}-->

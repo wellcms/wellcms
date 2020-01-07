@@ -1,0 +1,84 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<div class="container px-0">
+<div class="row">
+	<div class="col-lg-12">
+		<?php if(empty($hide_breadcrumb)) { ?>
+		<ol class="breadcrumb d-none d-md-flex text-muted">
+			<li class="breadcrumb-item"><a href="<?php echo url('content-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+			<?php if ($fid) { ?>
+			<li class="breadcrumb-item"><?php echo $forum['name'];?></li>
+			<?php } ?>
+            <li class="breadcrumb-item"><?php echo $breadcrumb_flag;?></li>
+			<!--{hook admin_page_post_breadcrumb.htm}-->
+		</ol>
+		<?php } ?>
+		<div class="card card-threadlist">
+			<div class="card-body">
+                <form action="<?php echo $form_action;?>" method="post" id="form">
+                    <input type="hidden" name="doctype" value="<?php echo $form_doctype;?>" />
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <!--{hook thread__post_inc_fid_select_before.htm}-->
+                                <select class="custom-select mr-1 w-auto" name="fid">
+                                    <?php foreach ($columnlist as $forum) { ?>
+                                    <option value="<?php echo $forum['fid']; ?>"><?php echo $forum['name']; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <!--{hook thread__post_inc_fid_select_after.htm}-->
+                            </div>
+                            <div class="form-group subject">
+                                <input type="text" class="form-control" placeholder="<?php echo lang('subject');?>" name="subject" value="<?php echo $form_subject;?>" id="subject">
+                            </div>
+                            <div class="form-group form-message">
+                                <textarea class="form-control" placeholder="<?php echo lang('message');?>" name="message" id="message" style="height: 300px;"><?php echo $form_message;?></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group my-3">
+                        <button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto mb-4" id="submit" data-loading-text="<?php echo lang('submiting');?>..."> <?php echo $form_submit_txt;?> </button>
+                        <a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mb-3" href="javascript:history.back();"><?php echo lang('back');?></a>
+                    </div>
+                </form>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+    var jfid = $('select[name="fid"]');
+    var fid = <?php echo intval($fid); ?> || $('select[name="fid"]').val();
+
+    var jform = $('#form');
+    var jsubmit = $('#submit');
+    jform.on('submit', function() {
+        jform.reset();
+        jsubmit.button('loading');
+        var postdata = jform.serialize();
+        var fid = jfid.val();
+        $.xpost(jform.attr('action'), postdata, function(code, message) {
+            if(code == 0) {
+                $.alert(message);
+                jsubmit.button(message).delay(1000).location(xn.url('page-list-' + fid));
+            } else if(xn.is_number(code)) {
+                $.alert(message);
+                jsubmit.button('reset');
+            } else {
+                $.alert(message);
+                jsubmit.button('reset');
+            }
+        });
+        return false;
+    });
+
+    jform.find('[name="fid"]').checked(<?php echo $fid;?>);
+
+    $('#content').addClass('show');
+    $('.sidebar-sticky li.menu-<?php echo $route;?>').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+</script>
+
+<!--{hook admin_page_post_js.htm}-->

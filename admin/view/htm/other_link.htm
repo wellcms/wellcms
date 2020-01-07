@@ -1,0 +1,131 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_link_list_start.htm}-->
+<div class="container px-0">
+<div class="row">
+    <div class="col-lg-12">
+        <!--{hook admin_link_list_breadcrumb_before.htm}-->
+        <?php if(empty($hide_breadcrumb)) { ?>
+        <ol class="breadcrumb d-none d-md-flex text-muted">
+            <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><?php echo lang('friends_link');?></li>
+            <li class="breadcrumb-item"><?php echo lang('list');?></li>
+            <!--{hook admin_link_list_breadcrumb.htm}-->
+        </ol>
+        <?php } ?>
+        <!--{hook admin_link_list_breadcrumb_after.htm}-->
+
+        <!--{hook admin_link_list_before.htm}-->
+        <div class="card card-threadlist">
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <?php echo $input['name'];?>
+                    <?php echo $input['url'];?>
+                    <div class="input-group-append">
+                        <button class="create btn btn-outline-secondary" type="button" id="button"><?php echo lang('submit');?></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive arrlist">
+                    <table class="table table-hover text-center">
+                        <tbody>
+                        <?php if ($arrlist) { foreach($arrlist as $key => &$val) { ?>
+                        <tr align="center" rowid="<?php echo $val['id']; ?>">
+                            <td width="80">
+                                <input type="text" class="form-control small" name="rank" value="<?php echo $val['rank']; ?>" rank="<?php echo $val['rank'];?>" id="<?php echo $val['id'];?>" placeholder="<?php echo lang('rank');?>" />
+                            </td>
+                            <td class="pt-3">
+                                <?php echo $val['name'];?>
+                            </td>
+                            <td class="pt-3 small hidden-sm">
+                                <?php echo $val['url'];?>
+                            </td>
+                            <td>
+                                <a data-href="<?php echo url('other-link-'.$val['id']);?>" class="btn delete" role="button" tabindex="0"><?php echo lang('delete');?></a>
+                            </td>
+                        </tr>
+
+                        <?php } ?>
+                        <?php } else { ?>
+                        <tr>
+                            <td colspan="4"><?php echo lang('none');?></td>
+                        </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="btn-group mod-button my-3" role="group" aria-label="">
+                <button class="btn btn-secondary rank"><?php echo lang('rank');?></button>
+            </div>
+        </div>
+        <!--{hook admin_link_list_page_before.htm}-->
+        <?php if ($pagination) { ?>
+        <nav class="my-3"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
+        <?php } ?>
+        <!--{hook admin_link_list_page_after.htm}-->
+    </div>
+</div>
+</div>
+<!--{hook admin_link_list_end.htm}-->
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+    var body = $('body');
+    body.on('click', 'button.create', function() {
+        var name = $('input[name="name"]').val();
+        var url = $('input[name="url"]').val();
+        $.xpost(xn.url('other-link'), {name:name,url:url,type:1}, function(code, message) {
+            if(code == 0) {
+                window.location.reload();
+            } else {
+                $.alert(message);
+            }
+        });
+        return false;
+    });
+
+    body.on('click', 'a.delete', function() {
+
+        if (window.confirm(lang.confirm_delete)) {
+            var href = $(this).data('href');
+            $.xpost(href, {type:0}, function(code, message) {
+                if(code == 0) {
+                    window.location.reload();
+                } else {
+                    $.alert(message);
+                }
+            });
+        }
+        return false;
+    });
+
+    body.on('click', 'button.rank', function () {
+        var rankarr = new Array();
+        $('input[name="rank"]').each(function(){
+            var id = xn.intval($(this).attr('id'));
+            var oldrank = xn.intval($(this).attr('rank'));
+            var rank = xn.intval($(this).val());
+            rankarr.push({id:id,oldrank:oldrank,rank:rank});
+        });
+        $.xpost(xn.url('other-link'), {type:2,data:rankarr}, function (code, message) {
+            if (code == 0) {
+                $.alert(message);
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                $.alert(message);
+            }
+        });
+    });
+
+    $('#other').addClass('show');
+    $('.sidebar-sticky li.menu-link').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+</script>
+
+<!--{hook admin_link_list_js.htm}-->
