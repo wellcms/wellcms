@@ -1,0 +1,197 @@
+<form action="<?php echo $form_action;?>" method="post" id="form">
+	<input type="hidden" name="doctype" value="<?php echo $form_doctype;?>" />
+    <!--{hook admin_thread_post_inc_hidden_before.htm}-->
+    <div class="row">
+        <div class="col-12 col-md-9">
+            <div class="form-group">
+                <!--{hook admin_thread_post_inc_fid_select_before.htm}-->
+                <select class="custom-select mr-1 w-auto" name="fid">
+                    <?php foreach ($columnlist as $forum) { ?>
+                    <option value="<?php echo $forum['fid']; ?>">
+                        <?php echo $forum['name']; ?>
+                    </option>
+                    <?php } ?>
+                </select>
+                <!--{hook admin_thread_post_inc_fid_select_after.htm}-->
+            </div>
+            <!--{hook admin_thread_post_inc_subject_before.htm}-->
+            <div class="form-group subject">
+                <input type="text" class="form-control" placeholder="<?php echo lang('subject');?>" name="subject" value="<?php echo $form_subject;?>" id="subject">
+            </div>
+            <!--{hook admin_thread_post_inc_subject_after.htm}-->
+            <div class="form-group form-message">
+                <textarea class="form-control" placeholder="<?php echo lang('message');?>" name="message" id="message" style="height: 300px;"><?php echo $form_message;?></textarea>
+            </div>
+            <!--{hook admin_thread_post_inc_message_after.htm}-->
+        </div>
+
+        <!--移动端隐藏点击展示-->
+        <div class="button-show d-lg-none position-fixed rounded-left bg-secondary d-flex align-items-center nav-block">
+            <i class="icon-chevron-left text-white mx-auto"></i>
+        </div>
+        <div id="nav-show" class="col-lg-3 d-none d-lg-block">
+
+            <div class="button-hide d-lg-none position-absolute rounded-left bg-secondary d-flex align-items-center nav-block button-hide">
+                <i class="icon-chevron-right text-white mx-auto"></i>
+            </div>
+
+            <div class="sticky-top post-sticky-top pt-2">
+
+                <div id="accordionthread">
+                    <!--{hook admin_header_nav_start.htm}-->
+                    <ul class="navbar-nav flex-column">
+                        <!-- thumbnail -->
+                        <li class="nav-item">
+                            <a class="nav-link alert-dark px-3 mb-2" data-toggle="collapse" data-target="#thumbnail" aria-expanded="true" aria-controls="collapse" href="javascript:void(0);">
+                                <?php echo lang('thumbnail');?>
+                            </a>
+                            <div id="thumbnail" class="collapse show" aria-labelledby="heading" data-parent="#accordionthread">
+                                <!--{hook admin_thread_post_inc_addicon_start.htm}-->
+                                <div class="form-group addicon small">
+                                    <!--{hook admin_thread_post_inc_addicon_before.htm}-->
+                                    <label class="d-block img_1" tabindex="10" data-toggle="tooltip" title="<?php echo lang('upload_picture_size',array('width' => $pic_width, 'height' => $pic_height)); ?>">
+                                        <img id="img_1" n="1" class="mx-auto d-block rounded" src="<?php echo $thumbnail; ?>" />
+                                        <span class="addpic" style="display: none;">
+                                            <i class="icon-file-image-o"></i>
+                                            <?php echo lang('create').lang('thumbnail');?>
+                                            <input type="file" multiple="multiple" data-assoc="img_1" />
+                                        </span>
+                                    </label>
+                                    <!--{hook admin_thread_post_inc_addicon_after.htm}-->
+                                </div>
+                                <!--{hook admin_thread_post_inc_addicon_end.htm}-->
+                                <div class="form-group text-center">
+                                    <?php if ($action == 'create') { ?>
+                                    <!--{hook admin_thread_post_inc_thumbnail_before.htm}-->
+                                    <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="thumbnail" value="1"  <?php echo $thumbnail_on;?>/>
+                                        <?php echo lang('get_the_thumbnail');?>
+                                    </label>
+                                    <!--{hook admin_thread_post_inc_thumbnail_after.htm}-->
+                                    <?php } ?>
+
+                                    <!--{hook admin_thread_post_inc_delete_before.htm}-->
+                                    <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="delete_pic" value="1" />
+                                        <?php echo lang('delete_thumbnail');?>
+                                    </label>
+                                    <!--{hook admin_thread_post_inc_delete_after.htm}-->
+
+                                </div>
+                                <!--{hook admin_thread_post_inc_thumbnail_end.htm}-->
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link alert-dark px-3 mb-2" data-toggle="collapse" data-target="#centent" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
+                                <?php echo lang('message');?>
+                            </a>
+                            <div id="centent" class="collapse" aria-labelledby="heading" data-parent="#accordionthread">
+                                <div class="form-group">
+                                    <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="save_image" value="1" <?php echo $save_image;?> />
+                                        <?php echo lang('save_remote_image');?>
+                                    </label>
+                                    <!--{hook admin_thread_post_inc_save_image_after.htm}-->
+                                    <label class="custom-input custom-checkbox mb-0 mr-2"><input class="mr-1" type="checkbox" name="link" value="1" <?php echo $form_link;?> /><?php echo lang('external_link');?></label>
+                                    <!--{hook admin_thread_post_inc_type_after.htm}-->
+                                    <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="closed" value="1" <?php echo $form_closed;?> />
+                                        <?php echo lang('disable_comment');?>
+                                    </label>
+                                    <!--{hook admin_thread_post_inc_brief_auto_before.htm}-->
+                                    <label class="custom-input custom-checkbox"><input class="mr-1" type="checkbox" name="brief_auto" value="1" />
+                                        <?php echo lang('brief_get');?>
+                                    </label>
+                                    <!--{hook admin_thread_post_inc_brief_auto_after.htm}-->
+
+                                    <div class="form-group row tags mx-0">
+                                        <!--tag插在这之后-->
+                                        <?php if (!empty($thread['tag_text'])) {foreach ($thread['tag_text'] as $key => $_tag) { ?>
+                                        <span class="border border-secondary tag btn-sm my-1 mr-3 tags-token">
+                                            <?php echo $_tag; ?>
+                                        </span>
+                                        <?php }} ?>
+                                        <div class="tag-wrap">
+                                            <input id="tag-input" type="text" class="form-control tag-input small btn-sm my-1" placeholder="<?php echo lang('spatial_segmentation').lang('well_tag');?>" name="tag-input" value="" style="width: 90px">
+                                        </div>
+                                        <input class="tags-val" type="hidden" name="tags" id="tags" value="<?php echo $tagstr;?>" />
+                                    </div>
+                                    <!--{hook admin_thread_post_inc_tag_after.htm}-->
+                                    <div class="form-group brief">
+                                        <textarea class="form-control" placeholder="<?php echo lang('brief_limit_character');?>" name="brief" id="brief" style="height: 2.5rem;"><?php echo $form_brief;?></textarea>
+                                    </div>
+                                    <!--{hook admin_thread_post_inc_brief_after.htm}-->
+                                    <div class="form-group keyword" style="<?php echo (!empty($form_link)?'display: none;':'');?>">
+                                        <textarea class="form-control" placeholder="SEO<?php echo lang('keywords') . lang('exceed_limit_will_be_intercepted', array('n' => 64));?>" name="keyword" id="keyword" style="height: 2.5rem;"><?php echo $form_keyword;?></textarea>
+                                    </div>
+                                    <!--{hook admin_thread_post_inc_keyword_after.htm}-->
+                                    <div class="form-group description">
+                                        <textarea class="form-control description" placeholder="<?php echo !empty($form_link)?lang('external_link'):('SEO'.lang('description') . lang('exceed_limit_will_be_intercepted', array('n' => 120)) .'('.lang('description_empty_use_brief').')');?>" name="description" id="description" style="height: 2.5rem;"><?php echo $form_description;?></textarea>
+                                    </div>
+                                    <!--{hook admin_thread_post_inc_description_after.htm}-->
+
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link alert-dark px-3 mb-2" data-toggle="collapse" data-target="#attach" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
+                                <?php echo lang('attach');?>
+                            </a>
+                            <div id="attach" class="collapse" aria-labelledby="heading" data-parent="#accordionthread">
+                                <div class="form-group">
+                                    <!--{hook admin_thread_post_inc_attach_before.htm}-->
+                                    <div class="attachlist_parent">
+                                        <a class="small text-left" href="javascript:void(0)">
+                                            <label class="addattach" id="addattach">
+                                                <i class="icon-folder-open-o"></i>
+                                                <?php echo lang('add_attach');?>
+                                                <span style="display: none;">
+                                                    <input type="file"  multiple="multiple" />
+                                                </span>
+                                            </label>
+                                        </a>
+                                        <!--{hook admin_thread_post_inc_file_list_before.htm}-->
+                                        <?php echo data_file_list_html($filelist, TRUE, TRUE, TRUE);?>
+                                        <!--{hook admin_thread_post_inc_file_list_after.htm}-->
+                                    </div>
+                                </div>
+                                <!--{hook admin_thread_post_inc_attach_after.htm}-->
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link alert-dark px-3 mb-2" data-toggle="collapse" data-target="#flag" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
+                                <?php echo lang('customize');?>
+                            </a>
+                            <div id="flag" class="collapse" aria-labelledby="heading" data-parent="#accordionthread">
+                                <!--{hook admin_thread_post_inc_flag_before.htm}-->
+                                <div class="form-group">
+                                    <div class="row index-flag-list">
+
+                                    </div>
+                                    <div class="row flag-list">
+
+                                    </div>
+                                </div>
+                                <!--{hook admin_thread_post_inc_flag_after.htm}-->
+                            </div>
+                        </li>
+
+                    </ul>
+                    <!--{hook admin_header_nav_end.htm}-->
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group my-3">
+        <!--{hook admin_thread_post_inc_submit_after.htm}-->
+        <button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto mb-4" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
+            <?php echo $form_submit_txt;?>
+        </button>
+        <!--{hook website_post_inc_submit_after.htm}-->
+        <a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mb-3" href="javascript:history.back();">
+            <?php echo lang('back');?>
+        </a>
+        <!--{hook admin_thread_post_inc_history_back_after.htm}-->
+    </div>
+</form>

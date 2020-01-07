@@ -1,0 +1,43 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<div class="container px-0">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<div class="row">
+                        <?php foreach($themes as $dir=>$theme) {?>
+                        <div class="col-lg-2 col-md-3 col-6">
+                            <a href="<?php echo url('plugin-read-'.$dir);?>">
+                                <img src="<?php echo $theme['icon'];?>" class="rounded mx-auto d-block" alt="<?php echo $theme['name'];?>">
+                                <div class="text-center py-1">
+                                    <?php echo $theme['name'];?>
+                                </div>
+                            </a>
+                            <div class="text-center py-1">
+                                <?php if($theme['installed']==0) { ?>
+                                <a role="button" class="btn btn-primary btn-sm install" data-href="<?php echo url('plugin-theme-'.$dir.'-1');?>" href="javascript:void(0);"><?php echo lang('install');?></a>
+                                <?php } ?>
+                                <?php if($theme['installed']==1) { ?>
+                                <a role="button" class="btn btn-danger btn-sm uninstall" data-href="<?php echo url('plugin-theme-'.$dir.'-0');?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
+                                <?php } ?>
+                            </div>
+                        </div>
+                        <?php }?>
+					</div>
+				</div>
+			</div>
+
+			<?php if($pagination) { ?> <nav><ul class="pagination justify-content-center"><?php echo $pagination; ?></ul></nav> <?php } ?>
+
+		</div>
+
+	</div>
+</div>
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+$('#plugin').addClass('show');
+$('.sidebar-sticky li.menu-theme').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+</script>
