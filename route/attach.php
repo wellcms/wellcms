@@ -52,7 +52,7 @@ if ($action == 'create') {
 
     // hook attach_create_file_ext_before.php
 
-    // 主图为图片 附件如果文件后缀不在规定范围内 改变后缀名
+    // 主图为图片 附件文件后缀不在规定范围内 改变后缀名
     $mode == 1 ? $ext = 'jpeg' : (!in_array($ext, $filetypes['all']) AND $ext = '_' . $ext);
 
     // hook attach_create_file_ext_after.php
