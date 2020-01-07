@@ -1,12 +1,3 @@
-﻿码云，因为语言和网速问题，相对码云可能会比较活跃
-https://gitee.com/wellcms/WellCMS-2.0.git
-
-github
-https://github.com/wellcms/2.0
-
-代码陆续上传中
-
-
 独立安装版 WellCMS 1.0 升级到 2.0 或是 2.0 beta版已经建站，请按照这个说明操作，全新安装直接跳过此说明文件。
 
 如果您用beta版建站了，并且还覆盖了正式版，那么，请运行一次升级程序。
