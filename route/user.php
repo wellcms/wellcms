@@ -28,7 +28,7 @@ if (empty($action)) {
     $threadlist = well_thread_find_by_uid($_user['uid'], $page, $pagesize);
     well_thread_list_access_filter($threadlist, $gid);
 
-    $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'managedeletethread');
+    $allowdelete = group_access($gid, 'allowdelete');
 
     // hook user_index_center.php
 
@@ -87,8 +87,7 @@ if (empty($action)) {
             comment_filter($val);
             $val['subject'] = $threadlist[$val['tid']]['subject'];
             $val['url'] = url('read-' . $val['tid']);
-            $val['allowdelete'] = ($uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
-
+            $val['allowdelete'] = forum_access_mod($val['fid'], $gid, 'allowdelete');
         }
 
         // hook user_comment_middle.php
