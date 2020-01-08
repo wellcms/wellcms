@@ -76,7 +76,7 @@ if (empty($action) || $action == 'index') {
 
         // hook home_comment_middle.php
 
-        $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'managedeletethread') || 1;
+        $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || $gid == 1;
 
         $pagination = pagination(url('home-comment-{page}', $extra), $user['comments'], $page, $pagesize);
 
