@@ -935,7 +935,7 @@ function thread_unified_pull($arr)
     $threadlist = array();
     foreach ($arrlist as $_tid => &$_thread) {
         // 归类列表数据
-        isset($tidlist[$_thread['tid']]) AND $threadlist[$_tid] = well_thread_safe_info($_thread);
+        isset($tidlist[$_thread['tid']]) AND $threadlist[$_tid] = $_thread;
 
         // hook model_thread_unified_pull_threadlist.php
 
@@ -943,7 +943,7 @@ function thread_unified_pull($arr)
         if (!empty($flaglist)) {
             foreach ($flaglist as $key => $val) {
                 if (in_array($_thread['tid'], $val['tids'])) {
-                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = well_thread_safe_info($_thread);
+                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
                     ksort($flaglist[$key]['list']);
                     // hook model_thread_unified_pull_flag.php
                 }
@@ -1018,7 +1018,7 @@ function thread_other_pull($thread)
             foreach ($flaglist as $key => $val) {
                 if (in_array($_thread['tid'], $val['tids'])) {
 
-                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = well_thread_safe_info($_thread);
+                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
 
                     ksort($flaglist[$key]['list']);
 
