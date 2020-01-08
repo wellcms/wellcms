@@ -201,6 +201,8 @@ if ($action == 'sticky') {
 
         $backstage AND group_access($gid, 'managedeletethread') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
+        group_access($gid, 'allowdelete') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        
         // hook operate_delete_start.php
 
         $tid = param(2, 0);
