@@ -199,9 +199,12 @@ if ($action == 'sticky') {
 
     } elseif ($method == 'POST') {
 
-        $backstage AND group_access($gid, 'managedeletethread') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
-
-        group_access($gid, 'allowdelete') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        if ($backstage) {
+            group_access($gid, 'managedeletethread') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        } else {
+            $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || $gid == 1;
+            empty($allowdelete) AND message(1, lang('user_group_insufficient_privilege'));
+        }
         
         // hook operate_delete_start.php
 
