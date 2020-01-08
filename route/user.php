@@ -93,7 +93,7 @@ if (empty($action)) {
 
         // hook user_comment_middle.php
 
-        $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'managedeletethread');
+        $allowdelete = group_access($gid, 'allowdelete') || $gid == 1;
 
         $pagination = pagination(url('user-comment-' . $_user['uid'] . '{page}', $extra), $_user['comments'], $page, $pagesize);
 
