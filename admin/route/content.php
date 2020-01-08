@@ -389,6 +389,10 @@ if ($action == 'list') {
 
         // hook admin_content_update_get_start.php
 
+        $thread_data['message'] = htmlspecialchars($thread_data['message']);
+
+        ($uid != $thread['uid']) AND $thread_data['message'] = xn_html_safe($thread_data['message']);
+        
         $forum = array_value($forumlist, $fid);
         $model = array_value($forum, 'model', 0);
 
