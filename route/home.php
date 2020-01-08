@@ -66,11 +66,12 @@ if (empty($action) || $action == 'index') {
             $threadlist = well_thread__find(array('tid' => $tids));
 
             $commentlist = comment_find_by_pid($pids, $pagesize);
+
             foreach ($commentlist as &$val) {
                 comment_filter($val);
                 $val['subject'] = $threadlist[$val['tid']]['subject'];
                 $val['url'] = url('read-' . $val['tid']);
-                $val['allowdelete'] = ($uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
+                $val['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
             }
         }
 
