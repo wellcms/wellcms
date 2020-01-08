@@ -355,7 +355,7 @@ function comment_format(&$post)
 
     // 权限判断
     $post['allowupdate'] = ($uid == $post['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
-    $post['allowdelete'] = ($uid == $post['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
+    $post['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $post['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
 
     $post['user_url'] = url('user-' . $post['uid'] . ($post['uid'] ? '' : '-' . $post['pid']));
 
