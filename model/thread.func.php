@@ -784,9 +784,10 @@ function well_thread_format(&$thread)
 
     // 权限判断
     $thread['allowupdate'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
-    $thread['allowdelete'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
+    $thread['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
 
     // hook model__thread_format_end.php
+    $thread = well_thread_safe_info($thread);
 }
 
 function well_thread_format_last_date(&$thread)
