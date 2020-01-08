@@ -14,7 +14,7 @@ $action = param(1);
 $backstage = param('backstage', 0);
 $url_path = '';
 if($backstage) {
-    $_SERVER['conf']['admin'] = TRUE;
+    $conf['path'] = $conf['url_rewrite_on'] > 1 ? $conf['path'] : '../';
     $url_path = $conf['url_rewrite_on'] > 1 ? '' : '../';
 }
 
