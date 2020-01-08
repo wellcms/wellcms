@@ -2,19 +2,8 @@
 <?php $have_allowtop = 0;
 		if ($threadlist) {
             foreach ($threadlist as &$_thread) {
-
                 $_thread['allowtop'] = forum_access_mod($_thread['fid'], $gid, 'allowtop');
-
                 $_thread['allowtop'] AND $have_allowtop = 1;
-
-                /*$conf['attach_on'] == 2 AND !$_thread['image_url'] AND $upload_path = $conf['path'];
-                $_thread['icon_text'] = $_thread['icon_text'];*/
-
-                /*
-                $_thread['user_avatar_url'] = $_thread['user_avatar_url'];
-                $_thread['user']['avatar_url'] = $path.$_thread['user']['avatar_url'];
-                $_thread['user']['avatar_url'] = $_thread['user']['avatar_url'];*/
-
                 // hook admin_content_list_inc_after.php
             }
           }
