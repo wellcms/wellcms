@@ -33,7 +33,7 @@ function url($url, $extra = array())
     } elseif ($conf['url_rewrite_on'] == 3) {
         $r = $conf['path'] . $path . str_replace('-', '/', $query);
     }
-    $admin_access = _SERVER('admin_access');
+    $admin_access = GLOBALS('admin_access');
     if (isset($admin_access) && $conf['url_rewrite_on'] > 1 && strpos($r, '/operate/') === FALSE) $r = '/admin' . $r;
     // 附加参数
     if ($extra) {
@@ -294,7 +294,7 @@ function view_path()
     if ($path) return $path;
     $conf = _SERVER('conf');
     if ($conf['view_url'] == 'view/') {
-        $admin_access = _SERVER('admin_access');
+        $admin_access = GLOBALS('admin_access');
         // 使用目录化伪静态 域名"/"结尾或使用绝对路径"/"
         $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['view_url'] : (empty($admin_access) ? $conf['view_url'] : '../' . $conf['view_url']);
     } else {
@@ -325,7 +325,7 @@ function file_path()
     $conf = _SERVER('conf');
     if ($conf['attach_on'] == 0) {
         // 本地
-        $admin_access = _SERVER('admin_access');
+        $admin_access = GLOBALS('admin_access');
         $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : (empty($admin_access) ? $conf['upload_url'] : '../' . $conf['upload_url']);
     } elseif ($conf['attach_on'] == 1) {
         // 云储存
