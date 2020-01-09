@@ -29,7 +29,7 @@ WellCMS 采用 MIT 协议发布，您可以自由修改、派生版本、商用�
     ./view/template
 4. 上传所有文件到你的网站根目录
 5. 访问 http://www.domain.com/install/, 根据提示安装。
-6. 删除 install 目录
+6. 删除 install 和 upgrade 目录
 
 #### 使用说明
 
