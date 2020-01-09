@@ -6,7 +6,6 @@
 
 group_access($gid, 'manageforum') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
-$forumlist = forum_find();
 $action = param(1);
 
 // hook admin_column_start.php
