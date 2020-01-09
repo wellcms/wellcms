@@ -137,9 +137,8 @@ function forum_format(&$forum)
     if (empty($forum)) return;
 
     // hook model_forum_format_start.php
-
     $forum['create_date_fmt'] = date('Y-n-j', $forum['create_date']);
-    $forum['icon_url'] = $forum['icon'] ? file_path() . "forum/$forum[fid].png" : view_path() . 'img/forum.png';
+    $forum['icon_url'] = $forum['icon'] ? forum_file_path() . "forum/$forum[fid].png" : forum_view_path() . 'img/forum.png';
     $forum['accesslist'] = $forum['accesson'] ? forum_access_find_by_fid($forum['fid']) : array();
     $forum['modlist'] = array();
     if ($forum['moduids']) {
@@ -189,6 +188,50 @@ function forum_format(&$forum)
     }
 
     // hook model_forum_format_end.php
+}
+
+function forum_view_path()
+{
+    static $path = '';
+    if ($path) return $path;
+    $conf = _SERVER('conf');
+    if ($conf['view_url'] == 'view/') {
+        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['view_url'] : $conf['view_url'];
+    } else {
+        $path = $conf['view_url']; // 云储存
+    }
+    return $path;
+}
+
+function forum_file_path()
+{
+    static $path = '';
+    if ($path) return $path;
+    $conf = _SERVER('conf');
+    if ($conf['attach_on'] == 0) {
+        // 本地
+        $path = $conf['url_rewrite_on'] > 1 ? file_path() : $conf['upload_url'];
+    } elseif ($conf['attach_on'] == 1) {
+        // 云储存
+        $path = file_path();
+    } elseif ($conf['attach_on'] == 2) {
+        // 云储存
+        $path = file_path();
+    }
+    return $path;
+}
+
+function forum_admin_format($forumlist)
+{
+    global $conf;
+    if (empty($forumlist)) return array();
+    // hook model_forum_admin_format_start.php
+    foreach ($forumlist as &$forum) {
+        $forum['icon_url'] = $forum['icon'] ? admin_file_path() . "forum/$forum[fid].png" : admin_view_path() . 'img/forum.png';
+        // hook model_forum_admin_format_before.php
+    }
+    // hook model_forum_admin_format_end.php
+    return $forumlist;
 }
 
 function forum_count($cond = array())
