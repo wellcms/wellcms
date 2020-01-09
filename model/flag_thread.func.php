@@ -132,6 +132,7 @@ function flag_thread_by_fid($fid)
     // hook model_flag_thread_by_fid_start.php
 
     $flaglist = flag_forum_show($fid);
+
     if (empty($flaglist)) return array(NULL, NULL);
 
     // hook model_flag_thread_by_fid_before.php
@@ -143,72 +144,15 @@ function flag_thread_by_fid($fid)
 
     $flagtids = array();
     foreach ($flaglist as $key => $val) {
-        $flaglist[$key]['tids'] = arrlist_values(flag_thread_get($val['flagid']), 'tid');
-        $flagtids += flag_thread_get($val['flagid']);
+        if($val['count']) {
+            $flaglist[$key]['tids'] = arrlist_values(flag_thread_get($val['flagid']), 'tid');
+            $flagtids += flag_thread_get($val['flagid']);
+        }
         // hook model_flag_thread_by_fid_after.php
     }
 
     // hook model_flag_thread_by_fid_end.php
-    /* $flagtids =
-    Array
-    (
-        [3] => Array
-            (
-                [tid] => 3
-            )
 
-        [2] => Array
-            (
-                [tid] => 2
-            )
-
-        [1] => Array
-            (
-                [tid] => 1
-            )
-
-    )
-
-    $flaglist =
-    Array
-    (
-        [17] => Array
-            (
-                [flagid] => 17
-                [name] => 科技
-                [fid] => 0
-                [rank] => 0
-                [number] => 10
-                [count] => 8
-                [icon] => 0
-                [display] => 1
-                [create_date] => 1574903891
-                [title] =>
-                [keywords] =>
-                [description] =>
-                [tpl] =>
-                [alias] =>
-                [i] => 4
-                [column_name] => 首页
-                [display_text] => 是
-                [forum_url] => ./
-                [url] => ?flag-17.htm
-                [create_date_text] => 2019-11-28
-                [icon_text] =>
-                [tids] => Array
-                    (
-                        [0] => 9
-                        [1] => 8
-                        [2] => 7
-                        [3] => 6
-                        [4] => 5
-                        [5] => 4
-                        [6] => 3
-                        [7] => 2
-                    )
-            )
-    )
-     * */
     return array($flaglist, $flagtids);
 }
 
@@ -288,13 +232,17 @@ function flag_thread_get($flagid)
 {
     global $g_flag_thread;
     $g_flag_thread === FALSE AND $g_flag_thread = website_get('flag_thread');
+    if (isset($g_flag_thread[$flagid])) return $g_flag_thread[$flagid];
+
     empty($g_flag_thread) AND $g_flag_thread = array();
+
     if (empty($g_flag_thread[$flagid])) {
         $read = flag_read_cache($flagid);
         $g_flag_thread[$flagid] = flag_thread_find_by_flagid($flagid, 1, $read['number'], 'tid');
-
-        if ($g_flag_thread[$flagid]) {
-            foreach ($g_flag_thread[$flagid] as &$val) flag_thread_filter($val);
+        if (!empty($g_flag_thread[$flagid])) {
+            foreach ($g_flag_thread[$flagid] as &$val) {
+                flag_thread_filter($val);
+            }
             flag_thread_set($flagid, $g_flag_thread[$flagid]);
         }
     }
