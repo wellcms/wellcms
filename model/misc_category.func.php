@@ -102,7 +102,7 @@ function category_list($forumlist, $display = 0, $category = 0)
 function forum_list($forumlist)
 {
     // hook model_forum_list_start.php
-    if ($forumlist) return array();
+    if (empty($forumlist)) return array();
     $arrlist = array();
     foreach ($forumlist as $_fid => $_forum) {
         if ($_forum['type']) continue;
