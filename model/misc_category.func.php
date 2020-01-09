@@ -101,8 +101,16 @@ function category_list($forumlist, $display = 0, $category = 0)
  */
 function forum_list($forumlist)
 {
-    $arrlist = arrlist_cond_orderby($forumlist, array('type' => 0), array(), 1, 1000);
-
+    // hook model_forum_list_start.php
+    if ($forumlist) return array();
+    $arrlist = array();
+    foreach ($forumlist as $_fid => $_forum) {
+        if ($_forum['type']) continue;
+        // hook model_forum_list_before.php
+        $arrlist[$_fid] = $_forum;
+        // hook model_forum_list_after.php
+    }
+    // hook model_forum_list_end.php
     return $arrlist;
 }
 
