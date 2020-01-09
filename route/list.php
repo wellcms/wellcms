@@ -17,7 +17,7 @@ $uid AND $extra['fid'] = $fid;
 
 // hook list_before.php
 
-$forum = isset($forumlist[$fid]) ? $forumlist[$fid] : NULL;
+$forum = forum_read($fid);
 empty($forum) AND message(1, lang('forum_not_exists'));
 
 // hook list_forum_after.php
