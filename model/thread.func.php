@@ -384,7 +384,7 @@ function well_thread_find_asc($tidarr, $pagesize = 20)
     // hook model__thread_find_before.php
 
     if ($threadlist) {
-        foreach ($threadlist as &$thread) {
+        foreach ($threadlist as $_tid => &$thread) {
             well_thread_format($thread);
             // hook model__thread_find_format_after.php
         }
@@ -713,7 +713,6 @@ function well_thread_format(&$thread)
     global $gid, $uid, $forumlist;
     $conf = _SERVER('conf');
     if (empty($thread)) return;
-
     // hook model__thread_format_start.php
 
     $thread['create_date_fmt'] = humandate($thread['create_date']);
@@ -737,6 +736,7 @@ function well_thread_format(&$thread)
     } else {
         $lastuser = $thread['lastuid'] ? user_read_cache($thread['lastuid']) : array();
         $thread['lastusername'] = $thread['lastuid'] ? $lastuser['username'] : lang('guest');
+        unset($lastuser);
     }
 
     $thread['url'] = url('read-' . $thread['tid']);
@@ -778,9 +778,6 @@ function well_thread_format(&$thread)
     $thread['pages'] = ceil($thread['posts'] / $conf['postlist_pagesize']);
 
     $thread['tag_text'] = $thread['tag'] ? xn_json_decode($thread['tag']) : '';
-
-    // SEO描述 此处格式会导致编辑时也调用到该数据
-    //$thread['description'] = $thread['description'] ? $thread['description'] : ($thread['type']==10 ? '' : $thread['brief']);
 
     // 权限判断
     $thread['allowupdate'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
@@ -943,7 +940,7 @@ function thread_unified_pull($arr)
         // flag thread
         if (!empty($flaglist)) {
             foreach ($flaglist as $key => $val) {
-                if (in_array($_thread['tid'], $val['tids'])) {
+                if (isset($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
                     $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
                     ksort($flaglist[$key]['list']);
                     // hook model_thread_unified_pull_flag.php
@@ -1017,9 +1014,9 @@ function thread_other_pull($thread)
         // flag thread
         if (!empty($flaglist)) {
             foreach ($flaglist as $key => $val) {
-                if (in_array($_thread['tid'], $val['tids'])) {
+                if (isset($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
 
-                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
+                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = well_thread_safe_info($_thread);
 
                     ksort($flaglist[$key]['list']);
 
