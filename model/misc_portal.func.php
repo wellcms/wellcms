@@ -162,7 +162,7 @@ function portal_index_thread($forumlist)
         if (!empty($flaglist)) {
             foreach ($flaglist as $key => $val) {
 
-                if (in_array($_thread['tid'], $val['tids'])) {
+                if (isset($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
 
                     $arrlist['flaglist'][$key][array_search($_thread['tid'], $val['tids'])] = $_thread;
                     ksort($arrlist['flaglist'][$key]);
@@ -350,7 +350,7 @@ function portal_channel_thread($fid)
         if (!empty($flaglist)) {
             foreach ($flaglist as $key => $val) {
 
-                if (in_array($_thread['tid'], $val['tids'])) {
+                if (isset($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
 
                     $arrlist['flaglist'][$key][array_search($_thread['tid'], $val['tids'])] = $_thread;
                     ksort($arrlist['flaglist'][$key]);
