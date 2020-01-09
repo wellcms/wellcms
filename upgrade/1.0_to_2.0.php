@@ -46,6 +46,19 @@ if ($next == 0) {
         $r = db_exec($sql);
     }
 
+    if (!db_find_table($db->tablepre . 'website_link')) {
+        $sql = "CREATE TABLE `{$db->tablepre}website_link` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `rank` tinyint(3) unsigned NOT NULL DEFAULT '0', # 排序
+  `name` varchar(12) NOT NULL DEFAULT '',  # 网站名
+  `url` varchar(120) NOT NULL DEFAULT '',  # URL
+  `create_date` int(11) unsigned NOT NULL DEFAULT '0', # 创建时间
+  PRIMARY KEY (`id`),
+  KEY `rank` (`rank`) # 排序
+) ENGINE=MyISAM DEFAULT CHARSET=utf8";
+        $r = db_exec($sql);
+    }
+
     //$conf['version'] == '2.0.0' AND message(0, jump('database updated successfully', '?next=3', 1));
 
     if (db_find_field($db->tablepre . 'forum', 'well_thread_rank')) {
@@ -696,9 +709,9 @@ if ($next == 0) {
     $arr['official_version'] = '2.0.0'; // 官方版本
     $arr['last_version'] = 1578294915; // 最后获取版本时间
     $arr['version_date'] = 1578294915; // 版本时间戳
-    $arr['upgrade'] = '0'; // 0无更新 1有更新
-    $arr['index_flags'] = '0'; // 首页flag统计
-    $arr['index_flagstr'] = ''; // 首页显示的flag字串1,2,3
+    $arr['upgrade'] = 0; // 0无更新 1有更新
+    $arr['index_flags'] = empty($arr['index_flags']) ? 0 : $arr['index_flags']; // 首页flag统计
+    $arr['index_flagstr'] = empty($arr['index_flagstr']) ? '' : $arr['index_flagstr']; // 首页显示的flag字串1,2,3
     $arr['setting']['thumbnail_on'] = 1; // 生成主图
     $arr['setting']['save_image_on'] = 1; // 图片本地化
     setting_set('conf', $arr);
@@ -759,14 +772,25 @@ if ($next == 0) {
     // 统计版块flag数量，写入forum
     $arrlist = flag__find(array(), array(), 1, 1000);
     $arr = array();
+    $index = array();
+    $indexflags = '';
     foreach ($arrlist as $val) {
         if ($val['fid']) {
             isset($arr[$val['fid']]) ? $arr[$val['fid']] += 1 : $arr[$val['fid']] = 1;
+        } else {
+            isset($index[$val['fid']]) ? $index[$val['fid']] += 1 : $index[$val['fid']] = 1;
+            if ($val['display']) $indexflags .= $val['flagid'] . ',';
         }
     }
+
     foreach ($arr as $_fid => $n) {
         forum__update($_fid, array('flags' => $n));
     }
+
+    $arr = setting_get('conf');
+    $arr['index_flags'] = empty($index[0]) ? 0 : $index[0];
+    $arr['index_flagstr'] = empty($indexflags) ? '' : trim($indexflags, ',');
+    setting_set('conf', $arr);
 
     message(0, jump('flag update successfully', '?next=8', 2));
 
