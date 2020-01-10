@@ -107,7 +107,7 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    $('.message').base_href('<?php echo url_path();?>');
+    $('.threadlist').base_href('<?php echo url_path();?>');
     var body = $('body');
     body.on('click', 'button.delete', function() {
         var jthis = $(this);
