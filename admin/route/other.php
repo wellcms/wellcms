@@ -43,6 +43,7 @@ if ($action == 'cache') {
         $g_website = kv_cache_get('website');
         $g_website['forumlist'] = '';
         $g_website['flag'] = '';
+        $g_website['flag_thread'] = '';
         // hook admin_other_cache_post_before.php
         kv_cache_set('website', $g_website);
 
