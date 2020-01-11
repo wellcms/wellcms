@@ -56,7 +56,7 @@ $static_version = $conf['static_version'];
         </div>
 
         <!--- index page --->
-        <a class="navbar-brand d-md-none" href="<?php echo $conf['path'];?>" title="<?php echo lang('front_index_page');?>"><i class="icon-home"></i></a>
+        <a class="navbar-brand d-md-none" href="<?php echo url_path();?>" title="<?php echo lang('front_index_page');?>"><i class="icon-home"></i></a>
 
         <!--{hook admin_header_logo_after.htm}-->
         <div class="collapse navbar-collapse">
@@ -118,7 +118,7 @@ $static_version = $conf['static_version'];
                             <!--以下代码无需改动-->
                             <li class="nav-item d-flex justify-content-between d-md-none">
                                 <a class="nav-link my-url" href="<?php echo url('my');?>">
-                                    <img class="avatar-1 mr-1" src="<?php echo (strpos($user['avatar_url'], '//') === FALSE ? $path : '').$user['avatar_url'];?>">&nbsp;<?php echo isset($user['username']) ? $user['username'] : '';?>
+                                    <img class="avatar-1 mr-1" src="<?php echo $user['avatar_url'];?>">&nbsp;<?php echo isset($user['username']) ? $user['username'] : '';?>
                                 </a>
                                 <a class="nav-link" href="<?php echo url('index-logout');?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a>
                             </li>
