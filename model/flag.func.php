@@ -82,11 +82,12 @@ function flag_update($flagid, $update)
         $arrlist = flag_find_by_flagid($flagid, 1, count($flagid));
         foreach ($arrlist as $val) {
             flag_delete_cache($val['fid']);
+            cache_delete('flag_' . $val['flagid']);
         }
     } else {
         $read = flag_read_cache($flagid);
-
         flag_delete_cache($read['fid']);
+        cache_delete('flag_' . $flagid);
     }
 
     // hook model_flag__update_end.php
@@ -277,6 +278,8 @@ function flag_get($fid)
     global $forumlist, $g_flag, $config;
 
     $g_flag === FALSE AND $g_flag = website_get('flag');
+    if (isset($g_flag[$fid])) return $g_flag[$fid];
+
     empty($g_flag) AND $g_flag = array();
 
     if (empty($g_flag[$fid])) {
