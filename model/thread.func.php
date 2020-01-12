@@ -488,10 +488,9 @@ function well_thread_delete_all($tid)
 
     // 删除置顶
     if ($thread['sticky']) {
-        $r = sticky_thread__delete($tid);
+        $r = sticky_thread_delete($tid);
         if ($r === FALSE) return FALSE;
         $forumupdate['tops-'] = 1;
-        cache_delete('sticky_thread_list');
     }
 
     // 删除主题属性 同时更新
