@@ -71,9 +71,14 @@ function sticky_thread_update_by_tid($tid, $newfid)
 
 function sticky_thread_delete($tid)
 {
+    global $config;
     // hook model_sticky_delete_start.php
     $thread = well_thread__read($tid);
     if (empty($thread)) return FALSE;
+    if ($thread['sticky'] == 3) {
+        $config['index_stickys'] -= 1;
+        setting_set('conf', $config);
+    }
     if ($thread['sticky']) {
         well_thread_update($tid, array('sticky' => 0));
         cache_delete('sticky_thread_list');
