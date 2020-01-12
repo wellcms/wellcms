@@ -77,7 +77,7 @@
         <div class="card" style="min-height: 402px;">
             <!--<div class="card-header">推荐</div>-->
             <div class="row nowrap mx-1 mt-3">
-                <?php if(!empty($first_flag)){foreach($first_flag as $_thread) { ?>
+                <?php if($first_flag){foreach($first_flag as $_thread) { ?>
                 <div class="col-lg-12">
                     <a class="d-block ellipsis" href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                         <?php echo $_thread['subject'];?>
