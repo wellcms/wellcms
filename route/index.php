@@ -128,7 +128,12 @@ if ($website_mode == 0) {
         }
     }
 
-    $first_flag = isset($arrlist['flaglist']) ? reset($arrlist['flaglist']) : array();
+    $first_flag = NULL;
+    $flaglist = NULL;
+    if (isset($arrlist['flaglist'])) {
+        $flaglist = isset($arrlist['flaglist']);
+        $first_flag = reset($arrlist['flaglist']);
+    }
 
     // 友情链接
     $linklist = link_get(1, $conf['linksize']);
