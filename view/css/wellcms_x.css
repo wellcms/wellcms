@@ -44,7 +44,7 @@
     --white-smoke: #eaebec;/*背景色*/
     --tangerine: #ff3400;/*频道置顶*/
 }
-body{margin: 0;background: var(--gray-200);font-size: 1rem;} /*rgb(232, 232, 232);*/
+body{margin: 0;background: var(--gray-200);font-size: 1.07rem;} /*rgb(232, 232, 232);*/
 html, body {
     height: 100%;
     display: flex;
@@ -52,7 +52,7 @@ html, body {
     font-family: "Helvetica Neue", Helvetica, "Microsoft Yahei", "Hiragino Sans GB", "WenQuanYi Micro Hei", "微软雅黑", "华文细黑", STHeiti, sans-serif;
 }
 html, table {
-    font-size: 14px;
+    font-size: .9rem;
 }
 a {
     color: #1f4977;
@@ -318,7 +318,7 @@ li.quote {
 }
 
 .message {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 /* 回帖输入框 */
@@ -384,18 +384,18 @@ li.quote {
 .size6{font-size: 1.5rem;}
 .size7{font-size: 1.6rem;}
 @media (min-width: 576px) {
-    .subject h1 {font-size: 1.6rem;}
-    .threadlist h2,h3,h4{font-size: 1rem;}
+    .subject h1 {font-size: 1.2rem;}
+    .threadlist h2,h3,h4{font-size: 1.07rem;}
 }
 /* 小屏 + 中屏: small + middle */
 @media (max-width: 992px) {
-    .subject h1 {font-size: 1.2rem;}
-    .threadlist h2,h3,h4{font-size: .9rem;}
+    .subject h1 {font-size: 1.1rem;}
+    .threadlist h2,h3,h4{font-size: .95rem;}
 }
 /* 小屏: only small screen */
 @media (max-width: 576px) {
-    .subject h1 {font-size: 1rem;}
-    .threadlist h2,h3,h4{font-size: .9rem;}
+    .subject h1 {font-size: 1.1rem;}
+    .threadlist h2,h3,h4{font-size: .95rem;}
 }
 .sidebar {
     position: fixed;
