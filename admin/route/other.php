@@ -271,8 +271,8 @@ EOT;
             }
 
             $number = $tid + 20000;
-            $subject = 'WellCMS X 性能测试';
-            $message = 'WellCMS X 性能测试';
+            $subject = 'WellCMS 性能测试';
+            $message = 'WellCMS 性能测试';
             $thread = $thread_tid = $data = '';
             for ($tid; $tid < $number; ++$tid) {
                 $thread .= '(' . $tid . ',' . $fid . ',"' . $subject . '",' . $uid . ',' . $time . '),';
