@@ -206,24 +206,29 @@ if (empty($action)) {
 
         is_password($password, $err) || message('password', $err);
 
+        // hook user_create_post_before.php
+
         $salt = xn_rand(16);
-        $pwd = md5($password . $salt);
-        $gid = 101;
         $_user = array(
             'username' => $username,
             'email' => $email,
-            'password' => $pwd,
+            'password' => md5($password . $salt),
             'salt' => $salt,
-            'gid' => $gid,
+            'gid' => 101,
             'create_ip' => $longip,
             'create_date' => $time,
             'logins' => 1,
             'login_date' => $time,
             'login_ip' => $longip,
         );
+
+        // hook user_create_post_center.php
+
         $uid = user_create($_user);
         $uid === FALSE AND message('email', lang('user_create_failed'));
         $user = user_read($uid);
+
+        // hook user_create_post_after.php
 
         // 更新 session
 
