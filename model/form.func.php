@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018 www.wellcms.cn
+ * Copyright (C) www.wellcms.cn
  */
 
 function form_radio_yes_no($name, $checked = 0)
