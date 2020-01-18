@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018 www.wellcms.cn
+ * Copyright (C) www.wellcms.cn
  */
 return array(
     // hook admin_menu_conf_start.php
