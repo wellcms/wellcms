@@ -1,5 +1,7 @@
 <?php
-
+/*
+ * Copyright (C) www.wellcms.cn
+ */
 // hook model_misc_start.php
 
 /*
