@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018 www.wellcms.cn
+ * Copyright (C) www.wellcms.cn
  *
  * $arrlist = thread_tid__find(array('fid' => 1, 'tid' => array('>' => 40000000)), $orderby = array('tid' => 1), $page = 1, $pagesize = 20, $key = 'tid', $col = array('tid'));
  */
