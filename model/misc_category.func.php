@@ -124,6 +124,7 @@ function nav_list($forumlist)
         if ($forum['nav_display'] == 0) {
             unset($forumlist[$fid]);
         }
+        // hook model_nav_list_before.php
     }
     // hook model_nav_list_end.php
     return $forumlist;
