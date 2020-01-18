@@ -1,5 +1,7 @@
 <?php
-
+/*
+ * Copyright (C) www.wellcms.cn
+ */
 !defined('DEBUG') AND exit('Access Denied.');
 
 $action = param(1);
