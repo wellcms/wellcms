@@ -243,7 +243,7 @@ function xn_urldecode($s)
     return $s;
 }
 
-// $pretty = TRUE 格式化 FALSE 字串 燃烧的冰2019.12.12修改
+// $pretty = TRUE 格式化 FALSE 字串 wellcms@qq.com 2019.12.12修改
 function xn_json_encode($data, $pretty = FALSE, $level = 0)
 {
     if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
@@ -757,6 +757,7 @@ function check_browser($browser)
 function is_robot()
 {
     $agent = _SERVER('HTTP_USER_AGENT');
+    $agent = strtolower($agent);
     $robots = array('bot', 'spider', 'slurp');
     foreach ($robots as $robot) {
         if (strpos($agent, $robot) !== FALSE) {
