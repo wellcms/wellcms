@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018 www.wellcms.cn
+ * Copyright (C) www.wellcms.cn
  * intodb-uid-password-fid.html
 */
 !defined('DEBUG') AND exit('Access Denied.');
