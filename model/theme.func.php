@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018 www.wellcms.cn
+ * Copyright (C) www.wellcms.cn
  */
 
 // $type 区分页面 $id为绑定版块或栏目的ID
