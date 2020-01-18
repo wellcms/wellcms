@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018 www.wellcms.cn
- * 栏目管理扩展
+ * Copyright (C) www.wellcms.cn
  */
 
 // hook model_misc_category_start.php
@@ -77,6 +76,7 @@ function all_category($forumlist)
  */
 function category_list($forumlist, $display = 0, $category = 0)
 {
+    // hook model_category_list_start.php
     $arrlist = array();
     if ($display) {
         foreach ($forumlist as $key => $val) {
@@ -84,14 +84,16 @@ function category_list($forumlist, $display = 0, $category = 0)
                 $arrlist[$key] = $val;
             }
         }
+        // hook model_category_list_before.php
     } else {
         foreach ($forumlist as $key => $val) {
             if ($val['type'] == 1 && $val['category'] == $category) {
                 $arrlist[$key] = $val;
             }
         }
+        // hook model_category_list_after.php
     }
-
+    // hook model_category_list_end.php
     return $arrlist;
 }
 
@@ -117,11 +119,13 @@ function forum_list($forumlist)
 // 导航显示的版块
 function nav_list($forumlist)
 {
+    // hook model_nav_list_start.php
     foreach ($forumlist as $fid => $forum) {
         if ($forum['nav_display'] == 0) {
             unset($forumlist[$fid]);
         }
     }
+    // hook model_nav_list_end.php
     return $forumlist;
 }
 
