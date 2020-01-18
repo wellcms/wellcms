@@ -1,4 +1,7 @@
 <?php
+/*
+ * Copyright (C) www.wellcms.cn
+ */
 !defined('DEBUG') AND exit('Access Denied.');
 
 group_access($gid, 'manageplugin') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
