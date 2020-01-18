@@ -60,11 +60,9 @@ $static_version = $conf['static_version'];
 
         <!--{hook admin_header_logo_after.htm}-->
         <div class="collapse navbar-collapse">
-
             <!-- right -->
             <ul class="navbar-nav ml-auto">
                 <!--{hook admin_header_user_start.htm}-->
-
                 <li class="nav-item">
                     <a class="nav-link my-url" href="<?php echo url('my');?>">
                         <img class="avatar-1 mr-1" src="<?php echo $user['avatar_url'];?>">&nbsp;<?php echo isset($user['username']) ? $user['username'] : '';?>
