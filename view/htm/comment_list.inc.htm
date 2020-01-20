@@ -52,7 +52,7 @@
 
                                         <!--{hook comment_list_inc_delete_before.htm}-->
                                         <?php if($allowdelete || $_post['allowdelete']) { ?>
-                                        <a data-href="<?php echo url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" href="javascript:void(0);" class="dropdown-item text-grey post_delete _confirm">
+                                        <a data-href="<?php echo url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" href="javascript:void(0);" class="dropdown-item post_delete _confirm">
                                             <?php echo lang('delete');?>
                                         </a>
                                         <?php } ?>
