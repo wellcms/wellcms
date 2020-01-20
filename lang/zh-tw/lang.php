@@ -191,7 +191,7 @@ return array(
     'post_create' => '回帖',
     'post_update' => '編輯帖子',
     'create_thread' => '發帖',
-    'post_not_exists' => '主題不存在',
+    'post_not_exists' => '回帖不存在',
     'thread_not_exists' => '主題不存在',
     'forum_not_exists' => '板塊不存在',
     'please_input_subject' => '請輸入標題',
