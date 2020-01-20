@@ -124,6 +124,7 @@ return array(
 	'uid'=>'UID',
 	'search'=>'Search',
 	'operation'=>'Operation',
+    'illegal_operation'=>'Illegal operation',
 	'please_input_email'=>'Please input Email',
 	'please_input_username'=>'Please input user name',
 	'please_input_password'=>'Please input password',
