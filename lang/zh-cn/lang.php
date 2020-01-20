@@ -122,6 +122,7 @@ return array(
     'uid' => '用户 ID',
     'search' => '搜索',
     'operation' => '操作',
+    'illegal_operation' => '非法操作',
     'please_input_email' => '请填写邮箱',
     'please_input_username' => '请填写用户名',
     'please_input_password' => '请填写密码',
