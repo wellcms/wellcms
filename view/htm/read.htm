@@ -62,6 +62,7 @@
 								<!--{hook read_views_after.htm}-->
 							</div>
 
+                            <?php if($allowupdate || $allowdelete) { ?>
                             <span class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                     <?php echo lang('manage');?>
@@ -71,6 +72,7 @@
                                     <!--{hook read_dropdown_menu_end.htm}-->
                                 </span>
                             </span>
+                            <?php } ?>
 						</div>
 					</div>
 				</div>
