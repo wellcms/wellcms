@@ -129,22 +129,36 @@ $(function () {
 
 /* 导航子菜单 鼠标悬浮移除移入*/
 $(function () {
-    var dropdown = $(".dropdown");
+    /*var dropdown = $(".dropdown");
     dropdown.mouseover(function () {
         $(this).addClass("show");
-        $(this).find('span.dropdown-menu').addClass("show");
+        $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
+        $(this).find('.dropdown-menu').addClass("show");
     });
-    dropdown.mouseleave(function(){
+    dropdown.mouseleave(function () {
         $(this).removeClass("show");
-        $(this).find('span.dropdown-menu').removeClass("show");
+        $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
+        $(this).find('.dropdown-menu').removeClass("show");
     });
+    dropdown.click(function () {
+        var v = $(this).children('a.dropdown-toggle').attr("aria-expanded");
+        if (v == false) {
+            $(this).addClass("show");
+            $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
+            $(this).find('.dropdown-menu').addClass("show");
+        } else {
+            $(this).removeClass("show");
+            $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
+            $(this).find('.dropdown-menu').removeClass("show");
+        }
+    });*/
 });
 
 /*
-    确定框 / confirm / GET / POST
-    <a href="1.php" data-confirm-text="确定删除？" class="confirm">删除</a>
-    <a href="1.php" data-method="post" data-confirm-text="确定删除？" class="confirm">删除</a>
-*/
+ 确定框 / confirm / GET / POST
+ <a href="1.php" data-confirm-text="确定删除？" class="confirm">删除</a>
+ <a href="1.php" data-method="post" data-confirm-text="确定删除？" class="confirm">删除</a>
+ */
 $('a.confirm').on('click', function () {
     var jthis = $(this);
     var text = jthis.data('confirm-text');
@@ -167,7 +181,7 @@ $('a.confirm').on('click', function () {
 });
 
 /*选中所有 / check all
-<input class="checkall" data-target=".tid" />*/
+ <input class="checkall" data-target=".tid" />*/
 $('input.checkall').on('click', function () {
     var jthis = $(this);
     var target = jthis.data('target');
