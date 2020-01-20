@@ -124,6 +124,7 @@ return array(
     'uid' => '用戶 ID',
     'search' => '搜索',
     'operation' => '操作',
+    'illegal_operation' => '非法操作',
     'please_input_email' => '請填寫郵箱',
     'please_input_username' => '請填寫用戶名',
     'please_input_password' => '請填寫密碼',
