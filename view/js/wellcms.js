@@ -35,19 +35,6 @@ $('.thread input[type="checkbox"]').parents('td').on('click', function (e) {
     e.stopPropagation();
 })
 
-/* 导航子菜单 鼠标悬浮移除移入*/
-$(function () {
-    var dropdown = $(".dropdown");
-    dropdown.mouseover(function () {
-        $(this).addClass("show");
-        $('.dropdown-menu').addClass("show");
-    });
-    dropdown.mouseleave(function(){
-        $(this).removeClass("show");
-        $('.dropdown-menu').removeClass("show");
-    });
-});
-
 /*菜单右至左滑出*/
 $('.button-show').click(function () {
     $(this).css("display", "none");
@@ -137,6 +124,19 @@ $(function () {
             str += token.eq(i).text() + ",";
             it.find(".tags-val").val(str);
         }
+    });
+});
+
+/* 导航子菜单 鼠标悬浮移除移入*/
+$(function () {
+    var dropdown = $(".dropdown");
+    dropdown.mouseover(function () {
+        $(this).addClass("show");
+        $(this).find('span.dropdown-menu').addClass("show");
+    });
+    dropdown.mouseleave(function(){
+        $(this).removeClass("show");
+        $(this).find('span.dropdown-menu').removeClass("show");
     });
 });
 
