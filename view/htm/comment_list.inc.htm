@@ -25,7 +25,7 @@
                             <div class="text-right text-grey">
                                 <!--{hook comment_list_inc_quote_before.htm}-->
                                 <?php if($allowpost) { ?>
-                                <a href="javascript:void(0)" data-tid="<?php echo $_post['tid'];?>" data-pid="<?php echo $_post['pid'];?>" class="text-grey post_reply mr-3">
+                                <a href="javascript:void(0)" data-tid="<?php echo $_post['tid'];?>" data-pid="<?php echo $_post['pid'];?>" class="text-grey post_reply mr-2">
                                     <i class="icon-reply" title="<?php echo lang('quote');?>"></i>
                                     <span class="d-none">
                                         <?php echo lang('quote');?>
@@ -34,33 +34,30 @@
                                 <?php } ?>
                                 <!--{hook comment_list_inc_quote_after.htm}-->
 
-                                <!--{hook comment_list_inc_update_before.htm}-->
-                                <?php if($allowupdate || $_post['allowupdate']) { ?>
-                                <!--<a href="<?php echo url('reply-update-'.$_post['pid']);?>" class="text-grey post_update mr-3"><i class="icon-edit" title="<?php echo lang('edit');?>"></i> <span class="d-none"><?php echo lang('edit');?></span></a>-->
-                                <?php } ?>
-                                <!--{hook comment_list_inc_update_after.htm}-->
-
-                                <!--{hook comment_list_inc_delete_before.htm}-->
-                                <?php if($allowdelete || $_post['allowdelete']) { ?>
-                                <a data-href="<?php echo url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" href="javascript:void(0);" class="text-grey post_delete _confirm mr-3">
-                                    <i class="icon-remove" title="<?php echo lang('delete');?>"></i>
-                                    <span class="d-none">
-                                        <?php echo lang('delete');?>
-                                    </span>
-                                </a>
-                                <?php } ?>
-                                <!--{hook comment_list_inc_delete_after.htm}-->
-
                                 <!--{hook comment_list_inc_floor_before.htm}-->
                                 <?php if($_post['floor']) { ?>
-                                <span class="floor-parent">
-                                    <span class="floor mr-0">
+                                <span class="floor-parent mr-2">
+                                    <span class="floor">
                                         <?php echo $_post['floor'];?>
                                     </span>
                                     <?php echo lang('floor');?>
                                 </span>
                                 <?php } ?>
                                 <!--{hook comment_list_inc_floor_after.htm}-->
+
+                                <span class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><?php echo lang('manage');?></a>
+                                    <span class="dropdown-menu">
+
+                                        <!--{hook comment_list_inc_delete_before.htm}-->
+                                        <?php if($allowdelete || $_post['allowdelete']) { ?>
+                                        <a data-href="<?php echo url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" href="javascript:void(0);" class="dropdown-item text-grey post_delete _confirm mr-2">
+                                            <?php echo lang('delete');?>
+                                        </a>
+                                        <?php } ?>
+                                        <!--{hook comment_list_inc_delete_after.htm}-->
+                                    </span>
+                                </span>
                             </div>
                         </div>
 
