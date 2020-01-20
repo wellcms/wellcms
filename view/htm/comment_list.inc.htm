@@ -48,11 +48,11 @@
                                 <?php if($_post['allowdelete'] || $_post['allowupdate']) { ?>
                                 <span class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="true" aria-expanded="false"><?php echo lang('manage');?></a>
-                                    <span class="dropdown-menu">
+                                    <span class="dropdown-menu py-0">
 
                                         <!--{hook comment_list_inc_delete_before.htm}-->
                                         <?php if($allowdelete || $_post['allowdelete']) { ?>
-                                        <a data-href="<?php echo url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" href="javascript:void(0);" class="dropdown-item text-grey post_delete _confirm mr-2">
+                                        <a data-href="<?php echo url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" href="javascript:void(0);" class="dropdown-item text-grey post_delete _confirm">
                                             <?php echo lang('delete');?>
                                         </a>
                                         <?php } ?>
