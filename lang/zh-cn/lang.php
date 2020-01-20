@@ -190,7 +190,7 @@ return array(
     'post_create' => '回帖',
     'post_update' => '编辑帖子',
     'create_thread' => '发布',
-    'post_not_exists' => '主题不存在',
+    'post_not_exists' => '回帖不存在',
     'thread_not_exists' => '主题不存在',
     'forum_not_exists' => '板块不存在',
     'please_input_subject' => '请输入标题',
