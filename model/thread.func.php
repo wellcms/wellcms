@@ -98,8 +98,7 @@ function well_thread_create($arr)
     if (empty($delete_pic)) {
         if (!empty($upload_thumbnail)) {
             $thread['icon'] = $time;
-        }
-        if ($thumbnail && (!empty($upload_file) || stripos($message, 'src="http') !== FALSE)) {
+        } elseif ($thumbnail && (!empty($upload_file) || stripos($message, 'src="http') !== FALSE)) {
             $thread['icon'] = $time;
         }
     }
