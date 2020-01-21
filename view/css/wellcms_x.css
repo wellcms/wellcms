@@ -922,3 +922,4 @@ select option {
 
 .nav-block{right:0;top:45%;width: 20px;height: 60px;z-index:999;}
 .button-hide{left:-20px;}
+.dropdown-menu{min-width: auto;}
