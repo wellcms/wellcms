@@ -119,8 +119,7 @@ function link_get($page = 1, $pagesize = 100)
 // delete kv and cache
 function link_delete_cache()
 {
-    $g_link = link_find(1, 100);
-    $g_link AND website_set('friends_link', $g_link);
+    website_set('friends_link', '');
     return TRUE;
 }
 
