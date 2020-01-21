@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.0","official_version":"2.0.0","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":1,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.0","official_version":"2.0.0","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;
@@ -181,7 +181,6 @@ CREATE TABLE `wellcms_forum` (
   `announcement` text NOT NULL, # 版块公告 允许HTML
   PRIMARY KEY (`fid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_forum` (`fid`, `fup`, `son`, `type`, `model`, `category`, `name`, `rank`, `threads`, `tops`, `todayposts`, `todaythreads`, `accesson`, `orderby`, `icon`, `display`, `nav_display`, `index_new`, `channel_new`, `comment`, `pagesize`, `publish`, `flags`, `create_date`, `flagstr`, `thumbnail`, `moduids`, `seo_title`, `seo_keywords`, `brief`, `announcement`) VALUES (1, 0, 0, 1, 0, 0, '默认版块', 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 10, 10, 1, 20, 0, 0, 1576388001, '', '{"width":170,"height":113}', '', '', '', 'wellcms 测试版块', '');
 
 DROP TABLE IF EXISTS `wellcms_forum_access`;
 CREATE TABLE `wellcms_forum_access` (
@@ -227,7 +226,6 @@ CREATE TABLE `wellcms_website_data` (
   `message` longtext NOT NULL,
   PRIMARY KEY (`tid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_website_data` (`tid`, `doctype`, `message`) VALUES (1, 0, 'WellCMS 是一款开源、倾向移动端的轻量级CMS，高负载CMS，是大数据量、高并发访问网站最佳选择的轻CMS。wellcms具有安全、高效、稳定、速度快、负载超强的特点。是大数据时代下诞生的CMS，专为海量数据设计的高性能、高负载的CMS。wellcms 2.0 只有22张表，运行速度非常快，处理单次请求在 0.01 秒级别，支持SSL，支持CDN，支持各种NoSQL操作，支持附件分离，支持多台DB主从读写分离。分布式服务器设计，每张表都可创建单独的DB服务器群和CACHE服务器(群)，单表可承载高达亿级以上的数据，方便部署和维护，是一个二次开发非常好的基石。');
 
 DROP TABLE IF EXISTS `wellcms_website_flag`;
 CREATE TABLE `wellcms_website_flag` (
@@ -329,7 +327,6 @@ CREATE TABLE `wellcms_website_thread` (
   `image_url` varchar(120) NOT NULL DEFAULT '', # 图床文件网址
   PRIMARY KEY (`tid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_website_thread` (`tid`, `fid`, `type`, `sticky`, `uid`, `icon`, `userip`, `create_date`, `views`, `posts`, `images`, `files`, `mods`, `status`, `closed`, `lastuid`, `last_date`, `attach_on`, `flags`, `subject`, `tag`, `brief`, `keyword`, `description`, `image_url`) VALUES (1, 1, 0, 3, 1, 0, 2130706433, 1576388819, 0, 0, 0, 0, 0, 0, 0, 0, 1576388819, 0, 0, 'WellCMS  海量数据内容管理系统', '{"1":"轻量级CMS","2":"wellcms","3":"高负载CMS"}', 'WellCMS 是一款开源、倾向移动端的轻量级CMS，高负载CMS，亿万级CMS，是大数据量、高并发访问网站最佳选择的轻CMS。WellCMS具有安全、高效、稳定、速度快、负载超强的特点，同时在SEO方面做了大量优化。', '', '', '');
 
 DROP TABLE IF EXISTS `wellcms_website_thread_tid`;
 CREATE TABLE `wellcms_website_thread_tid` (
@@ -345,7 +342,6 @@ CREATE TABLE `wellcms_website_thread_tid` (
   #KEY `fid_rank` (`fid`,`rank`), # 插件形式出现
   KEY `uid_tid` (`uid`,`tid`) # 用户主题 & 清理
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_website_thread_tid` (`tid`, `fid`, `uid`, `verify_date`) VALUES (1, 1, 1, 0);
 
 # 单页
 DROP TABLE IF EXISTS `wellcms_website_page`;
@@ -368,8 +364,6 @@ CREATE TABLE `wellcms_website_thread_sticky` (
   KEY `fid_sticky` (`fid`,`sticky`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
-INSERT INTO `wellcms_website_thread_sticky` (`tid`, `fid`, `sticky`, `create_date`) VALUES (1, 1, 3, 1576388829);
-
 DROP TABLE IF EXISTS `wellcms_website_tag`;
 CREATE TABLE `wellcms_website_tag` (
   `tagid` int(11) unsigned NOT NULL AUTO_INCREMENT,  # 标签ID
@@ -380,16 +374,12 @@ CREATE TABLE `wellcms_website_tag` (
   KEY `name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
-INSERT INTO `wellcms_website_tag` (`tagid`, `name`, `count`, `icon`) VALUES (3, '高负载CMS', 1, 0),(2, 'wellcms', 1, 0),(1, '轻量级CMS', 1, 0);
-
 DROP TABLE IF EXISTS `wellcms_website_tag_thread`;
 CREATE TABLE `wellcms_website_tag_thread` (
   `tagid` int(11) unsigned NOT NULL,  # tagid
   `tid` int(11) unsigned NOT NULL DEFAULT '0',  # 主题tid
   PRIMARY KEY (`tagid`,`tid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
-INSERT INTO `wellcms_website_tag_thread` (`tagid`, `tid`) VALUES (1, 1),(2, 1),(3, 1);
 
 # 友情链接
 DROP TABLE IF EXISTS `wellcms_website_link`;
@@ -402,3 +392,4 @@ CREATE TABLE `wellcms_website_link` (
   PRIMARY KEY (`id`),
   KEY `rank` (`rank`) # 排序
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+INSERT INTO `well_website_link` (`id`, `rank`, `name`, `url`, `create_date`) VALUES (1, 0, 'WellCMS', 'http://www.wellcms.cn/', 1579584311);
