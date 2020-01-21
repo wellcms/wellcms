@@ -187,7 +187,7 @@ if (empty($action)) {
         // 管理员密码
         $salt = xn_rand(16);
         $password = md5(md5($adminpass) . $salt);
-        $update = array('username' => $adminuser, 'email' => $adminemail, 'password' => $password, 'salt' => $salt, 'articles' => 1, 'create_date' => $time, 'create_ip' => $longip);
+        $update = array('username' => $adminuser, 'email' => $adminemail, 'password' => $password, 'salt' => $salt, 'create_date' => $time, 'create_ip' => $longip);
         db_update('user', array('uid' => 1), $update);
 
         xn_mkdir(APP_PATH . 'upload/tmp', 0777);
