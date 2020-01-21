@@ -94,7 +94,15 @@ function well_thread_create($arr)
 
     // hook model__thread_create_center.php
 
-    (empty($delete_pic) AND !empty($upload_thumbnail) OR (empty($delete_pic) AND $thumbnail AND !empty($upload_file))) AND $thread['icon'] = $time;
+    //(empty($delete_pic) AND !empty($upload_thumbnail) OR (empty($delete_pic) AND $thumbnail AND !empty($upload_file))) AND $thread['icon'] = $time;
+    if (empty($delete_pic)) {
+        if (!empty($upload_thumbnail)) {
+            $thread['icon'] = $time;
+        }
+        if ($thumbnail && (!empty($upload_file) || stripos($message, 'src="http') !== FALSE)) {
+            $thread['icon'] = $time;
+        }
+    }
 
     // hook model__thread_create_middle.php
 
