@@ -347,20 +347,6 @@ var jmessage = $('#message');
 jmessage.on('focus', function() {if(jmessage.t) { clearTimeout(jmessage.t); jmessage.t = null; } jmessage.css('height', '6rem'); });
 jmessage.on('blur', function() {jmessage.t = setTimeout(function() { jmessage.css('height', '2.5rem');}, 1000); });
 
-<?php if(empty($thread['post_reward']) && $uid == $thread['uid']){ ?>
-    $('a.reward').on('click', function() {
-        var href = $(this).data('href');
-        $.xpost(href, function(code, message) {
-            if(code == 0) {
-                $.alert(message).delay(1000).location();
-            } else {
-                $.alert(message).delay(2000).location();
-            }
-        });
-        return false;
-    });
-<?php } ?>
-
 $('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
 </script>
 
