@@ -62,7 +62,9 @@
 								<!--{hook read_views_after.htm}-->
 							</div>
 
-                            <?php if($thread['allowdelete'] || $thread['allowupdate']) { ?>
+                            <div>
+                                <!--{hook read_manage_start.htm}-->
+                            <?php if($allowdelete || $allowupdate) { ?>
                             <span class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="true" aria-expanded="false">
                                     <?php echo lang('manage');?>
@@ -78,6 +80,8 @@
                                 </span>
                             </span>
                             <?php } ?>
+                                <!--{hook read_manage_end.htm}-->
+                            </div>
 						</div>
 					</div>
 				</div>
