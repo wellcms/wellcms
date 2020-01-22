@@ -75,8 +75,6 @@ if ($thread['type'] == 0) {
         // hook read_article_default_middle.php
 
         $allowpost = forum_access_user($fid, $gid, 'allowpost') ? 1 : 0;
-        $allowupdate = forum_access_mod($fid, $gid, 'allowupdate') ? 1 : 0;
-        $allowdelete = forum_access_mod($fid, $gid, 'allowdelete') ? 1 : 0;
 
         // hook read_article_default_after.php
     }
