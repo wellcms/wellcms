@@ -62,13 +62,18 @@
 								<!--{hook read_views_after.htm}-->
 							</div>
 
-                            <?php if($allowupdate || $allowdelete) { ?>
+                            <?php if($thread['allowdelete'] || $thread['allowupdate']) { ?>
                             <span class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="true" aria-expanded="false">
                                     <?php echo lang('manage');?>
                                 </a>
                                 <span class="dropdown-menu dropdown-menu-right size0 py-0">
                                     <!--{hook read_dropdown_menu_start.htm}-->
+									<?php if($thread['allowdelete']) { ?>
+									<a data-href="<?php echo url('operate-delete-'.$tid);?>" href="javascript:void(0);" class="dropdown-item post_delete" isfirst="1">
+                                    <?php echo lang('delete');?>
+                                    </a>
+									<?php } ?>
                                     <!--{hook read_dropdown_menu_end.htm}-->
                                 </span>
                             </span>
@@ -341,6 +346,20 @@ $(function() {
 var jmessage = $('#message');
 jmessage.on('focus', function() {if(jmessage.t) { clearTimeout(jmessage.t); jmessage.t = null; } jmessage.css('height', '6rem'); });
 jmessage.on('blur', function() {jmessage.t = setTimeout(function() { jmessage.css('height', '2.5rem');}, 1000); });
+
+<?php if(empty($thread['post_reward']) && $uid == $thread['uid']){ ?>
+    $('a.reward').on('click', function() {
+        var href = $(this).data('href');
+        $.xpost(href, function(code, message) {
+            if(code == 0) {
+                $.alert(message).delay(1000).location();
+            } else {
+                $.alert(message).delay(2000).location();
+            }
+        });
+        return false;
+    });
+<?php } ?>
 
 $('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
 </script>
