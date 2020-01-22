@@ -425,16 +425,18 @@ function well_attach_assoc_file($arr = array())
 
                 // hook model_attach_assoc_file_filter_center.php
             }
+
+            // hook model_attach_assoc_file_filter_middle.php
+
+            $_images = count($imagelist);
+            $images != $_images AND $thread['images'] = $_images;
         }
 
-        // hook model_attach_assoc_file_filter_middle.php
-
-        $_images = count($imagelist);
-        $images != $_images AND $thread['images'] = $_images;
-
-        $_files = count($filelist);
-        $files != $_files AND $thread['files'] = $_files;
-
+        if (!empty($filelist)) {
+            $_files = count($filelist);
+            $files != $_files AND $thread['files'] = $_files;
+        }
+        
         // hook model_attach_assoc_file_filter_end.php
     }
 
