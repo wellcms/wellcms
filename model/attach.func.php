@@ -124,12 +124,13 @@ function well_attach_find($cond = array(), $orderby = array(), $page = 1, $pages
 // 获取 $filelist $imagelist
 function well_attach_find_by_tid($tid)
 {
-    $imagelist = $filelist = array();
+    $imagelist = array();
+    $filelist = array();
 
     // hook model__attach_find_by_tid_start.php
 
     $attachlist = well_attach__find(array('tid' => $tid), array(), 1, 1000);
-    if (empty($attachlist)) return NULL;
+    if (empty($attachlist)) return array($attachlist, $imagelist, $filelist);
 
     // hook model__attach_find_by_tid_before.php
 
@@ -427,16 +428,14 @@ function well_attach_assoc_file($arr = array())
             }
 
             // hook model_attach_assoc_file_filter_middle.php
-
-            $_images = count($imagelist);
-            $images != $_images AND $thread['images'] = $_images;
         }
 
-        if (!empty($filelist)) {
-            $_files = count($filelist);
-            $files != $_files AND $thread['files'] = $_files;
-        }
-        
+        $_images = count($imagelist);
+        $images != $_images AND $thread['images'] = $_images;
+
+        $_files = count($filelist);
+        $files != $_files AND $thread['files'] = $_files;
+
         // hook model_attach_assoc_file_filter_end.php
     }
 
