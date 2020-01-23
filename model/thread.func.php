@@ -781,7 +781,7 @@ function well_thread_format(&$thread)
     }
 
     // 回复页面
-    $thread['pages'] = ceil($thread['posts'] / $conf['postlist_pagesize']);
+    $thread['pages'] = ceil($thread['posts'] / $conf['comment_pagesize']);
 
     $thread['tag_text'] = $thread['tag'] ? xn_json_decode($thread['tag']) : '';
 
