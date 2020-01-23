@@ -103,8 +103,9 @@ if ($thread['type'] == 0) {
     }
 
     // hook read_article_middle.php
-
-    $pagination = pagination(url('read-' . $tid . '-{page}', $extra), $thread['posts'], $page, $pagesize);
+    $thread_posts = $thread['posts'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $thread['posts'];
+    // hook read_article_pagination_before.php
+    $pagination = pagination(url('read-' . $tid . '-{page}', $extra), $thread_posts, $page, $pagesize);
 
     // hook read_article_after.php
 
