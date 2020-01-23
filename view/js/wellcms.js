@@ -33,7 +33,20 @@ $('ul.nav > li').on('click', function (e) {
 /*点击响应整行：，但是不响应 checkbox 的点击  / check response line, without checkbox*/
 $('.thread input[type="checkbox"]').parents('td').on('click', function (e) {
     e.stopPropagation();
-})
+});
+
+/*管理用户组*/
+$('.admin-manage-user').on('click', function () {
+    var href = $(this).data('href');
+    $.xpost(href, function (code, message) {
+        if (code == 0) {
+            $.alert(message).delay(1000).location();
+        } else {
+            $.alert(message).delay(2000).location();
+        }
+    });
+    return false;
+});
 
 /*菜单右至左滑出*/
 $('.button-show').click(function () {
