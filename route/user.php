@@ -1,5 +1,4 @@
 <?php
-
 !defined('DEBUG') AND exit('Access Denied.');
 
 include _include(XIUNOPHP_PATH . 'xn_send_mail.func.php');
@@ -20,7 +19,7 @@ if (empty($action)) {
     $extra = array(); // 插件预留
 
     empty($_uid) AND $_uid = $uid;
-    $_user = user_read($_uid);
+    $_user = user_read_cache($_uid);
     empty($_user) AND message(-1, lang('user_not_exists'));
 
     // hook user_index_before.php
@@ -52,7 +51,7 @@ if (empty($action)) {
     $_uid = param(2, 0);
 
     empty($_uid) AND $_uid = $uid;
-    $_user = user_read($_uid);
+    $_user = user_read_cache($_uid);
 
     empty($_user) AND message(-1, lang('user_not_exists'));
 
@@ -69,25 +68,27 @@ if (empty($action)) {
         $postlist = comment_pid_find_by_uid($_user['uid'], $page, $pagesize);
         $pids = array();
         $tids = array();
-        foreach ($postlist as &$_pid) {
-            $pids[] = $_pid['pid'];
-            $tids[] = $_pid['tid'];
-        }
+        if ($postlist) {
+            foreach ($postlist as &$_pid) {
+                $pids[] = $_pid['pid'];
+                $tids[] = $_pid['tid'];
+            }
 
-        // hook user_comment_center.php
+            // hook user_comment_center.php
 
-        $threadlist = well_thread__find(array('tid' => $tids));
-        // 过滤没有权限访问的主题 / filter no permission thread
-        well_thread_list_access_filter($threadlist, $gid);
-
-        $arrlist = comment_find_by_pid($pids, $pagesize);
-        foreach ($arrlist as $key => &$val) {
+            $threadlist = well_thread__find(array('tid' => $tids));
             // 过滤没有权限访问的主题 / filter no permission thread
-            if (empty($threadlist[$val['tid']])) unset($arrlist[$key]);
-            comment_filter($val);
-            $val['subject'] = $threadlist[$val['tid']]['subject'];
-            $val['url'] = url('read-' . $val['tid']);
-            $val['allowdelete'] = forum_access_mod($val['fid'], $gid, 'allowdelete');
+            well_thread_list_access_filter($threadlist, $gid);
+
+            $arrlist = comment_find_by_pid($pids, $pagesize);
+            foreach ($arrlist as $key => &$val) {
+                // 过滤没有权限访问的主题 / filter no permission thread
+                if (empty($threadlist[$val['tid']])) unset($arrlist[$key]);
+                comment_filter($val);
+                $val['subject'] = $threadlist[$val['tid']]['subject'];
+                $val['url'] = url('read-' . $val['tid']);
+                $val['allowdelete'] = forum_access_mod($val['fid'], $gid, 'allowdelete');
+            }
         }
 
         // hook user_comment_middle.php
