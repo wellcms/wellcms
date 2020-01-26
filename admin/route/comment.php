@@ -50,7 +50,7 @@ if ($action == 'list') {
 
         // hook website_admin_reply_list_get_middle.php
 
-        $n = $n > ($pagesize * 20000) ? ($pagesize * 20000) : $n;
+        $n = $n > ($pagesize * 2000) ? ($pagesize * 2000) : $n;
         // hook website_admin_reply_list_get_after.php
         $pagination = pagination(url('comment-list-{page}', $extra), $n, $page, $pagesize);
 
