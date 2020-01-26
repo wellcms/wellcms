@@ -23,7 +23,7 @@ if ($action == 'list') {
         $page = param(2, 1);
         $pagesize = 25;
         // 插件预留
-        $extra = array('verify' => 0, 'path' => '../');
+        $extra = array('verify' => $verify);
         //$threadlist = NULL;
 
         // hook website_admin_reply_list_get_before.php
