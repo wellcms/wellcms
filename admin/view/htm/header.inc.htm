@@ -41,7 +41,7 @@ $static_version = $conf['static_version'];
 
     <!--{hook admin_header_start.htm}-->
 
-    <header class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark-blue">
+    <header class="navbar fixed-top navbar-expand-lg <?php if ($action=='login') {echo 'navbar-dark bg-dark-blue';} ?>">
         <!-- 左：折叠菜单的图标 ☰ -->
         <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#nav" aria-controls="navbar_collapse" aria-expanded="false" aria-label="<?php echo lang('toggler_menu');?>">
             <span class="navbar-toggler-icon"></span>
@@ -51,7 +51,7 @@ $static_version = $conf['static_version'];
         <div class="navbar-brand col-2 hidden-lg hidden-xl">
             <img class="logo-2 mx-auto d-block" src="<?php echo admin_view_path();?>img/logo.png">
         </div>
-        <div class="navbar-brand col-2 hidden-md hidden-sm">
+        <div class="navbar-brand col-2 hidden-md hidden-sm mr-0" style="max-width: 240px;">
             <img class="logo-2 mx-auto d-block" src="<?php echo admin_view_path();?>img/admin.logo.png">
         </div>
 
@@ -59,7 +59,7 @@ $static_version = $conf['static_version'];
         <a class="navbar-brand d-md-none" href="<?php echo url_path();?>" title="<?php echo lang('front_index_page');?>"><i class="icon-home"></i></a>
 
         <!--{hook admin_header_logo_after.htm}-->
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse py-1 border-bottom <?php if ($action!='login') {echo 'navbar-light bg-light';} ?>">
             <!-- right -->
             <ul class="navbar-nav ml-auto">
                 <!--{hook admin_header_user_start.htm}-->
@@ -126,4 +126,4 @@ $static_version = $conf['static_version'];
                 </nav>
                 <?php } ?>
 
-                <div role="main" class="<?php if ($action=='login') {echo 'col-md-12';} else {echo 'admin-content ';} ?> px-4">
+                <div role="main" class="<?php if ($action=='login') {echo 'col-md-12';} else {echo 'admin-content';} ?> px-4">

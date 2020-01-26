@@ -22,7 +22,7 @@
 
     <!--{hook admin_footer_footer_center.htm}-->
 
-<footer class="d-flex justify-content-between text-muted small bg-dark-blue py-3" id="footer">
+<footer class="d-flex justify-content-between text-muted small border-top bg-light py-3" id="footer">
     <div class="col">
         <!--{hook admin_footer_footer_left_start.htm}-->
         Powered by <b><?php echo $config['name'];?></b>
@@ -74,6 +74,23 @@
             my_href = my_href.replace(my_href, '../' + my_href);
         }
         my_url.attr('href', my_href);
+
+        <?php if ($action!='login') { ?>
+        $(document).ready(function () {
+            window_width_auto();
+        });
+        <?php } ?>
+        $(window).resize(function () {
+            window_width_auto();
+        });
+        function window_width_auto() {
+            window_width = $(window).width();
+            if (window_width < 769) {
+                $('header').addClass('navbar-dark bg-dark-blue py-1');
+            } else {
+                $('header').removeClass('navbar-dark bg-dark-blue py-1');
+            }
+        }
     });
 </script>
 <!--{hook admin_footer_end.htm}-->
