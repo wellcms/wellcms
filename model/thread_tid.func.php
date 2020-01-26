@@ -3,6 +3,8 @@
  * Copyright (C) www.wellcms.cn
  *
  * $arrlist = thread_tid__find(array('fid' => 1, 'tid' => array('>' => 40000000)), $orderby = array('tid' => 1), $page = 1, $pagesize = 20, $key = 'tid', $col = array('tid'));
+ * total / page * pagesize
+ * 100 / 101 + page * pagesize/ 201 + page * pagesize
  */
 // hook model_thread_tid_start.php
 
