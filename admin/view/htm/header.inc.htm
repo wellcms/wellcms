@@ -59,7 +59,7 @@ $static_version = $conf['static_version'];
         <a class="navbar-brand d-md-none" href="<?php echo url_path();?>" title="<?php echo lang('front_index_page');?>"><i class="icon-home"></i></a>
 
         <!--{hook admin_header_logo_after.htm}-->
-        <div class="collapse navbar-collapse py-1 border-bottom <?php if ($action!='login') {echo 'navbar-light bg-light';} ?>">
+        <div class="collapse navbar-collapse py-1 <?php if ($action!='login') {echo 'navbar-light bg-light border-bottom';} ?>">
             <!-- right -->
             <ul class="navbar-nav ml-auto">
                 <!--{hook admin_header_user_start.htm}-->
