@@ -449,7 +449,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($local['type']) && $local['type'] = $type; // 0插件 1主题
 
     // 加上官方插件的信息
-    !isset($official['storeid']) && $official['storeid'] = 0; // TODO
+    !isset($official['storeid']) && $official['storeid'] = 0;
     !isset($official['name']) && $official['name'] = '';
     !isset($official['price']) && $official['price'] = 0;
     !isset($official['brief']) && $official['brief'] = '';
@@ -466,11 +466,11 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['file_md5']) && $official['file_md5'] = '';
     !isset($official['filename']) && $official['filename'] = '';
     !isset($official['is_cert']) && $official['is_cert'] = 0;
-    !isset($official['is_show']) && $official['is_show'] = 0;
-    !isset($official['img1']) && $official['img1'] = 0;
-    !isset($official['img2']) && $official['img2'] = 0;
-    !isset($official['img3']) && $official['img3'] = 0;
-    !isset($official['img4']) && $official['img4'] = 0;
+    //!isset($official['is_show']) && $official['is_show'] = 0;
+    !isset($official['img1']) && $official['img1'] = '';
+    !isset($official['img2']) && $official['img2'] = '';
+    !isset($official['img3']) && $official['img3'] = '';
+    !isset($official['img4']) && $official['img4'] = '';
     !isset($official['brief_url']) && $official['brief_url'] = '';
     !isset($official['qq']) && $official['qq'] = '';
     !isset($official['author']) && $official['author'] = '';
