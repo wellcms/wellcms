@@ -1,7 +1,4 @@
 <?php
-/*
- * Copyright (C) www.wellcms.cn
- */
 !defined('DEBUG') AND exit('Access Denied.');
 
 group_access($gid, 'manageplugin') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
@@ -31,22 +28,22 @@ if ($action == 'local') {
     // 免费和付费插件
 
     // 0 所有插件 1主题风格 2小型插件 3大型插件 4接口整合 99未分类
-    $cateid = param(2, 0);
+    $type = param(2, 0);
     $page = param(3, 1);
     $pagesize = 10;
-    $cond = $cateid ? array('cateid' => $cateid) : array();
+    $cond = $type ? array('type' => $type) : array();
     $cond['price'] = $action == 'official_fee' ? array('>' => 0) : 0;
 
     // plugin category
     $plugin_cates = array(0 => lang('plugin_cate_0'), 1 => lang('plugin_cate_1'), 2 => lang('plugin_cate_2'), 3 => lang('plugin_cate_3'), 4 => lang('plugin_cate_4'), 99 => lang('plugin_cate_99'));
 
-    $plugin_cate_html = plugin_cate_active($action, $plugin_cates, $cateid, $page);
+    $plugin_cate_html = plugin_cate_active($action, $plugin_cates, $type, $page);
 
     // official plugin
     $total = plugin_official_total($cond);
-    $pluginlist = plugin_official_list($cond, array('pluginid' => -1), $page, $pagesize);
+    $pluginlist = plugin_official_list($cond, array('storeid' => -1), $page, $pagesize);
 
-    $pagination = pagination(url("plugin-$action-$cateid-{page}"), $total, $page, $pagesize);
+    $pagination = pagination(url("plugin-$action-$type-{page}"), $total, $page, $pagesize);
 
     $header['title'] = lang('official_plugin');
     $header['mobile_title'] = lang('official_plugin');
@@ -70,7 +67,7 @@ if ($action == 'local') {
         // 本地模式禁止升级和购买 线上模式显示登录 升级 购买
         $url = $server_ip == 2130706433 ? FALSE : '';
 
-        if (!empty($plugin['official']['pluginid']) && !empty($plugin['official']) && $server_ip != 2130706433) {
+        if (!empty($plugin['official']['storeid']) && !empty($plugin['official']) && $server_ip != 2130706433) {
             /*
              * 获取cookie，空则显示登录框，有则将token POST到官方->官方解密token效验数据->数据错误返回重新登录，数据正确显示付款码或下载地址
              * 检查是否登录，登录后从官方下载token
@@ -91,12 +88,12 @@ if ($action == 'local') {
                        -1: 业务逻辑错误
                        <-1: 系统错误
                     */
-                    $url = plugin_order_buy_qrcode($plugin['official']['pluginid']);
+                    $url = plugin_order_buy_qrcode($plugin['official']['storeid']);
 
                     if ($url === FALSE) {
                         if ($errno == 1 || $errno == 2) {
                             // 已经支付，就给出下载地址。
-                            $download_url = url("plugin-download-$plugin[pluginid]");
+                            $download_url = url("plugin-download-$plugin[storeid]");
                         } else {
                             $download_url = '';
                             $errmsg = $errstr;
@@ -149,7 +146,7 @@ if ($action == 'local') {
 
     $plugin['official']['price'] == 0 AND message(1, lang('plugin_is_free'));
 
-    plugin_bought($plugin['official']['pluginid']) ? message(0, lang('plugin_is_bought')) : message(2, lang('plugin_not_bought'));
+    plugin_bought($plugin['official']['storeid']) ? message(0, lang('plugin_is_bought')) : message(2, lang('plugin_not_bought'));
 
 } elseif ($action == 'download') {
 
@@ -170,7 +167,7 @@ if ($action == 'local') {
     version_compare($conf['version'], $official['software_version']) == -1 AND message(-1, lang('plugin_version_not_match', array('software_version' => $official['software_version'], 'version' => $conf['version'])));
 
     // 下载，解压 / download and zip
-    plugin_download_unzip($dir, $official['pluginid']);
+    plugin_download_unzip($dir, $official['storeid']);
 
     plugin_lock_end();
 
@@ -299,7 +296,7 @@ if ($action == 'local') {
     }
 
     // 下载，解压 / download and zip
-    plugin_download_unzip($dir, $official['pluginid']);
+    plugin_download_unzip($dir, $official['storeid']);
 
     if (empty($official['type'])) {
         // 安装插件
@@ -401,7 +398,7 @@ function plugin_verify_token()
     return https_request($url, $post, '', 500, 1);
 }
 
-function plugin_download_unzip($dir, $pluginid)
+function plugin_download_unzip($dir, $storeid)
 {
     global $conf;
 
@@ -412,7 +409,7 @@ function plugin_download_unzip($dir, $pluginid)
     $app_url = xn_urlencode(http_url_path());
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
     $url = PLUGIN_OFFICIAL_URL . 'plugin-download.html';
-    $post = array('pluginid' => $pluginid, 'siteid' => $siteid, 'app_url' => $app_url, 'domain' => $domain, 'token' => $token);
+    $post = array('storeid' => $storeid, 'siteid' => $siteid, 'app_url' => $app_url, 'domain' => $domain, 'token' => $token);
     // 服务端获取下载地址开始下载 readfile() 直接输出也可以
     $res = https_request($url, $post, '', 500, 1);
     ($res == -1 || empty($res)) AND message(-1, jump(lang('server_response_empty'), url("plugin-read-$dir"), 3));
@@ -463,7 +460,7 @@ function plugin_download_unzip($dir, $pluginid)
 }
 
 // 查询是否购买了
-function plugin_bought($pluginid)
+function plugin_bought($storeid)
 {
     global $conf;
 
@@ -474,7 +471,7 @@ function plugin_bought($pluginid)
     $siteid = plugin_siteid();
     $app_url = xn_urlencode(http_url_path());
     $url = PLUGIN_OFFICIAL_URL . 'plugin-bought.html';
-    $post = array('pluginid' => $pluginid, 'siteid' => $siteid, 'domain' => $domain, 'token' => $token, 'app_url' => $app_url);
+    $post = array('storeid' => $storeid, 'siteid' => $siteid, 'domain' => $domain, 'token' => $token, 'app_url' => $app_url);
     $s = https_request($url, $post, '', 500, 1);
     $arr = xn_json_decode($s);
     empty($arr) AND message(-1, $url . lang('plugin_return_data_error') . $s);
@@ -485,7 +482,7 @@ function plugin_bought($pluginid)
     }
 }
 
-function plugin_order_buy_qrcode($pluginid)
+function plugin_order_buy_qrcode($storeid)
 {
     global $conf;
 
@@ -496,7 +493,7 @@ function plugin_order_buy_qrcode($pluginid)
     $siteid = plugin_siteid();
     $app_url = xn_urlencode(http_url_path());
     $url = PLUGIN_OFFICIAL_URL . 'plugin-qrcode.html';
-    $post = array('pluginid' => $pluginid, 'siteid' => $siteid, 'app_url' => $app_url, 'domain' => $domain, 'token' => $token);
+    $post = array('storeid' => $storeid, 'siteid' => $siteid, 'app_url' => $app_url, 'domain' => $domain, 'token' => $token);
     $s = https_request($url, $post, '', 1);
     if (empty($s)) return xn_error(-1, lang('server_response_empty'));
     $arr = xn_json_decode($s);
@@ -533,12 +530,12 @@ function plugin_check_exists($dir, $local = TRUE)
     }
 }
 
-function plugin_cate_active($action, $plugin_cate, $cateid, $page)
+function plugin_cate_active($action, $arr, $type, $page)
 {
     $s = '';
-    foreach ($plugin_cate as $_cateid => $_catename) {
-        $url = url("plugin - $action - $_cateid - $page");
-        $s .= '<a role="button" class="btn btn btn-secondary' . ($cateid == $_cateid ? ' active' : '') . '" href="' . $url . '">' . $_catename . '</a>';
+    foreach ($arr as $_type => $name) {
+        $url = url("plugin - $action - $_type - $page");
+        $s .= '<a role="button" class="btn btn btn-secondary' . ($type == $_type ? ' active' : '') . '" href="' . $url . '">' . $name . '</a>';
     }
     return $s;
 }

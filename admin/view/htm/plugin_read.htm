@@ -34,7 +34,7 @@
 						<?php echo $plugin['software_version']; ?>
 					</div>
 
-					<?php if(!empty($plugin['pluginid'])) { ?>
+					<?php if(!empty($plugin['storeid'])) { ?>
 					<div class="col-md-6">
 						<span class="text-muted"><?php echo lang('price');?></span>：
 						<span class="price"><?php echo $plugin['official']['price']; ?>元</span>
@@ -119,7 +119,7 @@
 				</div>
 				<?php } ?>
 
-				<?php if(!empty($plugin['pluginid']) && !empty($url)) { ?>
+				<?php if(!empty($plugin['storeid']) && !empty($url)) { ?>
 				<div class="row">
 					<table width="60%" align="center">
 						<tr>
@@ -153,27 +153,27 @@
 					<a role="button" class="btn btn-primary setting" href="<?php echo url("plugin-setting-$dir"); ?>"><?php echo lang('setting');?></a>
 					<?php } ?>
 
-					<?php if($islocal && !$plugin['installed'] && empty($plugin['type'])) { ?>
+					<?php if($islocal && !$plugin['installed'] && $plugin['type'] != 1) { ?>
 					<a role="button" class="btn btn-primary install" href="<?php echo url("plugin-install-$dir"); ?>"><?php echo lang('install');?></a>
 					<?php } ?>
 
-					<?php if($plugin['installed'] && $plugin['enable'] && empty($plugin['type'])) { ?>
+					<?php if($plugin['installed'] && $plugin['enable'] && $plugin['type'] != 1) { ?>
 					<a role="button" class="btn btn-secondary disable" href="<?php echo url("plugin-disable-$dir"); ?>"><?php echo lang('disable');?></a>
 					<?php } ?>
 
-					<?php if($plugin['installed'] && !$plugin['enable'] && empty($plugin['type'])) { ?>
+					<?php if($plugin['installed'] && !$plugin['enable'] && $plugin['type'] != 1) { ?>
 					<a role="button" class="btn btn-secondary enable" href="<?php echo url("plugin-enable-$dir"); ?>"><?php echo lang('enable');?></a>
 					<?php } ?>
 
-					<?php if($plugin['installed'] && empty($plugin['type'])) { ?>
+					<?php if($plugin['installed'] && $plugin['type'] != 1) { ?>
 					<a role="button" class="btn btn-danger uninstall confirm" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir"); ?>"><?php echo lang('uninstall');?></a>
 					<?php } ?>
 
-                    <?php if($islocal && !$plugin['installed'] && $plugin['type']) { ?>
+                    <?php if($islocal && !$plugin['installed'] && $plugin['type'] == 1) { ?>
                     <a role="button" class="btn btn-primary install" data-href="<?php echo url('plugin-theme-'.$dir.'-1');?>" href="javascript:void(0);"><?php echo lang('install');?></a>
                     <?php } ?>
 
-                    <?php if($plugin['installed'] && $plugin['type']) { ?>
+                    <?php if($plugin['installed'] && $plugin['type'] == 1) { ?>
                     <a role="button" class="btn btn-danger uninstall" data-href="<?php echo url('plugin-theme-'.$dir.'-0');?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
                     <?php } ?>
 
@@ -215,7 +215,7 @@
         return false;
     });
 
-<?php if(!empty($plugin['pluginid']) && !empty($url) && !is_dir(APP_PATH."plugin/$dir")) { ?>
+<?php if(!empty($plugin['storeid']) && !empty($url) && !is_dir(APP_PATH."plugin/$dir")) { ?>
 
 	/*定时查询，如果支付成功，则跳转到下载*/
 	var dir = '<?php echo $dir;?>';

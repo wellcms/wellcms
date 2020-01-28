@@ -374,7 +374,7 @@ function plugin_official_total($cond = array())
     return count($offlist);
 }
 
-function plugin_official_list($cond = array(), $orderby = array('pluginid' => -1), $page = 1, $pagesize = 20)
+function plugin_official_list($cond = array(), $orderby = array('storeid' => -1), $page = 1, $pagesize = 20)
 {
     global $official_plugins;
     // 服务端插件信息，缓存起来
@@ -449,15 +449,16 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($local['type']) && $local['type'] = $type; // 0插件 1主题
 
     // 加上官方插件的信息
-    !isset($official['pluginid']) && $official['pluginid'] = 0;
+    !isset($official['storeid']) && $official['storeid'] = 0; // TODO
     !isset($official['name']) && $official['name'] = '';
     !isset($official['price']) && $official['price'] = 0;
     !isset($official['brief']) && $official['brief'] = '';
     !isset($official['software_version']) && $official['software_version'] = '2.0';
     !isset($official['version']) && $official['version'] = '1.0';
-    !isset($official['cateid']) && $official['cateid'] = 0;
-    !isset($official['type']) && $official['type'] = 0; // 0插件 1主题
-    !isset($official['lastupdate']) && $official['lastupdate'] = 0;
+    //!isset($official['cateid']) && $official['cateid'] = 0;
+    // 0 所有插件 1主题风格 2小型插件 3大型插件 4接口整合 99未分类
+    !isset($official['type']) && $official['type'] = 0;
+    !isset($official['last_update']) && $official['last_update'] = 0;
     !isset($official['stars']) && $official['stars'] = 0;
     !isset($official['user_stars']) && $official['user_stars'] = 0;
     !isset($official['installs']) && $official['installs'] = 0;
@@ -484,18 +485,18 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     }
 
     // 额外的判断
-    $plugin['icon_url'] = $plugin['pluginid'] ? PLUGIN_OFFICIAL_URL . "upload/plugin/$plugin[pluginid]/icon.png" : $icon;
+    $plugin['icon_url'] = $plugin['storeid'] ? PLUGIN_OFFICIAL_URL . "upload/plugin/$plugin[storeid]/icon.png" : $icon;
     $plugin['setting_url'] = $plugin['installed'] && is_file("../plugin/$dir/setting.php") ? "plugin-setting-$dir.html" : "";
     $plugin['downloaded'] = isset($plugins[$dir]);
-    $plugin['stars_fmt'] = $plugin['pluginid'] ? str_repeat('<span class="icon star"></span>', $plugin['stars']) : '';
-    $plugin['user_stars_fmt'] = $plugin['pluginid'] ? str_repeat('<span class="icon star"></span>', $plugin['user_stars']) : '';
+    $plugin['stars_fmt'] = $plugin['storeid'] ? str_repeat('<span class="icon star"></span>', $plugin['stars']) : '';
+    $plugin['user_stars_fmt'] = $plugin['storeid'] ? str_repeat('<span class="icon star"></span>', $plugin['user_stars']) : '';
     $plugin['is_cert_fmt'] = empty($plugin['is_cert']) ? '<span class="text-danger">' . lang('no') . '</span>' : '<span class="text-success">' . lang('yes') . '</span>';
     $plugin['have_upgrade'] = $plugin['installed'] && version_compare($official['version'], $local['version']) > 0 ? TRUE : FALSE;
     $plugin['official_version'] = $official['version']; // 官方版本
-    $plugin['img1_url'] = $official['img1'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['pluginid'] . '/img1.jpg' : ''; // 官方版本
-    $plugin['img2_url'] = $official['img2'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['pluginid'] . '/img2.jpg' : ''; // 官方版本
-    $plugin['img3_url'] = $official['img3'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['pluginid'] . '/img3.jpg' : ''; // 官方版本
-    $plugin['img4_url'] = $official['img4'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['pluginid'] . '/img4.jpg' : ''; // 官方版本
+    $plugin['img1_url'] = $official['img1'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img1.jpg' : ''; // 官方版本
+    $plugin['img2_url'] = $official['img2'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img2.jpg' : ''; // 官方版本
+    $plugin['img3_url'] = $official['img3'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img3.jpg' : ''; // 官方版本
+    $plugin['img4_url'] = $official['img4'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img4.jpg' : ''; // 官方版本
 
     return $plugin;
 }

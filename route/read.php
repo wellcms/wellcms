@@ -74,9 +74,9 @@ if ($thread['type'] == 0) {
 
         // hook read_article_default_middle.php
 
-        $allowpost = forum_access_user($fid, $gid, 'allowpost') ? 1 : 0;
-        $allowupdate = forum_access_mod($fid, $gid, 'allowupdate') ? 1 : 0;
-        $allowdelete = (forum_access_mod($fid, $gid, 'allowdelete') || (group_access($gid, 'allowuserdelete') AND $uid == $thread['uid'])) ? 1 : 0;
+        $allowpost = forum_access_user($fid, $gid, 'allowpost');
+        $allowupdate = $uid == $thread['uid'] || forum_access_mod($thread['fid'], $gid, 'allowupdate');
+        $allowdelete = ($uid == $thread['uid'] AND forum_access_mod($fid, $gid, 'allowuserdelete')) || forum_access_mod($fid, $gid, 'allowdelete');
 
         // hook read_article_default_after.php
     }
@@ -149,9 +149,9 @@ if ($thread['type'] == 0) {
 
     // hook read_single_page_middle.php
 
-    $allowpost = forum_access_user($fid, $gid, 'allowpost') ? 1 : 0;
-    $allowupdate = forum_access_mod($fid, $gid, 'allowupdate') ? 1 : 0;
-    $allowdelete = forum_access_mod($fid, $gid, 'allowdelete') ? 1 : 0;
+    $allowpost = forum_access_user($fid, $gid, 'allowpost');
+    $allowupdate = forum_access_mod($fid, $gid, 'allowupdate');
+    $allowdelete = forum_access_mod($fid, $gid, 'allowdelete');
 
     $tidlist = $forum['threads'] ? page_find_by_fid($fid, $page, $pagesize) : NULL;
 
