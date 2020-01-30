@@ -734,6 +734,7 @@ function well_thread_format(&$thread)
 
     $forum = isset($forumlist[$thread['fid']]) ? $forumlist[$thread['fid']] : array('name' => '');
     $thread['forum_name'] = $forum['name'];
+    $thread['forum_url'] = $forum['url'];
 
     if ($thread['last_date'] == $thread['create_date']) {
         $thread['last_date_fmt'] = '';
