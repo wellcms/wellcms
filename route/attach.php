@@ -65,7 +65,7 @@ if ($action == 'create') {
 
     // hook attach_create_tmpfile_after.php
 
-    $tmpurl = file_path() . 'tmp/' . $tmpanme;
+    $tmpurl = $conf['upload_url'] . 'tmp/' . $tmpanme;
 
     // hook attach_create_tmpurl_after.php
 
