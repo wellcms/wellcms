@@ -83,7 +83,7 @@ if ($forum['type'] == 1) {
         // hook list_unified_pull_after.php
 
         // ajax数据
-        $arrlist = array('threadlist' => $threadlist, 'flaglist' => $flaglist);
+        //$arrlist = array('threadlist' => $threadlist, 'flaglist' => $flaglist);
 
         // hook list_ajax_after.php
 
@@ -110,7 +110,7 @@ if ($forum['type'] == 1) {
 
             empty($conf['api_on']) AND message(0, lang('closed'));
 
-            if ($arrlist['threadlist']) {
+            if (isset($arrlist['threadlist'])) {
                 foreach ($arrlist['threadlist'] as &$val) {
                     well_thread_filter($val);
                 }

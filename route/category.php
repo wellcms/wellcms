@@ -47,7 +47,7 @@ if ($forum['model'] == 0) {
         // hook category_article_portal_start.php
 
         /*
-         * $arrlist[list]对应每个需要删除的栏目;
+         * $arrlist[list]对应每个需要显示的栏目;
          * // 栏目按照rank被重新排序所以键已经不是fid
          * $arrlist[list][0]['name']栏目名;
          * $arrlist[list][0]['url']栏目路径;
@@ -59,7 +59,7 @@ if ($forum['model'] == 0) {
 
         // 轮播凑整 双列排版 防止错版 单一列注释该代码
         $slide = array_value($arrlist, 'sticky');
-        if ($slide) {
+        /*if ($slide) {
             if (count($arrlist['sticky']) % 2 != 0) {
                 $i = 0;
                 foreach ($arrlist['sticky'] as $key => &$_thread) {
@@ -69,13 +69,13 @@ if ($forum['model'] == 0) {
                     }
                 }
             }
-        }
+        }*/
 
         $first_flag = NULL;
         $flaglist = NULL;
         if (isset($arrlist['flaglist'])) {
-          $flaglist = isset($arrlist['flaglist']);
-          $first_flag = reset($arrlist['flaglist']);
+            $flaglist = isset($arrlist['flaglist']);
+            $first_flag = reset($arrlist['flaglist']);
         }
 
         // hook category_article_portal_end.php
@@ -123,14 +123,14 @@ if ($forum['model'] == 0) {
 
         // hook category_article_flat_unified_pull_before.php
 
-        $arr = thread_unified_pull($arr);
-        $threadlist = $arr['threadlist'];
-        $flaglist = $arr['flaglist'];
+        $arrlist = thread_unified_pull($arr);
+        $threadlist = $arrlist['threadlist'];
+        $flaglist = $arrlist['flaglist'];
 
         // hook category_article_flat_middle.php
 
         // ajax数据
-        $arrlist = array('threadlist' => $threadlist, 'flaglist' => $flaglist);
+        //$arrlist = array('threadlist' => $threadlist, 'flaglist' => $flaglist);
 
         // hook category_article_flat_after.php
 

@@ -80,8 +80,6 @@ if ($website_mode == 0) {
         // hook index_custom_flaglist.php
     }
 
-    unset($arrlist);
-
     // hook index_custom_middle.php
     // 按之前tidlist排序
     $threadlist = array2_sort_key($threadlist, $tidlist, 'tid');
@@ -116,7 +114,7 @@ if ($website_mode == 0) {
 
     // 轮播凑整 双列排版 防止错版 单一列注释该代码
     $slide = array_value($arrlist, 'sticky');
-    if ($slide) {
+    /*if ($slide) {
         if (count($arrlist['sticky']) % 2 != 0) {
             $i = 0;
             foreach ($arrlist['sticky'] as $key => &$_thread) {
@@ -126,7 +124,7 @@ if ($website_mode == 0) {
                 }
             }
         }
-    }
+    }*/
 
     $first_flag = NULL;
     $flaglist = NULL;
@@ -192,17 +190,15 @@ if ($website_mode == 0) {
 
     // hook index_flat_unified_pull_before.php
 
-    $arr = thread_unified_pull($arr);
-    $threadlist = $arr['threadlist'];
-    $flaglist = $arr['flaglist'];
+    $arrlist = thread_unified_pull($arr);
+    $threadlist = $arrlist['threadlist'];
+    $flaglist = $arrlist['flaglist'];
 
     // hook index_flat_unified_pull_after.php
 
     // 友情链接
     $linklist = link_get(1, $conf['linksize']);
 
-    // ajax数据
-    $arrlist = array('threadlist' => $threadlist, 'flaglist' => $flaglist);
     // hook index_flat_after.php
 
     $threads = $threads > $conf['pagesize'] * $conf['listsize'] ? $conf['pagesize'] * $conf['listsize'] : $threads;
