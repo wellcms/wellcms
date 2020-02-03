@@ -775,14 +775,7 @@ function filter_keyword($keyword, $type, &$error)
     return FALSE;
 }
 
-function well_http_location($url = NULL)
-{
-    empty($url) AND $url = './';
-    header('Location:' . $url);
-    exit;
-}
-
-// 返回判断https域名
+// return http://domain.com OR https://domain.com
 function url_prefix()
 {
     $http = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
