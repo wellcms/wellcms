@@ -39,12 +39,24 @@
     --black-red: #291204;
     --mobile-but: rgba(199, 202, 205, 0.9);/*移动端隐藏显示侧边栏按钮*/
     --light-green: #eaebec;
-    --blue-green: #008080;/*侧边栏选中色*/
+    --duck-green: #008080;/*鸭绿*/
+    --peacock-blue: #00808c;/*孔雀蓝*/
     --blue-grey: #384141;/*青灰*/
     --bali-blue: #60707e;/*侧边栏选中色*/
     --silver: #ADB5BD;/*侧边栏线条银色*/
     --white-smoke: #eaebec;/*烟灰*/
     --tangerine: #ff3400;/*橘红*/
+    --orangered: #ff4500;/*橙红*/
+    --persimmon-orange: #FF4D40;/*柿子橙*/
+    --tomato-red: #ff6347;/*蕃茄紅*/
+    --limegreen: #32cd32;/*柠檬绿*/
+    --malachite-green: #22c32e;/*孔雀石绿*/
+    --yellowgreen: #9acd32;/*黄绿色*/
+    --apple-green: #8ce600;/*苹果绿*/
+    --grass-green: #99e64d;/*草绿*/
+    --coconut-brown: #4d1f00;/*椰子棕*/
+    --royal-blue: #082567;/*宝蓝色*/
+    --sage-blue: #4d80e6;/*鼠尾草蓝*/
 }
 body{margin: 0;background: var(--gray-200);font-size: 1.07rem;} /*rgb(232, 232, 232);*/
 html, body {
