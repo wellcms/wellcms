@@ -37,7 +37,7 @@ class db_pdo_sqlite {
 			if(!$this->wlink) $this->wlink = $this->connect_master();
 			$this->rlink = $this->wlink;
 		} else {
-			$n = array_rand($this->conf['slaves']);
+            $n = array_rand($this->conf['slaves'], 1);
 			$conf = $this->conf['slaves'][$n];
 			$this->rlink = $this->real_connect($conf['host'], $conf['user'], $conf['password'], $conf['name'], $conf['charset'], $conf['engine']);
 		}
