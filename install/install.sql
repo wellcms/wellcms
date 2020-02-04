@@ -153,7 +153,7 @@ CREATE TABLE `wellcms_forum` (
   `type` tinyint(1) unsigned NOT NULL DEFAULT '1',   # 分类 0论坛 1cms
   `model` tinyint(2) unsigned NOT NULL DEFAULT '0',  # 模型 0文章
   `category` tinyint(2) unsigned NOT NULL DEFAULT '0', # 版块分类 (0列表 1频道 2单页 3外链)
-  `name` char(16) NOT NULL DEFAULT '',    # 版块名称
+  `name` varchar(24) NOT NULL DEFAULT '',    # 版块名称
   `rank` tinyint(3) unsigned NOT NULL DEFAULT '0', # 显示，倒序，数字越大越靠前
   `threads` int(11) unsigned NOT NULL DEFAULT '0', # 主题数
   `tops` int(11) unsigned NOT NULL DEFAULT '0',    # 置顶主题数
@@ -230,7 +230,7 @@ CREATE TABLE `wellcms_website_data` (
 DROP TABLE IF EXISTS `wellcms_website_flag`;
 CREATE TABLE `wellcms_website_flag` (
   `flagid` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` char(12) NOT NULL DEFAULT '',  # 属性名
+  `name` char(24) NOT NULL DEFAULT '',  # 属性名
   `fid` int(11) unsigned NOT NULL DEFAULT '0', # 0全站
   `rank` smallint(6) unsigned NOT NULL DEFAULT '0',  # 排序最大值排在最前面
   `number` int(11) unsigned NOT NULL DEFAULT '0',  # 前台显示主题数
@@ -367,7 +367,7 @@ CREATE TABLE `wellcms_website_thread_sticky` (
 DROP TABLE IF EXISTS `wellcms_website_tag`;
 CREATE TABLE `wellcms_website_tag` (
   `tagid` int(11) unsigned NOT NULL AUTO_INCREMENT,  # 标签ID
-  `name` char(12) NOT NULL DEFAULT '',  # 标签名
+  `name` char(32) NOT NULL DEFAULT '',  # 标签名
   `count` int(11) NOT NULL DEFAULT '0', # 标签下主题数 允许负数，方便查bug
   `icon` int(11) unsigned NOT NULL DEFAULT '0',  # 标签缩略图 时间戳 tagid为图片名
   PRIMARY KEY (`tagid`),
@@ -386,7 +386,7 @@ DROP TABLE IF EXISTS `wellcms_website_link`;
 CREATE TABLE `wellcms_website_link` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `rank` tinyint(3) unsigned NOT NULL DEFAULT '0', # 排序
-  `name` varchar(12) NOT NULL DEFAULT '',  # 网站名
+  `name` varchar(24) NOT NULL DEFAULT '',  # 网站名
   `url` varchar(120) NOT NULL DEFAULT '',  # URL
   `create_date` int(11) unsigned NOT NULL DEFAULT '0', # 创建时间
   PRIMARY KEY (`id`),
