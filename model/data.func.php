@@ -230,7 +230,7 @@ function data_file_list_html($filelist, $include_delete = FALSE, $access = FALSE
     }
 
     $s = '<fieldset class="fieldset m-0 p-0">' . "\r\n";
-    $s .= '<legend>上传的附件：</legend>' . "\r\n";
+    $s .= '<legend>' . lang('uploaded_attach') . '：</legend>' . "\r\n";
     $s .= '<ul class="list-unstyled attachlist nowrap">' . "\r\n";
     foreach ($filelist as &$attach) {
         $s .= '<li aid="' . $attach['aid'] . '" class="p-1">' . "\r\n";

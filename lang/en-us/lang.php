@@ -612,7 +612,7 @@ return array(
     'title_contain_keywords' => 'title contain keywords:',
     'brief_contain_keywords' => 'brief contain keywords:',
     'tag_contain_keywords' => 'tag contain keywords:',
-    'message_contain_keywords' => '内容含有敏感词:',
+    'message_contain_keywords' => 'message contain keywords:',
 
     'index_display' => 'home page display',
     'own_channel' => 'own channel',

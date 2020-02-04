@@ -32,16 +32,16 @@ function runtime_init()
 
 function runtime_get($k)
 {
-    // hook model_runtime_get_start.php
     global $runtime;
+    // hook model_runtime_get_start.php
     // hook model_runtime_get_end.php
     return array_value($runtime, $k, NULL);
 }
 
 function runtime_set($k, $v)
 {
-    // hook model_runtime_set_start.php
     global $conf, $runtime;
+    // hook model_runtime_set_start.php
     $op = substr($k, -1);
     if ($op == '+' || $op == '-') {
         $k = substr($k, 0, -1);
@@ -50,24 +50,24 @@ function runtime_set($k, $v)
     }
 
     $runtime[$k] = $v;
-    return TRUE;
     // hook model_runtime_set_end.php
+    return TRUE;
 }
 
 function runtime_delete($k)
 {
-    // hook model_runtime_delete_start.php
     global $conf, $runtime;
+    // hook model_runtime_delete_start.php
     unset($runtime[$k]);
     runtime_save();
-    return TRUE;
     // hook model_runtime_delete_end.php
+    return TRUE;
 }
 
 function runtime_save()
 {
-    // hook model_runtime_save_start.php
     global $conf, $runtime;
+    // hook model_runtime_save_start.php
 
     function_exists('chdir') AND chdir(APP_PATH);
 
