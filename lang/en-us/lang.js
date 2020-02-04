@@ -4,12 +4,9 @@ var lang = {
 	'confirm': 'Confirm',
 	'confirm_title': 'Please confirm',
 	'confirm_delete': 'Confirm delete？',
-	'close': 'Close',
 	'yes': 'Yes',
 	'no': 'No',
 	'open': 'Open',
 	'close': 'Close',
-	
 	// hook lang_en_us_js.htm
-	
 };
