@@ -493,10 +493,10 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     $plugin['is_cert_fmt'] = empty($plugin['is_cert']) ? '<span class="text-danger">' . lang('no') . '</span>' : '<span class="text-success">' . lang('yes') . '</span>';
     $plugin['have_upgrade'] = $plugin['installed'] && version_compare($official['version'], $local['version']) > 0 ? TRUE : FALSE;
     $plugin['official_version'] = $official['version']; // 官方版本
-    $plugin['img1_url'] = $official['img1'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img1.jpg' : ''; // 官方版本
-    $plugin['img2_url'] = $official['img2'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img2.jpg' : ''; // 官方版本
-    $plugin['img3_url'] = $official['img3'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img3.jpg' : ''; // 官方版本
-    $plugin['img4_url'] = $official['img4'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img4.jpg' : ''; // 官方版本
+    $plugin['img1_url'] = $official['img1'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img1.jpg' : '';
+    $plugin['img2_url'] = $official['img2'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img2.jpg' : '';
+    $plugin['img3_url'] = $official['img3'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img3.jpg' : '';
+    $plugin['img4_url'] = $official['img4'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img4.jpg' : '';
 
     return $plugin;
 }
