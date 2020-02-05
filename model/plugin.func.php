@@ -14,8 +14,16 @@ function _include($srcfile)
 {
     global $conf;
     // 合并插件，存入 tmp_path
-    $len = strlen(APP_PATH);
-    $tmpfile = $conf['tmp_path'] . substr(str_replace('/', '_', $srcfile), $len);
+    if (strpos($srcfile, 'plugin/') !== FALSE
+        && strpos($srcfile, 'admin') === FALSE
+        && in_array(file_ext($srcfile), array('htm', 'html'))) {
+        // 获取模板文件名
+        $file_name = file_name($srcfile);
+        $tmpfile = $conf['tmp_path'] . 'view_htm_' . $file_name;
+    } else {
+        $tmpfile = $conf['tmp_path'] . substr(str_replace('/', '_', $srcfile), strlen(APP_PATH));
+    }
+
     // tmp不存在文件则进行编译
     if (!is_file($tmpfile) || DEBUG > 1) {
         // 开始编译
@@ -302,10 +310,10 @@ function plugin_find_overwrite($srcfile)
         // 获取插件目录名
         $dir = file_name($path);
         $filepath_half = substr($srcfile, $len);
-        $hookname = file_name($srcfile); // 获取覆盖的文件
+        $overwrite_name = file_name($srcfile); // 获取覆盖的文件
         $overwrite_file = APP_PATH . "plugin/$dir/overwrite/$filepath_half";
         if (is_file($overwrite_file)) {
-            $rank = isset($pconf['overwrites_rank'][$hookname]) ? $pconf['overwrites_rank'][$hookname] : 0;
+            $rank = isset($pconf['overwrites_rank'][$overwrite_name]) ? $pconf['overwrites_rank'][$overwrite_name] : 0;
             if ($rank >= $maxrank) {
                 $returnfile = $overwrite_file;
                 $maxrank = $rank;
@@ -493,10 +501,10 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     $plugin['is_cert_fmt'] = empty($plugin['is_cert']) ? '<span class="text-danger">' . lang('no') . '</span>' : '<span class="text-success">' . lang('yes') . '</span>';
     $plugin['have_upgrade'] = $plugin['installed'] && version_compare($official['version'], $local['version']) > 0 ? TRUE : FALSE;
     $plugin['official_version'] = $official['version']; // 官方版本
-    $plugin['img1_url'] = $official['img1'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img1.jpg' : '';
-    $plugin['img2_url'] = $official['img2'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img2.jpg' : '';
-    $plugin['img3_url'] = $official['img3'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img3.jpg' : '';
-    $plugin['img4_url'] = $official['img4'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img4.jpg' : '';
+    $plugin['img1_url'] = $official['img1'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img1.jpg' : ''; // 官方版本
+    $plugin['img2_url'] = $official['img2'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img2.jpg' : ''; // 官方版本
+    $plugin['img3_url'] = $official['img3'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img3.jpg' : ''; // 官方版本
+    $plugin['img4_url'] = $official['img4'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img4.jpg' : ''; // 官方版本
 
     return $plugin;
 }

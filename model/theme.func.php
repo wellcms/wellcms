@@ -3,21 +3,20 @@
  * Copyright (C) www.wellcms.cn
  */
 
-// $type 区分页面 $id为绑定版块或栏目的ID
 /*
  * $mode = 0 自定义模式 1门户模式 2扁平模式
  * 1.先搜索绑定的ID模板文件，存在则区分电脑端/平板端/移动端模板，如果平板和移动端没有模板，则只加载电脑端；
  * 2.没有绑定ID，则加载当前风格默认模板；
  * 3.当前风格默认没有相对应的模板，则加载官方默认模板；
+ * $type 区分页面
+ * $id 需绑定的ID，如fid，tagid，flagid
+ * $dir = 插件名，即目录 well_bbs
  * */
-function theme_load($type = 0, $id = 0)
+function theme_load($type = 0, $id = 0, $dir = '')
 {
     global $config;
 
-    $type = intval($type);
-    $id = intval($id); //需绑定的ID，如fid，tagid，flagid
-
-    // 0自适应 1PC和手机 2PC、平板和手机
+    // 0:self-adaption 1:PC/Pad 2:PC/Pad/Mobile
     $tpl_mode = $config['setting']['tpl_mode'];
 
     isset($tpl_mode) || $tpl_mode = 0;
@@ -26,7 +25,7 @@ function theme_load($type = 0, $id = 0)
     $detect = get_device();
 
     // 自动追加前缀 $pre适配端 $default_pre自适应或PC
-    $pre = $default_pre = ''; // 自适应/PC端 list.htm
+    $pre = $default_pre = '';
 
     if ($tpl_mode && $detect) {
         if ($tpl_mode == 2 && $detect == 2) {
@@ -130,14 +129,11 @@ function theme_load($type = 0, $id = 0)
         $json = is_file($conffile) ? xn_json_decode(file_get_contents($conffile)) : array();
     }
 
-    // 加载模板路径 安装的风格不在则加载官方默认
-    $path = APP_PATH . (($config['theme'] AND $json['installed']) ? 'view/template/' . $config['theme'] . '/htm/' : 'view/htm/');
+    // 加载安装风格
+    !empty($json['installed']) AND $path_file = APP_PATH . 'view/template/' . $config['theme'] . '/htm/' . ($id ? $id . '_' : '') . $pre;
 
-    // 绑定ID
-    $config['theme'] AND $json['installed'] AND $id AND $path_file = $path . $id . '_' . $pre;
-
-    // 绑定ID文件不存在，检查默认适配端文件，默认不存使用官方默认文件
-    (empty($path_file) || !is_file($path_file)) AND $path_file = is_file($path . $pre) ? $path . $pre : APP_PATH . 'view/htm/' . $default_pre;
+    // 风格不存在加载适配端
+    (empty($path_file) || !is_file($path_file)) AND $path_file = APP_PATH . ($dir ? 'plugin/' . $dir . '/view/htm/' : 'view/htm/') . $default_pre;
 
     return $path_file;
 }
