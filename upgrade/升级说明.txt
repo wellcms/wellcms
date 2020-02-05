@@ -47,9 +47,9 @@ http://www.x.cn/upgrade.php
 打开 nginx 配置文件 /usr/local/nginx/conf/nginx.conf 找到对应的虚拟主机配置处，追加加粗行:
 
 location / {
-
-rewrite ^((.*)/)?(.*).html$ $1/index.php last;
-
+    if (!-e $request_filename) {
+        rewrite ^((.*)/)?(.*).html$ $1/index.php last;
+    }
 }
 
 修改完之后重启Nginx或重启服务器
