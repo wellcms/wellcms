@@ -129,8 +129,11 @@ function theme_load($type = 0, $id = 0, $dir = '')
         $json = is_file($conffile) ? xn_json_decode(file_get_contents($conffile)) : array();
     }
 
-    // 加载安装风格
+    // 加载绑定ID安装风格
     !empty($json['installed']) AND $path_file = APP_PATH . 'view/template/' . $config['theme'] . '/htm/' . ($id ? $id . '_' : '') . $pre;
+
+    // 加载安装风格
+    (empty($path_file) || !is_file($path_file)) AND $path_file = APP_PATH . 'view/template/' . $config['theme'] . '/htm/' . $pre;
 
     // 风格不存在加载适配端
     (empty($path_file) || !is_file($path_file)) AND $path_file = APP_PATH . ($dir ? 'plugin/' . $dir . '/view/htm/' : 'view/htm/') . $default_pre;
