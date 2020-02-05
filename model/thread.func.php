@@ -768,15 +768,23 @@ function well_thread_format(&$thread)
         $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
         $day = date($attach_dir_save_rule, $thread['icon']);
 
-        // 本地文件绝对路径
-        $destfile = $conf['upload_path'] . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
+        if (in_array($conf['attach_on'], array(0, 2))) {
+            // 本地文件绝对路径
+            $destfile = $conf['upload_path'] . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
 
-        $thread['icon_text'] = is_file($destfile) ? file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
+            // 本地
+            $thread['icon_text'] = is_file($destfile) ? file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
+        }
 
-        if ($conf['attach_on'] == 2 && $thread['attach_on'] == 2) {
-            // 开启图床 没有上传成功 本地图片在的话使用本地，不在则使用默认
+        if ($conf['attach_on'] == 1) {
+            // 云储存
+            $thread['icon_text'] = file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
+
+        } elseif ($conf['attach_on'] == 2 && $thread['attach_on'] == 2) {
+            // 图床 未上传成功 本地图片在的话使用本地，不在则默认
             $thread['icon_text'] = $thread['image_url'] ? $thread['image_url'] : $thread['icon_text'];
         }
+
     } else {
         $thread['icon_text'] = $nopic;
     }

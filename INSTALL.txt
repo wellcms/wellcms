@@ -1,4 +1,4 @@
-﻿【如何安装 WellCMS X 2.0 ？】
+【如何安装 WellCMS X 2.0 ？】
 
 1. 确认您的主机支持 PHP，并且已经开通并且配置好了 MySQL。
 3. 设置如下目录和文件为可写(Linux: 目录权限为 0777，Windows 设置用户 everyone 可读写）
