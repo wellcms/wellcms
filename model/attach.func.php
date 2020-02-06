@@ -468,7 +468,7 @@ function well_attach_assoc_type($type)
     }
     $sess_tmp_files = _SESSION($k);
     // 如果session中没有，从数据库中获取储存的session
-    if (empty($sess_tmp_files) && preg_match('/' . $k . '\|(a\:1\:\{.*\})/', _SESSION('data'), $matches)) $sess_tmp_files = unserialize(str_replace(array('+', '='), array('_', '.'), $matches['1']));
+    if (empty($sess_tmp_files) && preg_match('#' . $k . '\|(a\:1\:\{.*\})#', _SESSION('data'), $matches)) $sess_tmp_files = unserialize(str_replace(array('+', '='), array('_', '.'), $matches['1']));
     // hook model__attach_assoc_type_end.php
     return $sess_tmp_files;
 }
@@ -625,7 +625,7 @@ function well_save_remote_image($arr)
             }
             $message = $_message;
         }
-        $message = preg_replace('/(<img.*?)(class=.+?[\'|\"])|(data-src=.+?[\'|"])|(data-type=.+?[\'|"])|(data-ratio=.+?[\'|"])|(data-s=.+?[\'|"])|(data-fail=.+?[\'|"])|(crossorigin=.+?[\'|"])|((data-w)=[\'"]+[0-9]+[\'"]+)|(_width=.+?[\'|"]+)|(_height=.+?[\'|"]+)|(style=.+?[\'|"])|((width)=[\'"]+[0-9]+[\'"]+)|((height)=[\'"]+[0-9]+[\'"]+)|/i', '$1', $message);
+        $message = preg_replace('#(<img.*?)(class=.+?[\'|\"])|(data-src=.+?[\'|"])|(data-type=.+?[\'|"])|(data-ratio=.+?[\'|"])|(data-s=.+?[\'|"])|(data-fail=.+?[\'|"])|(crossorigin=.+?[\'|"])|((data-w)=[\'"]+[0-9]+[\'"]+)|(_width=.+?[\'|"]+)|(_height=.+?[\'|"]+)|(style=.+?[\'|"])|((width)=[\'"]+[0-9]+[\'"]+)|((height)=[\'"]+[0-9]+[\'"]+)|#i', '$1', $message);
         // hook model_attach_save_remote_image_after.php
         $n AND well_thread_update($tid, array('images+' => $n));
     }

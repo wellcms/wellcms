@@ -213,7 +213,7 @@ EOT;
 
         $map = param('map', '', FALSE);
         // 英文 数字 下划线及三种组合 不支持其他字符
-        !preg_match('/^[a-z\d_]*$/i', $map) AND message(1, lang('english_number_tips'));
+        !preg_match('#^[\w]*$#i', $map) AND message(1, lang('english_number_tips'));
 
         // hook admin_other_map_post_before.php
 
