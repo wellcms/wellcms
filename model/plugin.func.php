@@ -14,16 +14,7 @@ function _include($srcfile)
 {
     global $conf;
     // 合并插件，存入 tmp_path
-    if (strpos($srcfile, 'plugin/') !== FALSE
-        && strpos($srcfile, 'admin') === FALSE
-        && in_array(file_ext($srcfile), array('htm', 'html'))) {
-        // 获取模板文件名
-        $file_name = file_name($srcfile);
-        $tmpfile = $conf['tmp_path'] . 'view_htm_' . $file_name;
-    } else {
-        $tmpfile = $conf['tmp_path'] . substr(str_replace('/', '_', $srcfile), strlen(APP_PATH));
-    }
-
+    $tmpfile = $conf['tmp_path'] . substr(str_replace('/', '_', $srcfile), strlen(APP_PATH));
     // tmp不存在文件则进行编译
     if (!is_file($tmpfile) || DEBUG > 1) {
         // 开始编译

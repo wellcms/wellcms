@@ -597,12 +597,17 @@ function well_mulit_array_int($array = array(), $string = array())
 
 //---------------表单安全过滤结束---------------
 
-// 编码转utf-8
-function code_to_utf8($str)
+/*
+ * @param $str 转换字符
+ * @param string $type 转换编码
+ * @return string
+ */
+function code_conversion($str, $type = 'utf-8')
 {
-    $encoding = mb_detect_encoding($str, array('GB2312', 'BIG5', 'ASCII', 'GBK', 'UTF-16', 'UCS-2', 'UTF-8'));
+    $encoding_list = $type == 'utf-8' ? array('gb2312', 'big5', 'ascii', 'gbk', 'utf-16', 'ucs-2', 'utf-8') : array('utf-8', 'utf-16', 'ascii', 'gb2312', 'gbk');
+    $encoding = mb_detect_encoding($str, $encoding_list);
 
-    return $encoding == FALSE ? mb_convert_encoding($str, 'UTF-8', 'Unicode') : iconv($encoding, 'UTF-8', $str);
+    return $encoding === FALSE ? mb_convert_encoding($str, $type, $encoding) : iconv($encoding, $type, $str);
 }
 
 // 过滤用户昵称里面的特殊字符
