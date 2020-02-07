@@ -183,6 +183,7 @@ a:hover {
     display: block;
     width: 100%;
 }
+.border-bottom-2x {border-bottom:2px solid var(--persimmon-orange) !important;}
 /* 小屏: only small screen */
 @media (max-width: 576px) {
     #body {
