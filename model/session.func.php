@@ -31,7 +31,7 @@ function sess_close()
 function sess_read($sid)
 {
     global $g_session, $longip, $time;
-    //echo "sess_read() sid: $sid <br>\r\n";
+
     if (empty($sid)) {
         // 查找刚才是不是已经插入一条了？  如果相隔时间特别短，并且 data 为空，则删除。
         // 测试是否支持 cookie，如果不支持 cookie，则不生成 sid
@@ -113,20 +113,12 @@ function sess_write($sid, $data)
 {
     global $g_session, $time, $longip, $g_session_invalid, $conf;
 
-    //echo "sess_write($sid, $data)";
-    //if($g_session_invalid) return TRUE;
-
     $uid = _SESSION('uid');
     $fid = _SESSION('fid');
     unset($_SESSION['uid']);
     unset($_SESSION['fid']);
 
-    if ($data) {
-        //$arr = session_decode($data);
-        //unset($_SESSION['uid']);
-        //unset($_SESSION['fid']);
-        $data = session_encode();
-    }
+    $data AND $data = session_encode();
 
     function_exists('chdir') AND chdir(APP_PATH);
 
@@ -177,7 +169,6 @@ function sess_write($sid, $data)
 
 function sess_destroy($sid)
 {
-    //echo "sess_destroy($sid) \r\n";
     db_delete('session', array('sid' => $sid));
     db_delete('session_data', array('sid' => $sid));
     return TRUE;
@@ -186,7 +177,6 @@ function sess_destroy($sid)
 function sess_gc($maxlifetime)
 {
     global $time;
-    // echo "sess_gc($maxlifetime) \r\n";
     $expiry = $time - $maxlifetime;
     db_delete('session', array('last_date' => array('<' => $expiry)));
     db_delete('session_data', array('last_date' => array('<' => $expiry)));
@@ -197,31 +187,33 @@ function sess_start()
 {
     global $conf, $sid, $g_session;
     ini_set('session.name', $conf['cookie_pre'] . 'sid');
-    ini_set('session.use_cookies', 'On');
-    ini_set('session.use_only_cookies', 'On');
+    ini_set('session.use_cookies', TRUE);
+    ini_set('session.use_only_cookies', TRUE);
     ini_set('session.cookie_domain', $conf['cookie_domain']);
-    ini_set('session.cookie_path', $conf['cookie_path']);    // 为空则表示当前目录和子目录
-    ini_set('session.cookie_secure', 'Off'); // 打开后只有通过 https 才有效。
+    // 为空则表示当前目录和子目录
+    ini_set('session.cookie_path', $conf['cookie_path']);
+    // 打开后只有通过 https 才有效
+    ini_set('session.cookie_secure', FALSE);
     ini_set('session.cookie_lifetime', 8640000);
-    ini_set('session.cookie_httponly', 'On'); // 打开后 js 获取不到 HTTP 设置的 cookie, 有效防止 XSS，对于安全很重要，除非有 BUG，否则不要关闭。
-
-    ini_set('session.gc_maxlifetime', $conf['online_hold_time']);    // 活动时间 $conf['online_hold_time']
-    ini_set('session.gc_probability', 1);    // 垃圾回收概率 = gc_probability/gc_divisor
-    ini_set('session.gc_divisor', 500);    // 垃圾回收时间 5 秒，在线人数 * 10
+    // 打开后 js 获取不到 HTTP 设置的 cookie, 有效防止 XSS，对于安全很重要，除非有 BUG，否则不要关闭。
+    ini_set('session.cookie_httponly', TRUE);
+    // 活动时间
+    ini_set('session.gc_maxlifetime', $conf['online_hold_time']);
+    // 垃圾回收概率 = gc_probability/gc_divisor
+    ini_set('session.gc_probability', 1);
+    // 垃圾回收时间 5 秒，在线人数 * 10
+    ini_set('session.gc_divisor', 500);
 
     session_set_save_handler('sess_open', 'sess_close', 'sess_read', 'sess_write', 'sess_destroy', 'sess_gc');
 
     // register_shutdown_function 会丢失当前目录，需要 chdir(APP_PATH)
-
-    // 这个比须有，否则 ZEND 会提前释放 $db 资源
+    $conf['url_rewrite_on'] > 1 AND function_exists('chdir') AND chdir(APP_PATH);
+    // 这个必须有，否则 ZEND 会提前释放 $db 资源
     register_shutdown_function('session_write_close');
 
     session_start();
-
     $sid = session_id();
 
-    //echo "sess_start() sid: $sid <br>\r\n";
-    //print_r(db_find('session'));
     return $sid;
 }
 

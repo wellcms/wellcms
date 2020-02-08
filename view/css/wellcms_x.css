@@ -63,7 +63,7 @@ html, body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    font-family: "Helvetica Neue", Helvetica, "Microsoft Yahei", "Hiragino Sans GB", "WenQuanYi Micro Hei", "微软雅黑", "华文细黑", STHeiti, sans-serif;
+    font-family: arial, "Microsoft Yahei", "Helvetica Neue", Helvetica, "Hiragino Sans GB", "WenQuanYi Micro Hei", "微软雅黑", STHeiti, sans-serif;
 }
 html, table {
     font-size: .9rem;
