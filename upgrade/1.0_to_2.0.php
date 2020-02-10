@@ -1,6 +1,6 @@
 <?php
 define('SKIP_ROUTE', 1);
-include './index.php';
+include '../index.php';
 
 $next = param('next', 0);
 
