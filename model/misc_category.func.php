@@ -8,36 +8,42 @@
 // 获取CMS全部栏目，包括频道的二叉树结构
 function category_tree($forumlist)
 {
-    $forumlist = arrlist_cond_orderby($forumlist, array('type' => 1), array(), 1, 1000);
-    $forumlist = category_tree_format($forumlist);
-    $forumlist = array_multisort_key($forumlist, 'rank', FALSE, 'fid');
-    return $forumlist;
+    static $cache = array();
+    if (!empty($cache)) return $cache;
+    $arrlist = arrlist_cond_orderby($forumlist, array('type' => 1), array(), 1, 1000);
+    $arrlist = category_tree_format($arrlist);
+    $cache = array_multisort_key($arrlist, 'rank', FALSE, 'fid');
+    return $cache;
 }
 
 // 门户 获取需要在频道显示的栏目 fid name index_new最新显示数量
 function channel_category($fid)
 {
     global $forumlist_show;
+    static $cache = array();
+    if (isset($cache[$fid])) return $cache[$fid];
     // hook model_category_show_start.php
     if (empty($forumlist_show[$fid])) return NULL;
     // hook model_category_show_before.php
     $forum = $forumlist_show[$fid];
     // hook model_category_show_after.php
-    $forum_show = $forum['son'] ? arrlist_cond_orderby($forumlist_show, array('fup' => $fid, 'type' => 1, 'category' => 0), array('fid' => -1), 1, 1000) : NULL;
+    $cache[$fid] = $forum['son'] ? arrlist_cond_orderby($forumlist_show, array('fup' => $fid, 'type' => 1, 'category' => 0), array('fid' => -1), 1, 1000) : NULL;
     // hook model_index_category_end.php
-    return $forum_show;
+    return $cache[$fid];
 }
 
 // 返回网站所有频道
 function all_channel($forumlist)
 {
+    static $cache = array();
+    if (!empty($cache)) return $cache;
     $channellist = arrlist_cond_orderby($forumlist, array('type' => 1, 'category' => 1), array(), 1, 100);
     $fidarr = arrlist_key_values($channellist, 'fid', 'name');
-    $arr = array('0' => lang('first_level_forum'));
+    $cache = array('0' => lang('first_level_forum'));
     foreach ($fidarr as $key => $v) {
-        $arr[$key] = $v;
+        $cache[$key] = $v;
     }
-    return $arr;
+    return $cache;
 }
 
 /**
@@ -65,7 +71,10 @@ function category_tree_format($forumlist)
  */
 function all_category($forumlist)
 {
-    return arrlist_cond_orderby($forumlist, array('type' => 1, 'category' => array('<' => 2)), array(), 1, 1000);
+    static $cache = array();
+    if (!empty($cache)) return $cache;
+    $cache = arrlist_cond_orderby($forumlist, array('type' => 1, 'category' => array('<' => 2)), array(), 1, 1000);
+    return $cache;
 }
 
 /**
@@ -76,25 +85,27 @@ function all_category($forumlist)
  */
 function category_list($forumlist, $display = 0, $category = 0)
 {
+    static $cache = array();
+    if (isset($cache[$display][$category])) return $cache[$display][$category];
     // hook model_category_list_start.php
-    $arrlist = array();
+    $cache[$display][$category] = array();
     if ($display) {
         foreach ($forumlist as $key => $val) {
             if ($val['display'] == 1 && $val['type'] == 1 && $val['category'] == $category) {
-                $arrlist[$key] = $val;
+                $cache[$display][$category][$key] = $val;
             }
         }
         // hook model_category_list_before.php
     } else {
         foreach ($forumlist as $key => $val) {
             if ($val['type'] == 1 && $val['category'] == $category) {
-                $arrlist[$key] = $val;
+                $cache[$display][$category][$key] = $val;
             }
         }
         // hook model_category_list_after.php
     }
     // hook model_category_list_end.php
-    return $arrlist;
+    return $cache[$display][$category];
 }
 
 /**
@@ -105,20 +116,24 @@ function forum_list($forumlist)
 {
     // hook model_forum_list_start.php
     if (empty($forumlist)) return array();
-    $arrlist = array();
+    static $cache = array();
+    if (!empty($cache)) return $cache;
+    $cache = array();
     foreach ($forumlist as $_fid => $_forum) {
         if ($_forum['type']) continue;
         // hook model_forum_list_before.php
-        $arrlist[$_fid] = $_forum;
+        $cache[$_fid] = $_forum;
         // hook model_forum_list_after.php
     }
     // hook model_forum_list_end.php
-    return $arrlist;
+    return $cache;
 }
 
 // 导航显示的版块
 function nav_list($forumlist)
 {
+    static $cache = array();
+    if (!empty($cache)) return $cache;
     // hook model_nav_list_start.php
     foreach ($forumlist as $fid => $forum) {
         if ($forum['nav_display'] == 0) {
@@ -127,7 +142,7 @@ function nav_list($forumlist)
         // hook model_nav_list_before.php
     }
     // hook model_nav_list_end.php
-    return $forumlist;
+    return $cache = $forumlist;
 }
 
 // hook model_misc_category_end.php
