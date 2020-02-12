@@ -27,7 +27,7 @@
 第五、禁用所有插件conf/conf.php打开修改disabled_plugin值为1
 
 第六、激动人心的时刻，打开
-http://www.x.cn/tool/upgrade.php
+http://www.x.cn/tool/1.0_to_2.0.php
 自动执行升级。
 
 升级完成后，用支持utf8文件编辑的软件修改/conf/conf.php文件
