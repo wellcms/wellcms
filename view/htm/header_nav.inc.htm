@@ -1,5 +1,5 @@
 	<!--{hook header_nav_start.htm}-->
-	<header class="navbar navbar-expand-lg navbar-dark bg-dark-blue" id="header">
+	<header class="navbar navbar-expand-lg navbar-dark bg-dark-blue py-1" id="header">
 		<div class="container">
 			<button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#nav" aria-controls="navbar_collapse" aria-expanded="false" aria-label="<?php echo lang('toggler_menu');?>">
 				<span class="navbar-toggler-icon"></span>
@@ -50,9 +50,21 @@
 				<!-- 右侧：用户 -->
 				<ul class="navbar-nav">
                     <!-- 搜索 -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo url('operate-search');?>"><i class="icon-search"></i>&nbsp;<?php echo lang('search');?></a>
-                    </li>
+					<li class="nav-item">
+						<div class="form-group px-2 mb-0 mt-2">
+							<form action="<?php echo url('operate-search'); ?>" id="search">
+								<div class="input-group input-group-sm mb-0">
+									<input type="text" class="form-control" placeholder="<?php echo lang('keyword'); ?>" name="keyword" value="">
+									<input type="hidden" name="range" value="1">
+									<div class="input-group-append">
+										<button class="btn btn-secondary btn-search-sm" type="submit" id="submit">
+											<i class="icon-search"></i>
+										</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</li>
 					<!--{hook header_nav_user_start.htm}-->
 				<?php if(empty($uid)) { ?>
 					<li class="nav-item"><a class="nav-link" rel="nofollow" href="<?php echo url('user-login');?>"><i class="icon-user"></i>&nbsp;<?php echo lang('login');?></a></li>

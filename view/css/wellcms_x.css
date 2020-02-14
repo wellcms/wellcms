@@ -58,7 +58,7 @@
     --royal-blue: #082567;/*宝蓝色*/
     --sage-blue: #4d80e6;/*鼠尾草蓝*/
 }
-body{margin: 0;background: var(--gray-200);font-size: 1.07rem;} /*rgb(232, 232, 232);*/
+body{margin: 0;background: var(--gray-200);font-size: 1.07rem;}
 html, body {
     height: 100%;
     display: flex;
@@ -911,4 +911,8 @@ select option {
 }
 .nav-block{right:0;top:45%;width: 20px;height: 60px;z-index:999;}
 .button-hide{left:-20px;}
-.dropdown-menu{min-width: auto;}
+.dropdown-menu{min-width: inherit;}
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255,255,255,.6);
+    font-size: 16px;
+}
