@@ -383,9 +383,9 @@ function comment_highlight_keyword($str, $k)
 // <blockquote class="blockquote">
 function comment_message_format(&$s)
 {
-    if(xn_strlen($s) < 100) return;
+    if (xn_strlen($s) < 100) return;
     $s = preg_replace('#<blockquote\s+class="blockquote">.*?</blockquote>#is', '', $s);
-    $s = str_ireplace(array('<br>', '<br />', '<br/>', '</p>', '</tr>', '</div>', '</li>', '</dd>'. '</dt>'), "\r\n", $s);
+    $s = str_ireplace(array('<br>', '<br />', '<br/>', '</p>', '</tr>', '</div>', '</li>', '</dd>' . '</dt>'), "\r\n", $s);
     $s = str_ireplace(array('&nbsp;'), " ", $s);
     $s = strip_tags($s);
     $s = preg_replace('#[\r\n]+#', "\n", $s);
