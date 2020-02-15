@@ -51,19 +51,7 @@
 				<ul class="navbar-nav">
                     <!-- 搜索 -->
 					<li class="nav-item">
-						<div class="form-group px-2 mb-0 mt-2">
-							<form action="<?php echo url('operate-search'); ?>" id="search">
-								<div class="input-group input-group-sm mb-0">
-									<input type="text" class="form-control" placeholder="<?php echo lang('keyword'); ?>" name="keyword" value="">
-									<input type="hidden" name="range" value="1">
-									<div class="input-group-append">
-										<button class="btn btn-secondary btn-search-sm" type="submit" id="submit">
-											<i class="icon-search"></i>
-										</button>
-									</div>
-								</div>
-							</form>
-						</div>
+						<a class="nav-link" href="<?php echo url('operate-search');?>"><i class="icon-search"></i></a>
 					</li>
 					<!--{hook header_nav_user_start.htm}-->
 				<?php if(empty($uid)) { ?>
