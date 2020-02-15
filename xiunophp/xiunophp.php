@@ -40,7 +40,6 @@ if(IN_CMD) {
 
 include XIUNOPHP_PATH.'db_mysql.class.php';
 include XIUNOPHP_PATH.'db_pdo_mysql.class.php';
-include XIUNOPHP_PATH.'db_pdo_sqlite.class.php';
 include XIUNOPHP_PATH.'cache_apc.class.php';
 include XIUNOPHP_PATH.'cache_memcached.class.php';
 include XIUNOPHP_PATH.'cache_mysql.class.php';
@@ -52,7 +51,6 @@ include XIUNOPHP_PATH.'cache_yac.class.php';
 
 include XIUNOPHP_PATH.'db.func.php';
 include XIUNOPHP_PATH.'cache.func.php';
-include XIUNOPHP_PATH.'image.func.php';
 include XIUNOPHP_PATH.'array.func.php';
 include XIUNOPHP_PATH.'xn_encrypt.func.php';
 include XIUNOPHP_PATH.'misc.func.php';
