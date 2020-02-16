@@ -40,6 +40,7 @@ if ($action == 'base') {
 
         $sitebrief = param('sitebrief', '', FALSE);
         $sitename = param('sitename', '', FALSE);
+        $sitename = trim($sitename);
         $runlevel = param('runlevel', 0);
         $user_create_on = param('user_create_on', 0);
         $user_create_email_on = param('user_create_email_on', 0);

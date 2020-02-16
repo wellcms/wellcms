@@ -228,10 +228,9 @@ if ($action == 'list') {
 
         // hook admin_content_create_post_access_after.php
 
-        $subject = param('subject', '', FALSE);
-
-        empty($subject) ? message('subject', lang('please_input_subject')) : $subject = xn_html_safe(filter_all_html($subject));
-
+        $subject = param('subject');
+        $subject = filter_all_html($subject);
+        empty($subject) AND message('subject', lang('please_input_subject'));
         xn_strlen($subject) > 128 AND message('subject', lang('subject_length_over_limit', array('maxlength' => 128)));
         // 过滤标题 关键词
 
@@ -254,6 +253,7 @@ if ($action == 'list') {
         $message = $_message = '';
         if ($link == 0) {
             $message = param('message', '', FALSE);
+            $message = trim($message);
             empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
 
             // 过滤所有html标签
@@ -268,9 +268,6 @@ if ($action == 'list') {
 
         $brief = param('brief');
         if ($brief) {
-
-            $brief = xn_html_safe(filter_all_html($brief));
-
             // 过滤简介 关键词
             // hook admin_content_create_post_brief_before.php
 
@@ -282,7 +279,6 @@ if ($action == 'list') {
         // hook admin_content_create_post_brief_end.php
 
         $keyword = param('keyword');
-        $keyword = xn_html_safe(filter_all_html($keyword));
         // 过滤内容 关键词
         // hook admin_content_create_post_keyword_before.php
         // 超出则截取
@@ -291,7 +287,6 @@ if ($action == 'list') {
         // hook admin_content_create_post_description_before.php
 
         $description = param('description');
-        $description = xn_html_safe(filter_all_html($description));
         // 过滤内容 关键词
         // hook admin_content_create_post_description_center.php
         // 超出则截取
@@ -300,7 +295,7 @@ if ($action == 'list') {
         // hook admin_content_create_post_description_after.php
 
         $tags = param('tags', '', FALSE);
-        $tags = xn_html_safe(filter_all_html(trim($tags, ',')));
+        $tags = xn_html_safe(filter_all_html($tags));
         // 过滤标签 关键词
         // hook admin_content_create_post_tag_center.php
 
@@ -471,8 +466,9 @@ if ($action == 'list') {
 
         $arr = array();
 
-        $subject = param('subject', '', FALSE);
-        empty($subject) ? message('subject', lang('please_input_subject')) : $subject = xn_html_safe(filter_all_html($subject));
+        $subject = param('subject');
+        $subject = filter_all_html($subject);
+        empty($subject) AND message('subject', lang('please_input_subject'));
 
         xn_strlen($subject) > 128 AND message('subject', lang('subject_length_over_limit', array('maxlength' => 128)));
         // 过滤标题 关键词
@@ -509,6 +505,7 @@ if ($action == 'list') {
         $message = $_message = '';
         if ($link == 0) {
             $message = param('message', '', FALSE);
+            $message = trim($message);
             empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
 
             $_message = filter_all_html($message);
@@ -522,9 +519,6 @@ if ($action == 'list') {
         $brief_auto = param('brief_auto', 0);
         $brief = param('brief');
         if ($brief) {
-
-            $brief = xn_html_safe(filter_all_html($brief));
-
             // 过滤简介 关键词
             // hook admin_content_update_post_brief_before.php
 
@@ -540,7 +534,6 @@ if ($action == 'list') {
         // hook admin_content_update_post_keyword_before.php
 
         $keyword = param('keyword');
-        $keyword = xn_html_safe(filter_all_html($keyword));
         // 过滤内容 关键词
         // hook admin_content_update_post_keyword_center.php
         // 超出则截取
@@ -551,7 +544,6 @@ if ($action == 'list') {
         // hook admin_content_update_post_keyword_after.php
 
         $description = param('description');
-        $description = xn_html_safe(filter_all_html($description));
         // 过滤内容 关键词
         // hook admin_content_update_post_description_before.php
         // 超出则截取
@@ -614,7 +606,7 @@ if ($action == 'list') {
         // hook admin_content_update_post_attach_after.php
 
         $tags = param('tags', '', FALSE);
-        $tags = xn_html_safe(filter_all_html(trim($tags, ',')));
+        $tags = xn_html_safe(filter_all_html($tags));
         // 过滤标签 关键词
         // hook admin_content_update_post_tag_center.php
 

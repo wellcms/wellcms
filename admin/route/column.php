@@ -118,27 +118,25 @@ if (empty($action) || $action == 'list') {
 
         // hook admin_column_create_post_start.php
 
-        $name = param('name', '', FALSE);
-        empty($name) AND message(1, lang('data_empty_to_last_step'));
+        $name = param('name');
         $name = filter_all_html($name);
-        $name = xn_html_safe($name);
+        empty($name) AND message(1, lang('data_empty_to_last_step'));
+ 
         $rank = param('rank', 0);
         $brief = param('brief', '', FALSE);
         $brief = xn_html_safe($brief);
         $announcement = param('announcement', '', FALSE);
         $announcement = xn_html_safe($announcement);
         $accesson = param('accesson', 0);
-        $modnames = param('modnames', '', FALSE);
+        $modnames = param('modnames');
         $moduids = user_names_to_ids($modnames);
         $nav_display = param('nav_display', 0);
         $model = param('model', 0);
         $width = param('width', 170);
         $height = param('height', 113);
         $thumbnail = json_encode(array('width' => $width, 'height' => $height));
-        $seo_title = param('seo_title', '', FALSE);
-        $seo_title = filter_all_html($seo_title);
-        $seo_keywords = param('seo_keywords', '', FALSE);
-        $seo_keywords = filter_all_html($seo_keywords);
+        $seo_title = param('seo_title');
+        $seo_keywords = param('seo_keywords');
         // 0列表 1频道 2单页 3外链
         $category = param('category', 0);
         $fup = param('fup', 0);
@@ -271,7 +269,6 @@ if (empty($action) || $action == 'list') {
         $catearr = array(lang('first_level_forum'), lang('channel'), lang('single_page'), lang('outer_chain'));
         // hook admin_column_update_get_catearr_after.php
         $fup = $_forum['fup'];
-        //$old_fup = $_forum['fup']; // 提交时直接比对旧数据
         $model = $_forum['model'];
         $nav_display = $_forum['nav_display'];
         $comment = $_forum['comment'];
@@ -307,10 +304,10 @@ if (empty($action) || $action == 'list') {
 
         // hook admin_column_update_post_start.php
 
-        $name = param('name', '', FALSE);
-        empty($name) AND message(1, lang('data_empty_to_last_step'));
+        $name = param('name');
         $name = filter_all_html($name);
-        $name = xn_html_safe($name);
+        empty($name) AND message(1, lang('data_empty_to_last_step'));
+
         $rank = param('rank', 0);
         $brief = param('brief', '', FALSE);
         $brief = xn_html_safe($brief);
@@ -324,10 +321,8 @@ if (empty($action) || $action == 'list') {
         $width = param('width', 170);
         $height = param('height', 113);
         $thumbnail = json_encode(array('width' => $width, 'height' => $height));
-        $seo_title = param('seo_title', '', FALSE);
-        $seo_title = filter_all_html($seo_title);
-        $seo_keywords = param('seo_keywords', '', FALSE);
-        $seo_keywords = filter_all_html($seo_keywords);
+        $seo_title = param('seo_title');
+        $seo_keywords = param('seo_keywords');
 
         // 有主题 有子版块 单页 外链 都不修改该值
         $category = ($_forum['threads'] || $_forum['son'] || in_array($_forum['category'], array(2,3))) ? $_forum['category'] : param('category', 0);

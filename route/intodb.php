@@ -40,8 +40,9 @@ if ($method == 'GET') {
     $r = forum_access_user($fid, $user['gid'], 'allowthread');
     empty($r) AND exit(lang('user_group_insufficient_privilege'));
 
-    $subject = param('subject', '', FALSE);
-    empty($subject) ? exit(lang('please_input_subject')) : $subject = xn_html_safe(filter_all_html($subject));
+    $subject = param('subject');
+    $subject = filter_all_html($subject);
+    empty($subject) AND exit(lang('please_input_subject'));
 
     xn_strlen($subject) > 128 AND exit(lang('subject_length_over_limit', array('maxlength' => 128)));
     // 过滤标题 关键词
@@ -60,30 +61,28 @@ if ($method == 'GET') {
     $message = $_message = '';
     if ($link == 0) {
         $message = param('message', '', FALSE);
+        $message = trim($message);
         empty($message) ? exit(lang('please_input_message')) : xn_strlen($message) > 2028000 AND exit(lang('message_too_long'));
         $_message = filter_all_html($message);
     }
 
     $brief = param('brief');
     if ($brief) {
-        $brief = xn_html_safe(filter_all_html($brief));
         xn_strlen($brief) > 120 AND $brief = xn_substr($brief, 0, 120);
     } else {
         $brief = ($brief_auto AND $_message) ? xn_html_safe(xn_substr($_message, 0, 120)) : '';
     }
 
     $keyword = param('keyword');
-    $keyword = xn_html_safe(filter_all_html($keyword));
     // 超出则截取
     xn_strlen($keyword) > 64 AND $keyword = xn_substr($keyword, 0, 64);
 
     $description = param('description');
-    $description = xn_html_safe(filter_all_html($description));
     // 超出则截取
     xn_strlen($description) > 120 AND $description = xn_substr($description, 0, 120);
 
     $tags = param('tags', '', FALSE);
-    $tags = xn_html_safe(filter_all_html(trim($tags, ',')));
+    $tags = xn_html_safe(filter_all_html($tags));
 
     // 首页flag
     $flag_index_arr = array_filter(param('index', array()));

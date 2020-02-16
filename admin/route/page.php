@@ -179,8 +179,8 @@ if ($action == 'list') {
         // hook admin_page_create_post_center.php
 
         $subject = param('subject');
-
-        empty($subject) ? message('subject', lang('please_input_subject')) : $subject = filter_all_html($subject);
+        $subject = filter_all_html($subject);
+        empty($subject) AND message('subject', lang('please_input_subject'));
 
         xn_strlen($subject) > 128 AND message('subject', lang('subject_length_over_limit', array('maxlength' => 128)));
         // 过滤标题 关键词
@@ -193,8 +193,9 @@ if ($action == 'list') {
         // hook admin_page_create_post_before.php
 
         $message = param('message', '', FALSE);
+        $message = trim($message);
         empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
-
+        
         $message = xn_html_safe($message);
 
         // 过滤内容 关键词
@@ -278,9 +279,8 @@ if ($action == 'list') {
         $arr = array();
 
         $subject = param('subject');
-        //empty($subject) AND message('subject', lang('please_input_subject'));
-        //$subject = strip_tags($subject);
-        empty($subject) ? message('subject', lang('please_input_subject')) : $subject = strip_tags($subject);
+        $subject = filter_all_html($subject);
+        empty($subject) AND message('subject', lang('please_input_subject'));
 
         xn_strlen($subject) > 128 AND message('subject', lang('subject_length_over_limit', array('maxlength' => 128)));
         // 过滤标题 关键词
@@ -304,10 +304,7 @@ if ($action == 'list') {
         // hook admin_page_update_post_message_before.php
 
         $message = param('message', '', FALSE);
-        //empty($message) AND message('message', lang('please_input_message'));
-        // 超出提示
-        //xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
-
+        $message = trim($message);
         empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
 
         $message = xn_html_safe($message);

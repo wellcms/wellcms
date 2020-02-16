@@ -150,7 +150,7 @@ function param_force($val, $defval, $htmlspecialchars = TRUE, $addslashes = FALS
                         //$v = trim($v);
                         $addslashes AND !$get_magic_quotes_gpc && $v = addslashes($v);
                         !$addslashes AND $get_magic_quotes_gpc && $v = stripslashes($v);
-                        $htmlspecialchars AND $v = htmlspecialchars($v);
+                        $htmlspecialchars AND $v = htmlspecialchars($v, ENT_QUOTES);
                     } else {
                         $v = intval($v);
                     }
@@ -167,7 +167,7 @@ function param_force($val, $defval, $htmlspecialchars = TRUE, $addslashes = FALS
                 //$val = trim($val);
                 $addslashes AND !$get_magic_quotes_gpc && $val = addslashes($val);
                 !$addslashes AND $get_magic_quotes_gpc && $val = stripslashes($val);
-                $htmlspecialchars AND $val = htmlspecialchars($val);
+                $htmlspecialchars AND $val = htmlspecialchars($val, ENT_QUOTES);
             } else {
                 $val = intval($val);
             }

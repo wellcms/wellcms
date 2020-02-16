@@ -128,6 +128,7 @@ if (empty($action)) {
         // hook user_login_post_start.php
 
         $email = param('email'); // 邮箱或者手机号 / email or mobile
+        $email = filter_all_html($email);
         $password = param('password');
         empty($email) AND message('email', lang('email_is_empty'));
         if (is_email($email, $err)) {
@@ -183,7 +184,9 @@ if (empty($action)) {
         $username = param('username');
         $password = param('password');
         $code = param('code');
+        $email = filter_all_html($email);
         empty($email) AND message('email', lang('please_input_email'));
+        $username = filter_all_html($username);
         empty($username) AND message('username', lang('please_input_username'));
         empty($password) AND message('password', lang('please_input_password'));
 

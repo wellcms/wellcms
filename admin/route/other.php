@@ -211,7 +211,7 @@ EOT;
 
         // hook admin_other_map_post_start.php
 
-        $map = param('map', '', FALSE);
+        $map = param('map');
         // 英文 数字 下划线及三种组合 不支持其他字符
         !preg_match('#^[\w]*$#i', $map) AND message(1, lang('english_number_tips'));
 
@@ -426,13 +426,9 @@ EOT;
         $type = param('type', 0);
 
         if ($type == 1) {
-            $name = param('name', '', FALSE);
+            $name = param('name');
             $name = filter_all_html($name);
-            $name = xn_html_safe($name);
-
-            $url = param('url', '', FALSE);
-            $url = filter_all_html($url);
-            $url = xn_html_safe($url);
+            $url = param('url');
 
             link_create(array('name' => $name, 'url' => $url, 'create_date' => $time)) === FALSE AND message(-1, lang('create_failed'));
 

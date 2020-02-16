@@ -159,9 +159,8 @@ if ($action == 'list') {
         // hook admin_flag_create_post_start.php
 
         $fid = param('fid', 0);
-        $name = param('name', '', FALSE);
-
-        $name = strip_tags(trim($name));
+        $name = param('name');
+        $name = filter_all_html($name);
         empty($name) AND message('name', lang('flag_empty'));
 
         $name = htmlspecialchars($name);
@@ -287,8 +286,8 @@ if ($action == 'list') {
         // hook admin_flag_update_post_start.php
 
         $update = array();
-        $name = param('name', '', FALSE);
-        $name = htmlspecialchars(strip_tags($name));
+        $name = param('name');
+        $name = filter_all_html($name);
         if ($name && $name != $read['name']) {
             // 查询该属性是否存在
             flag_read_by_name_and_fid($name, $read['fid']) AND message('name', lang('flag_existed'));
