@@ -140,41 +140,46 @@ function forum_format(&$forum)
     $forum['create_date_fmt'] = date('Y-n-j', $forum['create_date']);
     $forum['icon_url'] = $forum['icon'] ? forum_file_path() . "forum/$forum[fid].png" : forum_view_path() . 'img/forum.png';
     $forum['accesslist'] = $forum['accesson'] ? forum_access_find_by_fid($forum['fid']) : array();
+
     $forum['modlist'] = array();
     if ($forum['moduids']) {
         $modlist = user_find_by_uids($forum['moduids']);
         foreach ($modlist as &$mod) $mod = user_safe_info($mod);
         $forum['modlist'] = $modlist;
     }
+
     // hook model_forum_format_before.php
-    if ($forum['flagstr']) {
-        $flaglist = flag_forum_show($forum['fid']);
-        if ($flaglist) {
-            foreach ($flaglist as $key => $val) {
-                unset($val['fid']);
-                unset($val['rank']);
-                unset($val['count']);
-                unset($val['number']);
-                unset($val['display']);
-                unset($val['create_date']);
-                unset($val['create_date_text']);
-                unset($val['display_text']);
-                unset($val['forum_name']);
-                unset($val['title']);
-                unset($val['keywords']);
-                unset($val['description']);
-                unset($val['forum_url']);
-                unset($val['i']);
-                unset($val['tpl']);
-            }
-            $forum['flagstr_text'] = array_multisort_key($flaglist, 'rank', FALSE, 'flagid');
-        }
-    }
-    $forum['thumbnail'] = $forum['thumbnail'] ? json_decode($forum['thumbnail'], true) : '';
 
-    // hook model_forum_format_center.php
-
+    // type = 0BBS 1CMS
     if ($forum['type']) {
+        // CMS需要格式化的
+        if ($forum['flagstr']) {
+            $flaglist = flag_forum_show($forum['fid']);
+            if ($flaglist) {
+                foreach ($flaglist as $key => $val) {
+                    unset($val['fid']);
+                    unset($val['rank']);
+                    unset($val['count']);
+                    unset($val['number']);
+                    unset($val['display']);
+                    unset($val['create_date']);
+                    unset($val['create_date_text']);
+                    unset($val['display_text']);
+                    unset($val['forum_name']);
+                    unset($val['title']);
+                    unset($val['keywords']);
+                    unset($val['description']);
+                    unset($val['forum_url']);
+                    unset($val['i']);
+                    unset($val['tpl']);
+                }
+                $forum['flagstr_text'] = array_multisort_key($flaglist, 'rank', FALSE, 'flagid');
+            }
+        }
+        $forum['thumbnail'] = $forum['thumbnail'] ? json_decode($forum['thumbnail'], true) : '';
+
+        // hook model_forum_format_center.php
+
         if ($forum['category'] == 0) {
             $forum['url'] = url('list-' . $forum['fid']);
         } elseif ($forum['category'] == 1) {

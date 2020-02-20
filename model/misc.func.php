@@ -368,6 +368,12 @@ function url_path()
     return $path;
 }
 
+// 格式化数字 1k
+function format_number($number)
+{
+    return $number ? ($number / 1000) . 'k' : $number;
+}
+
 //------------- cache and cookie set / start--------------
 function cookie_set($key, $value, $life = 8640000)
 {

@@ -209,4 +209,7 @@ function well_image_clip($sourcefile, $destfile, $clipx, $clipy, $clipwidth, $cl
     return $n;
 }
 
+function well_image_ext($filename) {
+    return strtolower(substr(strrchr($filename, '.'), 1));
+}
 ?>

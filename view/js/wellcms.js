@@ -1,3 +1,12 @@
+/* 搜索使用 */
+$('#form-search').on('submit', function() {
+    var jthis = $(this);
+    var range = jthis.find('input[name="range"]').val();
+    var keyword = jthis.find('input[name="keyword"]').val();
+    window.location = xn.url('operate-search-' + xn.urlencode(keyword) + '-' + range);
+    return false;
+});
+
 /*表单快捷键提交 CTRL+ENTER   / form quick submit*/
 $('form').keyup(function (e) {
     var jthis = $(this);

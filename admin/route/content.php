@@ -196,18 +196,14 @@ if ($action == 'list') {
 
         // 过滤版块相关数据
         $forumlist = forum_filter($forumlist);
-
+        
         // hook admin_content_create_get_template.php
 
         // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
-        /*if ($model == 0) {
-            // 加载
+        if ($model == 0) {
             include _include(ADMIN_PATH . 'view/htm/content_post.htm');
-            exit;
-        }*/
-
-        include _include(ADMIN_PATH . 'view/htm/content_post.htm');
-
+        }
+        
         // hook admin_content_create_get_end.php
 
     } elseif ($method == 'POST') {
@@ -365,7 +361,7 @@ if ($action == 'list') {
     $_fid = param('fid', 0);
     $page = param(3, 0);
 
-    $thread = well_thread_read_cache($tid);
+    $thread = well_thread_read($tid);
     empty($thread) AND message(-1, lang('thread_not_exists'));
     $fid = $thread['fid'];
 
@@ -450,14 +446,10 @@ if ($action == 'list') {
         // hook admin_content_update_get_template.php
 
         // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
-        /*if ($model == 0) {
-            // 加载
+        if ($model == 0) {
             include _include(ADMIN_PATH . 'view/htm/content_post.htm');
-            exit;
-        }*/
-
-        include _include(ADMIN_PATH . 'view/htm/content_post.htm');
-
+        }
+        
         // hook admin_content_update_get_end.php
 
     } elseif ($method == 'POST') {
@@ -583,10 +575,12 @@ if ($action == 'list') {
             // Ym变更删除旧图
             $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
             $old_day = $thread['icon'] ? date($attach_dir_save_rule, $thread['icon']) : '';
-            $day = date($attach_dir_save_rule, $time);
-            if ($day != $old_day || $delete_pic) {
+
+            // hook admin_content_update_post_unlink_before.php
+
+            if ($delete_pic || $upload_thumbnail) {
                 $file = $conf['upload_path'] . 'thumbnail/' . $old_day . '/' . $thread['uid'] . '_' . $tid . '_' . $thread['icon'] . '.jpeg';
-                file_exists($file) AND unlink($file);
+                is_file($file) AND unlink($file);
             }
 
             // hook admin_content_update_post_unlink_after.php
@@ -595,8 +589,8 @@ if ($action == 'list') {
                 $arr['icon'] = 0;
             } else {
                 $arr['icon'] = $time;
-                // 关联主图 type 0或空内容图片或附件 1:内容主图 8:节点主图 9:节点tag主图 教练套课主图
-                $thumbnail = array('tid' => $tid, 'uid' => $uid, 'type' => 0);
+                // 关联主图 assoc thumbnail主题主图 post:内容图片或附件
+                $thumbnail = array('tid' => $tid, 'uid' => $uid, 'type' => $arr['type'], 'assoc' => 'thumbnail');
                 // hook admin_content_update_post_attach_before.php
                 well_attach_assoc_post($thumbnail);
                 unset($thumbnail);
@@ -653,8 +647,8 @@ if ($action == 'list') {
             $save_image = param('save_image', 0);
             $save_image AND $message = well_save_remote_image(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid, 'message' => $message));
 
-            // 关联附件
-            $attach = array('tid' => $tid, 'uid' => $uid, 'type' => 1, 'images' => $thread['images'], 'files' => $thread['files'], 'message' => $message);
+            // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
+            $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => $thread['images'], 'files' => $thread['files'], 'message' => $message);
             $message = well_attach_assoc_post($attach);
             unset($attach);
 

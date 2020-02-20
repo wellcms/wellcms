@@ -69,32 +69,33 @@ function well_thread_count($cond = array(), $d = NULL)
 
 function well_thread_create($arr)
 {
-    global $conf, $time, $longip, $gid, $uid, $forumlist;
+    global $conf, $time, $longip, $gid, $uid, $forumlist, $config;
 
     if (empty($arr)) return FALSE;
 
     // hook model__thread_create_start.php
 
-    $fid = $arr['fid'];
+    $fid = array_value($arr, 'fid', 0);
+    $forum = array_value($forumlist, $fid);
     $message = array_value($arr, 'message');
-    $thumbnail = array_value($arr, 'thumbnail', 0); // 获取内容主图
+    $thumbnail = array_value($arr, 'thumbnail', 0); // 内容主图
     $delete_pic = array_value($arr, 'delete_pic', 0); // 删除主图
     $save_image = array_value($arr, 'save_image', 0); // 图片本地化
     $doctype = array_value($arr, 'doctype', 0);
+    $type = array_value($arr, 'type', 0);
 
     // hook model__thread_create_before.php
 
     // 创建主题
-    $thread = array('fid' => $fid, 'subject' => $arr['subject'], 'type' => $arr['type'], 'brief' => $arr['brief'], 'uid' => $uid, 'create_date' => $time, 'closed' => $arr['closed'], 'keyword' => $arr['keyword'], 'description' => $arr['description'], 'last_date' => $time, 'userip' => $longip, 'attach_on' => $conf['attach_on'], 'flags' => $arr['flags']);
+    $thread = array('fid' => $fid, 'subject' => $arr['subject'], 'type' => $type, 'brief' => $arr['brief'], 'uid' => $uid, 'create_date' => $time, 'closed' => $arr['closed'], 'keyword' => $arr['keyword'], 'description' => $arr['description'], 'last_date' => $time, 'userip' => $longip, 'attach_on' => $conf['attach_on'], 'flags' => $arr['flags']);
 
     // hook model__thread_create_thread_after.php
 
-    $upload_thumbnail = well_attach_assoc_type(0); // 缩略图主图
-    $upload_file = well_attach_assoc_type(1); // 内容附件
+    $upload_thumbnail = well_attach_assoc_type('thumbnail'); // 缩略图主图
+    $upload_file = well_attach_assoc_type('post'); // 内容附件
 
     // hook model__thread_create_center.php
 
-    //(empty($delete_pic) AND !empty($upload_thumbnail) OR (empty($delete_pic) AND $thumbnail AND !empty($upload_file))) AND $thread['icon'] = $time;
     if (empty($delete_pic)) {
         if (!empty($upload_thumbnail)) {
             $thread['icon'] = $time;
@@ -112,7 +113,7 @@ function well_thread_create($arr)
 
     // hook model__thread_create_after.php
 
-    // 关联主图 type 0内容主图 1:内容图片或附件 8:节点主图 9:节点tag主图
+    // 关联主图 assoc:thumbnail
     $create_thumbnail = 0;
     if (empty($delete_pic)) {
         // 没上传主图 内容中有上传图片附件
@@ -123,7 +124,8 @@ function well_thread_create($arr)
             $thumbnail AND well_attach_create_thumbnail($arr);
         } elseif (!empty($upload_thumbnail)) {
             // 上传了主图
-            $arr = array('tid' => $tid, 'uid' => $uid, 'type' => 0);
+            // hook model__thread_create_thumbnail_center.php
+            $arr = array('tid' => $tid, 'uid' => $uid, 'type' => $type, 'assoc' => 'thumbnail');
             // hook model__thread_create_thumbnail_after.php
             well_attach_assoc_post($arr);
             unset($arr);
@@ -141,7 +143,7 @@ function well_thread_create($arr)
     // hook model__thread_create_attach_before.php
 
     // 关联附件
-    $attach = array('tid' => $tid, 'uid' => $uid, 'type' => 1, 'images' => 0, 'files' => 0, 'message' => $message);
+    $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => 0, 'files' => 0, 'message' => $message);
     // hook model__thread_create_attach_before.php
     $message = well_attach_assoc_post($attach);
     unset($attach);
@@ -159,7 +161,7 @@ function well_thread_create($arr)
 
     $forum_update = array('threads+' => 1, 'todaythreads+' => 1);
     // hook model__thread_create_forum_update_before.php
-    forum_update($fid, $forum_update);
+    $fid AND forum_update($fid, $forum_update);
     unset($forum_update);
 
     // hook model__thread_create_verify_before.php
@@ -167,26 +169,44 @@ function well_thread_create($arr)
     // 我的主题 审核成功写入该表 website_thread_tid表
     if (!group_access($gid, 'publishverify') || group_access($gid, 'managecreatethread')) {
 
-        thread_tid_create(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid));
+        // hook model__thread_create_tid_start.php
+        if (array_value($forum, 'model') == 0) {
+            // hook model__thread_create_tid_before.php
+            thread_tid_create(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid));
+            // hook model__thread_create_tid_center.php
+            $user_update = array('articles+' => 1);
+            // hook model__thread_create_tid_after.php
+        }
+        // hook model__thread_create_tid_end.php
 
         // 更新统计数据
-        user_update($uid, array('articles+' => 1));
+        !empty($user_update) AND user_update($uid, $user_update);
 
         // hook model__thread_create_verify_middle.php
     } else {
         // 待审核 / Waiting for verification
-        // hook model__thread_create_waiting_for_verify.php
+        // hook model__thread_create_tid_verify_start.php
+        if (array_value($forum, 'model') == 0) {
+            // hook model__thread_create_tid_verify_before.php
+        }
+        // hook model__thread_create_tid_verify_end.php
     }
 
     // hook model__thread_create_verify_after.php
 
     // 全站内容数
-    runtime_set('articles+', 1);
-    runtime_set('todayarticles+', 1);
+    if (array_value($forum, 'model') == 0) {
+        runtime_set('articles+', 1);
+        runtime_set('todayarticles+', 1);
+    }
 
-    // 删除首页所有缓存
-    cache_delete('portal_index_thread');
-    cache_delete('portal_channel_thread_' . $fid);
+    // hook model__thread_create_articles_after.php
+
+    // 门户模式删除首页所有缓存
+    if (array_value($config, 'model') == 1) {
+        cache_delete('portal_index_thread');
+        $fid AND cache_delete('portal_channel_thread_' . $fid);
+    }
 
     // hook model__thread_create_end.php
 
@@ -536,7 +556,7 @@ function well_thread_delete_all($tid)
     // hook model_thread_delete_all_forum_update_before.php
 
     // 更新统计
-    forum_update($thread['fid'], $forumupdate);
+    $thread['fid'] AND forum_update($thread['fid'], $forumupdate);
 
     // hook model_thread_delete_all_runtime_set_before.php
 
@@ -621,11 +641,11 @@ function well_thread_delete_all_by_uid($uid)
         // 回复数 版块表以及删除此字段
         //$forum_pids = array_count_values($forum_pids);
         // hook model__thread_delete_all_forum_update_before.php
-        foreach ($forum_tids as $k => $v) {
-            $update = array('threads-' => $v);
+        foreach ($forum_tids as $_fid => $n) {
+            $update = array('threads-' => $n);
             //!empty($forum_pids) AND $update['posts'] = $forum_pids[$k];
             // hook model__thread_delete_all_forum_update_middle.php
-            forum_update($k, $update);
+            $_fid AND forum_update($_fid, $update);
         }
         // hook model__thread_delete_all_forum_update_after.php
     }

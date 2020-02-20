@@ -6,7 +6,7 @@
 	<div class="col-lg-10 mx-auto">
 		<div class="card">
 			<div class="card-body">
-				<form action="<?php echo url('operate-search');?>" id="form">
+				<form action="<?php echo url('operate-search');?>" id="form-search">
 					<div class="input-group mb-3">
 						<input type="text" class="form-control" placeholder="<?php echo lang('keyword');?>" name="keyword" value="<?php echo $keyword_decode;?>">
 						<div class="input-group-append">
@@ -89,17 +89,6 @@
 <?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-var jform = $('#form');
-var jsubmit = $('#submit');
-var jrange = jform.find('input[name="range"]');
-var jkeyword = jform.find('input[name="keyword"]');
-jform.on('submit', function() {
-	var range = jrange.checked();
-	var keyword = jkeyword.val();
-	window.location = xn.url('operate-search-' + xn.urlencode(keyword) + '-' + range);
-	return false;
-});
-
 $('#nav_pc li[fid="<?php echo $fid;?>"]').addClass('active');
 </script>
 

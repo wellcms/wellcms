@@ -79,33 +79,34 @@ function all_category($forumlist)
 
 /**
  * @param $forumlist    所有版块列表
+ * @param int $model 0文章
  * @param int $display 0全部CMS栏目 1在首页和频道显示内容的栏目
  * @param int $category 0列表 1频道 2单页 3外链
  * @return array
  */
-function category_list($forumlist, $display = 0, $category = 0)
+function category_list($forumlist, $model = 0, $display = 0, $category = 0)
 {
     static $cache = array();
-    if (isset($cache[$display][$category])) return $cache[$display][$category];
+    $key = $model . '-' . $display . '-' . $category;
+    if (isset($cache[$key])) return $cache[$key];
     // hook model_category_list_start.php
-    $cache[$display][$category] = array();
     if ($display) {
-        foreach ($forumlist as $key => $val) {
-            if ($val['display'] == 1 && $val['type'] == 1 && $val['category'] == $category) {
-                $cache[$display][$category][$key] = $val;
+        foreach ($forumlist as $k => $val) {
+            if ($val['display'] == 1 && $val['model'] == $model && $val['type'] == 1 && $val['category'] == $category) {
+                $cache[$key][$k] = $val;
             }
         }
         // hook model_category_list_before.php
     } else {
-        foreach ($forumlist as $key => $val) {
-            if ($val['type'] == 1 && $val['category'] == $category) {
-                $cache[$display][$category][$key] = $val;
+        foreach ($forumlist as $k => $val) {
+            if ($val['type'] == 1 && $val['model'] == $model && $val['category'] == $category) {
+                $cache[$key][$k] = $val;
             }
         }
         // hook model_category_list_after.php
     }
     // hook model_category_list_end.php
-    return $cache[$display][$category];
+    return empty($cache[$key]) ? NULL : $cache[$key];
 }
 
 /**
@@ -118,7 +119,6 @@ function forum_list($forumlist)
     if (empty($forumlist)) return array();
     static $cache = array();
     if (!empty($cache)) return $cache;
-    $cache = array();
     foreach ($forumlist as $_fid => $_forum) {
         if ($_forum['type']) continue;
         // hook model_forum_list_before.php

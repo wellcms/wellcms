@@ -281,7 +281,7 @@ CREATE TABLE `wellcms_website_comment` (
   `status` tinyint(2) NOT NULL DEFAULT '0',
   `create_date` int(11) unsigned NOT NULL DEFAULT '0',
   `userip` int(11) unsigned NOT NULL DEFAULT '0',
-  `doctype` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `doctype` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `quotepid` int(11) unsigned NOT NULL DEFAULT '0',
   `message` longtext NOT NULL,
   PRIMARY KEY (`pid`)

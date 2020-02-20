@@ -124,7 +124,7 @@
 						</span>
                         <!--{hook thread__list_inc_posts_after.htm}-->
 
-                        <?php if( $_thread['allowupdate']) { ?>
+                        <?php if($_thread['allowupdate']) { ?>
                         <!--<span data-href="<?php echo url('content-update-' . $_thread['tid']); ?>" class="text-grey update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></span>-->
                         <!--{hook thread__list_inc_update.htm}-->
                         <?php } ?>

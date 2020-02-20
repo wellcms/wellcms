@@ -12,7 +12,7 @@
  * $id 需绑定的ID，如fid，tagid，flagid
  * $dir = 插件名，即目录 well_bbs
  * */
-function theme_load($type = 0, $id = 0, $dir = '')
+function theme_load($type = '', $id = 0, $dir = '')
 {
     global $config;
 

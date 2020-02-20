@@ -228,26 +228,25 @@ function attach_gc()
 /*
  * 附件分离，最优方案是redis队列，单独写上传云储存php文件，nohup后台运行，将队列数据上传云储存，然后根据aid更新附件表attach_on、image_url自动，根据tid更新主题表attach_on。关联附件上传云储存，有可能导致超时。
  * */
-// 关联 session 中的临时文件，并不会重新统计 images, files
-// type 0主题主图 1:内容图片或附件 8:节点主图 9:节点tag主图
+// assoc thumbnail主题主图 post:内容图片或附件
 // 关联 session 中的临时文件，并不会重新统计 images, files
 function well_attach_assoc_post($arr = array())
 {
     if (empty($arr)) return FALSE;
     $message = TRUE;
     // hook model__attach_assoc_post_start.php
-    $type = array_value($arr, 'type', 0);
+    $assoc = array_value($arr, 'assoc');
     // hook model__attach_assoc_post_before.php
-    $arr['sess_tmp_files'] = well_attach_assoc_type($type);
+    $arr['sess_tmp_files'] = well_attach_assoc_type($assoc);
     // hook model__attach_assoc_post_center.php
-    if ($type == 0) {
+    if ($assoc == 'thumbnail') {
         // 主图缩略图
         // hook model__attach_assoc_post_thumbnail_start.php
         if (empty($arr['sess_tmp_files'])) return FALSE;
         // hook model__attach_assoc_post_thumbnail_before.php
         well_attach_assoc_thumbnail($arr);
         // hook model__attach_assoc_post_thumbnail_end.php
-    } elseif ($type == 1) {
+    } elseif ($assoc == 'post') {
         // hook model__attach_assoc_post_file_start.php
         $message = well_attach_assoc_file($arr);
         // hook model__attach_assoc_post_file_end.php
@@ -263,33 +262,46 @@ function well_attach_assoc_thumbnail($arr = array())
 
     // hook model_attach_assoc_thumbnail_start.php
 
-    $sess_tmp_files = array_value($arr, 'sess_tmp_files');
     $tid = array_value($arr, 'tid');
     $uid = array_value($arr, 'uid');
+    $sess_tmp_files = array_value($arr, 'sess_tmp_files');
 
     // hook model_attach_assoc_thumbnail_before.php
-
-    $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
-
-    $thumbnail_path = $conf['upload_path'] . 'thumbnail';
-    is_dir($thumbnail_path) || mkdir($thumbnail_path, 0777, TRUE);
-
-    $day = date($attach_dir_save_rule, $time);
-    $path = $conf['upload_path'] . 'thumbnail/' . $day;
-    is_dir($path) || mkdir($path, 0777, TRUE);
-
-    // hook model_attach_assoc_thumbnail_center.php
 
     // 获取文件后缀
     $ext = file_ext($sess_tmp_files['url']);
     if (!in_array($ext, array('gif', 'jpg', 'jpeg', 'png'))) {
         unlink($sess_tmp_files['path']);
-        return;
+        return TRUE;
     }
+
+    // 默认位置存图
+    $thumbnail_save_default = 1;
+    // array_value($arr, 'type', 0) == 10 AND $thumbnail_default = 2;
+    // hook model_attach_assoc_thumbnail_center.php
+
+    if ($thumbnail_save_default == 1) {
+        $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
+
+        $thumbnail_path = $conf['upload_path'] . 'thumbnail';
+        is_dir($thumbnail_path) || mkdir($thumbnail_path, 0777, TRUE);
+
+        $day = date($attach_dir_save_rule, $time);
+        $path = $conf['upload_path'] . 'thumbnail/' . $day;
+
+        is_dir($path) || mkdir($path, 0777, TRUE);
+
+        // 主题ID.后缀
+        $destfile = $path . '/' . $uid . '_' . $tid . '_' . $time . '.' . $ext;
+    }
+
     // hook model_attach_assoc_thumbnail_middle.php
 
-    // 主题ID.后缀
-    $destfile = $path . '/' . $uid . '_' . $tid . '_' . $time . '.' . $ext;
+    if (empty($destfile)) {
+        unlink($sess_tmp_files['path']);
+        return TRUE;
+    }
+
     xn_copy($sess_tmp_files['path'], $destfile) || xn_log("xn_copy($sess_tmp_files[path]), $destfile) failed, tid:$tid, name:$time", 'php_error');
 
     // hook model_attach_assoc_thumbnail_after.php
@@ -303,6 +315,8 @@ function well_attach_assoc_thumbnail($arr = array())
     // 按照$destfile文件路径，上传至云储存或图床，返回数据。附件分离，最优方案是redis队列，单独写上传云储存php文件，nohup后台运行，将队列数据上传云储存，然后根据aid更新附件表attach_on、image_url自动，根据tid更新主题表attach_on，如果使用了图床则需要更新主题表image_url图床文件完整网站。上传云储存，有可能导致超时。
 
     // hook model_attach_assoc_thumbnail_end.php
+
+    return TRUE;
 }
 
 // 关联内容的文件
@@ -312,7 +326,6 @@ function well_attach_assoc_file($arr = array())
 
     // hook model_attach_assoc_file_start.php
 
-    //$sess_tmp_files = array_value($arr, 'sess_tmp_files');
     $uid = array_value($arr, 'uid');
     $tid = array_value($arr, 'tid');
     //$message = array_value($arr, 'message');
@@ -450,20 +463,20 @@ function well_attach_assoc_file($arr = array())
     return $arr['message'];
 }
 
-// type 0内容主图 1:内容图片或附件 8:节点主图 9:节点tag主图 教练套课主图
+// thumbnail:主题主图 post:内容图片或附件
 function well_attach_assoc_type($type)
 {
     // hook model__attach_assoc_type_start.php
     switch ($type) {
-        case '0':
+        case 'thumbnail':
             $k = 'tmp_thumbnail';
             break;
-        case '1':
+        case 'post':
             $k = 'tmp_website_files';
             break;
         // hook model__attach_assoc_case_end.php
         default:
-            $k = 'tmp_thumbnail';
+            return NULL;
             break;
     }
     $sess_tmp_files = _SESSION($k);
@@ -488,7 +501,7 @@ function well_attach_create_thumbnail($arr)
     $pic_width = $picture['width'];
     $pic_height = $picture['height'];
 
-    $attachlist = well_attach_assoc_type(1);
+    $attachlist = well_attach_assoc_type('post');
     if (empty($attachlist)) return;
 
     $website_path = $conf['upload_path'] . 'thumbnail';
