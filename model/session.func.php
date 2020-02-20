@@ -6,6 +6,8 @@
 	xiuno.js $.each_sync() 串行化并发请求，可以避免客户端并发访问导致的 session 写入问题。
 */
 
+// hook model_session_start.php
+
 $sid = '';
 $g_session = array();
 $g_session_invalid = FALSE; // 0: 有效， 1：无效
@@ -14,6 +16,92 @@ $g_session_invalid = FALSE; // 0: 有效， 1：无效
 //$g_sess_db = $db;
 
 // 如果是管理员, sid, 与 ip 绑定，一旦 IP 发生变化，则需要重新登录。管理员采用 token (绑定IP) 双重验证，避免 sid 被中间窃取。
+
+// hook model_session_before.php
+
+// ------------> 最原生的 CURD，无关联其他数据。
+
+function session_create($arr, $d = NULL)
+{
+    // hook model_session_create_start.php
+    $r = db_insert('session', $arr, $d);
+    // hook model_session_create_end.php
+    return $r;
+}
+
+function session_update($sid, $update, $d = NULL)
+{
+    // hook model_session_update_start.php
+    $r = db_update('session', array('sid' => $sid), $update, $d);
+    // hook model_session_update_end.php
+    return $r;
+}
+
+function session_read($sid, $orderby = array(), $col = array(), $d = NULL)
+{
+    // hook model_session_read_start.php
+    $r = db_find_one('session', array('sid' => $sid), $orderby, $col, $d);
+    // hook model_session_read_end.php
+    return $r;
+}
+
+function session_delete($cond = array(), $d = NULL)
+{
+    // hook model_session_delete_start.php
+    $r = db_delete('session', $cond, $d);
+    // hook model_session_delete_end.php
+    return $r;
+}
+
+function session_find($cond = array(), $orderby = array(), $page = 1, $pagesize = 20, $key = '', $col = array(), $d = NULL)
+{
+    // hook model_session_find_start.php
+    $arrlist = db_find('session', $cond, $orderby, $page, $pagesize, $key, $col, $d);
+    // hook model_session_find_end.php
+    return $arrlist;
+}
+
+function session_count($cond = array(), $d = NULL)
+{
+    // hook model_session_count_start.php
+    $n = db_count('session', $cond, $d);
+    // hook model_session_count_end.php
+    return $n;
+}
+
+function session_data_create($arr, $d = NULL)
+{
+    // hook model_session_data_create_start.php
+    $r = db_insert('session_data', $arr, $d);
+    // hook model_session_data_create_end.php
+    return $r;
+}
+
+function session_data_update($sid, $update, $d = NULL)
+{
+    // hook model_session_data_update_start.php
+    $r = db_update('session_data', array('sid' => $sid), $update, $d);
+    // hook model_session_data_update_end.php
+    return $r;
+}
+
+function session_data_read($sid, $orderby = array(), $col = array(), $d = NULL)
+{
+    // hook model_session_data_read_start.php
+    $r = db_find_one('session_data', array('sid' => $sid), $orderby, $col, $d);
+    // hook model_session_data_read_end.php
+    return $r;
+}
+
+function session_data_delete($cond = array(), $d = NULL)
+{
+    // hook model_session_data_delete_start.php
+    $r = db_delete('session_data', $cond, $d);
+    // hook model_session_data_delete_end.php
+    return $r;
+}
+
+//--------------------------强相关--------------------------
 
 function sess_open($save_path, $session_name)
 {
@@ -39,13 +127,13 @@ function sess_read($sid)
         sess_new($sid);
         return '';
     }
-    $arr = db_find_one('session', array('sid' => $sid));
+    $arr = session_read($sid);
     if (empty($arr)) {
         sess_new($sid);
         return '';
     }
     if ($arr['bigdata'] == 1) {
-        $arr2 = db_find_one('session_data', array('sid' => $sid));
+        $arr2 = session_data_read($sid);
         $arr['data'] = $arr2['data'];
     }
     $g_session = $arr;
@@ -61,7 +149,7 @@ function sess_new($sid)
     $agent = _SERVER('HTTP_USER_AGENT');
 
     // 干掉同 ip 的 sid，仅仅在遭受攻击的时候
-    //db_delete('session', array('ip'=>$longip));
+    //session_delete(array('ip'=>$longip));
 
     $cookie_test = _COOKIE('cookie_test');
     if ($cookie_test) {
@@ -90,7 +178,7 @@ function sess_new($sid)
         'bigdata' => 0,
     );
     $g_session = $arr;
-    db_insert('session', $arr);
+    session_create($arr);
 }
 
 // 重新启动 session，降低并发写入数据的问题，这回抛弃前面的 _SESSION 数据
@@ -146,31 +234,31 @@ function sess_write($sid, $data)
     // 判断数据是否超长
     $len = strlen($data);
     if ($len > 255 && $g_session['bigdata'] == 0) {
-        db_insert('session_data', array('sid' => $sid));
+        session_data_create(array('sid' => $sid));
     }
     if ($len <= 255) {
         $update = array_diff_value($arr, $g_session);
-        db_update('session', array('sid' => $sid), $update);
+        session_update($sid, $update);
         if (!empty($g_session) && $g_session['bigdata'] == 1) {
-            db_delete('session_data', array('sid' => $sid));
+            session_data_delete(array('sid' => $sid));
         }
     } else {
         $arr['data'] = '';
         $arr['bigdata'] = 1;
         $update = array_diff_value($arr, $g_session);
-        $update AND db_update('session', array('sid' => $sid), $update);
+        $update AND session_update($sid, $update);
         $arr2 = array('data' => $data, 'last_date' => $time);
         if ($session_delay_update_on) unset($arr2['last_date']);
         $update2 = array_diff_value($arr2, $g_session);
-        $update2 AND db_update('session_data', array('sid' => $sid), $update2);
+        $update2 AND session_data_update($sid, $update2);
     }
     return TRUE;
 }
 
 function sess_destroy($sid)
 {
-    db_delete('session', array('sid' => $sid));
-    db_delete('session_data', array('sid' => $sid));
+    session_delete(array('sid' => $sid));
+    session_data_delete(array('sid' => $sid));
     return TRUE;
 }
 
@@ -178,8 +266,8 @@ function sess_gc($maxlifetime)
 {
     global $time;
     $expiry = $time - $maxlifetime;
-    db_delete('session', array('last_date' => array('<' => $expiry)));
-    db_delete('session_data', array('last_date' => array('<' => $expiry)));
+    session_delete(array('last_date' => array('<' => $expiry)));
+    session_data_delete(array('last_date' => array('<' => $expiry)));
     return TRUE;
 }
 
@@ -219,19 +307,14 @@ function sess_start()
 
 function online_count()
 {
-    return db_count('session');
-}
-
-function online_find_cache()
-{
-    return db_find('session');
+    return session_count();
 }
 
 function online_list_cache()
 {
     $onlinelist = cache_get('online_list');
     if ($onlinelist === NULL) {
-        $onlinelist = db_find('session', array('uid' => array('>' => 0)), array('last_date' => -1), 1, 500);
+        $onlinelist = session_find(array('uid' => array('>' => 0)), array('last_date' => -1), 1, 500);
         foreach ($onlinelist as &$online) {
             $user = user_read_cache($online['uid']);
             $online['username'] = $user['username'];
@@ -243,5 +326,7 @@ function online_list_cache()
     }
     return $onlinelist;
 }
+
+// hook model_session_end.php
 
 ?>
