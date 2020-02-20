@@ -63,7 +63,7 @@ function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheig
 {
     global $conf;
     $return = array('filesize' => 0, 'width' => 0, 'height' => 0);
-    $destext = well_image_ext(image_ext($destfile);
+    $destext = well_image_ext($destfile);
     if (!in_array($destext, array('gif', 'jpg', 'jpeg', 'bmp', 'png'))) {
         return $return;
     }
