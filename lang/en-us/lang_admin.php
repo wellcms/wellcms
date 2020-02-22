@@ -198,6 +198,7 @@ return array(
     'user_list' => 'User',
     'manage_plugin' => 'Manage Plugin',
     'local_plugin' => 'Local Plugin',
+	'manage_warehouse' => 'Manage Warehouse',
     'local_theme' => 'Local Theme',
     'other_function' => 'Other Function',
     'system_setting' => 'System Setting',

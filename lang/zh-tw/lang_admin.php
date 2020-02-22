@@ -224,6 +224,7 @@ return array(
     'manage_group' => '管理用戶組',
     'manage_update_group' => '編輯用戶組',
     'manage_plugin' => '管理挿件',
+    'manage_warehouse' => '管理倉庫',
     'manage_other' => '其他功能',
     'manage_setting' => '系統設置',
     'random_thread' => '隨機主題',

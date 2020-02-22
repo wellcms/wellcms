@@ -61,7 +61,7 @@ return array(
     // hook admin_menu_conf_plugin_before.php
     'plugin' => array(
         'url' => url('plugin'),
-        'text' => lang('manage_plugin'),
+        'text' => lang('manage_warehouse'),
         'icon' => 'icon-cogs',
         'tab' => array(
             // hook admin_menu_conf_plugin_local_before.php

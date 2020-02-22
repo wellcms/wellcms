@@ -222,6 +222,7 @@ return array(
     'manage_group' => '管理用户组',
     'manage_update_group' => '编辑用户组',
     'manage_plugin' => '管理插件',
+    'manage_warehouse' => '管理仓库',
     'manage_other' => '其他功能',
     'manage_setting' => '系统设置',
     'random_thread' => '随机主题',
