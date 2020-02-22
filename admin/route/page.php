@@ -10,7 +10,7 @@ $action = param(1, 'list');
 // hook admin_page_start.php
 
 // 返回单页版块列表数据(仅列表)
-$columnlist = category_list($forumlist, 0, 2);
+$columnlist = category_list_show($forumlist, 0, 2);
 
 // hook admin_page_before.php
 
@@ -181,7 +181,6 @@ if ($action == 'list') {
         $subject = param('subject');
         $subject = filter_all_html($subject);
         empty($subject) AND message('subject', lang('please_input_subject'));
-
         xn_strlen($subject) > 128 AND message('subject', lang('subject_length_over_limit', array('maxlength' => 128)));
         // 过滤标题 关键词
 
@@ -195,7 +194,7 @@ if ($action == 'list') {
         $message = param('message', '', FALSE);
         $message = trim($message);
         empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
-        
+
         $message = xn_html_safe($message);
 
         // 过滤内容 关键词
@@ -204,6 +203,12 @@ if ($action == 'list') {
 
         $tid = well_thread__create(array('fid' => $fid, 'uid' => $uid, 'type' => 11, 'subject' => $subject, 'userip' => $longip, 'create_date' => $time));
         $tid === FALSE AND message(-1, lang('create_thread_failed'));
+
+        // 关联附件
+        $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => 0, 'files' => 0, 'message' => $message);
+        // hook admin_page_create_post_attach_before.php
+        $message = well_attach_assoc_post($attach);
+        unset($attach);
 
         $tid = data_create(array('tid' => $tid, 'gid' => $gid, 'message' => $message, 'doctype' => $doctype));
         $tid === FALSE AND message(-1, lang('create_thread_failed'));
@@ -342,6 +347,11 @@ if ($action == 'list') {
 
         !empty($arr) AND well_thread_update($tid, $arr) === FALSE AND message(-1, lang('update_thread_failed'));
         unset($arr);
+
+        // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
+        $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => $thread['images'], 'files' => $thread['files'], 'message' => $message);
+        $message = well_attach_assoc_post($attach);
+        unset($attach);
 
         // hook admin_page_update_post_before.php
 

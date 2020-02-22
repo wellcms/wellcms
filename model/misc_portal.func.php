@@ -55,7 +55,7 @@ function portal_index_thread($forumlist)
 
     // 遍历所有在首页显示内容的栏目
     //$index_forumlist = arrlist_cond_orderby($forumlist, array('type' => 1, 'category' => 0, 'display' => 1), array('fid' => -1), 1, 1000);
-    $index_forumlist = category_list($forumlist, 1);
+    $index_forumlist = category_list_show($forumlist, 1);
 
     $arrlist = array();
     $forum_tids = array();

@@ -110,6 +110,37 @@ function category_list($forumlist, $model = 0, $display = 0, $category = 0)
 }
 
 /**
+ * @param $forumlist    所有版块列表 不分模型
+ * @param int $display 0全部CMS栏目 1在首页和频道显示内容的栏目
+ * @param int $category 0列表 1频道 2单页 3外链
+ * @return array
+ */
+function category_list_show($forumlist, $display = 0, $category = 0)
+{
+    static $cache = array();
+    $key = $display . '-' . $category;
+    if (isset($cache[$key])) return $cache[$key];
+    // hook model_category_list_show_start.php
+    if ($display) {
+        foreach ($forumlist as $k => $val) {
+            if ($val['display'] == 1 && $val['type'] == 1 && $val['category'] == $category) {
+                $cache[$key][$k] = $val;
+            }
+        }
+        // hook model_category_list_show_before.php
+    } else {
+        foreach ($forumlist as $k => $val) {
+            if ($val['type'] == 1 && $val['category'] == $category) {
+                $cache[$key][$k] = $val;
+            }
+        }
+        // hook model_category_list_show_after.php
+    }
+    // hook model_category_list_show_end.php
+    return empty($cache[$key]) ? NULL : $cache[$key];
+}
+
+/**
  * @param $forumlist    所有版块列表
  * @return mixed    BBS栏目数据(仅列表) 尚未开放bbs频道功能
  */

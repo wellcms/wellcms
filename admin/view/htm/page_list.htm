@@ -95,8 +95,19 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    $('ul.threadlist').base_href('<?php echo $conf['path'];?>');
-    $('ul.threadlist a').attr('target','_blank');
+    var threadlist = $("ul.threadlist a");
+    var path = "<?php echo url_path();?>";
+    threadlist.attr('target','_blank');
+    threadlist.each(function(){
+        var href = $(this).attr('href');
+        if (url_rewrite_on <= 1) {
+            var href = href.replace(href, path + href);
+        } else {
+            var href = href.replace('/admin', '');
+        }
+        $(this).attr('href', href);
+        $(this).attr('target','_blank');
+    });
 
     var body = $('body');
     body.on('click', 'button.delete', function() {
