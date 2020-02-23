@@ -3,7 +3,7 @@
  * Copyright (C) www.wellcms.cn
  */
 
-// hook model_misc_website_start.php
+// hook model_misc_portal_start.php
 
 /*array(
     //list栏目已经rank排序
@@ -164,7 +164,8 @@ function portal_index_thread($forumlist)
 
                 if (isset($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
 
-                    $arrlist['flaglist'][$key][array_search($_thread['tid'], $val['tids'])] = $_thread;
+                    $arrlist['flaglist'][$key] = $val;
+                    $arrlist['flaglist'][$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
                     ksort($arrlist['flaglist'][$key]);
 
                     $arrlist['flag'][$_thread['tid']] = $_thread;
@@ -182,24 +183,6 @@ function portal_index_thread($forumlist)
         foreach ($arrlist['sticky'] as &$val) {
             ++$i;
             $val['i'] = $i;
-        }
-    }
-
-    if (isset($arrlist['flag'])) {
-        $i = 0;
-        foreach ($arrlist['flag'] as &$val) {
-            ++$i;
-            $val['i'] = $i;
-        }
-    }
-
-    if (isset($arrlist['flaglist'])) {
-        foreach ($arrlist['flaglist'] as &$val) {
-            $i = 0;
-            foreach ($val as &$v) {
-                ++$i;
-                $v['i'] = $i;
-            }
         }
     }
 
@@ -400,6 +383,6 @@ function portal_channel_thread($fid)
     return $arrlist;
 }
 
-// hook model_misc_website_end.php
+// hook model_misc_portal_end.php
 
 ?>

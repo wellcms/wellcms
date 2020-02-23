@@ -129,8 +129,9 @@ if ($website_mode == 0) {
     $first_flag = NULL;
     $flaglist = NULL;
     if (isset($arrlist['flaglist'])) {
-        $flaglist = isset($arrlist['flaglist']);
+        $flaglist = $arrlist['flaglist'];
         $first_flag = reset($arrlist['flaglist']);
+        $first_flag = $first_flag['list'];
     }
 
     // 友情链接

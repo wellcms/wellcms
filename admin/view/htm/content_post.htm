@@ -46,7 +46,7 @@
     var action = '<?php echo $action;?>';
 
     var jfid = $('select[name="fid"]');
-    var fid = <?php echo intval($fid); ?> || $('select[name="fid"]').val();
+    var fid = <?php echo intval($fid); ?> || jfid.val();
     jfid.on('change', function() {
         var fid = jfid.val();
         fid_on_change(fid);
@@ -292,7 +292,7 @@
         }
     }
 
-    jform.find('[name="fid"]').checked(<?php echo $fid;?>);
+    jform.find('[name="fid"]').checked(fid);
 
     $('#content').addClass('show');
     $('.sidebar-sticky li.menu-<?php echo $route;?>').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
