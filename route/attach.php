@@ -33,9 +33,8 @@ if ($action == 'create') {
     $is_image = param('is_image', 0); // 图片
     $name = param('name');
     $data = param_base64('data');
-    $mode = param('mode', 0); // 上传类型 1主图
+    $mode = param('mode'); // 上传类型 0内容图片和附件 1主图
     $n = param('n', 0); // 对应主图赋值
-    $type = param('type', 0);
 
     // hook attach_create_before.php
 
@@ -58,13 +57,7 @@ if ($action == 'create') {
     // hook attach_create_file_ext_after.php
 
     $tmpanme = $uid . '_' . xn_rand(15) . '.' . $ext;
-
-    // hook attach_create_tmpanme_after.php
-
     $tmpfile = $conf['upload_path'] . 'tmp/' . $tmpanme;
-
-    // hook attach_create_tmpfile_after.php
-
     $tmpurl = $conf['upload_url'] . 'tmp/' . $tmpanme;
 
     // hook attach_create_tmpurl_after.php
@@ -79,28 +72,31 @@ if ($action == 'create') {
 
     sess_restart();
 
-    if (empty($t)) {
-        empty($_SESSION['tmp_website_files']) AND $_SESSION['tmp_website_files'] = array();
+    switch ($mode) {
+        case '1':
+            $key = 'tmp_thumbnail';
+            break;
+        // hook attach_assoc_case_after.php
+        default:
+            if (empty($t)) {
+                $key = 'tmp_website_files';
+            }
+            // hook attach_create_after.php
+            break;
     }
 
-    // hook attach_create_after.php
+    empty($_SESSION[$key]) AND $_SESSION[$key] = array();
 
-    // type = 0则按照SESSION数组附件数量统计，type = 1则按照传入的n数值
-    if (empty($type)) {
-        if (empty($t)) {
-            $n = count($_SESSION['tmp_website_files']);
-        }
-        // hook attach_create_middle.php
-    }
+    // $mode = 0内容图片和附件按照SESSION数组附件数量统计，1主图按照传入的n数值
+    empty($mode) AND $n = count(_SESSION($key));
 
-    $filesize = filesize($tmpfile);
     $attach = array(
         'backstage' => $backstage, // 0前台 1后台
         'url' => $backstage ? url_path() . $tmpurl : $tmpurl,
         'path' => $tmpfile,
         'orgfilename' => $name,
         'filetype' => $filetype,
-        'filesize' => $filesize,
+        'filesize' => filesize($tmpfile),
         'width' => $width,
         'height' => $height,
         'isimage' => $is_image,
@@ -110,16 +106,19 @@ if ($action == 'create') {
 
     // hook attach_create_array_after.php
 
-    if ($mode == 1) {
-        // hook attach_create_thumbnail_beofre.php
-        $_SESSION['tmp_thumbnail'] = $attach;
-        // hook attach_create_thumbnail_after.php
-    } else {
+    if (empty($mode)) {
+        // 内容图和附件
         // hook attach_create_website_files_beofre.php
-        if (empty($t)) {
-            $_SESSION['tmp_website_files'][$n] = $attach;
-        }
+        count(_SESSION($key)) > 30 AND well_attach_delete_tmp(_SESSION($key));
+        $_SESSION[$key][$n] = $attach;
         // hook attach_create_website_files_after.php
+    } elseif ($mode == 1) {
+        // 缩略图 / 主图
+        $thumbnail = _SESSION($key);
+        isset($thumbnail['path']) AND is_file($thumbnail['path']) AND unlink($thumbnail['path']);
+        // hook attach_create_thumbnail_beofre.php
+        $_SESSION[$key] = $attach;
+        // hook attach_create_thumbnail_after.php
     }
 
     // hook attach_create_session_after.php

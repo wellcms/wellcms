@@ -636,7 +636,7 @@ function well_save_remote_image($arr)
                 $aid = well_attach_create($attach);
                 $n++;
             }
-            
+
             $message = preg_replace('#(<img.*?)(class=.+?[\'|\"])|(data-src=.+?[\'|"])|(data-type=.+?[\'|"])|(data-ratio=.+?[\'|"])|(data-s=.+?[\'|"])|(data-fail=.+?[\'|"])|(crossorigin=.+?[\'|"])|((data-w)=[\'"]+[0-9]+[\'"]+)|(_width=.+?[\'|"]+)|(_height=.+?[\'|"]+)|(style=.+?[\'|"])|((width)=[\'"]+[0-9]+[\'"]+)|((height)=[\'"]+[0-9]+[\'"]+)#i', '$1', $_message);
         }
         // hook model_attach_save_remote_image_after.php
@@ -663,6 +663,27 @@ function well_get_image_url($url)
     $url = $n ? mb_substr($url, 0, $_n, 'UTF-8') : NULL;
 
     return $url;
+}
+
+function well_attach_clear_tmp()
+{
+    // hook model_attach_clear_tmp_start.php
+
+    $thumbnail = _SESSION('tmp_thumbnail');
+    isset($thumbnail['path']) AND is_file($thumbnail['path']) AND unlink($thumbnail['path']);
+    $_SESSION['tmp_thumbnail'] = array();
+
+    well_attach_delete_tmp(_SESSION('tmp_website_files'));
+    $_SESSION['tmp_website_files'] = array();
+
+    // hook model_attach_clear_tmp_end.php
+}
+
+function well_attach_delete_tmp($tmp_files)
+{
+    if (empty($tmp_files)) return;
+
+    foreach ($tmp_files as $_file) is_file($_file['path']) AND unlink($_file['path']);
 }
 
 // hook model__attach_end.php

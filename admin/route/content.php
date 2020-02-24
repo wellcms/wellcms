@@ -183,7 +183,9 @@ if ($action == 'list') {
         $form_doctype = 0;
         $_fid = 0;
         $page = 0;
-        $_SESSION['tmp_website_files'] = $_SESSION['tmp_thumbnail'] = array();
+        
+        // 初始化附件
+        well_attach_clear_tmp();
 
         // hook admin_content_create_get_form_after.php
 
@@ -397,6 +399,9 @@ if ($action == 'list') {
         // 获取主图
         $thread['icon_text'] = $thread['icon'] ? $thread['icon_text'] : url_path() . $thread['icon_text'];
 
+        // 初始化附件
+        well_attach_clear_tmp();
+        
         // hook admin_content_update_get_icon_after.php
 
         $picture = $config['picture_size'];

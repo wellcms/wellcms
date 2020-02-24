@@ -166,7 +166,6 @@
         $.each_sync(files, function (i, callback) {
             var file = files[i];
             xn.upload_file(file, xn.url('attach-create-1'), {
-                type: 1,
                 is_image: 1,
                 convert: 1, /*转码*/
                 filetype: 'jpeg',   /*压缩类型*/
