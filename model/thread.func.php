@@ -83,11 +83,12 @@ function well_thread_create($arr)
     $save_image = array_value($arr, 'save_image', 0); // 图片本地化
     $doctype = array_value($arr, 'doctype', 0);
     $type = array_value($arr, 'type', 0);
+    $status = array_value($arr, 'status', 0);
 
     // hook model__thread_create_before.php
 
     // 创建主题
-    $thread = array('fid' => $fid, 'subject' => $arr['subject'], 'type' => $type, 'brief' => $arr['brief'], 'uid' => $uid, 'create_date' => $time, 'closed' => $arr['closed'], 'keyword' => $arr['keyword'], 'description' => $arr['description'], 'last_date' => $time, 'userip' => $longip, 'attach_on' => $conf['attach_on'], 'flags' => $arr['flags']);
+    $thread = array('fid' => $fid, 'subject' => $arr['subject'], 'type' => $type, 'brief' => $arr['brief'], 'uid' => $uid, 'create_date' => $time, 'closed' => $arr['closed'], 'keyword' => $arr['keyword'], 'description' => $arr['description'], 'last_date' => $time, 'userip' => $longip, 'attach_on' => $conf['attach_on'], 'flags' => $arr['flags'], 'status' => $status);
 
     // hook model__thread_create_thread_after.php
 
