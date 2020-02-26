@@ -473,7 +473,7 @@ if ($action == 'list') {
         // hook admin_content_update_post_subject_before.php
 
         if ($subject != $thread['subject']) {
-            (mb_strlen($subject, 'UTF-8') > 80) ? message('subject', lang('subject_max_length', array('max' => 80))) : $arr['subject'] = $subject;
+            $arr['subject'] = $subject;
 
             $thread['sticky'] > 0 AND cache_delete('sticky_thread_list');
         }
@@ -559,7 +559,7 @@ if ($action == 'list') {
 
             // hook admin_content_update_post_fid_access.php
 
-            $thread['uid'] != $uid AND !forum_access_mod($fid, $gid, 'allowupdate') AND message(1, lang('user_group_insufficient_privilege'));
+            if ($thread['uid'] != $uid && !forum_access_mod($fid, $gid, 'allowupdate')) message(1, lang('user_group_insufficient_privilege'));
 
             // hook admin_content_update_post_fid_update.php
 
@@ -595,7 +595,7 @@ if ($action == 'list') {
             } else {
                 $arr['icon'] = $time;
                 // 关联主图 assoc thumbnail主题主图 post:内容图片或附件
-                $thumbnail = array('tid' => $tid, 'uid' => $uid, 'type' => $arr['type'], 'assoc' => 'thumbnail');
+                $thumbnail = array('tid' => $tid, 'uid' => $thread['uid'], 'type' => $arr['type'], 'assoc' => 'thumbnail');
                 // hook admin_content_update_post_attach_before.php
                 well_attach_assoc_post($thumbnail);
                 unset($thumbnail);
@@ -641,28 +641,33 @@ if ($action == 'list') {
 
         // hook admin_content_update_post_arr_after.php
 
-        !empty($arr) AND well_thread_update($tid, $arr) === FALSE AND message(-1, lang('update_thread_failed'));
-        unset($arr);
+        if (!empty($arr)) {
+            well_thread_update($tid, $arr) === FALSE AND message(-1, lang('update_thread_failed'));
+            unset($arr);
+        }
 
         // hook admin_content_update_post_before.php
 
         // $link = 1 为站外链接 无需更新数据表
         if ($link == 0) {
 
-            $save_image = param('save_image', 0);
-            $save_image AND $message = well_save_remote_image(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid, 'message' => $message));
-
-            // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
-            $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => $thread['images'], 'files' => $thread['files'], 'message' => $message);
-            $message = well_attach_assoc_post($attach);
-            unset($attach);
-
             // 如果开启云储存或使用图床，需要把内容中的附件链接替换掉
             $message = data_message_replace_url($tid, $message);
 
-            $update = array('tid' => $tid, 'gid' => $gid, 'doctype' => $doctype, 'message' => $message);
-            data_update($tid, $update) === FALSE AND message(-1, lang('update_post_failed'));
-            unset($update);
+            if (md5($message) != md5($thread_data['message'])) {
+                $save_image = param('save_image', 0);
+                $save_image AND $message = well_save_remote_image(array('tid' => $tid, 'fid' => $fid, 'uid' => $thread['uid'], 'message' => $message));
+
+                // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
+                $attach = array('tid' => $tid, 'uid' => $thread['uid'], 'assoc' => 'post', 'images' => $thread['images'], 'files' => $thread['files'], 'message' => $message);
+                $message = well_attach_assoc_post($attach);
+                unset($attach);
+
+                $update = array('tid' => $tid, 'gid' => $gid, 'doctype' => $doctype, 'message' => $message);
+                // hook admin_content_data_update_before.php
+                data_update($tid, $update) === FALSE AND message(-1, lang('update_post_failed'));
+                unset($update);
+            }
         }
 
         // hook admin_content_update_post_center.php
