@@ -44,7 +44,8 @@ if ($method == 'GET') {
     $subject = filter_all_html($subject);
     empty($subject) AND exit(lang('please_input_subject'));
 
-    xn_strlen($subject) > 128 AND exit(lang('subject_length_over_limit', array('maxlength' => 128)));
+    // 截取128个字符
+    $subject = xn_substr($subject, 0, 128);
     // 过滤标题 关键词
 
     $link = param('link', 0);
