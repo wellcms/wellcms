@@ -180,20 +180,18 @@ function forum_format(&$forum)
         $forum['thumbnail'] = $forum['thumbnail'] ? json_decode($forum['thumbnail'], true) : '';
 
         // hook model_forum_format_center.php
-        if ($forum['model'] == 0){
-            if ($forum['category'] == 0) {
-                $forum['url'] = url('list-' . $forum['fid']);
-            } elseif ($forum['category'] == 1) {
-                $forum['url'] = url('category-' . $forum['fid']);
-            } elseif ($forum['category'] == 2) {
-                $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief'])) : url('list-' . $forum['fid']);
-            } elseif ($forum['category'] == 3) {
-                $forum['url'] = url('list-' . $forum['fid']);
-            }
-            // hook model_forum_format_url.php
+        
+        if ($forum['category'] == 0) {
+            $forum['url'] = url('list-' . $forum['fid']);
+        } elseif ($forum['category'] == 1) {
+            $forum['url'] = url('category-' . $forum['fid']);
+        } elseif ($forum['category'] == 2) {
+            $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief'])) : url('list-' . $forum['fid']);
+        } elseif ($forum['category'] == 3) {
+            $forum['url'] = url('list-' . $forum['fid']);
         }
 
-        // hook model_forum_format_model_after.php
+        // hook model_forum_format_middle.php
     }
 
     // hook model_forum_format_end.php
