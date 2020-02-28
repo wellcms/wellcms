@@ -890,7 +890,7 @@ function well_thread_filter(&$val)
 // 后台和前台删除内容 并写入日志
 function well_thread_delete_content($tid)
 {
-    global $time, $uid, $gid;
+    global $time, $uid, $gid, $forumlist;
 
     // hook model_thread_delete_content_start.php
 
@@ -899,19 +899,26 @@ function well_thread_delete_content($tid)
 
     // hook model_thread_delete_content_before.php
 
+    $forum = array_value($forumlist, $thread['fid']);
+    //if (empty($forum)) return FALSE;
+
     // 权限判断 仅限管理员和用户本人有权限
     $allowdelete = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
 
     (empty($allowdelete) OR $thread['closed']) AND message(-1, lang('thread_has_already_closed'));
 
-    $delete_from_default = 0;
+    $delete_from_default = 1;
 
     // hook model_thread_delete_content_center.php
 
-    // 默认删除全部
-    if ($delete_from_default == 0) {
-        // 全部删除
-        well_thread_delete_all($tid) === FALSE AND message(-1, lang('delete_failed'));
+    // 默认彻底删除
+    if ($delete_from_default == 1) {
+        switch ($forum['model']) {
+            case '0': // 删除文章全部数据
+                well_thread_delete_all($tid) === FALSE AND message(-1, lang('delete_failed'));
+                break;
+            // hook operate_delete_foreach_case.php
+        }
     }
 
     // hook model_thread_delete_content_middle.php
