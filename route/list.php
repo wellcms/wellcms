@@ -82,11 +82,6 @@ if ($forum['type'] == 1) {
 
         // hook list_unified_pull_after.php
 
-        // ajax数据
-        //$arrlist = array('threadlist' => $threadlist, 'flaglist' => $flaglist);
-
-        // hook list_ajax_after.php
-
         $forum_threads = $forum['threads'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $forum['threads'];
 
         // hook list_forum_threads_after.php
@@ -117,7 +112,16 @@ if ($forum['type'] == 1) {
             }
             message(0, $arrlist);
         } else {
-            include _include(theme_load(1, $fid));
+            // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
+            switch ($forum['model']) {
+                /*case '0':
+                    include _include(APP_PATH . 'view/htm/list.htm');
+                    break;*/
+                // hook list_case.php
+                default:
+                    include _include(theme_load(1, $fid));
+                    break;
+            }
         }
 
     } elseif ($forum['category'] == 1) {
