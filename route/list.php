@@ -13,7 +13,7 @@ $page = param(2, 1);
 $extra = array(); // 插件预留
 $active = 'default';
 // 管理时使用
-$uid AND $extra['fid'] = $fid;
+(forum_access_mod($fid, $gid, 'allowdelete') OR forum_access_mod($fid, $gid, 'allowtop')) AND $extra['fid'] = $fid;
 
 // hook list_before.php
 
