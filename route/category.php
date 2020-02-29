@@ -17,7 +17,7 @@ $forum = array_value($forumlist_show, $fid);
 empty($forum) AND message(-1, lang('forum_not_exists'));
 
 // 管理时使用
-$uid AND $extra['fup'] = $fid;
+(forum_access_mod($fid, $gid, 'allowdelete') OR forum_access_mod($fid, $gid, 'allowtop')) AND $extra['fid'] = $fid;
 
 // hook category_before.php
 
