@@ -29,7 +29,7 @@ if ($action == 'sticky') {
         $fid = param('fid', 0);
         if (isset($forumlist[$fid])) {
             $forum = $forumlist[$fid];
-            $fup = $forum['fup'];
+            $fup = $forum['category'] == 1 ? $forum['fid'] : $forum['fup'];
         } else {
             $fup = 0;
         }
