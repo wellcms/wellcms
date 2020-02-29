@@ -302,7 +302,7 @@ DROP TABLE IF EXISTS `wellcms_website_thread`;
 CREATE TABLE `wellcms_website_thread` (
   `tid` int(11) unsigned NOT NULL AUTO_INCREMENT,  # 主题id
   `fid` int(11) unsigned NOT NULL DEFAULT '0', # 版块 id
-  `type` tinyint(2) unsigned NOT NULL DEFAULT '0', # 主题类型:0文章 10外链 11单页
+  `type` tinyint(2) unsigned NOT NULL DEFAULT '0', # 主题类型:0默认内容 10外链 11单页
   `sticky` tinyint(1) unsigned NOT NULL DEFAULT '0',  # 置顶级别: 0: 普通主题, 1-3 置顶顺序
   `uid` int(11) unsigned NOT NULL DEFAULT '0',   # 用户uid
   `icon` int(11) unsigned NOT NULL DEFAULT '0',  # 缩略图 写入时间戳 图片名tid
