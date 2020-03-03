@@ -179,9 +179,14 @@ function flag_find_by_flagid($flagids, $page, $pagesize)
 function flag_format(&$val)
 {
     global $conf, $forumlist;
+
     if (empty($val)) return;
+    empty($forumlist) AND $forumlist = forum_find();
+
     // hook model_flag_format_start.php
+
     $forum = array_value($forumlist, $val['fid']);
+
     $val['forum_name'] = $forum ? $forum['name'] : lang('index_page');
     $val['display_text'] = $val['display'] ? lang('yes') : lang('no');
     $val['forum_url'] = $forum ? forum_format_url($forum) : $conf['path'];
@@ -288,8 +293,8 @@ function flag_get($fid)
             $pagesize = $config['index_flags'];
         } else {
             // 版块
-            $forum = empty($forumlist) ? forum__read($fid) : $forumlist[$fid];
-            $pagesize = $forum['flags'];
+            $forumlist = empty($forumlist) ? forum_find() : $forumlist;
+            $pagesize = $forumlist[$fid]['flags'];
         }
 
         if (empty($pagesize)) return NULL;
