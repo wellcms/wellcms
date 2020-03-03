@@ -1064,6 +1064,8 @@ function thread_other_pull($thread)
 
     foreach ($threadlist as &$_thread) {
 
+        $_thread = well_thread_safe_info($_thread);
+
         // hook model_thread_other_pull_cate_before.php
 
         // flag thread
@@ -1071,7 +1073,7 @@ function thread_other_pull($thread)
             foreach ($flaglist as $key => $val) {
                 if (isset($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
 
-                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = well_thread_safe_info($_thread);
+                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
 
                     ksort($flaglist[$key]['list']);
 
