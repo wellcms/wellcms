@@ -482,7 +482,7 @@ function well_thread_delete($tid)
 // 删除主题相关的全部数据 TODO 删除数据太多，可能导致超时，有时间再重写
 function well_thread_delete_all($tid)
 {
-    global $conf;
+    global $conf, $forumlist;
 
     if (empty($tid)) return FALSE;
 
@@ -490,6 +490,8 @@ function well_thread_delete_all($tid)
 
     $thread = well_thread_read_cache($tid);
     if (empty($thread)) return FALSE;
+
+    $forum = array_value($forumlist, $thread['fid']);
 
     // hook model_thread_delete_all_before.php
 
@@ -549,10 +551,19 @@ function well_thread_delete_all($tid)
     $r = well_thread_delete($tid);
     if ($r === FALSE) return FALSE;
 
-    $r = thread_tid_delete($tid);
-    if ($r === FALSE) return FALSE;
+    $user_update = array();
+    // 新闻模型
+    if (array_value($forum, 'model') == 0) {
+        $r = thread_tid_delete($tid);
+        if ($r === FALSE) return FALSE;
 
-    user_update($thread['uid'], array('articles-' => 1));
+        // 内容数-1
+        $user_update = array('articles-' => 1);
+    }
+
+    // hook model_thread_delete_all_user_update_before.php
+
+    !empty($user_update) AND user_update($thread['uid'], $user_update);
 
     // hook model_thread_delete_all_forum_update_before.php
 
