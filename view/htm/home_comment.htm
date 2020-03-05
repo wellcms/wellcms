@@ -13,10 +13,10 @@
 
 						<!--{hook home_comment_list_inc_subject_before.htm}-->
 						<h6 class="font-weight-bold">
-							<a href="<?php echo url('read-'.$_post['tid']);?>" target="_blank">
-								<?php echo $_post['subject'];?>
-							</a>
-						</h6>
+                            <a href="<?php echo url('read-'.$_post['tid']);?>" target="_blank">
+                                <?php echo $_post['subject'];?>
+                            </a>
+                        </h6>
 						<!--{hook home_comment_list_inc_subject_after.htm}-->
 
 						<!--{hook home_comment_list_inc_message_before.htm}-->
@@ -35,25 +35,25 @@
 		<div class="text-center">
 			<label class="mr-3">
 				<input type="checkbox" data-target='input[name="pid"]' class="checkall mt-2 mr-2" value="" aria-label="<?php echo lang('checkall');?>" />
-				<?php echo lang('checkall');?>
+                <?php echo lang('checkall');?>
 			</label>
 			<div class="btn-group mod-button my-3" role="group" aria-label="">
 				<!--{hook home_comment_mode_delete_before.htm}-->
 				<button class="btn btn-secondary delete" data-href="<?php echo url('comment-delete');?>">
-					<?php echo lang('delete');?>
-				</button>
+                    <?php echo lang('delete');?>
+                </button>
 				<!--{hook home_comment_mode_delete_after.htm}-->
 			</div>
 		</div>
 		<?php } ?>
 
-		<?php if ($pagination) { ?>
-		<nav class="my-3">
-			<ul class="pagination justify-content-center flex-wrap">
-				<?php echo $pagination; ?>
-			</ul>
-		</nav>
-		<?php } ?>
+        <?php if ($pagination) { ?>
+        <nav class="my-3">
+            <ul class="pagination justify-content-center flex-wrap">
+                <?php echo $pagination; ?>
+            </ul>
+        </nav>
+        <?php } ?>
 
 	</slot>
 </template>

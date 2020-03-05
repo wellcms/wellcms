@@ -404,7 +404,7 @@ EOT;
 
         $safe_token = param('safe_token');
         well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
-
+        
         $type = param('type', 0);
 
         if ($type == 1) {

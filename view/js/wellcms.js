@@ -156,28 +156,28 @@ $(function () {
 /* 导航子菜单 鼠标悬浮移除移入*/
 $(function () {
     /*var dropdown = $(".dropdown");
-     dropdown.mouseover(function () {
-     $(this).addClass("show");
-     $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
-     $(this).find('.dropdown-menu').addClass("show");
-     });
-     dropdown.mouseleave(function () {
-     $(this).removeClass("show");
-     $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
-     $(this).find('.dropdown-menu').removeClass("show");
-     });
-     dropdown.click(function () {
-     var v = $(this).children('a.dropdown-toggle').attr("aria-expanded");
-     if (v == false) {
-     $(this).addClass("show");
-     $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
-     $(this).find('.dropdown-menu').addClass("show");
-     } else {
-     $(this).removeClass("show");
-     $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
-     $(this).find('.dropdown-menu').removeClass("show");
-     }
-     });*/
+    dropdown.mouseover(function () {
+        $(this).addClass("show");
+        $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
+        $(this).find('.dropdown-menu').addClass("show");
+    });
+    dropdown.mouseleave(function () {
+        $(this).removeClass("show");
+        $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
+        $(this).find('.dropdown-menu').removeClass("show");
+    });
+    dropdown.click(function () {
+        var v = $(this).children('a.dropdown-toggle').attr("aria-expanded");
+        if (v == false) {
+            $(this).addClass("show");
+            $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
+            $(this).find('.dropdown-menu').addClass("show");
+        } else {
+            $(this).removeClass("show");
+            $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
+            $(this).find('.dropdown-menu').removeClass("show");
+        }
+    });*/
 });
 
 /*

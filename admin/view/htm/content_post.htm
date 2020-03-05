@@ -1,42 +1,42 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 <!--{hook admin_content_post_start.htm}-->
 <div class="container-fluid px-0">
-	<div class="row">
-		<div class="col-lg-12">
-			<!--{hook admin_content_post_breadcrumb_before.htm}-->
-			<?php if(empty($hide_breadcrumb)) { ?>
-			<ol class="breadcrumb d-none d-md-flex text-muted">
-				<li class="breadcrumb-item"><a href="<?php echo url('content-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
-				<?php if ($fid) { ?>
-				<li class="breadcrumb-item"><?php echo $forum['name'];?></li>
-				<?php } ?>
-				<li class="breadcrumb-item"><?php echo $breadcrumb_flag;?></li>
-				<!--{hook admin_content_post_breadcrumb.htm}-->
-			</ol>
+<div class="row">
+	<div class="col-lg-12">
+		<!--{hook admin_content_post_breadcrumb_before.htm}-->
+		<?php if(empty($hide_breadcrumb)) { ?>
+		<ol class="breadcrumb d-none d-md-flex text-muted">
+			<li class="breadcrumb-item"><a href="<?php echo url('content-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+			<?php if ($fid) { ?>
+			<li class="breadcrumb-item"><?php echo $forum['name'];?></li>
 			<?php } ?>
-			<!--{hook admin_content_post_breadcrumb_after.htm}-->
-			<div class="card card-threadlist">
-				<div class="card-body">
-					<!--{hook admin_content_post_form_start.htm}-->
-					<?php include _include(ADMIN_PATH.'view/htm/thread_post.inc.htm');?>
-					<!--{hook admin_content_post_form_end.htm}-->
-				</div>
+            <li class="breadcrumb-item"><?php echo $breadcrumb_flag;?></li>
+			<!--{hook admin_content_post_breadcrumb.htm}-->
+		</ol>
+		<?php } ?>
+		<!--{hook admin_content_post_breadcrumb_after.htm}-->
+		<div class="card card-threadlist">
+			<div class="card-body">
+                <!--{hook admin_content_post_form_start.htm}-->
+                <?php include _include(ADMIN_PATH.'view/htm/thread_post.inc.htm');?>
+                <!--{hook admin_content_post_form_end.htm}-->
 			</div>
 		</div>
 	</div>
+</div>
 </div>
 <!--{hook admin_content_post_end.htm}-->
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-	/* 模型 */
+    /* 模型 */
     var model = <?php echo $model;?>;
-	/* 主题 */
+    /* 主题 */
     var tid = <?php echo isset($tid) ? intval($tid) : 0; ?>;
     var forumlist = <?php echo xn_json_encode($forumlist);?>;
 
-	/*初始化值，选中的值*/
+    /*初始化值，选中的值*/
     var index_flagids = <?php echo xn_json_encode($index_flagids);?>;
     var index_flag_list = <?php echo xn_json_encode($index_flag);?>;
 
@@ -55,13 +55,13 @@
 
     fid_on_change(fid);
 
-	/* 当选择栏目时，加载对应需要加载的代码 */
+    /* 当选择栏目时，加载对应需要加载的代码 */
     function fid_on_change(fid) {
         var forum = forumlist[fid];
 
         <!--{hook admin_content_js_on_change_start.htm}-->
 
-		/* 如果不是文章模型 则跳转重新加载添加内容界面 */
+        /* 如果不是文章模型 则跳转重新加载添加内容界面 */
         if (forum.model != model) {
             if (action == 'create') {
                 window.location = xn.url('content-' + action + '-' + fid);
@@ -121,7 +121,7 @@
         var jthis = $(this);
         var flagid = jthis.attr('flagid');
         jthis.toggleClass('active');
-		/*隐藏域*/
+        /*隐藏域*/
         var v = jthis.hasClass('active') ? flagid : '';
         jthis.next().attr('value', v);
     });
@@ -181,17 +181,17 @@
             }, function (code, message) {
                 if (code != 0) return $.alert(message);
                 jassoc.attr('src', message.url);
-				/*jassoc.css('max-width',150);
-				 jassoc.css('height','auto');*/
+                /*jassoc.css('max-width',150);
+                 jassoc.css('height','auto');*/
                 callback();
             }, function (percent) {
-				/*percent = xn.intval(percent);
-				 jprogressbar.css('width', percent+'%');
-				 jprogressbar.text(percent+'%');
-				 jprogress.show();
-				 console.log('progress:'+ percent);*/
+                /*percent = xn.intval(percent);
+                 jprogressbar.css('width', percent+'%');
+                 jprogressbar.text(percent+'%');
+                 jprogress.show();
+                 console.log('progress:'+ percent);*/
             }, function (base64_data) {
-				/*base64_data 用来显示缩略图*/
+                /*base64_data 用来显示缩略图*/
             });
         });
     });
@@ -201,7 +201,7 @@
         var files = xn.get_files_from_event(e);
         if (!files) return;
 
-		/*并发下会 服务端 session 写入会有问题，由客户端控制改为串行*/
+        /*并发下会 服务端 session 写入会有问题，由客户端控制改为串行*/
         if (!jattachparent.find('.attachlist').length) {
             jattachparent.append('<fieldset class="fieldset m-0 p-0"><legend><?php echo lang('uploaded_attach');?></legend><ul class="list-unstyled attachlist nowrap"><ul></fieldset>');
         }
@@ -216,7 +216,7 @@
             var file = files[i];
             xn.upload_file(file, xn.url('attach-create-1'), {is_image: 0,safe_token: safe_token}, function (code, message) {
                 if (code != 0) return $.alert(message);
-				/*把文件 append 到附件列表*/
+                /*把文件 append 到附件列表*/
                 var url = message.url;
                 var filetype = message.filetype;
                 var aid = message.aid;
@@ -233,7 +233,7 @@
         });
     });
 
-	/*删除附件*/
+    /*删除附件*/
     jattachparent.on('click', 'a.delete', function() {
         var jlink = $(this);
         var jli = jlink.parents('li');
@@ -281,7 +281,7 @@
         description.remove();
     });
 
-    if (action == 'update') {
+	if (action == 'update') {
         if (input_link.checked() == true) {
             var description = $('div.description');
             var copy = description.clone();

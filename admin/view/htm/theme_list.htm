@@ -1,11 +1,11 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <div class="container-fluid px-0">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<div class="row">
                         <?php foreach($themes as $dir=>$theme) {?>
                         <div class="col-lg-2 col-md-3 col-6">
                             <a href="<?php echo url('plugin-read-'.$dir);?>">
@@ -24,20 +24,20 @@
                             </div>
                         </div>
                         <?php }?>
-                    </div>
-                </div>
-            </div>
+					</div>
+				</div>
+			</div>
 
-            <?php if($pagination) { ?> <nav><ul class="pagination justify-content-center"><?php echo $pagination; ?></ul></nav> <?php } ?>
+			<?php if($pagination) { ?> <nav><ul class="pagination justify-content-center"><?php echo $pagination; ?></ul></nav> <?php } ?>
 
-        </div>
+		</div>
 
-    </div>
+	</div>
 </div>
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    $('#plugin').addClass('show');
-    $('.sidebar-sticky li.menu-theme').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#plugin').addClass('show');
+$('.sidebar-sticky li.menu-theme').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
 </script>

@@ -17,7 +17,7 @@ $forum = array_value($forumlist_show, $fid);
 empty($forum) AND message(-1, lang('forum_not_exists'));
 
 // 管理时使用
-$uid AND $extra['fup'] = $fid;
+(forum_access_mod($fid, $gid, 'allowdelete') OR forum_access_mod($fid, $gid, 'allowtop')) AND $extra['fid'] = $fid;
 
 // hook category_before.php
 
@@ -98,7 +98,7 @@ if ($forum['model'] == 0) {
         if ($thread_list_from_default) {
             $fids = array();
             $threads = 0;
-            if($forumlist_show) {
+            if ($forumlist_show) {
                 foreach ($forumlist_show as $key => $val) {
                     if ($val['fup'] == $fid && $val['type'] == 1 && $val['category'] == 0) {
                         $fids[] = $val['fid'];
@@ -127,11 +127,6 @@ if ($forum['model'] == 0) {
         $threadlist = $arrlist['threadlist'];
         $flaglist = $arrlist['flaglist'];
 
-        // hook category_article_flat_middle.php
-
-        // ajax数据
-        //$arrlist = array('threadlist' => $threadlist, 'flaglist' => $flaglist);
-
         // hook category_article_flat_after.php
 
         $threads = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
@@ -149,7 +144,7 @@ if ($forum['model'] == 0) {
     $seo_title = $forum['seo_title'] ? $forum['seo_title'] : $forum['name'] . '-' . $conf['sitename'];
     $header['title'] = strip_tags($seo_title);
     $header['mobile_title'] = '';
-    $header['mobile_link'] =url('category-' . $fid);
+    $header['mobile_link'] = url('category-' . $fid);
     $seo_keywords = $forum['seo_keywords'] ? $forum['seo_keywords'] : $forum['name'];
     $header['keywords'] = strip_tags($seo_keywords);
     $header['description'] = strip_tags($forum['brief']);

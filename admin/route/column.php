@@ -131,7 +131,7 @@ if (empty($action) || $action == 'list') {
         $name = param('name');
         $name = filter_all_html($name);
         empty($name) AND message(1, lang('data_empty_to_last_step'));
-
+ 
         $rank = param('rank', 0);
         $brief = param('brief', '', FALSE);
         $brief = xn_html_safe($brief);

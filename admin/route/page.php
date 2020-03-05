@@ -346,7 +346,7 @@ if ($action == 'list') {
         // hook admin_page_update_post_fid_center.php
 
         if ($fid != $newfid) {
-
+            
             // hook admin_page_update_post_fid_access.php
 
             $thread['uid'] != $uid AND !forum_access_mod($fid, $gid, 'allowupdate') AND message(1, lang('user_group_insufficient_privilege'));

@@ -196,9 +196,10 @@
 <script src="<?php echo admin_view_path();?>js/jquery.qrcode.min.js"></script>
 <script>
     var jform = $('#form');
-    var jsubmit = $('#submit');
     jform.on('submit', function() {
         jform.reset();
+        var jthis = $(this);
+        var jsubmit = jthis.find('#submit');
         jsubmit.button('loading');
         var postdata = jform.serializeObject();
         $.xpost(jform.attr('action'), postdata, function(code, message) {

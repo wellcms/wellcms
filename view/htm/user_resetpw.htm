@@ -17,7 +17,7 @@
 						<div class="invalid-feedback"></div>
 					</div>
 					<!--{hook user_resetpw_email_after.htm}-->
-
+					
 					<!--{hook user_resetpw_verify_code_before.htm}-->
 					<div class="media">
 						<div class="media-body">
@@ -35,10 +35,10 @@
 						</div>
 					</div>
 					<!--{hook user_resetpw_verify_code_after.htm}-->
-
+					
 					<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..." <?php if($conf['user_create_email_on']) { ?>disabled<?php } ?>>
-					<?php echo lang('next_step');?>
-					</button>
+                        <?php echo lang('next_step');?>
+                    </button>
 				</form>
 			</div>
 		</div>
@@ -48,58 +48,58 @@
 <?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    var jform = $('#form');
-    var jsend = $('#send');
-    jsend.on('click', function() {
-        var jthis = $(this);
-        var jsubmit = jthis.find('#submit');
-        jform.reset();
-        jsend.button('loading');
-        var postdata = jform.serialize();
-        $.xpost(jsend.attr('action'), postdata, function(code, message) {
-            if(code == 0) {
-                $.alert(message);
-                $('#code').focus();
-                var t = 60;
-                jsend.button('<?php echo lang('user_send_successfully');?> 60 ');
-                jsubmit.button('reset');
-				/*倒计时，重新发送*/
-                var handler = setInterval(function() {
-                    jsend.button('<?php echo lang('user_send_successfully');?> '+(--t)+' ');
-                    if(t == 0) {
-                        clearInterval(handler);
-                        jsend.button('reset');
-                    }
-                }, 1000);
-            } else if(code < 0) {
-                $.alert(message);
-                jsend.button('reset');
-            } else {
-                jform.find('[name="'+code+'"]').alert(message).focus();
-                jsend.button('reset');
-            }
-        });
-        return false;
-    });
+var jform = $('#form');
+var jsend = $('#send');
+jsend.on('click', function() {
+    var jthis = $(this);
+    var jsubmit = jthis.find('#submit');
+	jform.reset();
+	jsend.button('loading');
+	var postdata = jform.serialize();
+	$.xpost(jsend.attr('action'), postdata, function(code, message) {
+		if(code == 0) {
+			$.alert(message);
+			$('#code').focus();
+			var t = 60;
+			jsend.button('<?php echo lang('user_send_successfully');?> 60 ');
+			jsubmit.button('reset');
+			/*倒计时，重新发送*/
+			var handler = setInterval(function() {
+				jsend.button('<?php echo lang('user_send_successfully');?> '+(--t)+' ');
+				if(t == 0) {
+					clearInterval(handler);
+					jsend.button('reset');
+				}
+			}, 1000);
+		} else if(code < 0) {
+			$.alert(message);
+			jsend.button('reset');
+		} else {
+			jform.find('[name="'+code+'"]').alert(message).focus();
+			jsend.button('reset');
+		}
+	});
+	return false;
+});
 
-    jform.on('submit', function() {
-        var jthis = $(this);
-        var jsubmit = jthis.find('#submit');
-        jform.reset();
-        jsubmit.button('loading');
-        var postdata = jform.serialize();
-        $.xpost(jform.attr('action'), postdata, function(code, message) {
-            if(code == 0) {
-                $.alert(message);
-                jsubmit.button(message).delay(1000).location(xn.url('user-resetpw_complete'));
-            } else if(xn.is_number(code)) {
-                alert(message);
-                jsubmit.button('reset');
-            } else {
-                jform.find('[name="'+code+'"]').alert(message).focus();
-                jsubmit.button('reset');
-            }
-        });
-        return false;
-    });
+jform.on('submit', function() {
+    var jthis = $(this);
+    var jsubmit = jthis.find('#submit');
+	jform.reset();
+	jsubmit.button('loading');
+	var postdata = jform.serialize();
+	$.xpost(jform.attr('action'), postdata, function(code, message) {
+		if(code == 0) {
+			$.alert(message);
+			jsubmit.button(message).delay(1000).location(xn.url('user-resetpw_complete'));
+		} else if(xn.is_number(code)) {
+			alert(message);
+			jsubmit.button('reset');
+		} else {
+			jform.find('[name="'+code+'"]').alert(message).focus();
+			jsubmit.button('reset');
+		}
+	});
+	return false;
+});
 </script>

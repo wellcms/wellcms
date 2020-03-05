@@ -53,289 +53,289 @@
 
 <!--{hook admin_column_post_start.htm}-->
 <div class="container-fluid px-0">
-    <div class="row">
-        <div class="col-12">
-            <ol class="breadcrumb d-none d-md-flex text-muted">
-                <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
-                <li class="breadcrumb-item"><?php echo lang('website');?></li>
-                <li class="breadcrumb-item"><?php echo $breadcrumb;?></li>
-                <!--{hook admin_column_post_breadcrumb.htm}-->
-            </ol>
-            <div class="card">
+<div class="row">
+	<div class="col-12">
+        <ol class="breadcrumb d-none d-md-flex text-muted">
+            <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><?php echo lang('website');?></li>
+            <li class="breadcrumb-item"><?php echo $breadcrumb;?></li>
+            <!--{hook admin_column_post_breadcrumb.htm}-->
+        </ol>
+        <div class="card">
 
-                <?php if ($next == 1 || $action == 'update') { ?>
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                        <!--{hook admin_column_post_header_start.htm}-->
-                        <li class="nav-item">
-                            <a class="nav-link active" id="base-tab" data-toggle="tab" href="#base" role="tab" aria-controls="base" aria-selected="true"><?php echo lang('base');?></a>
-                        </li>
-                        <!--{hook admin_column_post_header_before.htm}-->
+            <?php if ($next == 1 || $action == 'update') { ?>
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                    <!--{hook admin_column_post_header_start.htm}-->
+                    <li class="nav-item">
+                        <a class="nav-link active" id="base-tab" data-toggle="tab" href="#base" role="tab" aria-controls="base" aria-selected="true"><?php echo lang('base');?></a>
+                    </li>
+                    <!--{hook admin_column_post_header_before.htm}-->
 
-                        <?php if ($category < 2) { ?>
-                        <!--{hook admin_column_post_header_center.htm}-->
-                        <li class="nav-item">
-                            <a class="nav-link" id="privilege-tab" data-toggle="tab" href="#privilege" role="tab" aria-controls="privilege" aria-selected="false"><?php echo lang('privilege');?></a>
-                        </li>
-                        <!--{hook admin_column_post_header_middle.htm}-->
-                        <li class="nav-item">
-                            <a class="nav-link" id="option-tab" data-toggle="tab" href="#option" role="tab" aria-controls="option" aria-selected="false"><?php echo lang('option');?></a>
-                        </li>
-                        <!--{hook admin_column_post_header_after.htm}-->
-                        <?php } ?>
+                    <?php if ($category < 2) { ?>
+                    <!--{hook admin_column_post_header_center.htm}-->
+                    <li class="nav-item">
+                        <a class="nav-link" id="privilege-tab" data-toggle="tab" href="#privilege" role="tab" aria-controls="privilege" aria-selected="false"><?php echo lang('privilege');?></a>
+                    </li>
+                    <!--{hook admin_column_post_header_middle.htm}-->
+                    <li class="nav-item">
+                        <a class="nav-link" id="option-tab" data-toggle="tab" href="#option" role="tab" aria-controls="option" aria-selected="false"><?php echo lang('option');?></a>
+                    </li>
+                    <!--{hook admin_column_post_header_after.htm}-->
+                    <?php } ?>
 
-                        <!--{hook admin_column_post_header_end.htm}-->
-                    </ul>
+                    <!--{hook admin_column_post_header_end.htm}-->
+                </ul>
+            </div>
+            <?php } ?>
+
+            <div class="card-body">
+                <?php if ($next == 0 && $action == 'create') { ?>
+                <div class="col-md-6 offset-md-3 my-4 py-4">
+                    <div class="form-group row text-center">
+                        <div class="col-sm-12 next">
+                            <?php echo $input['category']; ?>
+                            <p class="small text-muted mt-3"><?php echo lang('create_forum_choose_tips');?></p>
+                        </div>
+                    </div>
+                </div>
+                <!--{hook admin_column_post_next_after.htm}-->
+                <div class="text-center m-3">
+                    <button class="btn btn-primary btn-lock col-md-3 mx-auto" id="next" data-loading-text="Loding...">Next</button>
                 </div>
                 <?php } ?>
 
-                <div class="card-body">
-                    <?php if ($next == 0 && $action == 'create') { ?>
-                    <div class="col-md-6 offset-md-3 my-4 py-4">
-                        <div class="form-group row text-center">
-                            <div class="col-sm-12 next">
-                                <?php echo $input['category']; ?>
-                                <p class="small text-muted mt-3"><?php echo lang('create_forum_choose_tips');?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--{hook admin_column_post_next_after.htm}-->
-                    <div class="text-center m-3">
-                        <button class="btn btn-primary btn-lock col-md-3 mx-auto" id="next" data-loading-text="Loding...">Next</button>
-                    </div>
-                    <?php } ?>
+                <?php if ($next == 1 || $action == 'update') { ?>
+                <form action="<?php echo $form_action;?>" method="post" id="form">
+                    <?php echo $input['safe_token'];?>
+                    <div class="tab-content">
+                        <!--{hook admin_column_post_tab_start.htm}-->
 
-                    <?php if ($next == 1 || $action == 'update') { ?>
-                    <form action="<?php echo $form_action;?>" method="post" id="form">
-                        <?php echo $input['safe_token'];?>
-                        <div class="tab-content">
-                            <!--{hook admin_column_post_tab_start.htm}-->
-
-                            <div class="tab-pane fade show active" id="base" role="tabpanel" aria-labelledby="base-tab">
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('forum_name');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['name'];?>
-                                    </div>
-                                </div>
-
-                                <!--{hook admin_column_post_name_after.htm}-->
-                                <?php if ($category != 2) { ?>
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo $category==3?lang('outer_chain'):lang('brief');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['brief'];?>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <?php if ($category < 2) { ?>
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">title：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['seo_title'];?>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">keywords：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['seo_keywords'];?>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('forum_announcement');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['announcement'];?>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('moderator');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['modnames'];?>
-                                        <p class="small text-muted mt-2" id="modnames"><?php echo lang('forum_moduid_format_tips');?></p>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('column').lang('model');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['model'];?>
-                                    </div>
-                                </div>
-
-                                <?php } ?>
-
-                                <!--{hook admin_column_post_model_after.htm}-->
-                                <?php if (in_array($category, array(0,1)) && $action == 'update') { ?>
-                                <!--栏目属性 选择频道 下面的.fup不显示-->
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('column').lang('flag');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['category']; ?>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!--{hook admin_column_post_fup_before.htm}-->
-
-                                <?php if (in_array($category, array(0))) { ?>
-                                <div class="fup">
-                                    <div class="form-group row">
-                                        <label class="col-sm-2 form-control-label"><?php echo lang('own_channel');?>：</label>
-                                        <div class="col-sm-8">
-                                            <div>
-                                                <?php echo $input['fup']; ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!--{hook admin_column_post_fup_after.htm}-->
-                                <!--是否显示在导航-->
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('nav_display');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['nav_display']; ?>
-                                    </div>
-                                </div>
-
-                                <!--{hook admin_column_post_comment_before.htm}-->
-                                <?php if ($category == 0) { ?>
-                                <!--comment / 频道不显示评论 -->
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('comment');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['comment'];?>
-                                        <p class="small text-muted mt-3"><?php echo lang('comment_remark');?></p>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!--{hook admin_column_post_comment_after.htm}-->
-
-                            </div>
-
-                            <!--{hook admin_column_post_tab_beofre.htm}-->
-
-                            <div class="tab-pane fade" id="privilege" role="tabpanel" aria-labelledby="privilege-tab">
-                                <div class="form-group row">
-                                    <div class="col-sm-12">
-                                        <p><?php echo lang('user_privilege');?>：<?php echo $input['accesson'];?><?php echo lang('enable');?></p>
-                                        <div class="table-responsive <?php echo $accesson ? '' : 'collapse';?>" id="accesslist_div">
-                                            <table class="table table-hover text-small" id="accesslist" style="min-width: 500px;">
-                                                <thead>
-                                                <tr align="center">
-                                                    <td><?php echo lang('checkall');?></td>
-                                                    <td align="left"><?php echo lang('user_group');?></td>
-                                                    <td><?php echo lang('allow_view');?></td>
-                                                    <td><?php echo lang('allow_thread');?></td>
-                                                    <td><?php echo lang('allow_post');?></td>
-                                                    <td><?php echo lang('allow_upload');?></td>
-                                                    <td><?php echo lang('allow_download');?></td>
-                                                    <!--{hook admin_column_access_title_end.htm}-->
-                                                </tr>
-                                                <thead>
-                                                <tbody>
-                                                <?php foreach ($accesslist as &$access) { ?>
-                                                <tr align="center">
-                                                    <td><label class="custom-input c-checkbox"><input type="checkbox" name="checkall" /></label></td>
-                                                    <td align="left"><?php echo $access['name']; ?></td>
-                                                    <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowread[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowread'] ? 'checked' : ''); ?> /></label></td>
-                                                    <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowthread[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowthread'] ? 'checked' : ''); ?> /></label></td>
-                                                    <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowpost[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowpost'] ? 'checked' : ''); ?> /></label></td>
-                                                    <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowattach[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowattach'] ? 'checked' : ''); ?> /></label></td>
-                                                    <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowdown[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowdown'] ? 'checked' : ''); ?> /></label></td>
-                                                    <!--{hook admin_column_access_input_end.htm}-->
-                                                </tr>
-                                                <?php } ?>
-                                                </tbody>
-                                            </table>
-
-                                        </div>
-                                    </div>
+                        <div class="tab-pane fade show active" id="base" role="tabpanel" aria-labelledby="base-tab">
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('forum_name');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['name'];?>
                                 </div>
                             </div>
 
-                            <!--{hook admin_column_post_tab_after.htm}-->
-
-                            <?php if ($category < 2) { ?>
-                            <div class="tab-pane fade" id="option" role="tabpanel" aria-labelledby="option-tab">
-
-                                <?php if ($category == 0) { ?>
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label" for="display"><?php echo lang('index_display');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['display'];?>
-                                    </div>
+                            <!--{hook admin_column_post_name_after.htm}-->
+                            <?php if ($category != 2) { ?>
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo $category==3?lang('outer_chain'):lang('brief');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['brief'];?>
                                 </div>
-                                <!--{hook admin_column_post_display_after.htm}-->
-                                <!--首页最新数量-->
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('index_page').lang('new_thread');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['index_new'];?>
-                                        <p class="small text-muted mt-3"><?php echo lang('portal_display_remark');?></p>
-                                    </div>
-                                </div>
-                                <!--{hook admin_column_post_index_new_after.htm}-->
-                                <!--频道最新数量-->
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('channel').lang('new_thread');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['channel_new'];?>
-                                        <p class="small text-muted mt-3"><?php echo lang('portal_display_remark');?></p>
-                                    </div>
-                                </div>
-                                <?php } ?>
-                                <!--{hook admin_column_post_channel_new_after.htm}-->
-                                <!--设置为频道和顶级栏目时 列表显示数量-->
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('list').lang('pagination');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['pagesize'];?>
-                                        <p class="small text-muted mt-3"><?php echo lang('pagesize_tips');?></p>
-                                    </div>
-                                </div>
-                                <!--{hook admin_column_post_pagesize_after.htm}-->
-                                <?php if ($category == 0) { ?>
-                                <!--{hook admin_column_post_thumbnail_start.htm}-->
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('thumbnail').lang('width');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['width'];?>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"><?php echo lang('thumbnail').lang('height');?>：</label>
-                                    <div class="col-sm-10">
-                                        <?php echo $input['height'];?>
-                                    </div>
-                                </div>
-                                <!--{hook admin_column_post_thumbnail_after.htm}-->
-                                <?php } ?>
-                                <!--{hook admin_column_post_thumbnail_end.htm}-->
                             </div>
                             <?php } ?>
 
-                            <!--{hook admin_column_post_tab_end.htm}-->
+                            <?php if ($category < 2) { ?>
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label">title：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['seo_title'];?>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label">keywords：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['seo_keywords'];?>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('forum_announcement');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['announcement'];?>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('moderator');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['modnames'];?>
+                                    <p class="small text-muted mt-2" id="modnames"><?php echo lang('forum_moduid_format_tips');?></p>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('column').lang('model');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['model'];?>
+                                </div>
+                            </div>
+
+                            <?php } ?>
+
+                            <!--{hook admin_column_post_model_after.htm}-->
+                            <?php if (in_array($category, array(0,1)) && $action == 'update') { ?>
+                            <!--栏目属性 选择频道 下面的.fup不显示-->
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('column').lang('flag');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['category']; ?>
+                                </div>
+                            </div>
+                            <?php } ?>
+
+                            <!--{hook admin_column_post_fup_before.htm}-->
+
+                            <?php if (in_array($category, array(0))) { ?>
+                            <div class="fup">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 form-control-label"><?php echo lang('own_channel');?>：</label>
+                                    <div class="col-sm-8">
+                                        <div>
+                                            <?php echo $input['fup']; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php } ?>
+
+                            <!--{hook admin_column_post_fup_after.htm}-->
+                            <!--是否显示在导航-->
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('nav_display');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['nav_display']; ?>
+                                </div>
+                            </div>
+
+                            <!--{hook admin_column_post_comment_before.htm}-->
+                            <?php if ($category == 0) { ?>
+                            <!--comment / 频道不显示评论 -->
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('comment');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['comment'];?>
+                                    <p class="small text-muted mt-3"><?php echo lang('comment_remark');?></p>
+                                </div>
+                            </div>
+                            <?php } ?>
+
+                            <!--{hook admin_column_post_comment_after.htm}-->
+
                         </div>
 
-                        <p class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lock col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
-                            <a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
-                        </p>
-                    </form>
-                    <?php } ?>
+                        <!--{hook admin_column_post_tab_beofre.htm}-->
 
-                </div>
+                        <div class="tab-pane fade" id="privilege" role="tabpanel" aria-labelledby="privilege-tab">
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <p><?php echo lang('user_privilege');?>：<?php echo $input['accesson'];?><?php echo lang('enable');?></p>
+                                    <div class="table-responsive <?php echo $accesson ? '' : 'collapse';?>" id="accesslist_div">
+                                        <table class="table table-hover text-small" id="accesslist" style="min-width: 500px;">
+                                            <thead>
+                                            <tr align="center">
+                                                <td><?php echo lang('checkall');?></td>
+                                                <td align="left"><?php echo lang('user_group');?></td>
+                                                <td><?php echo lang('allow_view');?></td>
+                                                <td><?php echo lang('allow_thread');?></td>
+                                                <td><?php echo lang('allow_post');?></td>
+                                                <td><?php echo lang('allow_upload');?></td>
+                                                <td><?php echo lang('allow_download');?></td>
+                                                <!--{hook admin_column_access_title_end.htm}-->
+                                            </tr>
+                                            <thead>
+                                            <tbody>
+                                            <?php foreach ($accesslist as &$access) { ?>
+                                            <tr align="center">
+                                                <td><label class="custom-input c-checkbox"><input type="checkbox" name="checkall" /></label></td>
+                                                <td align="left"><?php echo $access['name']; ?></td>
+                                                <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowread[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowread'] ? 'checked' : ''); ?> /></label></td>
+                                                <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowthread[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowthread'] ? 'checked' : ''); ?> /></label></td>
+                                                <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowpost[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowpost'] ? 'checked' : ''); ?> /></label></td>
+                                                <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowattach[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowattach'] ? 'checked' : ''); ?> /></label></td>
+                                                <td><label class="custom-input ccustom-checkbox"><input type="checkbox" name="allowdown[<?php echo $access['gid']; ?>]" value="1"<?php echo ($access['allowdown'] ? 'checked' : ''); ?> /></label></td>
+                                                <!--{hook admin_column_access_input_end.htm}-->
+                                            </tr>
+                                            <?php } ?>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--{hook admin_column_post_tab_after.htm}-->
+
+                        <?php if ($category < 2) { ?>
+                        <div class="tab-pane fade" id="option" role="tabpanel" aria-labelledby="option-tab">
+
+                            <?php if ($category == 0) { ?>
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label" for="display"><?php echo lang('index_display');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['display'];?>
+                                </div>
+                            </div>
+                            <!--{hook admin_column_post_display_after.htm}-->
+                            <!--首页最新数量-->
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('index_page').lang('new_thread');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['index_new'];?>
+                                    <p class="small text-muted mt-3"><?php echo lang('portal_display_remark');?></p>
+                                </div>
+                            </div>
+                            <!--{hook admin_column_post_index_new_after.htm}-->
+                            <!--频道最新数量-->
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('channel').lang('new_thread');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['channel_new'];?>
+                                    <p class="small text-muted mt-3"><?php echo lang('portal_display_remark');?></p>
+                                </div>
+                            </div>
+                            <?php } ?>
+                            <!--{hook admin_column_post_channel_new_after.htm}-->
+                            <!--设置为频道和顶级栏目时 列表显示数量-->
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('list').lang('pagination');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['pagesize'];?>
+                                    <p class="small text-muted mt-3"><?php echo lang('pagesize_tips');?></p>
+                                </div>
+                            </div>
+                            <!--{hook admin_column_post_pagesize_after.htm}-->
+                            <?php if ($category == 0) { ?>
+                            <!--{hook admin_column_post_thumbnail_start.htm}-->
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('thumbnail').lang('width');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['width'];?>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 form-control-label"><?php echo lang('thumbnail').lang('height');?>：</label>
+                                <div class="col-sm-10">
+                                    <?php echo $input['height'];?>
+                                </div>
+                            </div>
+                            <!--{hook admin_column_post_thumbnail_after.htm}-->
+                            <?php } ?>
+                            <!--{hook admin_column_post_thumbnail_end.htm}-->
+                        </div>
+                        <?php } ?>
+
+                        <!--{hook admin_column_post_tab_end.htm}-->
+                    </div>
+
+                    <p class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lock col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+                        <a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
+                    </p>
+                </form>
+                <?php } ?>
+
             </div>
         </div>
     </div>
+</div>
 </div>
 <!--{hook admin_column_post_end.htm}-->
 
@@ -343,62 +343,62 @@
 
 <script>
     <?php if ($next == 1 || $action == 'update') { ?>
-        var jform = $("#form");
-        jform.on('submit', function(){
-            jform.reset();
-            var jthis = $(this);
-            var jsubmit = jthis.find('#submit');
-            jsubmit.button('loading');
-            var postdata = jform.serialize();
-            $.xpost(jform.attr('action'), postdata, function(code, message) {
-                if(code == 0) {
-                    $.alert(message);
-                    jsubmit.text(message).delay(1000).location(xn.url('column-list'));
-                } else {
-                    $.alert(message);
-                    jsubmit.button('reset');
-                }
-            });
-            return false;
+    var jform = $("#form");
+    jform.on('submit', function(){
+        jform.reset();
+        var jthis = $(this);
+        var jsubmit = jthis.find('#submit');
+        jsubmit.button('loading');
+        var postdata = jform.serialize();
+        $.xpost(jform.attr('action'), postdata, function(code, message) {
+            if(code == 0) {
+                $.alert(message);
+                jsubmit.text(message).delay(1000).location(xn.url('column-list'));
+            } else {
+                $.alert(message);
+                jsubmit.button('reset');
+            }
         });
+        return false;
+    });
 
-        var jaccesslist = $('#accesslist_div');
-        /*toggle*/
-        jform.find('input[name="accesson"]').on('click', function() {
-            /*jaccesslist.collapse('toggle'); bootstrap toggler have bug*/
-            jaccesslist.toggle('fast');
-            return true;
-        });
+    var jaccesslist = $('#accesslist_div');
+    /*toggle*/
+    jform.find('input[name="accesson"]').on('click', function() {
+        /*jaccesslist.collapse('toggle'); bootstrap toggler have bug*/
+        jaccesslist.toggle('fast');
+        return true;
+    });
 
-        /*全选*/
-        jaccesslist.find('tr').each(function(k, v) {
-            var jtr = $(v);
-            jtr.find('td').eq(0).find('input[type="checkbox"]').on('click', function() {
-                jtr.find('input[type="checkbox"]').prop('checked', $(this).prop('checked'));
-            });
+    /*全选*/
+    jaccesslist.find('tr').each(function(k, v) {
+        var jtr = $(v);
+        jtr.find('td').eq(0).find('input[type="checkbox"]').on('click', function() {
+            jtr.find('input[type="checkbox"]').prop('checked', $(this).prop('checked'));
         });
+    });
 
         <!--{hook admin_column_post_js_bfore.htm}-->
 
     <?php } else { ?>
         $('body').on('click', 'input[name="category"],button#next', function(){
-            var category = $('input[name="category"]').checked();
-            if (category == 0) {
-                var action = '<?php echo url('column-create-'.$fup, array('category' => 0, 'next' => 1));?>';
-            } else if (category == 1) {
-                var action = '<?php echo url('column-create', array('category' => 1, 'next' => 1));?>';
-            } else if (category == 2) {
-                var action = '<?php echo url('column-create', array('category' => 2, 'next' => 1));?>';
-            } else if (category == 3) {
-                var action = '<?php echo url('column-create', array('category' => 3, 'next' => 1));?>';
-            }
-            window.location = action;
-            return false;
-        });
+        var category = $('input[name="category"]').checked();
+        if (category == 0) {
+            var action = '<?php echo url('column-create-'.$fup, array('category' => 0, 'next' => 1));?>';
+        } else if (category == 1) {
+            var action = '<?php echo url('column-create', array('category' => 1, 'next' => 1));?>';
+        } else if (category == 2) {
+            var action = '<?php echo url('column-create', array('category' => 2, 'next' => 1));?>';
+        } else if (category == 3) {
+            var action = '<?php echo url('column-create', array('category' => 3, 'next' => 1));?>';
+        }
+        window.location = action;
+        return false;
+    });
     <?php } ?>
 
-    $('#forum').addClass('show');
-    $('.sidebar-sticky li.menu-website').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#forum').addClass('show');
+$('.sidebar-sticky li.menu-website').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
 
     <!--{hook admin_column_post_js_after.htm}-->
 </script>

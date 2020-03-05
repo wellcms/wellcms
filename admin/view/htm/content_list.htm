@@ -2,69 +2,69 @@
 
 <!--{hook admin_content_start.htm}-->
 <div class="container-fluid px-0">
-    <div class="row">
-        <div class="col-lg-12">
-            <!--{hook admin_content_breadcrumb_before.htm}-->
-            <?php if(empty($hide_breadcrumb)) { ?>
-            <ol class="breadcrumb text-muted">
-                <li class="breadcrumb-item"><a href="<?php echo url($route.'-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
-                <li class="breadcrumb-item"><?php echo lang($route);?></li>
-                <?php if ($fid) { ?>
-                <li class="breadcrumb-item"><a href="<?php echo url('content-list-'.$fid);?>"><?php echo $forum['name'];?></a></li>
-                <?php } ?>
-                <li class="breadcrumb-item"><?php echo lang('list');?></li>
-                <!--{hook admin_content_breadcrumb.htm}-->
-            </ol>
+<div class="row">
+	<div class="col-lg-12">
+		<!--{hook admin_content_breadcrumb_before.htm}-->
+		<?php if(empty($hide_breadcrumb)) { ?>
+		<ol class="breadcrumb text-muted">
+            <li class="breadcrumb-item"><a href="<?php echo url($route.'-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><?php echo lang($route);?></li>
+            <?php if ($fid) { ?>
+            <li class="breadcrumb-item"><a href="<?php echo url('content-list-'.$fid);?>"><?php echo $forum['name'];?></a></li>
             <?php } ?>
-            <!--{hook admin_content_breadcrumb_after.htm}-->
-            <div class="card card-threadlist">
-                <div class="card-body">
-                    <div class="row d-flex justify-content-between mx-0 mb-3">
-                        <!--{hook admin_content_menu_start.htm}-->
-                        <div>
-                            <select class="custom-select mr-1 w-auto" name="fid">
-                                <!--{hook admin_content_select_strat.htm}-->
-                                <option value="0"><?php echo $route=='sticky'?lang('top_3'):lang('select'); ?></option>
-                                <!--{hook admin_content_select_before.htm}-->
-                                <?php foreach ($columnlist as $v) { ?>
-                                <option value="<?php echo $v['fid']; ?>"><?php echo $v['name']; ?></option>
-                                <?php } ?>
-                                <!--{hook admin_content_select_end.htm}-->
-                            </select>
-                        </div>
-                        <!--{hook admin_content_rank_before.htm}-->
-                        <!--<?php if (!empty($forum['thread_rank'])) { ?>
-                        <div>
-                            <?php echo form_radio('thread_rank', array(lang('desc'), lang('rank')), $orderby);?>
-                        </div>
-                        <?php } ?>-->
-                        <!--{hook admin_content_rank_after.htm}-->
-                        <div>
-                            <?php if (empty($columnlist)) { ?>
-                            <a class="btn btn-info btn-sm" href="<?php echo url('column-list');?>"><?php echo lang('create').lang('column'); ?></a>
-                            <?php } else { ?>
-                            <a class="btn btn-info btn-sm" href="<?php echo url('content-create-'.$fid);?>"><?php echo lang('increase').lang('content'); ?></a>
+            <li class="breadcrumb-item"><?php echo lang('list');?></li>
+            <!--{hook admin_content_breadcrumb.htm}-->
+		</ol>
+		<?php } ?>
+		<!--{hook admin_content_breadcrumb_after.htm}-->
+		<div class="card card-threadlist">
+			<div class="card-body">
+                <div class="row d-flex justify-content-between mx-0 mb-3">
+                    <!--{hook admin_content_menu_start.htm}-->
+                    <div>
+                        <select class="custom-select mr-1 w-auto" name="fid">
+                            <!--{hook admin_content_select_strat.htm}-->
+                            <option value="0"><?php echo $route=='sticky'?lang('top_3'):lang('select'); ?></option>
+                            <!--{hook admin_content_select_before.htm}-->
+                            <?php foreach ($columnlist as $v) { ?>
+                            <option value="<?php echo $v['fid']; ?>"><?php echo $v['name']; ?></option>
                             <?php } ?>
-                        </div>
-                        <!--{hook admin_content_menu_end.htm}-->
+                            <!--{hook admin_content_select_end.htm}-->
+                        </select>
                     </div>
-                    <ul class="list-unstyled threadlist mb-0">
-                        <!--{hook admin_content_threadlist_before.htm}-->
-                        <?php include _include(ADMIN_PATH.'view/htm/thread_list.inc.htm');?>
-                        <!--{hook admin_content_threadlist_after.htm}-->
-                    </ul>
+                    <!--{hook admin_content_rank_before.htm}-->
+                    <!--<?php if (!empty($forum['thread_rank'])) { ?>
+                    <div>
+                        <?php echo form_radio('thread_rank', array(lang('desc'), lang('rank')), $orderby);?>
+                    </div>
+                    <?php } ?>-->
+                    <!--{hook admin_content_rank_after.htm}-->
+                    <div>
+                        <?php if (empty($columnlist)) { ?>
+                        <a class="btn btn-info btn-sm" href="<?php echo url('column-list');?>"><?php echo lang('create').lang('column'); ?></a>
+                        <?php } else { ?>
+                        <a class="btn btn-info btn-sm" href="<?php echo url('content-create-'.$fid);?>"><?php echo lang('increase').lang('content'); ?></a>
+                        <?php } ?>
+                    </div>
+                    <!--{hook admin_content_menu_end.htm}-->
                 </div>
-            </div>
+				<ul class="list-unstyled threadlist mb-0">
+					<!--{hook admin_content_threadlist_before.htm}-->
+					<?php include _include(ADMIN_PATH.'view/htm/thread_list.inc.htm');?>
+					<!--{hook admin_content_threadlist_after.htm}-->
+				</ul>
+			</div>
+		</div>
 
-            <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+        <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
 
-            <!--{hook admin_content_page_before.htm}-->
-            <?php if ($pagination) { ?>
-            <nav class="my-1"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
-            <?php } ?>
-            <!--{hook admin_content_page_after.htm}-->
-        </div>
-    </div>
+		<!--{hook admin_content_page_before.htm}-->
+        <?php if ($pagination) { ?>
+        <nav class="my-1"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
+        <?php } ?>
+		<!--{hook admin_content_page_after.htm}-->
+	</div>
+</div>
 </div>
 <!--{hook admin_content_end.htm}-->
 
@@ -102,41 +102,41 @@
 
     /* 对主题排序 */
     /*$('button.rank').on('click', function () {
-     var rankarr = new Array();
-     $('input[name="rank"]').each(function(){
-     var tid = xn.intval($(this).attr('id'));
-     var oldrank = xn.intval($(this).attr('rank'));
-     var v = xn.intval($(this).val());
-     rankarr.push({tid:tid,oldrank:oldrank,rank:v}); /!*添加至数组*!/
-     });
-     var safe_token = '<?php echo $safe_token;?>';
-     $.xpost(xn.url('content-list'), {safe_token: safe_token,data:rankarr}, function (code, message) {
-     if (code == 0) {
-     $.alert(message);
-     setTimeout(function() {
-     window.location.reload();
-     }, 1000);
-     } else {
-     $.alert(message);
-     }
-     });
-     });
+        var rankarr = new Array();
+        $('input[name="rank"]').each(function(){
+            var tid = xn.intval($(this).attr('id'));
+            var oldrank = xn.intval($(this).attr('rank'));
+            var v = xn.intval($(this).val());
+            rankarr.push({tid:tid,oldrank:oldrank,rank:v}); /!*添加至数组*!/
+        });
+        var safe_token = '<?php echo $safe_token;?>';
+        $.xpost(xn.url('content-list'), {safe_token: safe_token,data:rankarr}, function (code, message) {
+            if (code == 0) {
+                $.alert(message);
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                $.alert(message);
+            }
+        });
+    });
 
-     /!* 主题排序切换 *!/
-     $('input[name="thread_rank"]').click(function () {
-     if ($(this).checked() == 1) {
-     window.location = xn.url('content-list-' + fid + '-1-1');
-     } else {
-     window.location = xn.url('content-list-' + fid);
-     }
-     });*/
+    /!* 主题排序切换 *!/
+    $('input[name="thread_rank"]').click(function () {
+        if ($(this).checked() == 1) {
+            window.location = xn.url('content-list-' + fid + '-1-1');
+        } else {
+            window.location = xn.url('content-list-' + fid);
+        }
+    });*/
 
     var select = $('select[name="fid"]');
     select.val(<?php echo $fid;?>);
     select.change(function () {
         var fid = $(this).val();
         <?php if ($route == 'content') { ?>
-            window.location = xn.url('content-list-' + fid);
+        window.location = xn.url('content-list-' + fid);
         <?php } elseif ($route == 'sticky') { ?>
             window.location = xn.url('sticky-list-' + fid);
         <?php } ?>

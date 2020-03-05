@@ -1099,7 +1099,7 @@ function xn_filemtime($file)
 /*
 	实例：
 	xn_set_dir(123, APP_PATH.'upload');
-
+	
 	000/000/1.jpg
 	000/000/100.jpg
 	000/000/100.jpg

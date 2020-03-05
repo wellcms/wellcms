@@ -165,7 +165,7 @@ if ($action == 'create') {
         }
 
         // hook comment_delete_pids_center.php
-
+        
         empty($pidarr) AND message(1, lang('data_malformation'));
 
         $r = comment_delete($pidarr);
