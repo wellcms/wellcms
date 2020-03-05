@@ -81,6 +81,8 @@ if (empty($action) || $action == 'index') {
 
         $pagination = pagination(url('home-comment-{page}', $extra), $user['comments'], $page, $pagesize);
 
+        $safe_token = well_token_set($uid);
+
         $header['title'] = lang('my') . lang('comment');
 
         // hook home_comment_after.php

@@ -21,6 +21,8 @@ if ($action == 'cache') {
         $input = array();
         $input['clear_tmp'] = form_checkbox('clear_tmp', 1);
         $input['clear_cache'] = form_checkbox('clear_cache', 1);
+        $safe_token = well_token_set($uid);
+        $input['safe_token'] = form_hidden('safe_token', $safe_token);
 
         // hook admin_other_cache_get_end.php
 
@@ -30,7 +32,10 @@ if ($action == 'cache') {
 
         include _include(ADMIN_PATH . 'view/htm/other_cache.htm');
 
-    } else {
+    } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         // hook admin_other_cache_post_start.php
 
@@ -91,7 +96,7 @@ if ($action == 'cache') {
 
             // hook admin_other_map_xml_middle.php
 
-            $forumlist_show = category_list($forumlist);
+            //$forumlist_show = category_list($forumlist);
 
             // hook admin_other_map_xml_after.php
 
@@ -101,15 +106,16 @@ if ($action == 'cache') {
                 $fids = '';
                 foreach ($forumlist_show as $_forum) {
 
-                    if (!$_forum['threads']) continue;
+                    if ($_forum['threads'] == 0) continue;
+                    if (in_array($_forum['category'], array(1, 2))) continue;
 
                     $fids .= $_forum['fid'] . '|';
 
                     $n = ceil($_forum['threads'] / $pagesize);
-
+                    //str_replace('.html', '-' . $i, $_forum['url']);
                     //--------------生成栏目索引---------------
                     for ($i = 0; $i < $n; ++$i) {
-                        $forum_xml .= '    <loc>' . url_prefix() . '/' . $dir . 'forum-' . $_forum['fid'] . '-' . $i . '.xml</loc>
+                        $forum_xml .= '    <loc>' . url_prefix() . '/' . $dir . str_replace('.html', '-' . $i, $_forum['url']) . '.xml</loc>
     <lastmod>' . $lastmod . '</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>' . "\r\n";
@@ -166,8 +172,7 @@ EOT;
 {$xml}
 </urlset>
 EOT;
-
-                    file_put_contents_try(APP_PATH . $setting['map'] . '/forum-' . $fid . '-' . $page . '.xml', $map);
+                    file_put_contents_try(APP_PATH . $setting['map'] . '/' . str_replace('.html', '-' . $page, $forum['url']) . '.xml', $map);
                 }
 
                 $page += 1;
@@ -192,6 +197,8 @@ EOT;
 
             $input = array();
             $input['map'] = form_text('map', array_value($setting, 'map', 'sitemap'), FALSE, lang('setting_map_tips'));
+            $safe_token = well_token_set($uid);
+            $input['safe_token'] = form_hidden('safe_token', $safe_token);
 
             // hook admin_other_map_get_before.php
 
@@ -208,6 +215,9 @@ EOT;
         include _include(ADMIN_PATH . 'view/htm/other_map.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         // hook admin_other_map_post_start.php
 
@@ -358,39 +368,6 @@ EOT;
 
         message(0, lang('delete_successfully'));
     }
-} elseif ($action == 'optimize') {
-    // 作废 海量数据下会超时
-    if ($method == 'GET') {
-
-        // hook admin_other_optimize_get_start.php
-
-        $input = array();
-        $input['optimize'] = form_checkbox('optimize', 1);
-
-        // hook admin_other_optimize_get_before.php
-
-        $header['title'] = lang('optimize_table');
-        $header['mobile_title'] = lang('optimize_table');
-        $header['mobile_link'] = url('system-optimize');
-
-        // hook admin_other_optimize_get_end.php
-
-        include _include(ADMIN_PATH . 'view/htm/other_optimize.htm');
-
-    } else {
-
-        // hook admin_other_optimize_post_start.php
-
-        $optimize = param('optimize');
-
-        // hook admin_other_optimize_post_before.php
-
-        $optimize AND db_sql_find_one("OPTIMIZE TABLE `{$db->tablepre}cache`, `{$db->tablepre}forum`, `{$db->tablepre}forum_access`, `{$db->tablepre}group`, `{$db->tablepre}kv`, `{$db->tablepre}session`, `{$db->tablepre}session_data`, `{$db->tablepre}user`, `{$db->tablepre}website_attach`, `{$db->tablepre}website_data`, `{$db->tablepre}website_flag`, `{$db->tablepre}website_flag_thread`, `{$db->tablepre}website_modelog`, `{$db->tablepre}website_comment`, `{$db->tablepre}website_comment_pid`, `{$db->tablepre}website_thread`, `{$db->tablepre}website_thread_tid`, `{$db->tablepre}website_thread_sticky`, `{$db->tablepre}website_tag`, `{$db->tablepre}website_tag_thread`");
-
-        // hook admin_other_optimize_post_end.php
-
-        message(0, lang('admin_clear_successfully'));
-    }
 } elseif ($action == 'link') {
 
     if ($method == 'GET') {
@@ -403,6 +380,8 @@ EOT;
         $input = array();
         $input['name'] = form_text('name', '', $width = FALSE, lang('site_name'));
         $input['url'] = form_text('url', '', $width = FALSE, lang('site_url'));
+
+        $safe_token = well_token_set($uid);
 
         // hook admin_other_link_get_before.php
 
@@ -422,6 +401,9 @@ EOT;
         include _include(ADMIN_PATH . 'view/htm/other_link.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         $type = param('type', 0);
 
@@ -456,6 +438,7 @@ EOT;
             message(0, lang('delete_successfully'));
         }
     }
+
 } elseif ($action == 'upgrade') {
 
     // 获取更新文件 打包 下载

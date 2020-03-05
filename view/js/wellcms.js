@@ -156,28 +156,28 @@ $(function () {
 /* 导航子菜单 鼠标悬浮移除移入*/
 $(function () {
     /*var dropdown = $(".dropdown");
-    dropdown.mouseover(function () {
-        $(this).addClass("show");
-        $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
-        $(this).find('.dropdown-menu').addClass("show");
-    });
-    dropdown.mouseleave(function () {
-        $(this).removeClass("show");
-        $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
-        $(this).find('.dropdown-menu').removeClass("show");
-    });
-    dropdown.click(function () {
-        var v = $(this).children('a.dropdown-toggle').attr("aria-expanded");
-        if (v == false) {
-            $(this).addClass("show");
-            $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
-            $(this).find('.dropdown-menu').addClass("show");
-        } else {
-            $(this).removeClass("show");
-            $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
-            $(this).find('.dropdown-menu').removeClass("show");
-        }
-    });*/
+     dropdown.mouseover(function () {
+     $(this).addClass("show");
+     $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
+     $(this).find('.dropdown-menu').addClass("show");
+     });
+     dropdown.mouseleave(function () {
+     $(this).removeClass("show");
+     $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
+     $(this).find('.dropdown-menu').removeClass("show");
+     });
+     dropdown.click(function () {
+     var v = $(this).children('a.dropdown-toggle').attr("aria-expanded");
+     if (v == false) {
+     $(this).addClass("show");
+     $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
+     $(this).find('.dropdown-menu').addClass("show");
+     } else {
+     $(this).removeClass("show");
+     $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
+     $(this).find('.dropdown-menu').removeClass("show");
+     }
+     });*/
 });
 
 /*
@@ -229,7 +229,8 @@ $('input.checkall').on('click', function () {
  });*/
 
 /*引用 / Quote*/
-$('body').on('click', '.post_reply', function () {
+var body = $('body');
+body.on('click', '.post_reply', function () {
     var jthis = $(this);
     var tid = jthis.data('tid');
     var pid = jthis.data('pid');
@@ -254,16 +255,16 @@ $('body').on('click', '.post_reply', function () {
 });
 
 /* BBS 删除 / Delete post*/
-$('body').on('click', '.post_delete', function () {
+body.on('click', '.post_delete', function () {
     var jthis = $(this);
     var href = jthis.data('href');
     var isfirst = jthis.attr('isfirst');
     if (window.confirm(lang.confirm_delete)) {
-        $.xpost(href, function (code, message) {
+        $.xpost(href, {safe_token: safe_token}, function (code, message) {
             var isfirst = jthis.attr('isfirst');
             if (code == 0) {
-                if (isfirst == '1') {
-                    $.location('<?php echo url("forum-$fid");?>');
+                if (isfirst == 1) {
+                    window.location = forum_url;
                 } else {
                     // 删掉楼层
                     jthis.parents('.post').remove();
@@ -279,7 +280,7 @@ $('body').on('click', '.post_delete', function () {
     return false;
 });
 
-$('body').on('click', '.install, .uninstall', function () {
+body.on('click', '.install, .uninstall', function () {
     var href = $(this).data('href');
     $.xpost(href, function (code, message) {
         if (code == 0) {

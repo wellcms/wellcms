@@ -341,15 +341,14 @@ function user_token_set($uid)
     global $conf, $time;
     if (empty($uid)) return;
     $token = user_token_gen($uid);
-    setcookie($conf['cookie_pre'] . 'token', $token, $time + 8640000, $conf['cookie_path'], $conf['cookie_domain']);
+    setcookie($conf['cookie_pre'] . 'token', $token, $time + 8640000, $conf['cookie_path'], $conf['cookie_domain'], '', TRUE);
     // hook model_user_token_set_end.php
 }
 
 function user_token_clear()
 {
     global $conf, $time;
-    setcookie($conf['cookie_pre'] . 'token', '', $time - 8640000, $conf['cookie_path'], $conf['cookie_domain']);
-    //setcookie($conf['cookie_pre'] . 'token', '', $time - 8640000, '', '');
+    setcookie($conf['cookie_pre'] . 'token', '', $time - 8640000, $conf['cookie_path'], $conf['cookie_domain'], '', TRUE);
     // hook model_user_token_clear_end.php
 }
 
@@ -400,7 +399,7 @@ function user_auth_check($token)
     global $time, $ip;
     // hook user_auth_check_start.php
     $auth = param(2);
-    $s = decrypt($auth);
+    $s = xn_decrypt($auth);
     empty($s) AND message(-1, lang('decrypt_failed'));
     $arr = explode('-', $s);
     count($arr) != 4 AND message(-1, lang('encrypt_failed'));

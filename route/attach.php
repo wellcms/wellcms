@@ -22,6 +22,12 @@ $t = param('t', 0); // 0 CMS上传/1 BBS上传
 
 if ($action == 'create') {
 
+    // 验证token
+    if (array_value($conf, 'upload_token', 0)) {
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+    }
+
     user_login_check();
     empty($group['allowattach']) AND $gid != 1 AND message(-1, lang('user_group_insufficient_privilege'));
 

@@ -45,6 +45,13 @@ if ($action == 'create') {
 
         // hook comment_create_get_end.php
     } elseif ($method == 'POST') {
+
+        // 验证token
+        if (array_value($conf, 'intodb_token', 0)) {
+            $safe_token = param('safe_token');
+            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        }
+
         // hook comment_create_post_start.php
 
         $message = param('message', '', FALSE);
@@ -99,6 +106,9 @@ if ($action == 'create') {
     }
 } elseif ($action == 'delete') {
     // 删除回复 type = 1支持批量删除，直接传pid一维数组pid = array(1,2,3)
+
+    $safe_token = param('safe_token');
+    well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
     $type = param('type', 0);
     $pid = $type ? param('pid', array()) : param(2, 0);
@@ -155,7 +165,7 @@ if ($action == 'create') {
         }
 
         // hook comment_delete_pids_center.php
-        
+
         empty($pidarr) AND message(1, lang('data_malformation'));
 
         $r = comment_delete($pidarr);

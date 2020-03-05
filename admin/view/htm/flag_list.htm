@@ -2,119 +2,120 @@
 
 <!--{hook admin_flag_list_start.htm}-->
 <div class="container-fluid px-0">
-<div class="row">
-	<div class="col-lg-12">
-		<!--{hook admin_flag_list_breadcrumb_before.htm}-->
-		<?php if(empty($hide_breadcrumb)) { ?>
-		<ol class="breadcrumb d-none d-md-flex text-muted">
-            <li class="breadcrumb-item"><a href="<?php echo url('flag-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
-            <?php if ($fid) { ?>
-            <li class="breadcrumb-item"><?php echo $forum['name'];?></li>
-            <?php } else { ?>
-            <li class="breadcrumb-item"><?php echo lang('index_page');?></li>
-            <?php } ?>
-            <li class="breadcrumb-item"><?php echo lang('customize');?></li>
-            <!--{hook admin_flag_list_breadcrumb.htm}-->
-		</ol>
-		<?php } ?>
-		<!--{hook admin_flag_list_breadcrumb_after.htm}-->
-		<div class="card card-threadlist">
-			<div class="card-body">
-                <div class="row d-flex justify-content-between mx-0 mb-3">
-                    <!--{hook admin_flag_list_menu_start.htm}-->
-                    <div>
-                        <select class="custom-select mr-1 w-auto" name="fid">
-                            <!--{hook admin_flag_list_select_start.htm}-->
-							<option value="0"><?php echo lang('index_page'); ?></option>
-                            <!--{hook admin_flag_list_select_before.htm}-->
-                            <?php foreach ($columnlist as $val) { ?>
-                            <option value="<?php echo $val['fid']; ?>"><?php echo $val['name']; ?></option>
-                            <?php } ?>
-                            <!--{hook admin_flag_list_select_end.htm}-->
-                        </select>
-                    </div>
-                    <!--{hook admin_flag_list_menu_before.htm}-->
-                    <div>
-                        <?php echo form_radio('flag_rank', array(lang('desc'), lang('rank')), $orderby);?>
-                    </div>
+	<div class="row">
+		<div class="col-lg-12">
+			<!--{hook admin_flag_list_breadcrumb_before.htm}-->
+			<?php if(empty($hide_breadcrumb)) { ?>
+			<ol class="breadcrumb d-none d-md-flex text-muted">
+				<li class="breadcrumb-item"><a href="<?php echo url('flag-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+				<?php if ($fid) { ?>
+				<li class="breadcrumb-item"><?php echo $forum['name'];?></li>
+				<?php } else { ?>
+				<li class="breadcrumb-item"><?php echo lang('index_page');?></li>
+				<?php } ?>
+				<li class="breadcrumb-item"><?php echo lang('customize');?></li>
+				<!--{hook admin_flag_list_breadcrumb.htm}-->
+			</ol>
+			<?php } ?>
+			<!--{hook admin_flag_list_breadcrumb_after.htm}-->
+			<div class="card card-threadlist">
+				<div class="card-body">
+					<div class="row d-flex justify-content-between mx-0 mb-3">
+						<!--{hook admin_flag_list_menu_start.htm}-->
+						<div>
+							<select class="custom-select mr-1 w-auto" name="fid">
+								<!--{hook admin_flag_list_select_start.htm}-->
+								<option value="0"><?php echo lang('index_page'); ?></option>
+								<!--{hook admin_flag_list_select_before.htm}-->
+								<?php foreach ($columnlist as $val) { ?>
+								<option value="<?php echo $val['fid']; ?>"><?php echo $val['name']; ?></option>
+								<?php } ?>
+								<!--{hook admin_flag_list_select_end.htm}-->
+							</select>
+						</div>
+						<!--{hook admin_flag_list_menu_before.htm}-->
+						<div>
+							<?php echo form_radio('flag_rank', array(lang('desc'), lang('rank')), $orderby);?>
+						</div>
 
-                    <!--{hook admin_flag_list_rank_after.htm}-->
+						<!--{hook admin_flag_list_rank_after.htm}-->
 
-                    <div>
-                        <a class="btn btn-info btn-sm" href="<?php echo url('flag-create-' . $fid);?>"><?php echo lang('increase').lang('flag'); ?></a>
-                    </div>
-                    <!--{hook admin_flag_list_menu_end.htm}-->
-                </div>
-				<table class="table table-bordered text-center">
-					<tbody>
-					<tr>
-						<td>flagid</td>
-						<td><?php echo lang('rank');?></td>
-						<td><?php echo lang('customize');?></td>
-						<td class="hidden-sm hidden-md"><?php echo lang('column');?></td>
-						<td><?php echo lang('show');?></td>
-						<td class="hidden-sm hidden-md"><?php echo lang('quantity');?></td>
-						<td class="hidden-sm hidden-md"><?php echo lang('threads');?></td>
-						<td class="hidden-sm hidden-md"><?php echo lang('create_date');?></td>
-						<td><?php echo lang('operation');?></td>
-					</tr>
-					<?php if(!empty($arrlist)){ foreach($arrlist as $k => &$val) {?>
-					<tr class="tap" data-href="<?php echo url('flag-read-' . $val['flagid']); ?>">
-						<td class="break-all">
-							<?php echo $val['flagid'];?>
-						</td>
-						<td class="break-all">
-							<input type="text" placeholder="<?php echo lang('rank');?>" name="rank" value="<?php echo $val['rank']; ?>" rank="<?php echo $val['rank'];?>" id="<?php echo $val['flagid'];?>" style="width: 35px;">
-						</td>
-						<td class="break-all">
-                            <a href="<?php echo url('flag-read-' . $val['flagid']); ?>" rel="nofollow"><?php echo $val['name'];?></a>
-						</td>
-						<td class="hidden-sm hidden-md break-all">
-							<?php echo $val['forum_name'];?>
-						</td>
-						<td>
-							<?php echo $val['display_text'];?>
-						</td>
-						<td class="hidden-sm hidden-md">
-							<?php echo $val['number'];?>
-						</td>
-						<td class="hidden-sm hidden-md">
-							<?php echo $val['count'];?>
-						</td>
-						<td class="hidden-sm hidden-md">
-							<?php echo $val['create_date_text'];?>
-						</td>
-						<td class="small">
-                            <a href="<?php echo url('flag-update-' . $val['fid'] . '-' . $val['flagid']); ?>" rel="nofollow" class="text-grey mr-2 update"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
-                            <a data-href="<?php echo url('flag-list-' . $val['fid'] . '-' . $val['flagid']);?>" n="<?php echo $val['count'];?>" href="javascript:void(0);" class="text-grey delete"><i class="icon-remove"></i>&nbsp;<?php echo lang('delete');?></a>
-						</td>
-					</tr>
-					<?php }} ?>
-					</tbody>
-				</table>
+						<div>
+							<a class="btn btn-info btn-sm" href="<?php echo url('flag-create-' . $fid);?>"><?php echo lang('increase').lang('flag'); ?></a>
+						</div>
+						<!--{hook admin_flag_list_menu_end.htm}-->
+					</div>
+					<table class="table table-bordered text-center">
+						<tbody>
+						<tr>
+							<td>flagid</td>
+							<td><?php echo lang('rank');?></td>
+							<td><?php echo lang('customize');?></td>
+							<td class="hidden-sm hidden-md"><?php echo lang('column');?></td>
+							<td><?php echo lang('show');?></td>
+							<td class="hidden-sm hidden-md"><?php echo lang('quantity');?></td>
+							<td class="hidden-sm hidden-md"><?php echo lang('threads');?></td>
+							<td class="hidden-sm hidden-md"><?php echo lang('create_date');?></td>
+							<td><?php echo lang('operation');?></td>
+						</tr>
+						<?php if(!empty($arrlist)){ foreach($arrlist as $k => &$val) {?>
+						<tr class="tap" data-href="<?php echo url('flag-read-' . $val['flagid']); ?>">
+							<td class="break-all">
+								<?php echo $val['flagid'];?>
+							</td>
+							<td class="break-all">
+								<input type="text" placeholder="<?php echo lang('rank');?>" name="rank" value="<?php echo $val['rank']; ?>" rank="<?php echo $val['rank'];?>" id="<?php echo $val['flagid'];?>" style="width: 35px;">
+							</td>
+							<td class="break-all">
+								<a href="<?php echo url('flag-read-' . $val['flagid']); ?>" rel="nofollow"><?php echo $val['name'];?></a>
+							</td>
+							<td class="hidden-sm hidden-md break-all">
+								<?php echo $val['forum_name'];?>
+							</td>
+							<td>
+								<?php echo $val['display_text'];?>
+							</td>
+							<td class="hidden-sm hidden-md">
+								<?php echo $val['number'];?>
+							</td>
+							<td class="hidden-sm hidden-md">
+								<?php echo $val['count'];?>
+							</td>
+							<td class="hidden-sm hidden-md">
+								<?php echo $val['create_date_text'];?>
+							</td>
+							<td class="small">
+								<a href="<?php echo url('flag-update-' . $val['fid'] . '-' . $val['flagid']); ?>" rel="nofollow" class="text-grey mr-2 update"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
+								<a data-href="<?php echo url('flag-list-' . $val['fid'] . '-' . $val['flagid']);?>" n="<?php echo $val['count'];?>" href="javascript:void(0);" class="text-grey delete"><i class="icon-remove"></i>&nbsp;<?php echo lang('delete');?></a>
+							</td>
+						</tr>
+						<?php }} ?>
+						</tbody>
+					</table>
+				</div>
 			</div>
-		</div>
-        <?php if($gid > 0 && $gid < 5) { ?>
-        <div class="text-center">
-            <div class="btn-group mod-button my-3" role="group">
-                <button class="btn btn-secondary rank"><?php echo lang('rank');?></button>
-            </div>
-        </div>
-        <?php } ?>
+			<?php if($gid > 0 && $gid < 5) { ?>
+			<div class="text-center">
+				<div class="btn-group mod-button my-3" role="group">
+					<button class="btn btn-secondary rank"><?php echo lang('rank');?></button>
+				</div>
+			</div>
+			<?php } ?>
 
-		<!--{hook admin_flag_list_page_before.htm}-->
-		<?php if ($pagination) { ?>
-		<nav class="my-3"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
-		<?php } ?>
-		<!--{hook admin_flag_list_page_after.htm}-->
+			<!--{hook admin_flag_list_page_before.htm}-->
+			<?php if ($pagination) { ?>
+			<nav class="my-3"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
+			<?php } ?>
+			<!--{hook admin_flag_list_page_after.htm}-->
+		</div>
 	</div>
-</div>
 </div>
 <!--{hook admin_flag_list_end.htm}-->
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
+    var safe_token = '<?php echo $safe_token;?>';
     $('body').on('click', '.delete', function() {
         var jthis = $(this);
         var n = xn.intval(jthis.attr('n'));
@@ -124,7 +125,7 @@
         }
         var href = jthis.data('href');
         if(window.confirm(lang.confirm_delete)) {
-            $.xpost(href, function(code, message) {
+            $.xpost(href, {safe_token: safe_token}, function(code, message) {
                 if(code == 0) {
                     jthis.parents('tr').removeDeep();
                 } else {
@@ -143,7 +144,7 @@
             var v = xn.intval($(this).val());
             rankarr.push({flagid:flagid,oldrank:oldrank,rank:v}); /*添加至数组*/
         });
-        $.xpost(xn.url('flag-list'), {type:1,data:rankarr}, function (code, message) {
+        $.xpost(xn.url('flag-list'), {type:1,data:rankarr,safe_token: safe_token}, function (code, message) {
             if (code == 0) {
                 $.alert(message);
                 setTimeout(function() {

@@ -54,6 +54,8 @@ if ($action == 'list') {
         // hook website_admin_reply_list_get_after.php
         $pagination = pagination(url('comment-list-{page}', $extra), $n, $page, $pagesize);
 
+        $safe_token = well_token_set($uid);
+
         $header['title'] = lang('comment');
         $header['mobile_title'] = lang('comment');
         $header['mobile_link'] = url('comment-list');

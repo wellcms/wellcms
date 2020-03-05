@@ -100,6 +100,8 @@ if ($action == 'list') {
 
         $pagination = pagination(url('content-list-' . $fid . '-{page}', $extra), $n, $page, $pagesize);
 
+        $safe_token = well_token_set($uid);
+
         // hook admin_content_list_get_after.php
 
         $header['title'] = lang('content');
@@ -110,6 +112,9 @@ if ($action == 'list') {
         include _include(ADMIN_PATH . 'view/htm/content_list.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         // hook admin_content_list_post_start.php
 
@@ -183,7 +188,7 @@ if ($action == 'list') {
         $form_doctype = 0;
         $_fid = 0;
         $page = 0;
-        
+
         // 初始化附件
         well_attach_clear_tmp();
 
@@ -198,17 +203,25 @@ if ($action == 'list') {
 
         // 过滤版块相关数据
         $forumlist = forum_filter($forumlist);
-        
+
+        $safe_token = well_token_set($uid);
+
         // hook admin_content_create_get_template.php
 
         // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
         if ($model == 0) {
             include _include(ADMIN_PATH . 'view/htm/content_post.htm');
         }
-        
+
         // hook admin_content_create_get_end.php
 
     } elseif ($method == 'POST') {
+
+        // 验证token
+        if (array_value($conf, 'intodb_token', 0)) {
+            $safe_token = param('safe_token');
+            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        }
 
         group_access($gid, 'managecreatethread') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
@@ -385,7 +398,7 @@ if ($action == 'list') {
         $thread_data['message'] = htmlspecialchars($thread_data['message']);
 
         ($uid != $thread['uid']) AND $thread_data['message'] = xn_html_safe($thread_data['message']);
-        
+
         $forum = array_value($forumlist, $fid);
         $model = array_value($forum, 'model', 0);
 
@@ -401,7 +414,7 @@ if ($action == 'list') {
 
         // 初始化附件
         well_attach_clear_tmp();
-        
+
         // hook admin_content_update_get_icon_after.php
 
         $picture = $config['picture_size'];
@@ -450,14 +463,22 @@ if ($action == 'list') {
 
         // hook admin_content_update_get_template.php
 
+        $safe_token = well_token_set($uid);
+
         // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
         if ($model == 0) {
             include _include(ADMIN_PATH . 'view/htm/content_post.htm');
         }
-        
+
         // hook admin_content_update_get_end.php
 
     } elseif ($method == 'POST') {
+
+        // 验证token
+        if (array_value($conf, 'intodb_token', 0)) {
+            $safe_token = param('safe_token');
+            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        }
 
         // hook admin_content_update_post_start.php
 
@@ -473,7 +494,7 @@ if ($action == 'list') {
         // hook admin_content_update_post_subject_before.php
 
         if ($subject != $thread['subject']) {
-            (mb_strlen($subject, 'UTF-8') > 80) ? message('subject', lang('subject_max_length', array('max' => 80))) : $arr['subject'] = $subject;
+            $arr['subject'] = $subject;
 
             $thread['sticky'] > 0 AND cache_delete('sticky_thread_list');
         }
@@ -559,7 +580,7 @@ if ($action == 'list') {
 
             // hook admin_content_update_post_fid_access.php
 
-            $thread['uid'] != $uid AND !forum_access_mod($fid, $gid, 'allowupdate') AND message(1, lang('user_group_insufficient_privilege'));
+            if ($thread['uid'] != $uid && !forum_access_mod($fid, $gid, 'allowupdate')) message(1, lang('user_group_insufficient_privilege'));
 
             // hook admin_content_update_post_fid_update.php
 
@@ -595,7 +616,7 @@ if ($action == 'list') {
             } else {
                 $arr['icon'] = $time;
                 // 关联主图 assoc thumbnail主题主图 post:内容图片或附件
-                $thumbnail = array('tid' => $tid, 'uid' => $uid, 'type' => $arr['type'], 'assoc' => 'thumbnail');
+                $thumbnail = array('tid' => $tid, 'uid' => $thread['uid'], 'type' => $thread['type'], 'assoc' => 'thumbnail');
                 // hook admin_content_update_post_attach_before.php
                 well_attach_assoc_post($thumbnail);
                 unset($thumbnail);
@@ -641,28 +662,33 @@ if ($action == 'list') {
 
         // hook admin_content_update_post_arr_after.php
 
-        !empty($arr) AND well_thread_update($tid, $arr) === FALSE AND message(-1, lang('update_thread_failed'));
-        unset($arr);
+        if (!empty($arr)) {
+            well_thread_update($tid, $arr) === FALSE AND message(-1, lang('update_thread_failed'));
+            unset($arr);
+        }
 
         // hook admin_content_update_post_before.php
 
         // $link = 1 为站外链接 无需更新数据表
         if ($link == 0) {
 
-            $save_image = param('save_image', 0);
-            $save_image AND $message = well_save_remote_image(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid, 'message' => $message));
-
-            // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
-            $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => $thread['images'], 'files' => $thread['files'], 'message' => $message);
-            $message = well_attach_assoc_post($attach);
-            unset($attach);
-
             // 如果开启云储存或使用图床，需要把内容中的附件链接替换掉
             $message = data_message_replace_url($tid, $message);
 
-            $update = array('tid' => $tid, 'gid' => $gid, 'doctype' => $doctype, 'message' => $message);
-            data_update($tid, $update) === FALSE AND message(-1, lang('update_post_failed'));
-            unset($update);
+            if (md5($message) != md5($thread_data['message'])) {
+                $save_image = param('save_image', 0);
+                $save_image AND $message = well_save_remote_image(array('tid' => $tid, 'fid' => $fid, 'uid' => $thread['uid'], 'message' => $message));
+
+                // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
+                $attach = array('tid' => $tid, 'uid' => $thread['uid'], 'assoc' => 'post', 'images' => $thread['images'], 'files' => $thread['files'], 'message' => $message);
+                $message = well_attach_assoc_post($attach);
+                unset($attach);
+
+                $update = array('tid' => $tid, 'gid' => $gid, 'doctype' => $doctype, 'message' => $message);
+                // hook admin_content_data_update_before.php
+                data_update($tid, $update) === FALSE AND message(-1, lang('update_post_failed'));
+                unset($update);
+            }
         }
 
         // hook admin_content_update_post_center.php
@@ -687,7 +713,6 @@ if ($action == 'list') {
 
         message(0, lang('update_successfully'));
     }
-
 }
 
 // hook admin_content_end.php

@@ -26,6 +26,8 @@ if ($action == 'base') {
         $input['user_create_email_on'] = form_radio_yes_no('user_create_email_on', $conf['user_create_email_on']);
         $input['user_resetpw_on'] = form_radio_yes_no('user_resetpw_on', $conf['user_resetpw_on']);
         $input['lang'] = form_select('lang', array('zh-cn' => lang('lang_zh_cn'), 'zh-tw' => lang('lang_zh_tw'), 'en-us' => lang('lang_en_us')), $conf['lang']);
+        $safe_token = well_token_set($uid);
+        $input['safe_token'] = form_hidden('safe_token', $safe_token);
 
         $header['title'] = lang('admin_setting_base');
         $header['mobile_title'] = lang('admin_setting_base');
@@ -34,7 +36,10 @@ if ($action == 'base') {
 
         include _include(ADMIN_PATH . 'view/htm/setting_base.htm');
 
-    } else {
+    } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         group_access($gid, 'managesetting') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
@@ -79,12 +84,16 @@ if ($action == 'base') {
 
         $smtplist = smtp_find();
         $maxid = smtp_maxid();
+        $safe_token = well_token_set($uid);
 
         // hook admin_setting_smtp_get_end.php
 
         include _include(ADMIN_PATH . "view/htm/setting_smtp.htm");
 
-    } else {
+    } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         group_access($gid, 'managesetting') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
@@ -137,12 +146,16 @@ if ($action == 'base') {
         $input['tpl_mode'] = form_radio('tpl_mode', $tpl_modearr, array_value($setting, 'tpl_mode', 0));
         $input['thumbnail_on'] = form_radio_yes_no('thumbnail_on', array_value($setting, 'thumbnail_on', 0));
         $input['save_image_on'] = form_radio_yes_no('save_image_on', array_value($setting, 'save_image_on', 0));
-
+        $safe_token = well_token_set($uid);
+        $input['safe_token'] = form_hidden('safe_token', $safe_token);
         // hook admin_setting_website_get_end.php
 
         include _include(ADMIN_PATH . 'view/htm/setting_website.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         group_access($gid, 'managesetting') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 

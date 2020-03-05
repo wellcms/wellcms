@@ -22,12 +22,16 @@ if (empty($action) || $action == 'list') {
         $header['mobile_title'] = lang('group_admin');
 
         $maxgid = group_maxid();
+        $safe_token = well_token_set($uid);
 
         // hook admin_group_list_get_end.php
 
         include _include(ADMIN_PATH . 'view/htm/group_list.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         group_access($gid, 'managegroup') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
@@ -123,12 +127,16 @@ if (empty($action) || $action == 'list') {
         $input['manageplugin'] = form_checkbox('manageplugin', $_group['manageplugin'], lang('manage_plugin'));
         $input['manageother'] = form_checkbox('manageother', $_group['manageother'], lang('manage_other'));
         $input['managesetting'] = form_checkbox('managesetting', $_group['managesetting'], lang('manage_setting'));
-
+        $safe_token = well_token_set($uid);
+        $input['safe_token'] = form_hidden('safe_token', $safe_token);
         // hook admin_group_update_get_end.php
 
         include _include(ADMIN_PATH . 'view/htm/group_update.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         $name = param('name');
         $creditsfrom = param('creditsfrom');

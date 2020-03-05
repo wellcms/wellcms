@@ -482,7 +482,7 @@ function well_thread_delete($tid)
 // 删除主题相关的全部数据 TODO 删除数据太多，可能导致超时，有时间再重写
 function well_thread_delete_all($tid)
 {
-    global $conf;
+    global $conf, $forumlist;
 
     if (empty($tid)) return FALSE;
 
@@ -490,6 +490,8 @@ function well_thread_delete_all($tid)
 
     $thread = well_thread_read_cache($tid);
     if (empty($thread)) return FALSE;
+
+    $forum = array_value($forumlist, $thread['fid']);
 
     // hook model_thread_delete_all_before.php
 
@@ -549,10 +551,19 @@ function well_thread_delete_all($tid)
     $r = well_thread_delete($tid);
     if ($r === FALSE) return FALSE;
 
-    $r = thread_tid_delete($tid);
-    if ($r === FALSE) return FALSE;
+    $user_update = array();
+    // 新闻模型
+    if (array_value($forum, 'model') == 0) {
+        $r = thread_tid_delete($tid);
+        if ($r === FALSE) return FALSE;
 
-    user_update($thread['uid'], array('articles-' => 1));
+        // 内容数-1
+        $user_update = array('articles-' => 1);
+    }
+
+    // hook model_thread_delete_all_user_update_before.php
+
+    !empty($user_update) AND user_update($thread['uid'], $user_update);
 
     // hook model_thread_delete_all_forum_update_before.php
 
@@ -818,6 +829,7 @@ function well_thread_format(&$thread)
     // 权限判断
     $thread['allowupdate'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
     $thread['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
+    $thread['allowtop'] = forum_access_mod($thread['fid'], $gid, 'allowtop');
 
     // hook model__thread_format_end.php
     $thread = well_thread_safe_info($thread);
@@ -890,7 +902,7 @@ function well_thread_filter(&$val)
 // 后台和前台删除内容 并写入日志
 function well_thread_delete_content($tid)
 {
-    global $time, $uid, $gid;
+    global $time, $uid, $gid, $forumlist;
 
     // hook model_thread_delete_content_start.php
 
@@ -899,19 +911,26 @@ function well_thread_delete_content($tid)
 
     // hook model_thread_delete_content_before.php
 
+    $forum = array_value($forumlist, $thread['fid']);
+    //if (empty($forum)) return FALSE;
+
     // 权限判断 仅限管理员和用户本人有权限
     $allowdelete = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
 
     (empty($allowdelete) OR $thread['closed']) AND message(-1, lang('thread_has_already_closed'));
 
-    $delete_from_default = 0;
+    $delete_from_default = 1;
 
     // hook model_thread_delete_content_center.php
 
-    // 默认删除全部
-    if ($delete_from_default == 0) {
-        // 全部删除
-        well_thread_delete_all($tid) === FALSE AND message(-1, lang('delete_failed'));
+    // 默认彻底删除
+    if ($delete_from_default == 1) {
+        switch ($forum['model']) {
+            case '0': // 删除文章全部数据
+                well_thread_delete_all($tid) === FALSE AND message(-1, lang('delete_failed'));
+                break;
+            // hook operate_delete_foreach_case.php
+        }
     }
 
     // hook model_thread_delete_content_middle.php
@@ -1045,6 +1064,8 @@ function thread_other_pull($thread)
 
     foreach ($threadlist as &$_thread) {
 
+        $_thread = well_thread_safe_info($_thread);
+
         // hook model_thread_other_pull_cate_before.php
 
         // flag thread
@@ -1052,7 +1073,7 @@ function thread_other_pull($thread)
             foreach ($flaglist as $key => $val) {
                 if (isset($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
 
-                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = well_thread_safe_info($_thread);
+                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
 
                     ksort($flaglist[$key]['list']);
 

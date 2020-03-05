@@ -21,6 +21,8 @@ if (empty($action) || $action == 'list') {
         $header['title'] = lang('website') . lang('column');
         $header['mobile_title'] = lang('website') . lang('column');
 
+        $safe_token = well_token_set($uid);
+
         // 后台栏目管理列表
         $arrlist = category_tree($forumlist);
 
@@ -29,6 +31,9 @@ if (empty($action) || $action == 'list') {
         include _include(ADMIN_PATH . 'view/htm/column_list.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         $fidarr = param('fid', array(0));
         $rankarr = param('rank', array(0));
@@ -110,18 +115,23 @@ if (empty($action) || $action == 'list') {
 
         $form_action = url('column-create', $extra);
 
+        $safe_token = well_token_set($uid);
+
         // hook admin_column_create_get_end.php
 
         include _include(ADMIN_PATH . 'view/htm/column_post.htm');
 
     } elseif ($method == 'POST') {
 
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+
         // hook admin_column_create_post_start.php
 
         $name = param('name');
         $name = filter_all_html($name);
         empty($name) AND message(1, lang('data_empty_to_last_step'));
- 
+
         $rank = param('rank', 0);
         $brief = param('brief', '', FALSE);
         $brief = xn_html_safe($brief);
@@ -296,11 +306,16 @@ if (empty($action) || $action == 'list') {
             $disabled_model = FALSE;
         }
 
+        $safe_token = well_token_set($uid);
+
         // hook admin_column_update_get_end.php
 
         include _include(ADMIN_PATH . 'view/htm/column_post.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         // hook admin_column_update_post_start.php
 
@@ -409,6 +424,11 @@ if (empty($action) || $action == 'list') {
     }
 
 } elseif ($action == 'delete') {
+
+    if ($method != 'POST') message(-1, lang('method_error'));
+
+    $safe_token = param('safe_token');
+    well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
     $_fid = param(2, 0);
     $_forum = forum_read($_fid);

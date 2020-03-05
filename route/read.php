@@ -116,6 +116,8 @@ if ($thread['type'] == 0) {
     $header['description'] = $thread['description'] ? $thread['description'] : $thread['brief'];
     $_SESSION['fid'] = $fid;
 
+    $safe_token = well_token_set($uid);
+
     // hook read_article_end.php
 
     if ($ajax) {
@@ -123,7 +125,16 @@ if ($thread['type'] == 0) {
         well_thread_filter($thread);
         message(0, array('thread' => $thread, 'thread_data' => $data, 'arrlist' => $arrlist));
     } else {
-        include _include(theme_load(3, $fid));
+        // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
+        switch ($forum['model']) {
+            /*case '0':
+                include _include(APP_PATH . 'view/htm/read.htm');
+                break;*/
+            // hook read_article_case.php
+            default:
+                include _include(theme_load(3, $fid));
+                break;
+        }
     }
 
 } elseif ($thread['type'] == 10) {

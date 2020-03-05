@@ -114,10 +114,10 @@ return array(
     'cdn_on' => 0,
     'api_on' => 0, // 默认关闭，打开后前台部分页面可通过api获取数据
     /* 支持多种 URL 格式：
-        0: ?thread-create-1.htm
-        1: thread-create-1.htm
-        2: ?/thread/create/1  不支持
-        3: /thread/create/1   不支持
+        0: ?read-create-1.htm
+        1: read-create-1.htm
+        2: ?/read/create/1
+        3: /read/create/1
     */
     'url_rewrite_on' => 0,
 
@@ -127,5 +127,8 @@ return array(
     'static_version' => '?2.0.05',
     'installed' => 0,
     'compress' => 1, // 代码压缩 0关闭 1仅压缩php、html代码(不压缩js代码) 2压缩全部代码 如果启用压缩出现错误，请关闭，删除html中的所有注释，并且js代码按照英文分号结束的地方加上分号;
+    // token验证，开启后内容提交和上传都需要token，没有token无法操作，app建议开启，有效阻止抓包伪造提交等。开启后相当于单线程，仅限当前页有效。
+    'upload_token' => 1, // 0关闭 1开启上传验证 token
+    'intodb_token' => 1, // 0关闭 1开启内容入库验证 token
 );
 ?>

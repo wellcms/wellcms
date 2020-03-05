@@ -1,19 +1,9 @@
 <!--{hook admin_thread_list_inc_start.htm}-->
-<?php $have_allowtop = 0;
-		if ($threadlist) {
-            foreach ($threadlist as &$_thread) {
-                $_thread['allowtop'] = forum_access_mod($_thread['fid'], $gid, 'allowtop');
-                $_thread['allowtop'] AND $have_allowtop = 1;
-                // hook admin_content_list_inc_after.php
-            }
-          }
-?>
+
 <?php if($threadlist) { foreach($threadlist as &$_thread) { ?>
 <li class="media thread bg-white" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
-	<?php if($have_allowtop) { ?>
 	<?php if($_thread['allowtop']) { ?>
 	<input type="checkbox" name="modtid" class="mt-3 mr-2" value="<?php echo $_thread['tid']; ?>" />
-	<?php } ?>
 	<?php } ?>
 
 	<div class="media-body">
@@ -107,7 +97,7 @@
 						<?php if( $_thread['allowupdate']) { ?>
 						<span data-href="<?php echo url('content-update-' . $_thread['tid'] . '-' . $page, $extra); ?>" class="text-grey update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></span>
 						<?php } ?>
-                        <!--{hook admin_thread_list_inc_update_after.htm}-->
+						<!--{hook admin_thread_list_inc_update_after.htm}-->
 					</div>
 				</div>
 

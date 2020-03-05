@@ -2,58 +2,59 @@
 
 <!--{hook admin_setting_website_start.htm}-->
 <div class="container-fluid px-0">
-<div class="row">
-	<div class="col-lg-12">
-		<!--{hook admin_setting_website_middle.htm}-->
-		<div class="card card-threadlist">
-			<div class="card-body">
-                <!--{hook admin_setting_website_form_start.htm}-->
-                <form action="<?php echo url('setting-website'); ?>" method="post" id="form">
-                    <!--{hook admin_setting_website_form_before.htm}-->
-                    <div class="form-group row">
-                        <label class="col-3 col-sm-2 form-control-label"><?php echo lang('website');?></label>
-                        <div class="col-9 col-sm-10">
-                            <?php echo $input['website_mode']; ?>
+    <div class="row">
+        <div class="col-lg-12">
+            <!--{hook admin_setting_website_middle.htm}-->
+            <div class="card card-threadlist">
+                <div class="card-body">
+                    <!--{hook admin_setting_website_form_start.htm}-->
+                    <form action="<?php echo url('setting-website'); ?>" method="post" id="form">
+                        <?php echo $input['safe_token'];?>
+                        <!--{hook admin_setting_website_form_before.htm}-->
+                        <div class="form-group row">
+                            <label class="col-3 col-sm-2 form-control-label"><?php echo lang('website');?></label>
+                            <div class="col-9 col-sm-10">
+                                <?php echo $input['website_mode']; ?>
+                            </div>
                         </div>
-                    </div>
-                    <!--{hook admin_setting_website_mode_before.htm}-->
-                    <div class="form-group row">
-                        <label class="col-3 col-sm-2 form-control-label"><?php echo lang('template');?></label>
-                        <div class="col-9 col-sm-10">
-                            <?php echo $input['tpl_mode']; ?>
-                            <p class="small text-muted">
-                                <?php echo lang('mode_tips');?>
-                            </p>
+                        <!--{hook admin_setting_website_mode_before.htm}-->
+                        <div class="form-group row">
+                            <label class="col-3 col-sm-2 form-control-label"><?php echo lang('template');?></label>
+                            <div class="col-9 col-sm-10">
+                                <?php echo $input['tpl_mode']; ?>
+                                <p class="small text-muted">
+                                    <?php echo lang('mode_tips');?>
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <!--{hook admin_setting_website_tpl_mode_before.htm}-->
-                    <div class="form-group row">
-                        <label class="col-sm-2 form-control-label"><?php echo lang('auto_thumbnail');?>：</label>
-                        <div class="col-sm-10">
-                            <?php echo $input['thumbnail_on'];?>
+                        <!--{hook admin_setting_website_tpl_mode_before.htm}-->
+                        <div class="form-group row">
+                            <label class="col-sm-2 form-control-label"><?php echo lang('auto_thumbnail');?>：</label>
+                            <div class="col-sm-10">
+                                <?php echo $input['thumbnail_on'];?>
+                            </div>
                         </div>
-                    </div>
-                    <!--{hook admin_setting_thumbnail_on_after.htm}-->
-                    <div class="form-group row">
-                        <label class="col-sm-2 form-control-label"><?php echo lang('save_remote_image');?>：</label>
-                        <div class="col-sm-10">
-                            <?php echo $input['save_image_on'];?>
+                        <!--{hook admin_setting_thumbnail_on_after.htm}-->
+                        <div class="form-group row">
+                            <label class="col-sm-2 form-control-label"><?php echo lang('save_remote_image');?>：</label>
+                            <div class="col-sm-10">
+                                <?php echo $input['save_image_on'];?>
+                            </div>
                         </div>
-                    </div>
-                    <!--{hook admin_setting_save_image_on_after.htm}-->
+                        <!--{hook admin_setting_save_image_on_after.htm}-->
 
-                    <div class="form-group text-center mt-4">
-                        <button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."> <?php echo lang('submit');?> </button>
-                    </div>
-                    <!--{hook admin_setting_website_submit_after.htm}-->
-                </form>
-                <!--{hook admin_setting_website_form_end.htm}-->
-                <a role="button" class="btn btn-secondary btn-block xn-back col-md-3 mx-auto mb-3" href="javascript:history.back();"><?php echo lang('back');?></a>
-                <!--{hook admin_setting_website_back_after.htm}-->
-			</div>
-		</div>
-	</div>
-</div>
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."> <?php echo lang('submit');?> </button>
+                        </div>
+                        <!--{hook admin_setting_website_submit_after.htm}-->
+                    </form>
+                    <!--{hook admin_setting_website_form_end.htm}-->
+                    <a role="button" class="btn btn-secondary btn-block xn-back col-md-3 mx-auto mb-3" href="javascript:history.back();"><?php echo lang('back');?></a>
+                    <!--{hook admin_setting_website_back_after.htm}-->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!--{hook admin_setting_website_end.htm}-->
 
@@ -61,9 +62,10 @@
 
 <script>
     var jform = $('#form');
-    var jsubmit = $('#submit');
     jform.on('submit', function() {
         jform.reset();
+        var jthis = $(this);
+        var jsubmit = jthis.find('#submit');
         jsubmit.button('loading');
         var postdata = jform.serialize();
         $.xpost(jform.attr('action'), postdata, function(code, message) {

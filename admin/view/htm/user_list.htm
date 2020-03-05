@@ -29,20 +29,20 @@
 					<div class="table-responsive">
 						<table class="table" style="min-width: 800px">
 							<thead>
-								<tr>
-									<th width="60" class="text-center"><?php echo lang('delete');?></th>
-									<th width="50">ID：</th>
-									<!--{hook admin_user_list_id_th_after.htm}-->
-									<th width="150"><?php echo lang('email');?></th>
-									<th width="150"><?php echo lang('username');?></th>
-									<th width="100"><?php echo lang('user_group');?></th>
-									<th width="100"><?php echo lang('create_date');?></th>
-									<th width="100"><?php echo lang('create_ip');?></th>
-									<th width="60"><?php echo lang('operation');?></th>
-								</tr>
+							<tr>
+								<th width="60" class="text-center"><?php echo lang('delete');?></th>
+								<th width="50">ID：</th>
+								<!--{hook admin_user_list_id_th_after.htm}-->
+								<th width="150"><?php echo lang('email');?></th>
+								<th width="150"><?php echo lang('username');?></th>
+								<th width="100"><?php echo lang('user_group');?></th>
+								<th width="100"><?php echo lang('create_date');?></th>
+								<th width="100"><?php echo lang('create_ip');?></th>
+								<th width="60"><?php echo lang('operation');?></th>
+							</tr>
 							</thead>
 							<tbody id="userlist">
-						<?php foreach($userlist as &$_user){ ?>
+							<?php foreach($userlist as &$_user){ ?>
 							<tr uid="<?php echo $_user['uid']; ?>">
 								<td class="text-center"><input type="checkbox" name="delete" /></td>
 								<td><?php echo $_user['uid']; ?></td>
@@ -54,7 +54,7 @@
 								<td><?php echo $_user['create_ip_fmt']; ?></td>
 								<td><a href="<?php echo url('user-update-'.$_user['uid']); ?>"><?php echo lang('edit');?></a></td>
 							</tr>
-						<?php } ?>
+							<?php } ?>
 							</tbody>
 						</table>
 					</div>
@@ -71,48 +71,52 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-var jbody = $("#userbody");
-var jcreate = $('#create');
-var jconfirm = $("#confirm");
-var jsearch = $("#search");
-var jsrchtype = $("#srchtype");
-var jkeyword = $('#keyword');
-var juserlist = $('#userlist');
-jsrchtype.val(jsrchtype.attr('value'));
+    var jbody = $("#userbody");
+    var jcreate = $('#create');
+    var jconfirm = $("#confirm");
+    var jsearch = $("#search");
+    var jsrchtype = $("#srchtype");
+    var jkeyword = $('#keyword');
+    var juserlist = $('#userlist');
+    jsrchtype.val(jsrchtype.attr('value'));
 
-jcreate.on('click', function(event) {
-	window.location = xn.url('user-create');
-});
+    jcreate.on('click', function(event) {
+        window.location = xn.url('user-create');
+    });
 
-jsearch.on('click', function(){
-	var srchtype = jsrchtype.val();
-	srchtype = srchtype ? srchtype : 'uid';
-	var keyword = $("#keyword").val();
-	var url = xn.url('user-list-'+srchtype+'-'+xn.urlencode(keyword)+'-1');
-	window.location = url;
-});
-jkeyword.on('keydown', function(e) {
-	if(e.keyCode == 13) jsearch.trigger('click');
-});
+    jsearch.on('click', function(){
+        var srchtype = jsrchtype.val();
+        srchtype = srchtype ? srchtype : 'uid';
+        var keyword = $("#keyword").val();
+        var url = xn.url('user-list-'+srchtype+'-'+xn.urlencode(keyword)+'-1');
+        window.location = url;
+    });
+    jkeyword.on('keydown', function(e) {
+        if(e.keyCode == 13) jsearch.trigger('click');
+    });
 
-/*删除选中的用户*/
-jconfirm.on('click', function(){
-	var jchecked = juserlist.find('input[name="delete"]').filter(function(){ return this.checked; });
-	if(jchecked.length < 1) return alert("<?php echo lang('please_check_delete_user');?>");
-	if(!window.confirm("<?php echo lang('user_delete_confirm');?>")) return false;
-	jchecked.each(function() {
-		jtr = $(this).parents('tr');
-		var uid = jtr.attr('uid');
-		if(uid == 1) return alert('<?php echo lang('user_admin_cant_be_deleted');?>');
-		$.xpost(xn.url('user-delete'), {uid:uid}, function(code, message) {
-			if(code != 0) return $.alert(message);
-			jtr.remove();
-		});
-	});
-});
+	/*删除选中的用户*/
+    jconfirm.on('click', function(){
+        var jchecked = juserlist.find('input[name="delete"]').filter(function(){ return this.checked; });
+        if(jchecked.length < 1) return alert("<?php echo lang('please_check_delete_user');?>");
+        if(!window.confirm("<?php echo lang('user_delete_confirm');?>")) return false;
+        var safe_token = '<?php echo $safe_token;?>';
+        jchecked.each(function() {
+            var jtr = $(this).parents('tr');
+            var uid = jtr.attr('uid');
+            if(uid == 1) return alert('<?php echo lang('user_admin_cant_be_deleted');?>');
+            $.xpost(xn.url('user-delete'), {uid: uid, safe_token: safe_token}, function (code, message) {
+                if (code == 0) {
+                    jtr.remove();
+                } else {
+                    $.alert(message);
+                }
+            });
+        });
+    });
 
-$('#user').addClass('show');
-$('.sidebar-sticky li.menu-list').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#user').addClass('show');
+    $('.sidebar-sticky li.menu-list').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
 </script>
 
 <!--{hook admin_user_list_js.htm}-->

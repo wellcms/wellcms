@@ -28,32 +28,24 @@
 <script src="<?php echo admin_view_path();?>js/md5.js"></script>
 
 <script>
-var jform = $('#form');
-var jsubmit = $('#submit');
-var jemail = $('#email');
-var jpassword = $('#password').focus();
-jform.on('submit', function() {
-	jform.reset();
-	jsubmit.button('loading');
-	var postdata = jform.serializeObject();
-	postdata.password = $.md5(postdata.password);
-	$.xpost(jform.attr('action'), postdata, function(code, message) {
-		if(code == 0) {
-			jsubmit.button(message).delay(1000).location();
-		} else if(code == 'email') {
-			jemail.alert(message).focus();
-			jsubmit.button('reset');
-		} else if(code == 'password') {
-			jpassword.alert(message).focus();
-			jsubmit.button('reset');
-		} else {
-			$.alert(message);
-			jsubmit.button('reset');
-		}
-	});
-	return false;
-});
-
+    var jform = $('#form');
+    jform.on('submit', function() {
+        jform.reset();
+        var jthis = $(this);
+        var jsubmit = jthis.find('#submit');
+        jsubmit.button('loading');
+        var postdata = jform.serializeObject();
+        postdata.password = $.md5(postdata.password);
+        $.xpost(jform.attr('action'), postdata, function(code, message) {
+            if(code == 0) {
+                jsubmit.button(message).delay(1000).location();
+            } else {
+                $.alert(message);
+                jsubmit.button('reset');
+            }
+        });
+        return false;
+    });
 </script>
 
 <!--{hook admin_index_login_js.htm}-->

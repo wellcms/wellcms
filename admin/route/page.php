@@ -17,6 +17,7 @@ $columnlist = category_list_show($forumlist, 0, 2);
 if ($action == 'list') {
 
     $fid = param(2, 0);
+
     // hook admin_page_list_start.php
 
     if ($method == 'GET') {
@@ -83,6 +84,8 @@ if ($action == 'list') {
 
         $pagination = pagination(url('page-list-' . $fid . '-{page}', $extra), $n, $page, $pagesize);
 
+        $safe_token = well_token_set($uid);
+
         // hook admin_page_list_get_after.php
 
         $header['title'] = lang('single_page');
@@ -93,6 +96,10 @@ if ($action == 'list') {
         include _include(ADMIN_PATH . 'view/htm/page_list.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+
         // 排序时最大值作为首页
         group_access($gid, 'managepage') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
@@ -146,6 +153,7 @@ if ($action == 'list') {
         $form_subject = $form_message = '';
         $form_doctype = $quotepid = 0;
         $_SESSION['tmp_website_files'] = array();
+        $safe_token = well_token_set($uid);
 
         // hook admin_page_create_get_form_after.php
 
@@ -161,6 +169,12 @@ if ($action == 'list') {
         include _include(ADMIN_PATH . 'view/htm/page_post.htm');
 
     } elseif ($method == 'POST') {
+
+        // 验证token
+        if (array_value($conf, 'intodb_token', 0)) {
+            $safe_token = param('safe_token');
+            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        }
 
         group_access($gid, 'managepage') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
@@ -268,6 +282,8 @@ if ($action == 'list') {
 
         // hook admin_page_update_get_middle.php
 
+        $safe_token = well_token_set($uid);
+
         $header['title'] = lang('edit');
         $header['mobile_title'] = lang('edit');
 
@@ -276,6 +292,12 @@ if ($action == 'list') {
         include _include(ADMIN_PATH . 'view/htm/page_post.htm');
 
     } elseif ($method == 'POST') {
+
+        // 验证token
+        if (array_value($conf, 'intodb_token', 0)) {
+            $safe_token = param('safe_token');
+            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        }
 
         group_access($gid, 'managepage') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
 
@@ -324,7 +346,6 @@ if ($action == 'list') {
         // hook admin_page_update_post_fid_center.php
 
         if ($fid != $newfid) {
-            //!forum_access_user($fid, $gid, 'allowthread') AND message(-1, lang('user_group_insufficient_privilege'));
 
             // hook admin_page_update_post_fid_access.php
 

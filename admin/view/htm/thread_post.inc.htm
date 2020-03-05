@@ -1,5 +1,6 @@
 <form action="<?php echo $form_action;?>" method="post" id="form">
-	<input type="hidden" name="doctype" value="<?php echo $form_doctype;?>" />
+    <input type="hidden" name="doctype" value="<?php echo $form_doctype;?>" />
+    <input type="hidden" name="safe_token" value="<?php echo $safe_token;?>" />
     <!--{hook admin_thread_post_inc_hidden_before.htm}-->
     <div class="row">
         <div class="col-12 col-md-9">
@@ -165,23 +166,18 @@
                                 <!--{hook admin_thread_post_inc_flag_before.htm}-->
                                 <div class="form-group">
                                     <div class="row index-flag-list">
-
                                     </div>
                                     <div class="row flag-list">
-
                                     </div>
                                 </div>
                                 <!--{hook admin_thread_post_inc_flag_after.htm}-->
                             </div>
                         </li>
-
                     </ul>
                     <!--{hook admin_header_nav_end.htm}-->
                 </div>
-
             </div>
         </div>
-
     </div>
     <div class="form-group my-3">
         <!--{hook admin_thread_post_inc_submit_after.htm}-->

@@ -261,21 +261,6 @@ function xn_html_safe($doc, $arg = array())
         'list-style' => array('list', 'none', array('disc', 'circle', 'square', 'decimal', 'lower-roman', 'upper-roman', 'none')),
         'text-align' => array('list', 'left', array('left', 'right', 'center', 'justify')),
         'text-indent' => array('range', 0, array(0, 100)),
-
-        // 代码高亮需要支持，但是不安全！
-        /*
-        'position'=>array('list', 'static', array('absolute', 'fixed', 'relative', 'static')),
-        'left'=>array('range', 0, array(0, 1000)),
-        'top'=>array('range', 0, array(0, 1000)),
-        'white-space'=>array('list', 'nowrap', array('nowrap', 'pre')),
-        'word-wrap'=>array('list', 'normal', array('break-word', 'normal')),
-        'word-break'=>array('list', 'break-all', array('break-all', 'normal')),
-        'display'=>array('list', 'block', array('block', 'table', 'none', 'inline-block', 'table-cell')),
-        'overflow'=>array('list', 'auto', array('scroll', 'hidden', 'auto')),
-        'overflow-x'=>array('list', 'auto', array('scroll', 'hidden', 'auto')),
-        'overflow-y'=>array('list', 'auto', array('scroll', 'hidden', 'auto')),
-        */
-
     );
 
     // hook model_xn_html_safe_new_before.php
@@ -368,6 +353,63 @@ function url_path()
     return $path;
 }
 
+// 设置token
+function well_token_set($uid)
+{
+    global $conf, $time;
+    if (empty($uid)) return FALSE;
+    $user = user_read_cache($uid);
+    if (empty($user)) return FALSE;
+    $pwd = md5($user['password']);
+    $token = well_token_gen($uid, $pwd);
+    setcookie('well_safe_token', $token, $time + 36800, '/', $conf['cookie_domain'], '', TRUE);
+    return $token;
+}
+
+// 验证token 返回 FALSE 验证失败 $life token 生命期
+function well_token_verify($uid, $token, $life = 1800)
+{
+    if (empty($uid) || empty($token)) return FALSE;
+    $user = user_read_cache($uid);
+    if (empty($user)) return FALSE;
+    $pwd = md5($user['password']);
+    $_token = param('well_safe_token');
+    if (empty($_token) || $_token != $token) return FALSE;
+    $r = well_token_decrypt($token, $uid, $pwd, $life);
+    return $r;
+}
+
+// 生成token / salt 混淆码用于加解密
+function well_token_gen($uid, $salt = '')
+{
+    global $time, $ip;
+    $token_key = md5(xn_key() . $salt);
+    $token = xn_encrypt("$ip	$uid	$time", $token_key);
+    return $token;
+}
+
+// 解密token 正确则返回新token 错误返回FALSE
+function well_token_decrypt($token, $uid, $salt = '', $life = 1800)
+{
+    global $time, $ip;
+    $token_key = md5(xn_key() . $salt);
+    $s = xn_decrypt($token, $token_key);
+    if (empty($s)) return FALSE;
+    $arr = explode("\t", $s);
+    if (count($arr) != 3) return FALSE;
+    list($_ip, $_uid, $_time) = $arr;
+    if ($uid != $_uid || $ip != $_ip) return FALSE;
+    if ($time - $_time > $life) return FALSE;
+    return well_token_gen($uid, $salt);
+}
+
+// 清理token
+function well_token_clear()
+{
+    global $conf, $time;
+    setcookie('well_safe_token', '', $time - 86400, '/', $conf['cookie_domain'], '', TRUE);
+}
+
 // 格式化数字 1k
 function format_number($number)
 {
@@ -379,7 +421,7 @@ function cookie_set($key, $value, $life = 8640000)
 {
     global $conf, $time;
     is_array($value) AND $value = xn_json_encode($value);
-    setcookie($conf['cookie_pre'] . $key, $value, ($time + $life), $conf['cookie_path'], $conf['cookie_domain']);
+    setcookie($conf['cookie_pre'] . $key, $value, ($time + $life), $conf['cookie_path'], $conf['cookie_domain'], '', TRUE);
 }
 
 // 清空内存缓存和Cookie
@@ -1047,65 +1089,6 @@ function search_directory($path)
             }
         }
     }
-}
-
-function is_spider()
-{
-    $agent = _SERVER('HTTP_USER_AGENT');
-    if (empty($agent)) return FALSE;
-
-    $agent = strtolower($agent);
-    $spiderSite = array(
-        'YisouSpider', // 神马
-        '360Spider', // 360
-        "TencentTraveler",
-        "Baiduspider+",
-        "BaiduGame",
-        "Googlebot",
-        "msnbot",
-        "Sosospider+",
-        "Sogou web spider",
-        "ia_archiver",
-        "Yahoo! Slurp",
-        "YoudaoBot",
-        "Yahoo Slurp",
-        "MSNBot",
-        "Java (Often spam bot)",
-        "BaiDuSpider",
-        "Voila",
-        "Yandex bot",
-        "BSpider",
-        "twiceler",
-        "Sogou Spider",
-        "Speedy Spider",
-        "Google AdSense",
-        "Heritrix",
-        "Python-urllib",
-        "Alexa (IA Archiver)",
-        "Ask",
-        "Exabot",
-        "Custo",
-        "OutfoxBot/YodaoBot",
-        "yacy",
-        "SurveyBot",
-        "legs",
-        "lwp-trivial",
-        "Nutch",
-        "StackRambler",
-        "The web archive (IA Archiver)",
-        "Perl tool",
-        "MJ12bot",
-        "Netcraft",
-        "MSIECrawler",
-        "WGet tools",
-        "larbin",
-        "Fish search",
-    );
-    foreach ($spiderSite as $val) {
-        $str = strtolower($val);
-        if (strpos($agent, $str) !== FALSE) return TRUE;
-    }
-    return FALSE;
 }
 
 // hook model_misc_end.php

@@ -299,89 +299,6 @@ function xn_json_decode($json)
     return json_decode($json, 1);
 }
 
-/*
-function xn_json_encode($arg) {
-	$r = '';
-	switch (gettype($arg)) {
-		case 'array':
-			$r = is_number_array($arg) ? xn_json_number_array_to_string($arg) : xn_json_assoc_array_to_string($arg);
-		break;
-		case 'object':
-			return xn_json_encode(get_object_vars($arg));
-		break;
-		case 'integer':
-		case 'double':
-			$r = is_numeric($arg) ? (string)$arg : 'null';
-		break;
-		case 'string':
-		$r = '"' . strtr($arg, array(
-			"\r"   => '\\r',    "\n"   => '\\n',    "\t"   => '\\t',     "\b"   => '\\b',
-			"\f"   => '\\f',    '\\'   => '\\\\',   '"'    => '\"',
-			"\x00" => '\u0000', "\x01" => '\u0001', "\x02" => '\u0002', "\x03" => '\u0003',
-			"\x04" => '\u0004', "\x05" => '\u0005', "\x06" => '\u0006', "\x07" => '\u0007',
-			"\x08" => '\b',     "\x0b" => '\u000b', "\x0c" => '\f',     "\x0e" => '\u000e',
-			"\x0f" => '\u000f', "\x10" => '\u0010', "\x11" => '\u0011', "\x12" => '\u0012',
-			"\x13" => '\u0013', "\x14" => '\u0014', "\x15" => '\u0015', "\x16" => '\u0016',
-			"\x17" => '\u0017', "\x18" => '\u0018', "\x19" => '\u0019', "\x1a" => '\u001a',
-			"\x1b" => '\u001b', "\x1c" => '\u001c', "\x1d" => '\u001d', "\x1e" => '\u001e',
-			"\x1f" => '\u001f'
-			)) . '"';
-		break;
-		case 'boolean':
-			$r = $arg ? 1 : 0;
-		break;
-		default:
-			$r = 'null';
-	}
-	return $r;
-}
-
-function xn_json_number_array_to_string($arr) {
-	$s = '';
-	foreach ($arr as $k=>$v) {
-		$s .= ','.xn_json_encode($v);
-	}
-	$s = substr($s, 1);
-	$r = '['.$s.']';
-	return $r;
-}
-
-function xn_json_assoc_array_to_string($arr) {
-	$s = '';
-	foreach ($arr as $k=>$v) {
-		$s .= ',"'.$k.'":'.xn_json_encode($v);
-	}
-	$s = substr($s, 1);
-	$r = '{'.$s.'}';
-	return $r;
-}
-function is_number_array($arr) {
-	$i = 0;
-	foreach ($arr as $k=>$v) {
-		if(!is_numeric($k) || $k != $i++) return FALSE; // 如果从0 开始，并且连续，则为数字数组
-	}
-	return TRUE;
-}*/
-
-
-/*
-// 此函数太耗费资源已经废弃。
-function xn_json_encode($json) {
-	if(version_compare(PHP_VERSION, '5.4.0') == 1) {
-		return json_encode($json, JSON_UNESCAPED_UNICODE);
-	} else {
-		$json = json_encode($json);
-		return ucs2_to_utf8($json);
-	}
-}
-// 此函数仅仅在工具中使用！不允许在主程序调用。不利于APC，并且可能有安全问题。
-function ucs2_to_utf8($s) {
-	$s = preg_replace("#\\\u([0-9a-f]+)#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", $s);
-	return $s;
-}
-*/
-
-
 // ---------------------> encrypt function end
 
 function pagination_tpl($url, $text, $active = '')
@@ -434,58 +351,6 @@ function pager($url, $totalnum, $page, $pagesize = 20)
     $totalnum >= $pagesize AND $page != $totalpage AND $s .= '<li><a href="' . str_replace('{page}', $page + 1, $url) . '">下一页</a></li>';
     return $s;
 }
-
-/*
-// 用例：pages('user-list-{page}.htm', 100, 10, 5);
-function pages($url, $totalnum, $page, $pagesize = 20) {
-	$totalpage = ceil($totalnum / $pagesize);
-	if($totalpage < 2) return '';
-	$page = min($totalpage, $page);
-	$shownum = 5;	// 显示多少个页 * 2
-
-	$start = max(1, $page - $shownum);
-	$end = min($totalpage, $page + $shownum);
-
-	// 不足 $shownum，补全左右两侧
-	$right = $page + $shownum - $totalpage;
-	$right > 0 && $start = max(1, $start -= $right);
-	$left = $page - $shownum;
-	$left < 0 && $end = min($totalpage, $end -= $left);
-
-	$s = '';
-	$page != 1 && $s .= '<a href="'.str_replace('{page}', $page-1, $url).'">◀</a>';
-	if($start > 1) $s .= '<a href="'.str_replace('{page}', 1, $url).'">1 '.($start > 2 ? '... ' : '').'</a>';
-	for($i=$start; $i<=$end; $i++) {
-		if($i == $page) {
-			$s .= '<a href="'.str_replace('{page}', $i, $url).'" class="active">'.$i.'</a>';// active
-		} else {
-			$s .= '<a href="'.str_replace('{page}', $i, $url).'">'.$i.'</a>';
-		}
-	}
-	if($end != $totalpage) $s .= '<a href="'.str_replace('{page}', $totalpage, $url).'">'.($totalpage - $end > 1 ? '... ' : '').$totalpage.'</a>';
-	$page != $totalpage && $s .= '<a href="'.str_replace('{page}', $page+1, $url).'">▶</a>';
-	return $s;
-}
-
-// 简单的上一页，下一页，比较省资源，不用count(), 推荐使用。
-function simple_pages($url, $totalnum, $page, $pagesize = 20) {
-	$totalpage = ceil($totalnum / $pagesize);
-	if($totalpage < 2) return '';
-	$page = min($totalpage, $page);
-
-	$s = '';
-	$page > 1 AND $s .= '<a href="'.str_replace('{page}', $page-1, $url).'">上一页</a>';
-	$s .= " $page / $totalpage ";
-	$totalnum >= $pagesize AND $page != $totalpage AND $s .= '<a href="'.str_replace('{page}', $page+1, $url).'">下一页</a>';
-	return $s;
-}
-*/
-
-/*function page($page, $n, $pagesize) {
-	$total = ceil($n / $pagesize);
-	$total < 1 AND $total = 1;
-	return mid($page, 1, $total);
-}*/
 
 function mid($n, $min, $max)
 {
@@ -628,68 +493,6 @@ function xn_log($s, $file = 'error')
     @error_log($s, 3, $logpath . "/$file.php");
 }
 
-/*
-	中国国情下的判断浏览器类型，简直就是五代十国，乱七八糟，对博主的收集表示感谢
-
-	参考：
-	http://www.cnblogs.com/wangchao928/p/4166805.html
-	http://www.useragentstring.com/pages/Internet%20Explorer/
-	https://github.com/serbanghita/Mobile-Detect/blob/master/Mobile_Detect.php
-
-	Mozilla/4.0 (compatible; MSIE 5.0; Windows NT)
-	Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)
-	Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2)
-	Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)
-
-	Win7+ie9：
-	Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; Tablet PC 2.0; .NET4.0E)
-
-	win7+ie11，模拟 78910 头是一样的
-	mozilla/5.0 (windows nt 6.1; wow64; trident/7.0; rv:11.0) like gecko
-
-	Win7+ie8：
-	Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; InfoPath.3)
-
-	WinXP+ie8：
-	Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; GTB7.0)
-
-	WinXP+ie7：
-	Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)
-
-	WinXP+ie6：
-	Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)
-
-	傲游3.1.7在Win7+ie9,高速模式:
-	Mozilla/5.0 (Windows; U; Windows NT 6.1; ) AppleWebKit/534.12 (KHTML, like Gecko) Maxthon/3.0 Safari/534.12
-
-	傲游3.1.7在Win7+ie9,IE内核兼容模式:
-	Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E)
-
-	搜狗
-	搜狗3.0在Win7+ie9,IE内核兼容模式:
-	Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E; SE 2.X MetaSr 1.0)
-
-	搜狗3.0在Win7+ie9,高速模式:
-	Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.33 Safari/534.3 SE 2.X MetaSr 1.0
-
-	360
-	360浏览器3.0在Win7+ie9:
-	Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E)
-
-	QQ 浏览器
-	QQ 浏览器6.9(11079)在Win7+ie9,极速模式:
-	Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.41 Safari/535.1 QQBrowser/6.9.11079.201
-
-	QQ浏览器6.9(11079)在Win7+ie9,IE内核兼容模式:
-	Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E) QQBrowser/6.9.11079.201
-
-	阿云浏览器
-	阿云浏览器 1.3.0.1724 Beta 在Win7+ie9:
-	Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)
-
-	MIUI V5
-	Mozilla/5.0 (Linux; U; Android <android-version>; <location>; <MODEL> Build/<ProductLine>) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30 XiaoMi/MiuiBrowser/1.0
-*/
 function get__browser()
 {
     // 默认为 chrome 标准浏览器
@@ -784,9 +587,8 @@ function browser_lang()
 function get_version()
 {
     global $conf, $config, $runtime;
-    $_ip = _SERVER('REMOTE_ADDR');
-    if (ip2long($_ip) != 2130706433) {
-        $domain = xn_urlencode(_SERVER('HTTP_HOST'));
+    $domain = xn_urlencode(_SERVER('HTTP_HOST'));
+    if (!filter_var(ip(), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || strpos($domain, 'localhost') !== FALSE || strpos($domain, 'test') !== FALSE) {
         $app_url = xn_urlencode(http_url_path());
         $users = $runtime['users'];
         $threads = isset($runtime['threads']) ? $runtime['threads'] : 0;
@@ -952,7 +754,6 @@ function http_multi_get($urls)
     }
     return $data;
 }
-
 
 // 将变量写入到文件，根据后缀判断文件格式，先备份，再写入，写入失败，还原备份
 function file_replace_var($filepath, $replace = array(), $pretty = FALSE)
@@ -1298,7 +1099,7 @@ function xn_filemtime($file)
 /*
 	实例：
 	xn_set_dir(123, APP_PATH.'upload');
-	
+
 	000/000/1.jpg
 	000/000/100.jpg
 	000/000/100.jpg
@@ -1505,24 +1306,6 @@ function f2y($rmb, $round = 'float')
     }
     return $rmb;
 }
-
-/* 需要兼容，请自行打开开这段注释，默认不兼容
-
-// 兼容 3.0，如果没有使用过，可以砍掉
-function array_to_sqladd($arr) {
-	return db_array_to_update_sqladd($arr);
-}
-
-// 兼容 3.0，如果没有使用过，可以砍掉
-function cond_to_sqladd($cond) {
-	return db_cond_to_sqladd($cond);
-}
-
-// 兼容 3.0，如果没有使用过，可以砍掉
-function orderby_to_sqladd($orderby) {
-	return db_orderby_to_sqladd($orderby);
-}
-*/
 
 // 无 Notice 方式的获取超级全局变量中的 key
 function _GET($k, $def = NULL)

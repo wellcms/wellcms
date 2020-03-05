@@ -13,7 +13,7 @@ $action = param(1);
 // 后台访问前台文件
 $backstage = param('backstage', 0);
 $url_path = '';
-if($backstage) {
+if ($backstage) {
     $conf['path'] = $conf['url_rewrite_on'] > 1 ? $conf['path'] : '../';
     $url_path = $conf['url_rewrite_on'] > 1 ? '' : '../';
 }
@@ -29,18 +29,23 @@ if ($action == 'sticky') {
         $fid = param('fid', 0);
         if (isset($forumlist[$fid])) {
             $forum = $forumlist[$fid];
-            $fup = $forum['fup'];
+            $fup = $forum['category'] == 1 ? $forum['fid'] : $forum['fup'];
         } else {
             $fup = 0;
         }
 
         // hook operate_sticky_get_end.php
 
+        $safe_token = well_token_set($uid);
+
         include _include(APP_PATH . 'view/htm/operate_sticky.htm');
 
-    } else {
+    } elseif ($method == 'POST') {
 
-        $backstage AND group_access($gid, 'managesticky') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        $backstage AND group_access($gid, 'managesticky') === FALSE AND message(1, lang('user_group_insufficient_privilege'));
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         // hook operate_sticky_start.php
 
@@ -141,12 +146,16 @@ if ($action == 'sticky') {
     if ($method == 'GET') {
 
         // hook operate_close_get_start.php
+        $safe_token = well_token_set($uid);
 
         include _include(APP_PATH . 'view/htm/operate_close.htm');
 
-    } else {
+    } elseif ($method == 'POST') {
 
         $backstage AND group_access($gid, 'manageupdatethread') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         $close = param('close', 0);
 
@@ -195,9 +204,13 @@ if ($action == 'sticky') {
 
     if ($method == 'GET') {
 
+        $safe_token = well_token_set($uid);
         include _include(APP_PATH . 'view/htm/operate_delete.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         if ($backstage) {
             group_access($gid, 'managedeletethread') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
@@ -205,7 +218,7 @@ if ($action == 'sticky') {
             $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || $gid == 1;
             empty($allowdelete) AND message(1, lang('user_group_insufficient_privilege'));
         }
-        
+
         // hook operate_delete_start.php
 
         $tid = param(2, 0);
@@ -240,9 +253,22 @@ if ($action == 'sticky') {
 
                 // hook operate_delete_thread_start.php
 
-                if (forum_access_mod($_thread['fid'], $gid, 'allowdelete')) {
+                $forum = array_value($forumlist, $_thread['fid']);
+                //if (empty($forum)) continue;
 
-                    well_thread_delete_all($_thread['tid']);
+                // hook operate_delete_thread_before.php
+
+                if (forum_access_mod($_thread['fid'], $gid, 'allowdelete')) {
+                    // hook operate_delete_thread_center.php
+
+                    switch ($forum['model']) {
+                        case '0': // 删除文章
+                            well_thread_delete_all($_thread['tid']);
+                            break;
+                        // hook operate_delete_foreach_case.php
+                    }
+
+                    // hook operate_delete_thread_middle.php
 
                     $arr = array('type' => 1, 'uid' => $uid, 'tid' => $_thread['tid'], 'subject' => $_thread['subject'], 'comment' => '', 'create_date' => $time);
 
@@ -281,15 +307,21 @@ if ($action == 'sticky') {
         $forumlist_show = arrlist_cond_orderby($forumlist_show, $cond, array(), 1, 1000);
         $forumarr = arrlist_key_values($forumlist_show, 'fid', 'name');
 
+        $safe_token = well_token_set($uid);
+
         include _include(APP_PATH . 'view/htm/operate_move.htm');
 
-    } else {
+    } elseif ($method == 'POST') {
 
-        $backstage AND (group_access($gid, 'manageupdatethread') == FALSE || group_access($gid, 'allowmove') == FALSE) AND message(1, lang('user_group_insufficient_privilege'));
+        $backstage AND (group_access($gid, 'manageupdatethread') == FALSE || group_access($gid, 'allowmove') === FALSE) AND message(1, lang('user_group_insufficient_privilege'));
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         $tidarr = param('tidarr', array(0));
         empty($tidarr) AND message(1, lang('please_choose_thread'));
-        $threadlist = well_thread_find_by_tids($tidarr);
+        //$threadlist = well_thread_find_by_tids($tidarr);
+        $threadlist = well_thread__find(array('tid' => $tidarr), array('tid' => 1), 1, count($tidarr));
 
         $newfid = param('newfid', 0);
         forum_read($newfid) || message(1, lang('forum_not_exists'));
@@ -298,16 +330,33 @@ if ($action == 'sticky') {
 
         $tids = array();
         $fids = array();
+        $thread_tid = 0;
+        // hook operate_move_before.php
         foreach ($threadlist as &$thread) {
 
             // hook operate_move_foreach_start.php
 
+            $forum = array_value($forumlist, $thread['fid']);
+            //if (empty($forum)) continue;
+
+            // hook operate_move_foreach_before.php
+
             if (forum_access_mod($thread['fid'], $gid, 'allowmove')) {
+
                 if ($thread['fid'] == $newfid) continue;
+
+                switch ($forum['model']) {
+                    case '0': // 移动文章
+                        $thread_tid = 1;
+                        break;
+                    // hook operate_move_foreach_case.php
+                }
+
                 $tids[] = $thread['tid'];
+
                 $fids[$thread['tid']] = $thread['fid'];
 
-                // hook operate_move_foreach_before.php
+                // hook operate_move_foreach_center.php
 
                 $arr = array('type' => 2, 'uid' => $uid, 'tid' => $thread['tid'], 'subject' => $thread['subject'], 'create_date' => $time);
 
@@ -330,13 +379,21 @@ if ($action == 'sticky') {
         // hook operate_move_thread_update_before.php
 
         // 主题主表 附表 回复 所属栏目更新
-        !empty($tids) AND well_thread_update_all($tids, array('fid' => $newfid));
-        !empty($tids) AND thread_tid_update($tids, $newfid);
+        if (!empty($tids)) {
 
-        // hook operate_move_forum_update_before.php
+            // hook operate_move_thread_update_middle.php
 
-        // 新栏目增加主题数
-        forum_update($newfid, array('threads+' => (count($tids))));
+            well_thread_update_all($tids, array('fid' => $newfid));
+
+            $thread_tid AND thread_tid_update($tids, $newfid);
+
+            // hook operate_move_thread_update_after.php
+
+            // 新栏目增加主题数
+            forum_update($newfid, array('threads+' => (count($tids))));
+
+            // hook operate_move_forum_update_after.php
+        }
 
         // hook operate_move_end.php
 
