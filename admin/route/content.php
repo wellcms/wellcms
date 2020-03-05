@@ -188,7 +188,7 @@ if ($action == 'list') {
         $form_doctype = 0;
         $_fid = 0;
         $page = 0;
-        
+
         // 初始化附件
         well_attach_clear_tmp();
 
@@ -205,14 +205,14 @@ if ($action == 'list') {
         $forumlist = forum_filter($forumlist);
 
         $safe_token = well_token_set($uid);
-        
+
         // hook admin_content_create_get_template.php
 
         // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
         if ($model == 0) {
             include _include(ADMIN_PATH . 'view/htm/content_post.htm');
         }
-        
+
         // hook admin_content_create_get_end.php
 
     } elseif ($method == 'POST') {
@@ -398,7 +398,7 @@ if ($action == 'list') {
         $thread_data['message'] = htmlspecialchars($thread_data['message']);
 
         ($uid != $thread['uid']) AND $thread_data['message'] = xn_html_safe($thread_data['message']);
-        
+
         $forum = array_value($forumlist, $fid);
         $model = array_value($forum, 'model', 0);
 
@@ -414,7 +414,7 @@ if ($action == 'list') {
 
         // 初始化附件
         well_attach_clear_tmp();
-        
+
         // hook admin_content_update_get_icon_after.php
 
         $picture = $config['picture_size'];
@@ -469,7 +469,7 @@ if ($action == 'list') {
         if ($model == 0) {
             include _include(ADMIN_PATH . 'view/htm/content_post.htm');
         }
-        
+
         // hook admin_content_update_get_end.php
 
     } elseif ($method == 'POST') {
@@ -479,7 +479,7 @@ if ($action == 'list') {
             $safe_token = param('safe_token');
             well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
         }
-        
+
         // hook admin_content_update_post_start.php
 
         $arr = array();
