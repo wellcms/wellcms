@@ -263,7 +263,7 @@
 
 <script>
 var forum_url = '<?php echo array_value($forum, 'url');?>';
-var safe_token = '<?php echo $safe_token;?>';
+var safe_token = '<?php echo GLOBALS('safe_token');?>';
 var jform = $('#quick_reply_form');
 jform.on('submit', function() {
 	jform.reset();

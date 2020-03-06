@@ -60,7 +60,6 @@ function cron_run($force = 0)
 
             // 清理临时附件
             attach_gc();
-            get_version();
 
             // hook model_cron_daily_after.php
 

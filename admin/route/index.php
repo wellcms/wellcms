@@ -82,9 +82,9 @@ if ($action == 'login') {
     // hook admin_index_info_before.php
 
     $stat = array();
-    $stat['threads'] = function_exists('thread_count') ? thread_count() : lang('unknown');
-    $stat['posts'] = function_exists('post_count') ? post_count() : lang('unknown');
-    $stat['attachs'] = function_exists('attach_count') ? attach_count() : lang('unknown');
+    $stat['threads'] = function_exists('thread_count') ? thread_count() : 0;
+    $stat['posts'] = function_exists('post_count') ? post_count() : 0;
+    $stat['attachs'] = function_exists('attach_count') ? attach_count() : 0;
     $stat['articles'] = well_thread_count();
     $stat['comments'] = comment_count();
     $stat['website_attachs'] = well_attach_count();
@@ -106,29 +106,25 @@ if ($action == 'login') {
 function get_last_version($stat)
 {
     global $time, $conf, $config;
-    $last_version = isset($config['last_version']) ? $config['last_version'] : 0;
+
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
-    $app_url = xn_urlencode(http_url_path());
-    $_ip = _SERVER('REMOTE_ADDR');
-    if ($time > $last_version && ip2long($_ip) != 2130706433) {
-        $sitename = xn_urlencode($conf['sitename']);
-        $version = $config['version'];
-        $url = 'http://www.wellcms.cn/version.html?type=1&sitename=' . $sitename . '&domain=' . $domain . '&app_url=' . $app_url . '&users=' . $stat['users'] . '&articles=' . $stat['articles'] . '&threads=' . $stat['threads'] . '&posts=' . $stat['posts'] . '&comments=' . $stat['comments'] . '&siteid=' . plugin_siteid() . '&version=' . $version . '&version_date=' . array_value($config, 'version_date', 0);
-        $json = https_request($url, '', '', 500, 1);
-        if (!in_array($json, array('1', '2', 'failed'))) {
-            $official = xn_json_decode($json);
-            if (is_array($official)) {
-                if ($official['version'] != $config['official_version'] || $official['version_date'] > array_value($config, 'version_date', 0)) {
-                    $config['official_version'] = $official['version'];
-                    $config['version_date'] = array_value($official, 'version_date', 0);
-                    $config['upgrade'] = 1; // 有更新
-                }
+    if (!filter_var(_SERVER('SERVER_ADDR'), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || $time < array_value($config, 'last_version', 0)) return;
+
+    $url = 'http://www.wellcms.cn/version.html?type=1&sitename=' . xn_urlencode($conf['sitename']) . '&domain=' . $domain . '&app_url=' . xn_urlencode(http_url_path()) . '&users=' . $stat['users'] . '&articles=' . $stat['articles'] . '&threads=' . $stat['threads'] . '&posts=' . $stat['posts'] . '&comments=' . $stat['comments'] . '&siteid=' . plugin_siteid() . '&version=' . array_value($config,'version') . '&version_date=' . array_value($config, 'version_date', 0);
+    $json = https_request($url, '', '', 500, 1);
+    if (!in_array($json, array('1', '2', 'failed'))) {
+        $official = xn_json_decode($json);
+        if (is_array($official)) {
+            if ($official['version'] != $config['official_version'] || $official['version_date'] > array_value($config, 'version_date', 0)) {
+                $config['official_version'] = $official['version'];
+                $config['version_date'] = array_value($official, 'version_date', 0);
+                $config['upgrade'] = 1; // 有更新
             }
         }
-
-        $config['last_version'] = clock_twenty_four();
-        setting_set('conf', $config);
     }
+
+    $config['last_version'] = clock_twenty_four();
+    setting_set('conf', $config);
 }
 
 // hook admin_index_function.php

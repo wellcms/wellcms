@@ -584,21 +584,6 @@ function browser_lang()
     }
 }
 
-function get_version()
-{
-    global $conf, $config, $runtime;
-    $domain = xn_urlencode(_SERVER('HTTP_HOST'));
-    if (!filter_var(ip(), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || strpos($domain, 'localhost') !== FALSE || strpos($domain, 'test') !== FALSE) {
-        $app_url = xn_urlencode(http_url_path());
-        $users = $runtime['users'];
-        $threads = isset($runtime['threads']) ? $runtime['threads'] : 0;
-        $posts = isset($runtime['posts']) ? $runtime['posts'] : 0;
-        $articles = isset($runtime['articles']) ? $runtime['articles'] : 0;
-        $comments = isset($runtime['comments']) ? $runtime['comments'] : 0;
-        echo '<script src="http://www.wellcms.cn/version.html?sitename=' . xn_urlencode($conf['sitename']) . '&domain=' . $domain . '&app_url=' . $app_url . '&users=' . $users . '&articles=' . $articles . '&threads=' . $threads . '&posts=' . $posts . '&comments=' . $comments . '&siteid=' . plugin_siteid() . '&version=' . $config['version'] . '"></script>';
-    }
-}
-
 // 安全请求一个 URL
 // ini_set('default_socket_timeout', 60);
 function http_get($url, $cookie = '', $timeout = 30, $times = 3)

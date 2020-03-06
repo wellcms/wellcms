@@ -787,11 +787,6 @@ function filter_html($text)
 
     $text = trim($text);
     $text = stripslashes($text);
-    // 过滤动态代码
-    //$text = preg_replace('#<\?|\?' . '>#', '', $text);
-    //$text = preg_replace('#<script(.*?)</script>#is', '', $text);
-    //$text = preg_replace('#<iframe(.*?)</iframe>#is', '', $text);
-    //$text = preg_replace('#<style(.*?)</style>#is', '', $text);
     $text = strip_tags($text, "$html_tag"); // 需要保留的字符在后台设置
     $text = str_replace(array("\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
     //$text = preg_replace('#\s+#', '', $text);//空白区域 会过滤图片等
@@ -801,8 +796,7 @@ function filter_html($text)
     // 过滤所有的class
     $text = preg_replace("#class=.+?['|\"]#i", '', $text);
     // 获取img= 过滤标签中其他属性
-    //$text = preg_replace("#<img\s*src=(\"|\')(.*?)\\1[^>]*>#is", '<img src="$2" />', $text);
-    $text = preg_replace('#(<img.*?)(class=.+?[\'|\"])|(data-src=.+?[\'|"])|(data-type=.+?[\'|"])|(data-ratio=.+?[\'|"])|(data-s=.+?[\'|"])|(data-fail=.+?[\'|"])|(crossorigin=.+?[\'|"])|((data-w)=[\'"]+[0-9]+[\'"]+)|(_width=.+?[\'|"]+)|(_height=.+?[\'|"]+)|(style=.+?[\'|"])|((width)=[\'"]+[0-9]+[\'"]+)|((height)=[\'"]+[0-9]+[\'"]+)|#i', '$1', $text);
+    $text = preg_replace('#(<img.*?)(class=.+?[\'|\"])|(data-src=.+?[\'|"])|(data-type=.+?[\'|"])|(data-ratio=.+?[\'|"])|(data-s=.+?[\'|"])|(data-fail=.+?[\'|"])|(crossorigin=.+?[\'|"])|((data-w)=[\'"]+[0-9]+[\'"]+)|(_width=.+?[\'|"]+)|(_height=.+?[\'|"]+)|(style=.+?[\'|"])|((width)=[\'"]+[0-9]+[\'"]+)|((height)=[\'"]+[0-9]+[\'"]+)#i', '$1', $text);
 
     return $text;
 }
@@ -961,6 +955,8 @@ function twenty_four_expired($time = NULL)
  */
 function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
 {
+    if (empty($url)) return FALSE;
+
     if (version_compare(PHP_VERSION, '5.2.3', '<')) {
         $ms = 0;
         $timeout = 30;
@@ -1047,11 +1043,6 @@ function save_image($img)
     curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
     $output = curl_exec($ch);
     curl_close($ch);
-    /*
-     * 写入到本地 $fullpath 完整路径123/jpg
-     * $fp = fopen($fullpath, 'w');
-    fwrite($fp, $output);
-    fclose($fp);*/
     return $output;
 }
 
