@@ -107,10 +107,10 @@ function get_last_version($stat)
 {
     global $time, $conf, $config;
 
-    $domain = xn_urlencode(_SERVER('HTTP_HOST'));
-    if (!filter_var(_SERVER('SERVER_ADDR'), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || $time < array_value($config, 'last_version', 0)) return;
+    $domain = _SERVER('HTTP_HOST');
+    if (!filter_var(gethostbyname($domain), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || $time < array_value($config, 'last_version', 0)) return;
 
-    $url = 'http://www.wellcms.cn/version.html?type=1&sitename=' . xn_urlencode($conf['sitename']) . '&domain=' . $domain . '&app_url=' . xn_urlencode(http_url_path()) . '&users=' . $stat['users'] . '&articles=' . $stat['articles'] . '&threads=' . $stat['threads'] . '&posts=' . $stat['posts'] . '&comments=' . $stat['comments'] . '&siteid=' . plugin_siteid() . '&version=' . array_value($config,'version') . '&version_date=' . array_value($config, 'version_date', 0);
+    $url = 'http://www.wellcms.cn/version.html?type=1&sitename=' . xn_urlencode($conf['sitename']) . '&domain=' . xn_urlencode($domain) . '&app_url=' . xn_urlencode(http_url_path()) . '&users=' . $stat['users'] . '&articles=' . $stat['articles'] . '&threads=' . $stat['threads'] . '&posts=' . $stat['posts'] . '&comments=' . $stat['comments'] . '&siteid=' . plugin_siteid() . '&version=' . array_value($config,'version') . '&version_date=' . array_value($config, 'version_date', 0);
     $json = https_request($url, '', '', 500, 1);
     if (!in_array($json, array('1', '2', 'failed'))) {
         $official = xn_json_decode($json);

@@ -270,7 +270,7 @@ function xn_json_encode($data, $pretty = FALSE, $level = 0)
             $data = str_replace("\t", '\\t', $data);
             return $data;
         case 'object':
-            $data = get_object_vars($data);
+            return get_object_vars($data);
         case 'array':
             $output_index_count = 0;
             $output_indexed = array();

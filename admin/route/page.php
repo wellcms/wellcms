@@ -171,7 +171,7 @@ if ($action == 'list') {
     } elseif ($method == 'POST') {
 
         // 验证token
-        if (array_value($conf, 'intodb_token', 0)) {
+        if (array_value($conf, 'message_token', 0)) {
             $safe_token = param('safe_token');
             well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
         }
@@ -294,7 +294,7 @@ if ($action == 'list') {
     } elseif ($method == 'POST') {
 
         // 验证token
-        if (array_value($conf, 'intodb_token', 0)) {
+        if (array_value($conf, 'message_token', 0)) {
             $safe_token = param('safe_token');
             well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
         }

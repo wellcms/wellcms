@@ -17,7 +17,6 @@ return array(
             'comment' => array('url' => url('comment-list'), 'text' => lang('comment_list')),
             // hook admin_menu_conf_content_after.php
             'page' => array('url' => url('page-list'), 'text' => lang('single__page')),
-            /*审核主题插在此处*/
             // hook admin_menu_conf_content_end.php
         )
     ),
@@ -65,10 +64,12 @@ return array(
         'icon' => 'icon-cogs',
         'tab' => array(
             // hook admin_menu_conf_plugin_local_before.php
-            'plugin' => array('url' => url('plugin-local'), 'text' => lang('local_plugin')),
+            'list' => array('url' => url('plugin-list'), 'text' => lang('local_plugin')),
             // hook admin_menu_conf_plugin_local_after.php
             'theme' => array('url' => url('plugin-theme'), 'text' => lang('local_theme')),
             // hook admin_menu_conf_theme_local_after.php
+            'storehouse' => array('url' => url('plugin-storehouse'), 'text' => lang('my_storehouse')),
+            // hook admin_menu_conf_storehouse_after.php
         )
     ),
     // hook admin_menu_conf_other_before.php
@@ -85,8 +86,6 @@ return array(
             'link' => array('url' => url('other-link'), 'text' => lang('friends__link')),
             // hook admin_menu_conf_other_cache_before.php
             'cache' => array('url' => url('other-cache'), 'text' => lang('cache')),
-            // hook admin_menu_conf_other_cache_after.php
-            /*'optimize' => array('url' => url('other-optimize'), 'text' => lang('optimize_table')),*/
             // hook admin_menu_conf_other_after.php
         )
     ),

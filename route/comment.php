@@ -47,7 +47,7 @@ if ($action == 'create') {
     } elseif ($method == 'POST') {
 
         // 验证token
-        if (array_value($conf, 'intodb_token', 0)) {
+        if (array_value($conf, 'comment_token', 0) == 1) {
             $safe_token = param('safe_token');
             well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
         }

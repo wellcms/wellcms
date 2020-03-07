@@ -156,6 +156,7 @@ return array(
     'plugin_is_cert' => '通過官方認證',
     'local_plugin' => '本地插件',
     'official_plugin' => '官方插件',
+    'official_store' => '官方商店',
     'plugin_cate_0' => '所有插件',
     'plugin_cate_1' => '風格模板',
     'plugin_cate_2' => '小型插件',
@@ -229,6 +230,11 @@ return array(
     'manage_setting' => '系統設置',
     'random_thread' => '隨機主題',
     'details_page_randoms' => '詳情頁隨機主題數量',
+    'add_applications' => '<a href="http://www.wellcms.cn/" target="_blank">請到官方應用中心添加應用到倉庫</a>',
+    'plugin_login_tips' => '輸入 WellCMS 官方登入賬戶和密碼',
+    'plugin_read_tips' => '本地模式禁止下載和支付',
+    'plugin_get_data_failed' => '無法從官方獲取插件數據',
+    'plugin_get_data_fmt_failed' => '從官方獲取數據格式錯誤',
     // hook lang_zh_tw_admin.php
 
 );

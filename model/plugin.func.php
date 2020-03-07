@@ -4,7 +4,7 @@ $plugin_paths = array();
 $plugins = array(); // 合并官方插件
 $themes = array(); // 初始化主题 作者上传后再根据作者增加uid
 
-// 官方插件列表
+// 我的仓库列表
 $official_plugins = array();
 
 define('PLUGIN_OFFICIAL_URL', DEBUG == 3 ? 'http://www.x.com/' : 'http://www.wellcms.cn/');
@@ -73,7 +73,7 @@ function plugin_init()
 {
     global $plugin_paths, $themes, $plugins, $official_plugins, $conf;
 
-    $official_plugins = plugin_official_list_cache();
+    $official_plugins = cache_get('plugin_official_list');
     empty($official_plugins) AND $official_plugins = array();
 
     $plugin_paths = glob(APP_PATH . 'plugin/*', GLOB_ONLYDIR);
@@ -376,28 +376,50 @@ function plugin_official_total($cond = array())
 function plugin_official_list($cond = array(), $orderby = array('storeid' => -1), $page = 1, $pagesize = 20)
 {
     global $official_plugins;
-    // 服务端插件信息，缓存起来
+    // 服务端信息，缓存起来
     $offlist = $official_plugins;
     $offlist = arrlist_cond_orderby($offlist, $cond, $orderby, $page, $pagesize);
     foreach ($offlist as &$plugin) $plugin = plugin_read_by_dir($plugin['dir'], FALSE);
     return $offlist;
 }
 
-// 远程插件列表，从官方服务器获取插件列表，全部缓存到本地，定期更新
-function plugin_official_list_cache()
+/* 从官方服务器获取我的仓库收藏的数据
+ * @param int $type 1 Synchronous Data
+ * @return bool|mixed|null|string
+ */
+function plugin_official_storehouse($type = 0)
 {
+    global $conf;
+
+    if (!filter_var(gethostbyname(_SERVER('HTTP_HOST')), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return NULL;
+
+    if ($type) {
+        $r = param($conf['cookie_pre'] . 'plugin_official_list');
+        if ($r) return cache_get('plugin_official_list');
+    }
+
     $s = DEBUG == 3 ? NULL : cache_get('plugin_official_list');
-    if ($s === NULL) {
-        $url = PLUGIN_OFFICIAL_URL . 'plugin-all.html'; // 获取所有插件
-        $s = https_request($url, '', '', 500, 1);
+    if ($s === NULL || $type) {
+
+        $arr = plugin_data_verify();
+        if ($arr === FALSE) {
+            setting_delete('plugin_data');
+            return NULL;
+        }
+
+        $url = PLUGIN_OFFICIAL_URL . 'plugin-storehouse.html';
+        $post = array('siteid' => plugin_siteid(), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $arr[4], 'uid' => $arr[0]);
+        $s = https_request($url, $post, '', 500, 1);
 
         // 检查返回值是否正确
-        if (empty($s)) return xn_error(-1, '从官方获取插件数据失败');
+        if (empty($s)) return xn_error(-1, lang('plugin_get_data_failed'));
         $s = xn_json_decode($s);
-        if (empty($s)) return xn_error(-1, '从官方获取插件数据格式不对');
+        if (empty($s)) return xn_error(-1, lang('plugin_get_data_fmt_failed'));
 
-        cache_set('plugin_official_list', $s, 3600); // 缓存时间 1 小时。
+        cache_set('plugin_official_list', $s);
+        cookie_set('plugin_official_list', 1, 300);
     }
+
     return $s;
 }
 
@@ -452,10 +474,10 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['name']) && $official['name'] = '';
     !isset($official['price']) && $official['price'] = 0;
     !isset($official['brief']) && $official['brief'] = '';
-    !isset($official['software_version']) && $official['software_version'] = '2.0';
+    !isset($official['software_version']) && $official['software_version'] = '2.0.0';
     !isset($official['version']) && $official['version'] = '1.0';
     //!isset($official['cateid']) && $official['cateid'] = 0;
-    // 0 所有插件 1主题风格 2小型插件 3大型插件 4接口整合 99未分类
+    // 0 所有插件 1主题风格 2功能增强 3大型插件 4接口整合 99未分类
     !isset($official['type']) && $official['type'] = 0;
     !isset($official['last_update']) && $official['last_update'] = 0;
     !isset($official['stars']) && $official['stars'] = 0;
@@ -465,11 +487,6 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['file_md5']) && $official['file_md5'] = '';
     !isset($official['filename']) && $official['filename'] = '';
     !isset($official['is_cert']) && $official['is_cert'] = 0;
-    //!isset($official['is_show']) && $official['is_show'] = 0;
-    !isset($official['img1']) && $official['img1'] = '';
-    !isset($official['img2']) && $official['img2'] = '';
-    !isset($official['img3']) && $official['img3'] = '';
-    !isset($official['img4']) && $official['img4'] = '';
     !isset($official['brief_url']) && $official['brief_url'] = '';
     !isset($official['qq']) && $official['qq'] = '';
     !isset($official['author']) && $official['author'] = '';
@@ -492,10 +509,6 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     $plugin['is_cert_fmt'] = empty($plugin['is_cert']) ? '<span class="text-danger">' . lang('no') . '</span>' : '<span class="text-success">' . lang('yes') . '</span>';
     $plugin['have_upgrade'] = $plugin['installed'] && version_compare($official['version'], $local['version']) > 0 ? TRUE : FALSE;
     $plugin['official_version'] = $official['version']; // 官方版本
-    $plugin['img1_url'] = $official['img1'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img1.jpg' : ''; // 官方版本
-    $plugin['img2_url'] = $official['img2'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img2.jpg' : ''; // 官方版本
-    $plugin['img3_url'] = $official['img3'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img3.jpg' : ''; // 官方版本
-    $plugin['img4_url'] = $official['img4'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . $plugin['storeid'] . '/img4.jpg' : ''; // 官方版本
 
     return $plugin;
 }
@@ -503,7 +516,6 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
 function plugin_siteid()
 {
     global $conf;
-    // 绑定auth_key和当前服务器IP地址
     $auth_key = $conf['auth_key'];
     $siteip = _SERVER('SERVER_ADDR');
     return md5($auth_key . $siteip);

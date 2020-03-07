@@ -28,13 +28,14 @@
 var javatar_upload = $('#avatar_upload');
 var jprogress = $('#avatar_progress');
 var jimg = $('#avatar_img');
+var safe_token = '<?php echo $safe_token;?>';
 jprogress.hide();
 javatar_upload.on('change', function(e) {
 	var files = xn.get_files_from_event(e);
 	xn.upload_file(
 		files[0],
 		xn.url('my-avatar'), 
-		{width: 128, height: 128, action: 'clip', filetype: 'jpg'}, 
+		{width: 128, height: 128, action: 'clip', filetype: 'jpg', safe_token: safe_token},
 		function(code, message) {
 			if(code == 0) {
 				jimg.attr('src', message.url+'?'+Math.random());
@@ -52,3 +53,4 @@ javatar_upload.on('change', function(e) {
 	);
 });
 </script>
+<!--{hook my_avatar_after.htm}-->

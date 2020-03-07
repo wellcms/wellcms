@@ -151,6 +151,7 @@ return array(
 	'plugin_sells'=>'Sells',
 	'plugin_is_cert'=>'Is certified',
 	'official_plugin'=>'Official Plugin',
+	'official_store' => 'Official Store',
 	'plugin_cate_0'=>'All',
 	'plugin_cate_1'=>'Style',
 	'plugin_cate_2'=>'Mini',
@@ -226,6 +227,11 @@ return array(
     'manage_setting' => 'System setting',
     'random_thread' => 'Random thread',
     'details_page_randoms' => 'Thread randoms',
+	'add_applications' => '<a href="http://www.wellcms.cn/" target="_blank">Please go to the official application center to add applications to the warehouse.</a>',
+	'plugin_login_tips' => 'Enter the WellCMS official login account and password',
+	'plugin_read_tips' => 'Forbid downloads and payments in local mode',
+	'plugin_get_data_failed' => 'Failed to get plugin data from official',
+	'plugin_get_data_fmt_failed' => 'Error from official data format',
 	// hook lang_en_us_admin.php
 	
 );

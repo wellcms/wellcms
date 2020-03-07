@@ -294,8 +294,10 @@ return array(
     'tag_cate_name' => '分類名稱',
     'tag_name' => '標簽名稱',
 
-    'toggler_menu' => '展開菜單',
+    'sync_official' => '同步官方',
+    'my_storehouse' => '我的倉庫',
     'user_locked' => '用戶被鎖',
+    'toggler_menu' => '展開菜單',
     'install_successfully' => '安裝成功',
     'uninstall_successfully' => '卸載成功',
     'customize' => '自定義',

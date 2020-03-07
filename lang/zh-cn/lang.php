@@ -292,6 +292,8 @@ return array(
     'tag_cate' => '标签分类',
     'tag_cate_name' => '分类名称',
 
+    'sync_official' => '同步官方',
+    'my_storehouse' => '我的仓库',
     'user_locked' => '用户被锁',
     'toggler_menu' => '展开菜单',
     'install_successfully' => '安装成功',

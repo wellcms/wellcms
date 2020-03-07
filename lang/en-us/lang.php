@@ -293,9 +293,11 @@ return array(
 	'tag_cate'=>'Tag Category',
 	'tag_cate_name'=>'Tag Category Name',
 	'tag_name'=>'Tag Name',
-	
-	'toggler_menu'=>'toggle Menu',
+
+    'sync_official' => 'Sync Official',
+    'my_storehouse' => 'Storehouse',
     'user_locked' => 'user locked',
+	'toggler_menu'=>'toggle Menu',
     'install_successfully' => 'install successfully',
     'uninstall_successfully' => 'uninstall successfully',
     'customize' => 'flag',

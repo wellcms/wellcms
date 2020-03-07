@@ -57,10 +57,17 @@ if (empty($action)) {
     if ($method == 'GET') {
 
         // hook my_avatar_get_start.php
+        $safe_token = well_token_set($uid);
 
         include _include(theme_load(19));
 
-    } else {
+    } elseif ($method == 'POST') {
+
+        // 验证token
+        if (array_value($conf, 'message_token', 0)) {
+            $safe_token = param('safe_token');
+            well_token_verify($uid, $safe_token, 60) === FALSE AND message(1, lang('illegal_operation'));
+        }
 
         // hook my_avatar_post_start.php
 
@@ -68,10 +75,14 @@ if (empty($action)) {
         $height = param('height');
         $data = param('data', '', FALSE);
 
+        // hook my_avatar_post_save_before.php
+
         empty($data) AND message(-1, lang('data_is_empty'));
         $data = base64_decode_file_data($data);
         $size = strlen($data);
         $size > 40000 AND message(-1, lang('filesize_too_large', array('maxsize' => '40K', 'size' => $size)));
+
+        // hook my_avatar_post_save_center.php
 
         $filename = "$uid.png";
         $dir = substr(sprintf("%09d", $uid), 0, 3) . '/';
@@ -79,7 +90,8 @@ if (empty($action)) {
         $url = file_path() . 'avatar/' . $dir . $filename;
         !is_dir($path) AND (mkdir($path, 0777, TRUE) OR message(-2, lang('directory_create_failed')));
 
-        // hook my_avatar_post_save_before.php
+        // hook my_avatar_post_save_after.php
+
         file_put_contents($path . $filename, $data) OR message(-1, lang('write_to_file_failed'));
 
         user_update($uid, array('avatar' => $time));
