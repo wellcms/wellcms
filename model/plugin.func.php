@@ -383,11 +383,11 @@ function plugin_official_list($cond = array(), $orderby = array('storeid' => -1)
     return $offlist;
 }
 
-/* 从官方服务器获取我的仓库收藏的数据
+/* 从官方服务器获取数据
  * @param int $type 1 Synchronous Data
  * @return bool|mixed|null|string
  */
-function plugin_official_storehouse($type = 0)
+function plugin_official_store($type = 0)
 {
     global $conf;
 
@@ -407,7 +407,7 @@ function plugin_official_storehouse($type = 0)
             return NULL;
         }
 
-        $url = PLUGIN_OFFICIAL_URL . 'plugin-storehouse.html';
+        $url = PLUGIN_OFFICIAL_URL . 'plugin-store.html';
         $post = array('siteid' => plugin_siteid(), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $arr[4], 'uid' => $arr[0]);
         $s = https_request($url, $post, '', 500, 1);
 
@@ -474,7 +474,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['name']) && $official['name'] = '';
     !isset($official['price']) && $official['price'] = 0;
     !isset($official['brief']) && $official['brief'] = '';
-    !isset($official['software_version']) && $official['software_version'] = '2.0.0';
+    !isset($official['software_version']) && $official['software_version'] = '2.0';
     !isset($official['version']) && $official['version'] = '1.0';
     //!isset($official['cateid']) && $official['cateid'] = 0;
     // 0 所有插件 1主题风格 2功能增强 3大型插件 4接口整合 99未分类
@@ -487,6 +487,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['file_md5']) && $official['file_md5'] = '';
     !isset($official['filename']) && $official['filename'] = '';
     !isset($official['is_cert']) && $official['is_cert'] = 0;
+    //!isset($official['is_show']) && $official['is_show'] = 0;
     !isset($official['brief_url']) && $official['brief_url'] = '';
     !isset($official['qq']) && $official['qq'] = '';
     !isset($official['author']) && $official['author'] = '';

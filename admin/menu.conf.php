@@ -17,6 +17,7 @@ return array(
             'comment' => array('url' => url('comment-list'), 'text' => lang('comment_list')),
             // hook admin_menu_conf_content_after.php
             'page' => array('url' => url('page-list'), 'text' => lang('single__page')),
+            /*审核主题插在此处*/
             // hook admin_menu_conf_content_end.php
         )
     ),
@@ -68,8 +69,8 @@ return array(
             // hook admin_menu_conf_plugin_local_after.php
             'theme' => array('url' => url('plugin-theme'), 'text' => lang('local_theme')),
             // hook admin_menu_conf_theme_local_after.php
-            'storehouse' => array('url' => url('plugin-storehouse'), 'text' => lang('my_storehouse')),
-            // hook admin_menu_conf_storehouse_after.php
+            'store' => array('url' => url('plugin-store'), 'text' => lang('official_store')),
+            // hook admin_menu_conf_store_after.php
         )
     ),
     // hook admin_menu_conf_other_before.php

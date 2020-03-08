@@ -58,7 +58,7 @@ if ($action == 'list') {
         }
     }
 
-} elseif ($action == 'storehouse') {
+} elseif ($action == 'store') {
 
     // 拉取用户在官方收录的主题和插件
     if ($method == 'GET') {
