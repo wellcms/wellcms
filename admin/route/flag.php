@@ -44,6 +44,8 @@ if ($action == 'list') {
 
         $pagination = pagination(url('flag-list-' . $fid . '-{page}', $extra), $n, $page, $pagesize);
 
+        $safe_token = well_token_set($uid);
+
         $header['title'] = lang('flag');
         $header['mobile_title'] = lang('flag');
 
@@ -52,6 +54,9 @@ if ($action == 'list') {
         include _include(ADMIN_PATH . 'view/htm/flag_list.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         $type = param('type', 0);
 
@@ -147,6 +152,8 @@ if ($action == 'list') {
 
         // hook admin_flag_create_get_after.php
 
+        $safe_token = well_token_set($uid);
+
         $header['title'] = lang('increase') . lang('flag') . '-' . ($fid ? $forum['name'] : lang('flag'));
         $header['mobile_title'] = lang('increase') . lang('flag') . '-' . ($fid ? $forum['name'] : lang('flag'));
 
@@ -155,6 +162,9 @@ if ($action == 'list') {
         include _include(ADMIN_PATH . 'view/htm/flag_post.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         // hook admin_flag_create_post_start.php
 
@@ -274,6 +284,8 @@ if ($action == 'list') {
 
         // hook admin_flag_update_get_after.php
 
+        $safe_token = well_token_set($uid);
+
         $header['title'] = lang('edit') . lang('flag');
         $header['mobile_title'] = lang('edit') . lang('flag');
 
@@ -282,6 +294,9 @@ if ($action == 'list') {
         include _include(ADMIN_PATH . 'view/htm/flag_post.htm');
 
     } elseif ($method == 'POST') {
+
+        $safe_token = param('safe_token');
+        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
 
         // hook admin_flag_update_post_start.php
 
