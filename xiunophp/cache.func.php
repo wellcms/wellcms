@@ -56,6 +56,59 @@ function cache_delete($k, $c = NULL) {
 	return $r;
 }
 
+// cache_update($key, $update = array('trash_threads' => 1));
+// cache_update($key, $update = array('trash_threads+' => 1));
+// cache_update($key, $update = array('trash_threads-' => 1));
+function cache_update($key = NULL, $arr = array(), $life = 0)
+{
+    global $conf;
+    if (empty($key) || empty($arr) || $conf['cache']['type'] == 'mysql') return NULL;
+
+    $cache = cache_get($key);
+    if (empty($cache)) return NULL;
+
+    $cache = cache_merge($cache, $arr);
+    cache_set($key, $cache, $life);
+
+    return $cache;
+}
+
+// cache_merge($arr, $update = array('trash_threads' => 1));
+// cache_merge($arr, $update = array('trash_threads+' => 1));
+// cache_merge($arr, $update = array('trash_threads-' => 1));
+function cache_merge($arr = array(), $update = array())
+{
+    if (empty($arr) || empty($update)) return TRUE;
+
+    if (count($update) == count($update, 1)) {
+        $arr = cache_merge_data($arr, $update);
+    } else {
+        foreach ($update as $k => $v) {
+            !isset($arr[$k]) AND $arr[$k] = array();
+            $arr = cache_merge_data($arr[$k], $v);
+        }
+    }
+    return $arr;
+}
+
+// cache_merge_data($arr, $update = array('trash_threads' => 1));
+// cache_merge_data($arr, $update = array('trash_threads+' => 1));
+// cache_merge_data($arr, $update = array('trash_threads-' => 1));
+function cache_merge_data($arr = array(), $update = array())
+{
+    if (empty($arr) || empty($update)) return TRUE;
+    foreach ($update as $k => $v) {
+        $op = substr($k, -1);
+        if ($op == '+' || $op == '-') {
+            $k = substr($k, 0, -1);
+            !isset($arr[$k]) AND $arr[$k] = 0;
+            $v = $op == '+' ? ($arr[$k] + $v) : ($arr[$k] - $v);
+        }
+        $arr[$k] = $v;
+    }
+    return $arr;
+}
+
 // 尽量避免调用此方法，不会清理保存在 kv 中的数据，逐条 cache_delete() 比较保险
 function cache_truncate($c = NULL) {
 	$cache = $_SERVER['cache'];
@@ -65,6 +118,78 @@ function cache_truncate($c = NULL) {
 	//$k = $c->cachepre.$k;
 	$r = $c->truncate();
 	return $r;
+}
+
+function cookie_set($key, $value, $life = 8640000)
+{
+    global $conf, $time;
+    is_array($value) AND $value = xn_json_encode($value);
+    setcookie($conf['cookie_pre'] . $key, $value, ($time + $life), $conf['cookie_path'], $conf['cookie_domain'], '', TRUE);
+}
+
+// 清空内存缓存和Cookie
+function cookie_cache_clear($key, $cookie = TRUE)
+{
+    global $conf, $time;
+    $cookie == TRUE AND setcookie($key, '', $time - 86400, $conf['cookie_path'], $conf['cookie_domain']);
+    $conf['cache']['type'] != 'mysql' AND cache_delete($key);
+}
+
+// set storage
+function storage_set($key, $value, $type = 0)
+{
+    $html = <<<EOT
+    <script language="javascript">
+        if (!window.localStorage || !window.sessionStorage || typeof '{$value}' == 'undefined') return false;
+        var type = {$type};
+        var value = JSON.stringify('{$value}');
+        if (type == 0) {
+            /*Permanent storage*/
+            var storage = window.localStorage;
+        } else {
+            /*Temporary storage*/
+            var storage = window.sessionStorage;
+        }
+        storage.setItem('{$key}', value);
+    </script>
+EOT;
+    echo $html;
+}
+
+// delete storage by key
+function storage_delete($key, $type = 0)
+{
+    $html = <<<EOT
+    <script language="javascript">
+        if (!window.localStorage || !window.sessionStorage || typeof '{$key}' == 'undefined') return false;
+        var type = {$type};
+        if (type == 0) {
+            var storage = window.localStorage;
+        } else {
+            var storage = window.sessionStorage;
+        }
+        storage.removeItem('{$key}');
+    </script>
+EOT;
+    echo $html;
+}
+
+// clear storage
+function storage_clear($type = 0)
+{
+    $html = <<<EOT
+    <script language="javascript">
+        if (!window.localStorage || !window.sessionStorage) return false;
+        var type = {$type};
+        if (type == 0) {
+            var storage = window.localStorage;
+        } else {
+            var storage = window.sessionStorage;
+        }
+        storage.clear();
+    </script>
+EOT;
+    echo $html;
 }
 
 ?>

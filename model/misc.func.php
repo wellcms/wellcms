@@ -416,136 +416,6 @@ function format_number($number)
     return $number ? ($number / 1000) . 'k' : $number;
 }
 
-//------------- cache and cookie set / start--------------
-function cookie_set($key, $value, $life = 8640000)
-{
-    global $conf, $time;
-    is_array($value) AND $value = xn_json_encode($value);
-    setcookie($conf['cookie_pre'] . $key, $value, ($time + $life), $conf['cookie_path'], $conf['cookie_domain'], '', TRUE);
-}
-
-// 清空内存缓存和Cookie
-function cookie_cache_remove($key, $cookie = TRUE)
-{
-    global $conf, $time;
-    $cookie == TRUE AND setcookie($key, '', $time - 86400, $conf['cookie_path'], $conf['cookie_domain']);
-    $conf['cache']['type'] != 'mysql' AND cache_delete($key);
-}
-
-// set storage
-function storage_set($key, $value, $type = 0)
-{
-    $html = <<<EOT
-    <script language="javascript">
-        if (!window.localStorage || !window.sessionStorage || typeof '{$value}' == 'undefined') return false;
-        var type = {$type};
-        var value = JSON.stringify('{$value}');
-        if (type == 0) {
-            /*Permanent storage*/
-            var storage = window.localStorage;
-        } else {
-            /*Temporary storage*/
-            var storage = window.sessionStorage;
-        }
-        storage.setItem('{$key}', value);
-    </script>
-EOT;
-    echo $html;
-}
-
-// delete storage by key
-function storage_delete($key, $type = 0)
-{
-    $html = <<<EOT
-    <script language="javascript">
-        if (!window.localStorage || !window.sessionStorage || typeof '{$key}' == 'undefined') return false;
-        var type = {$type};
-        if (type == 0) {
-            var storage = window.localStorage;
-        } else {
-            var storage = window.sessionStorage;
-        }
-        storage.removeItem('{$key}');
-    </script>
-EOT;
-    echo $html;
-}
-
-// clear storage
-function storage_clear($type = 0)
-{
-    $html = <<<EOT
-    <script language="javascript">
-        if (!window.localStorage || !window.sessionStorage) return false;
-        var type = {$type};
-        if (type == 0) {
-            var storage = window.localStorage;
-        } else {
-            var storage = window.sessionStorage;
-        }
-        storage.clear();
-    </script>
-EOT;
-    echo $html;
-}
-
-// 直接更新 缓存 一维或二维数组 20180501
-// 统计 array('键名 + or -' => '加数');
-// well_cache_set($arr, $update = array('trash_threads' => 1));
-// well_cache_set($arr, $update = array('trash_threads+' => 1));
-function well_cache_set($key = NULL, $arr = array(), $life = 0)
-{
-    global $conf;
-    if (empty($key) || empty($arr)) return;
-
-    if ($conf['cache']['type'] != 'mysql') {
-        $cache = cache_get($key);
-        if ($cache) {
-            $cache = cache_set_array($cache, $arr);
-            cache_set($key, $cache, $life);
-        }
-    }
-}
-
-// 直接更新 缓存 一维或二维数组 20180501
-// 统计 array('键名 + or -' => '加数');
-// cache_set_arr($arr, $update = array('trash_threads' => 1));
-// cache_set_arr($arr, $update = array('trash_threads+' => 1));
-function cache_set_array($arr = array(), $update = array())
-{
-    if (empty($arr) || empty($update)) return TRUE;
-
-    if (count($update) == count($update, 1)) {
-        $arr = cache_set_one($arr, $update);
-    } else {
-        foreach ($update as $k => $v) {
-            !isset($arr[$k]) AND $arr[$k] = array();
-            $arr = cache_set_one($arr[$k], $v);
-        }
-    }
-    return $arr;
-}
-
-// 直接更新 单条一维数组缓存20180501
-// cache_set_one($arr, $update = array('trash_threads' => 1));
-// cache_set_one($arr, $update = array('trash_threads+' => 1));
-function cache_set_one($arr = array(), $update = array())
-{
-    if (empty($arr) || empty($update)) return TRUE;
-    foreach ($update as $k => $v) {
-        $op = substr($k, -1);
-        if ($op == '+' || $op == '-') {
-            $k = substr($k, 0, -1);
-            !isset($arr[$k]) AND $arr[$k] = 0;
-            $v = $op == '+' ? ($arr[$k] + $v) : ($arr[$k] - $v);
-        }
-        $arr[$k] = $v;
-    }
-    return $arr;
-}
-
-//------------- cache and cookie set / end--------------
-
 //---------------表单安全过滤---------------
 /*
  * 专门处理表单多维数组安全过滤 指定最终级一维数组key为字符串安全处理
@@ -1052,11 +922,11 @@ function image_size($image_url)
     return getimagesize($image_url);
 }
 
-// 计算字串长度:剧中对齐(字体大小/字串内容/字体链接/背景宽度/倍数)
-function calculate_str_with($size, $str, $font, $with, $multiple = 2)
+// 计算字串宽度:剧中对齐(字体大小/字串内容/字体链接/背景宽度/倍数)
+function calculate_str_width($size, $str, $font, $width, $multiple = 2)
 {
     $box = imagettfbbox($size, 0, $font, $str);
-    return ($with - $box[4] - $box[6]) / $multiple;
+    return ($width - $box[4] - $box[6]) / $multiple;
 }
 
 // 搜索目录下的文件 比对文件后缀
