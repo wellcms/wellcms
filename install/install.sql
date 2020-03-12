@@ -105,7 +105,7 @@ DROP TABLE IF EXISTS `wellcms_session`;
 CREATE TABLE `wellcms_session` (
   `sid` char(32) NOT NULL default '0',  # 随机生成 id 不能重复 uniqueid() 13 位
   `uid` int(11) unsigned NOT NULL default '0',  # 用户id 未登录为 0，可以重复
-  `fid` tinyint(3) unsigned NOT NULL default '0', # 所在的版块
+  `fid` int(11) unsigned NOT NULL default '0', # 所在的版块
   `url` char(32) NOT NULL default '', # 当前访问 url
   `ip` int(11) unsigned NOT NULL default '0',		# 用户ip
   `useragent` char(128) NOT NULL default '',		# 用户浏览器信息
@@ -259,7 +259,7 @@ CREATE TABLE `wellcms_website_flag_thread` (
 DROP TABLE IF EXISTS `wellcms_website_operate`;
 CREATE TABLE `wellcms_website_operate` (
   `logid` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `type` tinyint(2) NOT NULL DEFAULT '0', # 1删除 2移动 3置顶 4取消置顶 5禁止回复 6关闭 7打开 8操作人民币 9操作金币 10操作积分 11删除节点 12删除节点分类 13审核专题 14删除专题 15归类专题主题 16删除专题主题 17删除用户 18禁止用户 19编辑用户
+  `type` tinyint(3) NOT NULL DEFAULT '0', # 1删除 2移动 3置顶 4取消置顶 5禁止回复 6关闭 7打开 8操作人民币 9操作金币 10操作积分 11删除节点 12删除节点分类 13审核专题 14删除专题 15归类专题主题 16删除专题主题 17删除用户 18禁止用户 19编辑用户
   `uid` int(11) unsigned NOT NULL DEFAULT '0', # 版主 uid
   `tid` int(11) unsigned NOT NULL DEFAULT '0', # 主题tid
   `pid` int(11) unsigned NOT NULL DEFAULT '0', # 评论pid
@@ -320,7 +320,7 @@ CREATE TABLE `wellcms_website_thread` (
   `attach_on` tinyint(1) unsigned NOT NULL DEFAULT '0',  # 0本地储存 1云储存 2图床
   `flags` tinyint(2) NOT NULL DEFAULT '0',  # 主题绑定flag数量
   `subject` varchar(128) NOT NULL DEFAULT '', # 主题
-  `tag` varchar(94) NOT NULL DEFAULT '',  # 标签 json {tgaid:name}
+  `tag` varchar(120) NOT NULL DEFAULT '',  # 标签 json {tgaid:name}
   `brief` varchar(120) NOT NULL DEFAULT '', # 简介
   `keyword` varchar(64) NOT NULL DEFAULT '', # SEO keyword
   `description` varchar(120) NOT NULL DEFAULT '', # SEO description 外链接写这里 直接跳出去了

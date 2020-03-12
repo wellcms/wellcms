@@ -89,55 +89,27 @@ $('.button-hide').click(function () {
 
 /*tag*/
 $(function () {
-    $('.tag-input').val('');
-    function get_tag_val(obj) {
-        var str = '';
-        var token = $(obj).parents('.tags').find('.tags-token');
-        if (token.length < 1) {
-            $(obj).parents('.tags').find('.tags-val').val('');
-            return false;
-        }
-        for (var i = 0; i < token.length; i++) {
-            str += token.eq(i).text() + ',';
-            $(obj).parents('.tags').find('.tags-val').val(str);
-        }
-    }
+    var tag_input = $('.tag-input');
+    tag_input.val('');
 
     $(document).on('keydown', '.tag-input', function (event) {
-        $(this).next().hide();
-        var v = $(this).val().replace(/\s+/g, '');
-        var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？%]", 'g');
-        v = v.replace(reg, '');
-        v = $.trim(v);
-        var token = $(this).parents('.tags').find('.tags-token');
-        if (v != '') {
-            if (event.keyCode == 13 || event.keyCode == 108 || event.keyCode == 32) {
-                var tags = $('input[name="tags"]').val();
-                n = xn.strpos(tags, v);
-                if (n >= 0) {
-                    $(this).val('');
-                    return false;
-                }
-                var tagarr = xn.explode(',', tags);
-                if (Object.count(tagarr) <= 5) {
-                    $('<span class="border border-secondary tag btn-sm my-1 mr-3 tags-token">' + v + '</span>').insertBefore($(this).parents(".tags").find(".tag-wrap"));
-                }
-                $(this).val('');
-                get_tag_val(this);
+        var tag_input = $(this);
+        var token = tag_input.parents('.tags').find('.tags-token');
+        if (event.keyCode == 13 || event.keyCode == 108 || event.keyCode == 188 || event.keyCode == 32) {
+            create_tag();
+            return false;
+        }
+        var str = tag_input.val().replace(/\s+/g, '');
+        if (str.length == 0 && event.keyCode == 8) {
+            if (token.length >= 1) {
+                tag_input.parents('.tags').find('.tags-token:last').remove();
+                get_tag_val(tag_input);
                 return false;
-            }
-        } else {
-            if (event.keyCode == 8) {
-                if (token.length >= 1) {
-                    $(this).parents('.tags').find('.tags-token:last').remove();
-                    get_tag_val(this);
-                }
             }
         }
     });
 
     $(document).on('click', '.tags-token', function () {
-        var token = $(this).parents('.tags').find('.tags-token');
         var it = $(this).parents('.tags');
         $(this).remove();
         var str = '';
@@ -151,6 +123,49 @@ $(function () {
             it.find('.tags-val').val(str);
         }
     });
+
+    tag_input.bind("input propertychange", function () {
+        var str = $(this).val();
+        if (str.indexOf(',') != -1 || str.indexOf('，') != -1 || str.indexOf(' ') != -1) {
+            create_tag();
+            return false;
+        }
+    });
+
+    function create_tag() {
+        var tag_input = $('.tag-input');
+        var str = tag_input.val().replace(/\s+/g, '');
+        var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？%]", 'g');
+        str = str.replace(reg, '');
+        if (str.length > 0) {
+            var tags = $('input[name="tags"]').val();
+            n = xn.strpos(tags, str);
+            if (n >= 0) {
+                tag_input.val('');
+                return false;
+            }
+            var tagarr = xn.explode(',', tags);
+            if (Object.count(tagarr) <= 5) {
+                $('<span class="border border-secondary tag btn-sm my-1 mr-3 tags-token">' + str + '</span>').insertBefore(tag_input.parents(".tags").find(".tag-wrap"));
+            }
+            tag_input.val('');
+            get_tag_val(tag_input);
+        }
+    }
+
+    function get_tag_val(obj) {
+        var str = '';
+        var token = $(obj).parents('.tags').find('.tags-token');
+        if (token.length < 1) {
+            $(obj).parents('.tags').find('.tags-val').val('');
+            return false;
+        }
+        for (var i = 0; i < token.length; i++) {
+            str += token.eq(i).text() + ',';
+            str = str.replace(/\s+/g, '');
+            $(obj).parents('.tags').find('.tags-val').val(str);
+        }
+    }
 });
 
 /* 导航子菜单 鼠标悬浮移除移入*/

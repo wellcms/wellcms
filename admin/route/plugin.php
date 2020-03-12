@@ -87,8 +87,8 @@ if ($action == 'list') {
 
         $safe_token = well_token_set($uid);
 
-        $header['title'] = lang('my_storehouse');
-        $header['mobile_title'] = lang('my_storehouse');
+        $header['title'] = lang('official_store');
+        $header['mobile_title'] = lang('official_store');
 
         include _include(ADMIN_PATH . "view/htm/plugin_list.htm");
 
