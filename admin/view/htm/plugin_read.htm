@@ -136,39 +136,39 @@
 
 				<p class="text-center">
 					<?php if($download_url && !$islocal) { ?>
-						<a role="button" class="btn btn-primary" href="<?php echo $download_url; ?>"><?php echo lang('download');?></a>
+						<a role="button" class="btn btn-primary mx-1" href="<?php echo $download_url; ?>"><?php echo lang('download');?></a>
 					<?php } ?>
 
 					<?php if($plugin['setting_url']) { ?>
-					<a role="button" class="btn btn-primary" href="<?php echo url("plugin-setting-$dir"); ?>"><?php echo lang('setting');?></a>
+					<a role="button" class="btn btn-primary mx-1" href="<?php echo url("plugin-setting-$dir"); ?>"><?php echo lang('setting');?></a>
 					<?php } ?>
 
 					<?php if($islocal && !$plugin['installed'] && $plugin['type'] != 1) { ?>
-					<a role="button" class="btn btn-primary" href="<?php echo url("plugin-install-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('install');?></a>
+					<a role="button" class="btn btn-primary mx-1" href="<?php echo url("plugin-install-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('install');?></a>
 					<?php } ?>
 
 					<?php if($plugin['installed'] && $plugin['enable'] && $plugin['type'] != 1) { ?>
-					<a role="button" class="btn btn-secondary" href="<?php echo url("plugin-disable-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('disable');?></a>
+					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url("plugin-disable-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('disable');?></a>
 					<?php } ?>
 
 					<?php if($plugin['installed'] && !$plugin['enable'] && $plugin['type'] != 1) { ?>
-					<a role="button" class="btn btn-secondary" href="<?php echo url("plugin-enable-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('enable');?></a>
+					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url("plugin-enable-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('enable');?></a>
 					<?php } ?>
 
 					<?php if($plugin['installed'] && $plugin['type'] != 1) { ?>
-					<a role="button" class="btn btn-danger confirm" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('uninstall');?></a>
+					<a role="button" class="btn btn-danger mx-1 confirm" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('uninstall');?></a>
 					<?php } ?>
 
                     <?php if($islocal && !$plugin['installed'] && $plugin['type'] == 1) { ?>
-                    <a role="button" class="btn btn-primary install" data-href="<?php echo url('plugin-theme-'.$dir.'-1');?>" href="javascript:void(0);"><?php echo lang('install');?></a>
+                    <a role="button" class="btn btn-primary mx-1 install" data-href="<?php echo url('plugin-theme-'.$dir.'-1');?>" href="javascript:void(0);"><?php echo lang('install');?></a>
                     <?php } ?>
 
                     <?php if($plugin['installed'] && $plugin['type'] == 1) { ?>
-                    <a role="button" class="btn btn-danger uninstall" data-href="<?php echo url('plugin-theme-'.$dir.'-0');?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
+                    <a role="button" class="btn btn-danger mx-1 uninstall" data-href="<?php echo url('plugin-theme-'.$dir.'-0');?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
                     <?php } ?>
 
 					<?php if($plugin['have_upgrade']) { ?>
-					<a role="button" class="btn btn-primary upgrade" href="<?php echo url("plugin-upgrade-$dir"); ?>"><?php echo lang('update');?></a>
+					<a role="button" class="btn btn-primary mx-1 upgrade" href="<?php echo url("plugin-upgrade-$dir"); ?>"><?php echo lang('update');?></a>
 					<?php } ?>
 
 				</p>

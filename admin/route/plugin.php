@@ -310,7 +310,7 @@ if ($action == 'list') {
     plugin_lock_end();
 
     $msg = lang('plugin_enable_successfully', array('name' => $name));
-    message(0, jump($msg, http_referer(), 1));
+    message(0, jump($msg, url('plugin-read-' . $dir), 1));
 
 } elseif ($action == 'disable') {
 
@@ -332,7 +332,7 @@ if ($action == 'list') {
     plugin_lock_end();
 
     $msg = lang('plugin_disable_successfully', array('name' => $name));
-    message(0, jump($msg, http_referer(), 3));
+    message(0, jump($msg, url('plugin-read-' . $dir), 3));
 
 } elseif ($action == 'upgrade') {
 
