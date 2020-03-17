@@ -1,5 +1,10 @@
-/*关闭click.bs.dropdown.data-api事件，使头部顶级菜单可点击*/
+/*
+关闭click.bs.dropdown.data-api事件，使头部顶级菜单可点击
+鼠标移动弹出下拉菜单 css 追加
+.navbar-nav > li:hover .dropdown-menu {display: block;}
+span.dropdown:hover .dropdown-menu {display: block;}
 $(document).off('click.bs.dropdown.data-api');
+*/
 
 /* 搜索使用 */
 $('#form-search').on('submit', function() {
