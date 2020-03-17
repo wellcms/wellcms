@@ -1,10 +1,11 @@
 /*
  * xiuno.js 封装了部分 PHP 常用的函数，便于代码移植和使用。
  * 技术支持： http://bbs.xiuno.com/
+ * wellcms.cn 二次修改
  */
 
 /********************* 对 window 对象进行扩展 ************************/
-// 兼容 ie89
+/*兼容 ie89*/
 if (!Object.keys) {
     Object.keys = function (o) {
         var arr = [];
@@ -64,17 +65,17 @@ if (typeof console == 'undefined') {
 
 /********************* xn 模拟 php 函数 ************************/
 
-// var xn = window; // browser， 如果要兼容以前的版本，请开启这里。
-// var xn = global; // nodejs
-var xn = {}; // 避免冲突，自己的命名空间。
+/*var xn = window; /!*browser， 如果要兼容以前的版本，请开启这里。*!/
+var xn = global; /!*nodejs*!/*/
+var xn = {}; /*避免冲突，自己的命名空间。*/
 
-// 针对国内的山寨套壳浏览器检测不准确
-xn.is_ie = (!!document.all) ? true : false;// ie6789
+/*针对国内的山寨套壳浏览器检测不准确*/
+xn.is_ie = (!!document.all) ? true : false;/*ie6789*/
 xn.is_ie_10 = navigator.userAgent.indexOf('Trident') != -1;
 xn.is_ff = navigator.userAgent.indexOf('Firefox') != -1;
 xn.in_mobile = ($(window).width() < 1140);
-xn.options = {}; // 全局配置
-xn.options.water_image_url = 'view/img/water-small.png';// 默认水印路径
+xn.options = {}; /*全局配置*/
+xn.options.water_image_url = 'view/img/water-small.png';/*默认水印路径*/
 
 xn.htmlspecialchars = function (s) {
     s = s.replace(/</g, "&lt;");
@@ -82,14 +83,14 @@ xn.htmlspecialchars = function (s) {
     return s;
 };
 
-// 标准的 urlencode()
+/*标准的 urlencode()*/
 xn._urlencode = function (s) {
     s = encodeURIComponent(s);
     s = xn.strtolower(s);
     return s;
 };
 
-// 标准的 urldecode()
+/*标准的 urldecode()*/
 xn._urldecode = function (s) {
     s = decodeURIComponent(s);
     return s;
@@ -105,7 +106,7 @@ xn.urlencode = function (s) {
     s = s.replace(/\*/g, "%2a");
     s = s.replace(/\(/g, "%28");
     s = s.replace(/\)/g, "%29");
-    //s = s.replace(/\+/g, "%20");
+    /*s = s.replace(/\+/g, "%20");*/
     s = s.replace(/\%/g, "_");
     return s;
 };
@@ -116,7 +117,7 @@ xn.urldecode = function (s) {
     return s;
 };
 
-// 兼容 3.0
+/*兼容 3.0*/
 xn.xn_urlencode = xn.urlencode_safe;
 xn.xn_urldecode = xn.urldecode_safe;
 
@@ -158,7 +159,7 @@ xn.empty = function (s) {
     if (!s) {
         return true;
     } else {
-        //$.isPlainObject
+        /*$.isPlainObject*/
         if (s.constructor === Object) {
             return Object.keys(s).length == 0;
         } else if (s.constructor === Array) {
@@ -250,41 +251,41 @@ xn.json_encode = function (o) {
 xn.json_decode = function (s) {
     if (!s) return null;
     try {
-        // 去掉广告代码。这行代码挺无语的，为了照顾国内很多人浏览器中广告病毒的事实。
-        // s = s.replace(/\}\s*<script[^>]*>[\s\S]*?<\/script>\s*$/ig, '}');
+        /*去掉广告代码。这行代码挺无语的，为了照顾国内很多人浏览器中广告病毒的事实。*/
+        /*s = s.replace(/\}\s*<script[^>]*>[\s\S]*?<\/script>\s*$/ig, '}');*/
         if (s.match(/^<!DOCTYPE/i)) return null;
         var json = $.parseJSON(s);
         return json;
     } catch (e) {
-        //alert('JSON格式错误：' + s);
-        //window.json_error_string = s;	// 记录到全局
+        /*alert('JSON格式错误：' + s);*/
+        /*window.json_error_string = s;	// 记录到全局*/
         return null;
     }
 };
 
 xn.clone = function (obj) {
     return xn.json_decode(xn.json_encode(obj));
-}
+};
 
-// 方便移植 PHP 代码
+/*方便移植 PHP 代码*/
 xn.min = function () {
     return Math.min.apply(this, arguments);
-}
+};
 xn.max = function () {
     return Math.max.apply(this, arguments);
-}
+};
 xn.str_replace = function (s, d, str) {
     var p = new RegExp(s, 'g');
     return str.replace(p, d);
-}
+};
 xn.strrpos = function (str, s) {
     return str.lastIndexOf(s);
-}
+};
 xn.strpos = function (str, s) {
     return str.indexOf(s);
-}
+};
 xn.substr = function (str, start, len) {
-    // 支持负数
+    /*支持负数*/
     if (!str) return '';
     var end = length;
     var length = str.length;
@@ -300,14 +301,14 @@ xn.substr = function (str, start, len) {
 };
 xn.explode = function (sep, s) {
     return s.split(sep);
-}
+};
 xn.implode = function (glur, arr) {
     return arr.join(glur);
-}
+};
 xn.array_merge = function (arr1, arr2) {
     return arr1 && arr1.__proto__ === Array.prototype && arr2 && arr2.__proto__ === Array.prototype ? arr1.concat(arr2) : $.extend(arr1, arr2);
-}
-// 比较两个数组的差异，在 arr1 之中，但是不在 arr2 中。返回差异结果集的新数组，
+};
+/*比较两个数组的差异，在 arr1 之中，但是不在 arr2 中。返回差异结果集的新数组*/
 xn.array_diff = function (arr1, arr2) {
     if (arr1.__proto__ === Array.prototype) {
         var o = {};
@@ -327,7 +328,7 @@ xn.array_diff = function (arr1, arr2) {
         return r;
     }
 };
-// 过滤空值，可以用于删除
+/*过滤空值，可以用于删除*/
 /*
  // 第一种用法：
  var arr = [0,1,2,3];
@@ -344,7 +345,8 @@ xn.array_filter = function (arr, callback) {
     for (var k in arr) {
         var v = arr[k];
         if (callback && callback(k, v)) continue;
-        // if(!callback && v === undefined) continue; // 默认过滤空值
+        /*默认过滤空值*/
+        /*if(!callback && v === undefined) continue;*/
         newarr.push(v);
     }
     return newarr;
@@ -365,7 +367,7 @@ xn.array_values = function (obj) {
 };
 xn.in_array = function (v, arr) {
     return $.inArray(v, arr) != -1;
-}
+};
 
 xn.rand = function (n) {
     var str = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
@@ -382,9 +384,9 @@ xn.random = function (min, max) {
     return r;
 };
 
-// 所谓的 js 编译模板，不过是一堆效率低下的正则替换，这种东西根据自己喜好用吧。
+/*所谓的 js 编译模板，不过是一堆效率低下的正则替换，这种东西根据自己喜好用吧。*/
 xn.template = function (s, json) {
-    //console.log(json);
+    /*console.log(json);*/
     for (k in json) {
         var r = new RegExp('\{(' + k + ')\}', 'g');
         s = s.replace(r, function (match, name) {
@@ -405,7 +407,7 @@ xn.is_mobile = function (s) {
 };
 
 xn.is_email = function (s) {
-    var r = /^[\w\-\.]+@[\w\-\.]+(\.\w+)+$/i
+    var r = /^[\w\-\.]+@[\w\-\.]+(\.\w+)+$/i;
     if (!s) {
         return false;
     } else if (!r.test(s)) {
@@ -449,19 +451,19 @@ xn.lang = function (key, arr) {
 /* 
  js 版本的翻页函数
  */
-// 用例：pages('user-list-{page}.html', 100, 10, 5);
+/*用例：pages('user-list-{page}.html', 100, 10, 5);*/
 xn.pages = function (url, totalnum, page, pagesize) {
     if (!page) page = 1;
     if (!pagesize) pagesize = 20;
     var totalpage = xn.ceil(totalnum / pagesize);
     if (totalpage < 2) return '';
     page = xn.min(totalpage, page);
-    var shownum = 5;	// 显示多少个页 * 2
+    var shownum = 5;	/*显示多少个页 * 2*/
 
     var start = xn.max(1, page - shownum);
     var end = xn.min(totalpage, page + shownum);
 
-    // 不足 $shownum，补全左右两侧
+    /*不足 $shownum，补全左右两侧*/
     var right = page + shownum - totalpage;
     if (right > 0) start = xn.max(1, start -= right);
     left = page - shownum;
@@ -472,7 +474,7 @@ xn.pages = function (url, totalnum, page, pagesize) {
     if (start > 1) s += '<a href="' + xn.str_replace('{page}', 1, url) + '">1 ' + (start > 2 ? '... ' : '') + '</a>';
     for (i = start; i <= end; i++) {
         if (i == page) {
-            s += '<a href="' + xn.str_replace('{page}', i, url) + '" class="active">' + i + '</a>';// active
+            s += '<a href="' + xn.str_replace('{page}', i, url) + '" class="active">' + i + '</a>';
         } else {
             s += '<a href="' + xn.str_replace('{page}', i, url) + '">' + i + '</a>';
         }
@@ -525,7 +527,7 @@ xn.parse_str = function (str) {
     return arr2;
 };
 
-// 解析 url 参数获取 $_GET 变量
+/*解析 url 参数获取 $_GET 变量*/
 xn.parse_url_param = function (url) {
     var arr = xn.parse_url(url);
     var q = arr.path;
@@ -535,12 +537,12 @@ xn.parse_url_param = function (url) {
     if (xn.substr(q, -4) == '.html') {
         q = xn.substr(q, 0, -4);
         r = xn.explode('-', q);
-        // 首页
+        /*首页*/
     } else if (url && url != window.location && url != '.' && url != '/' && url != './') {
         r = ['thread', 'seo', url];
     }
 
-    // 将 xxx.html?a=b&c=d 后面的正常的 _GET 放到 $_SERVER['_GET']
+    /*将 xxx.html?a=b&c=d 后面的正常的 _GET 放到 $_SERVER['_GET']*/
     if (!empty(arr['query'])) {
         var arr2 = xn.parse_str(arr['query']);
         r = xn.array_merge(r, arr2);
@@ -548,13 +550,13 @@ xn.parse_url_param = function (url) {
     return r;
 };
 
-// 从参数里获取数据
+/*从参数里获取数据*/
 xn.param = function (key) {
 
 };
 
-// 模拟服务端 url() 函数
-xn.url = function (u, url_rewrite) {
+/*模拟服务端 url() 函数 extra = {k1:v,k2:v}*/
+xn.url = function (u, extra, url_rewrite) {
     var on = window.url_rewrite_on || url_rewrite;
     var url_path = window.url_path || ''; /*wellcms*/
     var admin_access = window.admin_access || false; /*wellcms*/
@@ -584,10 +586,21 @@ xn.url = function (u, url_rewrite) {
     if(admin_access && (on == 1 || !on) && xn.strpos(u, 'attach-') != -1) {
         r = '../' + r;
     }
+    if (extra) {
+        var args = '';
+        $.each(extra, function (k, v) {
+            if (k && v) {
+                args += '&' + k + '=' + v;
+            }
+        });
+        args = args.replace('&','');
+        var sep = r.indexOf('?') == -1 ? '?' : '&';
+        r += sep + args;
+    }
     return r;
 };
 
-// 将参数添加到 URL
+/*将参数添加到 URL*/
 xn.url_add_arg = function (url, k, v) {
     var pos = xn.strpos(url, '.html');
     if (pos === false) {
@@ -597,8 +610,8 @@ xn.url_add_arg = function (url, k, v) {
     }
 };
 
-// 页面跳转的时间
-//xn.jumpdelay = xn.debug ? 20000000 : 2000;
+/*页面跳转的时间*/
+/*xn.jumpdelay = xn.debug ? 20000000 : 2000;*/
 
 /********************* 对 JQuery 进行扩展 ************************/
 
@@ -609,7 +622,7 @@ $.location = function (url, seconds) {
     }, seconds * (debug ? 2000 : 1000));
 };
 
-// 二级数组排序
+/*二级数组排序*/
 /*Array.prototype.proto_sort = Array.prototype.sort;
  Array.prototype.sort = function(arg) {
  if(arg === undefined) {
@@ -654,7 +667,7 @@ xn.arrlist_keep_keys = function (arrlist, keys) {
         arrlist[k] = newarr;
     }
     return arrlist;
-}
+};
 /*var arrlist = [
  {uid:1, gid:3},
  {uid:2, gid:2},
@@ -671,7 +684,7 @@ xn.arrlist_multisort = function (arrlist, k, asc) {
         return r ? 1 : -1;
     });
     return arrlist;
-}
+};
 /*
  var arrlist = [
  {uid:1, gid:3},
@@ -682,7 +695,7 @@ xn.arrlist_multisort = function (arrlist, k, asc) {
  console.log(arrlist2);
  */
 
-// if(xn.is_ie) document.documentElement.addBehavior("#default#userdata");
+/*if(xn.is_ie) document.documentElement.addBehavior("#default#userdata");*/
 /*
  storage 比cookie储存更多
  */
@@ -692,9 +705,9 @@ $.pdata = function (key, value) {
         value = xn.json_encode(value);
     }
 
-    // HTML 5
+    /*HTML 5*/
     try {
-        // ie10 需要 try 一下
+        /*ie10 需要 try 一下*/
         if (window.localStorage) {
             if (typeof value == 'undefined') {
                 r = localStorage.getItem(key);
@@ -706,18 +719,18 @@ $.pdata = function (key, value) {
     } catch (e) {
     }
 
-    // HTML 4
+    /*HTML 4*/
     if (xn.is_ie && (!document.documentElement || typeof document.documentElement.load == 'unknown' || !document.documentElement.load)) {
         return '';
     }
-    // get
+    /*get*/
     if (typeof value == 'undefined') {
         if (xn.is_ie) {
             try {
                 document.documentElement.load(key);
                 r = document.documentElement.getAttribute(key);
             } catch (e) {
-                //alert('$.pdata:' + e.message);
+                /*alert('$.pdata:' + e.message);*/
                 r = '';
             }
         } else {
@@ -728,11 +741,11 @@ $.pdata = function (key, value) {
             }
         }
         return xn.json_decode(r);
-        // set
+        /*set*/
     } else {
         if (xn.is_ie) {
             try {
-                // fix: IE TEST for ie6 崩溃
+                /*fix: IE TEST for ie6 崩溃*/
                 document.documentElement.load(key);
                 document.documentElement.setAttribute(key, value);
                 document.documentElement.save(key);
@@ -748,7 +761,7 @@ $.pdata = function (key, value) {
     }
 };
 
-// time 单位为秒，与php setcookie, 和  misc::setcookie() 的 time 参数略有差异。
+/*time 单位为秒，与php setcookie, 和  misc::setcookie() 的 time 参数略有差异。*/
 $.cookie = function (name, value, time, path) {
     if (typeof value != 'undefined') {
         if (value === null) {
@@ -763,8 +776,8 @@ $.cookie = function (name, value, time, path) {
             var time = '';
         }
         var path = path ? '; path=' + path : '';
-        //var domain = domain ? '; domain=' + domain : '';
-        //var secure = secure ? '; secure' : '';
+        /*var domain = domain ? '; domain=' + domain : '';*/
+        /*var secure = secure ? '; secure' : '';*/
         document.cookie = name + '=' + encodeURIComponent(value) + time + path;
     } else {
         var v = '';
@@ -782,7 +795,7 @@ $.cookie = function (name, value, time, path) {
     }
 };
 
-// 改变Location URL ?
+/*改变Location URL ?*/
 $.xget = function (url, callback, retry) {
     if (retry === undefined) retry = 1;
     $.ajax({
@@ -795,26 +808,26 @@ $.xget = function (url, callback, retry) {
             if (!r) return callback(-100, 'Server Response Empty!');
             var s = xn.json_decode(r);
             if (!s) {
-                return callback(-101, r); // 'Server Response xn.json_decode() failed：'+
+                return callback(-101, r); /*'Server Response xn.json_decode() failed：'+*/
             }
             if (s.code === undefined) {
                 if ($.isPlainObject(s)) {
                     return callback(0, s);
                 } else {
-                    return callback(-102, r); // 'Server Response Not JSON 2：'+
+                    return callback(-102, r); /*'Server Response Not JSON 2：'+*/
                 }
             } else if (s.code == 0) {
                 return callback(0, s.message);
-                //系统错误
+                /*系统错误*/
             } else if (s.code < 0) {
                 return callback(s.code, s.message);
-                //业务逻辑错误
+                /*业务逻辑错误*/
             } else {
                 return callback(s.code, s.message);
 
             }
         },
-        // 网络错误，重试
+        /*网络错误，重试*/
         error: function (xhr, type) {
             if (retry > 1) {
                 $.xget(url, callback, retry - 1);
@@ -830,17 +843,17 @@ $.xget = function (url, callback, retry) {
     });
 };
 
-// ajax progress plugin
+/*ajax progress plugin*/
 (function ($, window, undefined) {
-    //is onprogress supported by browser?
+    /*is onprogress supported by browser?*/
     var hasOnProgress = ("onprogress" in $.ajaxSettings.xhr());
 
-    //If not supported, do nothing
+    /*If not supported, do nothing*/
     if (!hasOnProgress) {
         return;
     }
 
-    //patch ajax settings to call a progress callback
+    /*patch ajax settings to call a progress callback*/
     var oldXHR = $.ajaxSettings.xhr;
     $.ajaxSettings.xhr = function () {
         var xhr = oldXHR();
@@ -864,7 +877,7 @@ $.unparam = function (str) {
         params[paramSplit[0]] = paramSplit[1];
         return params;
     }, {});
-}
+};
 
 $.xpost = function (url, postdata, callback, progress_callback) {
     if ($.isFunction(postdata)) {
@@ -881,7 +894,6 @@ $.xpost = function (url, postdata, callback, progress_callback) {
         progress: function (e) {
             if (e.lengthComputable) {
                 if (progress_callback) progress_callback(e.loaded / e.total * 100);
-                //console.log('progress1:'+e.loaded / e.total * 100 + '%');
             }
         },
         success: function (r) {
@@ -890,7 +902,6 @@ $.xpost = function (url, postdata, callback, progress_callback) {
             if (!s || s.code === undefined) return callback(-1, 'Server Response Not JSON：' + r);
             if (s.code == 0) {
                 return callback(0, s.message);
-                //系统错误
             } else if (s.code < 0) {
                 return callback(s.code, s.message);
             } else {
@@ -985,11 +996,11 @@ $.xpost = function (url, postdata, callback, progress_callback) {
  alert('after all loaded');
  }]);
  */
-// 区别于全局的 node.js require 关键字
+/*区别于全局的 node.js require 关键字*/
 $.required = [];
 $.require = function () {
     var args = null;
-    if (arguments[0] && typeof arguments[0] == 'object') { // 如果0 为数组
+    if (arguments[0] && typeof arguments[0] == 'object') { /*如果0 为数组*/
         args = arguments[0];
         if (arguments[1]) args.push(arguments[1]);
     } else {
@@ -1000,7 +1011,7 @@ $.require = function () {
         if (args[i] === undefined) return;
         if (typeof args[i] == 'string') {
             var js = args[i];
-            // 避免重复加载
+            /*避免重复加载*/
             if ($.inArray(js, $.required) != -1) {
                 if (i < args.length) this.load(args, i + 1);
                 return;
@@ -1037,7 +1048,7 @@ $.require = function () {
 };
 
 $.require_css = function (filename) {
-    // 判断重复加载
+    /*判断重复加载*/
     var tags = document.getElementsByTagName('link');
     for (var i = 0; i < tags.length; i++) {
         if (tags[i].href.indexOf(filename) != -1) {
@@ -1052,7 +1063,7 @@ $.require_css = function (filename) {
     document.getElementsByTagName('head')[0].appendChild(link);
 };
 
-// 在节点上显示 loading 图标
+/*在节点上显示 loading 图标*/
 $.fn.loading = function (action) {
     return this.each(function () {
         var jthis = $(this);
@@ -1075,8 +1086,8 @@ $.fn.loading = function (action) {
     });
 };
 
-// 对图片进行缩略，裁剪，然后 base64 存入 form 隐藏表单，name 与 file 控件相同
-// 上传过程中，禁止 button，对图片可以缩略
+/*对图片进行缩略，裁剪，然后 base64 存入 form 隐藏表单，name 与 file 控件相同*/
+/*上传过程中，禁止 button，对图片可以缩略*/
 $.fn.base64_encode_file = function (width, height, action) {
     var action = action || 'thumb';
     var jform = $(this);
@@ -1093,8 +1104,7 @@ $.fn.base64_encode_file = function (width, height, action) {
         $('.input_' + jassoc.attr('id')).removeDeep();
         /*燃烧的冰20181111 创建一个隐藏域，用来保存 base64 数据*/
         var jhidden = $('<input class="input_' + jassoc.attr('id') + '" type="hidden" name="' + obj.name + '" />').appendTo(jform);
-        //obj.name = '';
-
+        
         var reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function (e) {
@@ -1103,7 +1113,7 @@ $.fn.base64_encode_file = function (width, height, action) {
                 xn.image_resize(this.result, function (code, message) {
                     if (code == 0) {
                         if (jassoc) jassoc.attr('src', message.data);
-                        jhidden.val(message.data); // base64
+                        jhidden.val(message.data); /*base64*/
                     } else {
                         alert(message);
                     }
@@ -1119,21 +1129,21 @@ $.fn.base64_encode_file = function (width, height, action) {
 };
 
 xn.base64_data_image_type = function (s) {
-    //data:image/png;base64
+    /*data:image/png;base64*/
     r = s.match(/^data:image\/(\w+);/i);
     return r[1];
 };
 
-// 图片背景透明算法 by axiuno@gmail.com，只能处理小图片，效率做过改进，目前速度还不错。
+/*图片背景透明算法 by axiuno@gmail.com，只能处理小图片，效率做过改进，目前速度还不错*/
 xn.image_background_opacity = function (data, width, height, callback) {
     var x = 0;
     var y = 0;
-    //var map = {}; // 图片的状态位： 0: 未检测，1:检测过是背景，2：检测过不是背景
-    //var unmap = {}; // 未检测过的 map
-    var checked = {'0-0': 1}; // 检测过的点
-    var unchecked = {}; // 未检测过的点，会不停得将新的未检测的点放进来，检测过的移动到 checked;
-    var unchecked_arr = []; // 用来加速
-    // 从四周遍历
+    /*var map = {};*/ /*图片的状态位： 0: 未检测，1:检测过是背景，2：检测过不是背景*/
+    /*var unmap = {};*/ /*未检测过的 map*/
+    var checked = {'0-0': 1}; /*检测过的点*/
+    var unchecked = {}; /*未检测过的点，会不停得将新的未检测的点放进来，检测过的移动到 checked;*/
+    var unchecked_arr = []; /*用来加速*/
+    /*从四周遍历*/
     /*
      *************************************
      *                                   *
@@ -1167,9 +1177,9 @@ xn.image_background_opacity = function (data, width, height, callback) {
     }
 
     var bg = [data[0], data[1], data[2], data[3]];
-    // 如果不是纯黑，纯白，则返回。
+    /*如果不是纯黑，纯白，则返回。*/
     if (!((bg[0] == 0 && bg[1] == 0 && bg[2] == 0) || (bg[0] == 255 && bg[1] == 255 && bg[2] == 255))) return;
-    // 判断该点是否被检测过。
+    /*判断该点是否被检测过。*/
     /*
      function is_checked(x, y) {
      return checked[x+'-'+y] ? true : false;
@@ -1200,7 +1210,7 @@ xn.image_background_opacity = function (data, width, height, callback) {
 
     var n = 0;
     while (1) {
-        //if(k++ > 100000) break;
+        /*//if(k++ > 100000) break;
         //if(checked.length > 10000) return;
         //(n++ % 10000 == 0) {
         //alert(n);
@@ -1208,15 +1218,15 @@ xn.image_background_opacity = function (data, width, height, callback) {
         //console.log(unchecked);
         //break;
         //}
-        // 遍历未检测的区域，并且不在 checked 列表的，放进去。
+        // 遍历未检测的区域，并且不在 checked 列表的，放进去。*/
         var curr = get_one_unchecked();
-        //if(unchecked.length > 1000) return;
-        // 遍历完毕，终止遍历
+        /*//if(unchecked.length > 1000) return;
+        // 遍历完毕，终止遍历*/
         if (!curr) break;
         var x = xn.intval(curr[0]);
         var y = xn.intval(curr[1]);
 
-        // 在 data 中的偏移量应该 * 4, rgba 各占一位。
+        /*// 在 data 中的偏移量应该 * 4, rgba 各占一位。*/
         var pos = 4 * ((y * width) + x);
         var r = data[pos];
         var g = data[pos + 1];
@@ -1226,22 +1236,22 @@ xn.image_background_opacity = function (data, width, height, callback) {
         if (Math.abs(r - bg[0]) < 2 && Math.abs(g == bg[1]) < 2 && Math.abs(b == bg[2]) < 2) {
 
             if (!callback) {
-                data[pos + 0] = 0; // 处理为透明
-                data[pos + 1] = 0; // 处理为透明
-                data[pos + 2] = 0; // 处理为透明
-                data[pos + 3] = 0; // 处理为透明
+                data[pos + 0] = 0; /*处理为透明*/
+                data[pos + 1] = 0; /*处理为透明*/
+                data[pos + 2] = 0; /*处理为透明*/
+                data[pos + 3] = 0; /*处理为透明*/
             } else {
                 callback(data, pos);
             }
 
-            // 检测边距
-            if (y > 0) unchecked_push(x, y - 1);	 // 上
-            if (x < width - 1) unchecked_push(x + 1, y); // 右
-            if (y < height - 1) unchecked_push(x, y + 1); // 下
-            if (x > 0) unchecked_push(x - 1, y); 	// 左
+            /*检测边距*/
+            if (y > 0) unchecked_push(x, y - 1);	 /*top*/
+            if (x < width - 1) unchecked_push(x + 1, y); /*right*/
+            if (y < height - 1) unchecked_push(x, y + 1); /*bottom*/
+            if (x > 0) unchecked_push(x - 1, y); 	/*left*/
         }
 
-        checked_push(x, y); // 保存
+        checked_push(x, y); /*save*/
     }
 };
 
@@ -1255,26 +1265,26 @@ xn.image_file_type = function (file_base64_data) {
         return 'png';
     }
     return 'jpg';
-}
+};
 
-//对图片进行裁切，缩略，对黑色背景，透明化处理
+/*对图片进行裁切，缩略，对黑色背景，透明化处理*/
 xn.image_resize = function (file_base64_data, callback, options) {
     var thumb_width = options.width || 2560;
     var thumb_height = options.height || 4960;
     var action = options.action || 'thumb';
-    var filetype = options.filetype || xn.image_file_type(file_base64_data);//xn.base64_data_image_type(file_base64_data);
-    var qulity = options.qulity || 0.75; // 图片质量, 1 为无损
+    var filetype = options.filetype || xn.image_file_type(file_base64_data);/*xn.base64_data_image_type(file_base64_data);*/
+    var qulity = options.qulity || 0.75; /*图片质量, 1 为无损*/
 
     if (thumb_width < 1) return callback(-1, '缩略图宽度不能小于 1 / thumb image width length is less 1 pix');
     if (xn.substr(file_base64_data, 0, 10) != 'data:image') return callback(-1, '传入的 base64 数据有问题 / deformed base64 data');
-    // && xn.substr(file_base64_data, 0, 14) != 'data:image/gif' gif 不支持\
+    /*&& xn.substr(file_base64_data, 0, 14) != 'data:image/gif' gif 不支持\*/
 
     var img = new Image();
     img.onload = function () {
 
         var water_img_onload = function (water_on) {
             var canvas = document.createElement('canvas');
-            // 等比缩放
+            /*等比缩放*/
             var width = 0, height = 0, canvas_width = 0, canvas_height = 0;
             var dx = 0, dy = 0;
 
@@ -1287,22 +1297,22 @@ xn.image_resize = function (file_base64_data, callback, options) {
                 data: file_base64_data
             });
 
-            // width, height: 计算出来的宽高（求）
+            /*// width, height: 计算出来的宽高（求）
             // thumb_width, thumb_height: 要求的缩略宽高
             // img_width, img_height: 原始图片宽高
-            // canvas_width, canvas_height: 画布宽高
+            // canvas_width, canvas_height: 画布宽高*/
             if (action == 'thumb') {
                 if (img_width < thumb_width && img_height && thumb_height) {
                     width = img_width;
                     height = img_height;
                 } else {
-                    // 横形
+                    /*// 横形*/
                     if (img_width / img_height > thumb_width / thumb_height) {
-                        var width = thumb_width; // 以缩略图宽度为准，进行缩放
+                        var width = thumb_width; /*// 以缩略图宽度为准，进行缩放*/
                         var height = Math.ceil((thumb_width / img_width) * img_height);
-                        // 竖形
+                        /*// 竖形*/
                     } else {
-                        var height = thumb_height; // 以缩略图宽度为准，进行缩放
+                        var height = thumb_height; /*// 以缩略图宽度为准，进行缩放*/
                         var width = Math.ceil((img_width / img_height) * thumb_height);
                     }
                 }
@@ -1324,14 +1334,14 @@ xn.image_resize = function (file_base64_data, callback, options) {
                     /*原始宽<裁切宽 横形图*/
                     if (img_width / img_height > thumb_width / thumb_height) {
                         /*原始资源比 > 裁切资源比 以宽度作为标准裁切缩放*/
-                        var height = thumb_height; // 以缩略图宽度为准，进行缩放
+                        var height = thumb_height; /*// 以缩略图宽度为准，进行缩放*/
                         var width = Math.ceil((img_width / img_height) * thumb_height);
                         var dx = -((width - thumb_width) / 2);
                         var dy = 0;
 
                     } else {
                         /*竖形*/
-                        var width = thumb_width; // 以缩略图宽度为准，进行缩放
+                        var width = thumb_width; /*// 以缩略图宽度为准，进行缩放*/
                         var height = Math.ceil((img_height / img_width) * thumb_width);
                         dx = 0;
                         dy = -((height - thumb_height) / 2);
@@ -1344,11 +1354,11 @@ xn.image_resize = function (file_base64_data, callback, options) {
             canvas.height = canvas_height;
             var ctx = canvas.getContext("2d");
 
-            //ctx.fillStyle = 'rgb(255,255,255)';
-            //ctx.fillRect(0,0,width,height);
+            /*//ctx.fillStyle = 'rgb(255,255,255)';
+            //ctx.fillRect(0,0,width,height);*/
 
-            ctx.clearRect(0, 0, width, height); 			// canvas清屏
-            ctx.drawImage(img, 0, 0, img_width, img_height, dx, dy, width, height);	// 将图像绘制到canvas上
+            ctx.clearRect(0, 0, width, height); /*// canvas清屏*/
+            ctx.drawImage(img, 0, 0, img_width, img_height, dx, dy, width, height); /*// 将图像绘制到canvas上*/
 
 
             if (water_on) {
@@ -1358,10 +1368,10 @@ xn.image_resize = function (file_base64_data, callback, options) {
                     var x = img_width - water_width - 16;
                     var y = img_height - water_height - 16;
 
-                    // 参数参考：https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
-                    ctx.globalAlpha = 0.3; // 水印透明度
+                    /*// 参数参考：https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage*/
+                    ctx.globalAlpha = 0.3; /*// 水印透明度*/
                     ctx.beginPath();
-                    ctx.drawImage(water_img, 0, 0, water_width, water_height, x, y, water_width, water_height);	// 将水印图像绘制到canvas上
+                    ctx.drawImage(water_img, 0, 0, water_width, water_height, x, y, water_width, water_height); /*// 将水印图像绘制到canvas上*/
                     ctx.closePath();
                     ctx.save();
                 }
@@ -1370,14 +1380,14 @@ xn.image_resize = function (file_base64_data, callback, options) {
 
             var imagedata = ctx.getImageData(0, 0, canvas_width, canvas_height);
             var data = imagedata.data;
-            // 判断与 [0,0] 值相同的并且连续的像素为背景
+            /*// 判断与 [0,0] 值相同的并且连续的像素为背景
 
             //xn.image_background_opacity(data, canvas_width, canvas_height);
 
-            // 将修改后的代码复制回画布中
+            // 将修改后的代码复制回画布中*/
             ctx.putImageData(imagedata, 0, 0);
 
-            //filetype = 'png';
+           /*//filetype = 'png';*/
             if (filetype == 'jpg') filetype = 'jpeg';
             var s = canvas.toDataURL('image/' + filetype, qulity);
             if (callback) callback(0, {width: width, height: height, data: s});
@@ -1435,21 +1445,21 @@ xn.upload_file = function (file, upload_url, postdata, complete_callback, progre
             });
         };
 
-        // gif 直接上传
+        /*// gif 直接上传
         // 图片进行缩放，然后上传
-        //  && xn.substr(base64_data, 0, 14) != 'data:image/gif'
+        //  && xn.substr(base64_data, 0, 14) != 'data:image/gif'*/
         if (xn.substr(base64_data, 0, 10) == 'data:image') {
             var filename = file.name ? file.name : (file.type == 'image/png' ? 'capture.png' : 'capture.jpg');
             xn.image_resize(base64_data, function (code, message) {
                 if (code != 0) return alert(message);
-                // message.width, message.height 是缩略后的宽度和高度
+                /*// message.width, message.height 是缩略后的宽度和高度*/
                 postdata.name = filename;
                 postdata.data = message.data;
                 postdata.width = message.width;
                 postdata.height = message.height;
                 ajax_upload(upload_url, postdata, complete_callback);
             }, postdata);
-            // 文件直接上传， 不缩略
+            /*// 文件直接上传， 不缩略*/
         } else {
             var filename = file.name ? file.name : '';
             postdata.name = filename;
@@ -1460,7 +1470,7 @@ xn.upload_file = function (file, upload_url, postdata, complete_callback, progre
         }
     };
 
-    // 如果为 base64 则不需要 new FileReader()
+    /*// 如果为 base64 则不需要 new FileReader()*/
     if (xn.is_string(file) && xn.substr(file, 0, 10) == 'data:image') {
         var base64_data = file;
         if (thumb_callback) thumb_callback(base64_data);
@@ -1477,7 +1487,7 @@ xn.upload_file = function (file, upload_url, postdata, complete_callback, progre
 
 };
 
-// 从事件对象中查找 file 对象，兼容 jquery event, clipboard, file.onchange
+/*从事件对象中查找 file 对象，兼容 jquery event, clipboard, file.onchange*/
 xn.get_files_from_event = function (e) {
     function get_paste_files(e) {
         return e.clipboardData && e.clipboardData.items ? e.clipboardData.items : null;
@@ -1493,7 +1503,7 @@ xn.get_files_from_event = function (e) {
     return files;
 };
 
-// 获取所有的 父节点集合，一直到最顶层节点为止。, IE8 没有 HTMLElement
+/*获取所有的 父节点集合，一直到最顶层节点为止。, IE8 没有 HTMLElement*/
 xn.nodeHasParent = function (node, topNode) {
     if (!topNode) topNode = document.body;
     var pnode = node.parentNode;
@@ -1501,19 +1511,18 @@ xn.nodeHasParent = function (node, topNode) {
         if (pnode == topNode) return true;
         pnode = pnode.parentNode;
     }
-    ;
     return false;
 };
 
-// 表单提交碰到错误的时候，依赖此处，否则错误会直接跳过，不利于发现错误
+/*表单提交碰到错误的时候，依赖此处，否则错误会直接跳过，不利于发现错误*/
 window.onerror = function (msg, url, line) {
     if (!window.debug) return;
     alert("error: " + msg + "\r\n line: " + line + "\r\n url: " + url);
-    // 阻止所有的 form 提交动作
+    /*阻止所有的 form 提交动作*/
     return false;
 };
 
-// remove() 并不清除子节点事件！！用来替代 remove()，避免内存泄露
+/*remove() 并不清除子节点事件！！用来替代 remove()，避免内存泄露*/
 $.fn.removeDeep = function () {
     this.each(function () {
         $(this).find('*').off();
@@ -1523,7 +1532,7 @@ $.fn.removeDeep = function () {
     return this;
 };
 
-// empty 清楚子节点事件，释放内存。
+/*empty 清楚子节点事件，释放内存。*/
 $.fn.emptyDeep = function () {
     this.each(function () {
         $(this).find('*').off();
@@ -1546,25 +1555,25 @@ $.fn.son = $.fn.children;
  $('input[type="radio"]').checked();		// 返回选中状态的 radio 的值。
  */
 $.fn.checked = function (v) {
-    // 转字符串
+    /*转字符串*/
     if (v) v = v instanceof Array ? v.map(function (vv) {
             return vv + ""
         }) : v + "";
     var filter = function () {
         return !(v instanceof Array) ? (this.value == v) : ($.inArray(this.value, v) != -1)
     };
-    // 设置
+    /*设置*/
     if (v) {
         this.each(function () {
             if (xn.strtolower(this.tagName) == 'select') {
                 $(this).find('option').filter(filter).prop('selected', true);
             } else if (xn.strtolower(this.type) == 'checkbox' || strtolower(this.type) == 'radio') {
-                // console.log(v);
+                /*console.log(v);*/
                 $(this).filter(filter).prop('checked', true);
             }
         });
         return this;
-        // 获取，值用数组的方式返回
+        /*获取，值用数组的方式返回*/
     } else {
         if (this.length == 0) return [];
         var tagtype = xn.strtolower(this[0].tagName) == 'select' ? 'select' : xn.strtolower(this[0].type);
@@ -1586,7 +1595,7 @@ $.fn.checked = function (v) {
     }
 };
 
-// 支持连续操作 jsubmit.button(message).delay(1000).button('reset');
+/*支持连续操作 jsubmit.button(message).delay(1000).button('reset');*/
 $.fn.button = function (status) {
     return this.each(function () {
         var jthis = $(this);
@@ -1612,7 +1621,7 @@ $.fn.button = function (status) {
     });
 };
 
-// 支持连续操作 jsubmit.button(message).delay(1000).button('reset').delay(1000).location('http://xxxx');
+/*支持连续操作 jsubmit.button(message).delay(1000).button('reset').delay(1000).location('http://xxxx');*/
 $.fn.location = function (href) {
     var jthis = this;
     jthis.queue(function (next) {
@@ -1625,13 +1634,12 @@ $.fn.location = function (href) {
     });
 };
 
-// 在控件上方提示错误信息，如果为手机版，则调用 toast
+/*在控件上方提示错误信息，如果为手机版，则调用 toast*/
 $.fn.alert = function (message) {
     var jthis = $(this);
     jpthis = jthis.parent('.form-group');
     jpthis.addClass('has-danger');
     jthis.addClass('form-control-danger');
-    //if(in_mobile) alert(message);
     jthis.data('title', message).tooltip('show');
     return this;
 };
@@ -1661,8 +1669,6 @@ $.fn.serializeObject = function () {
     };
 
     $.each($(this).serializeArray(), function () {
-
-        // skip invalid keys
         if (!patterns.validate.test(this.name)) {
             return;
         }
@@ -1673,22 +1679,12 @@ $.fn.serializeObject = function () {
             reverse_key = this.name;
 
         while ((k = keys.pop()) !== undefined) {
-
-            // adjust reverse_key
             reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
-
-            // push
             if (k.match(patterns.push)) {
                 merge = self.build([], self.push_counter(reverse_key), merge);
-            }
-
-            // fixed
-            else if (k.match(patterns.fixed)) {
+            } else if (k.match(patterns.fixed)) {
                 merge = self.build([], k, merge);
-            }
-
-            // named
-            else if (k.match(patterns.named)) {
+            } else if (k.match(patterns.named)) {
                 merge = self.build({}, k, merge);
             }
         }
@@ -1737,7 +1733,7 @@ $.fn.serializeObject = function () {
  return formobj;
  }*/
 
-// 批量修改 input name="gid[123]" 中的 123 的值
+/*批量修改 input name="gid[123]" 中的 123 的值*/
 $.fn.attr_name_index = function (rowid) {
     return this.each(function () {
         var jthis = $(this);
@@ -1750,14 +1746,14 @@ $.fn.attr_name_index = function (rowid) {
     });
 };
 
-// 重置 form 状态
+/*重置 form 状态*/
 $.fn.reset = function () {
     var jform = $(this);
     jform.find('input[type="submit"]').button('reset');
     jform.find('input').tooltip('dispose');
 };
 
-// 用来代替 <base href="../" /> 的功能
+/*用来代替 <base href="../" /> 的功能*/
 $.fn.base_href = function (base) {
     function replace_url(url) {
         if (url.match('/^https?:\/\//i')) {
@@ -1780,7 +1776,7 @@ $.fn.base_href = function (base) {
     return this;
 };
 
-// $.each() 的串行版本，用法：
+/*$.each() 的串行版本，用法：*/
 /*
  $.each_sync(items, function(i, callback) {
  var item = items[i];
@@ -1801,7 +1797,6 @@ $.each_sync = function (array, func, callback) {
                      setTimeout(function() {
                      func(i, callback);
                      }, 2000);*/
-
                 }
             };
             func_arr.push(f(i))
@@ -1812,7 +1807,7 @@ $.each_sync = function (array, func, callback) {
     });
 };
 
-// 定位
+/*定位*/
 /*
  11      12      1
  --------------------
@@ -1828,7 +1823,7 @@ $.each_sync = function (array, func, callback) {
  $(this).xn_position($('#menuid'), 6);
 
  */
-// 将菜单定位于自己的周围
+/*将菜单定位于自己的周围*/
 $.fn.xn_position = function (jfloat, pos, offset) {
     var jthis = $(this);
     var jparent = jthis.offsetParent();
@@ -1837,12 +1832,12 @@ $.fn.xn_position = function (jfloat, pos, offset) {
     offset.left = offset.left || 0;
     offset.top = offset.top || 0;
 
-    // 如果 menu 藏的特别深，把它移动出来。
+    /*如果 menu 藏的特别深，把它移动出来。*/
     if (jfloat.offsetParent().get(0) != jthis.offsetParent().get(0)) {
         jfloat.appendTo(jthis.offsetParent());
     }
 
-    // 设置菜单为绝对定位
+    /*设置菜单为绝对定位*/
     jfloat.css('position', 'absolute').css('z-index', jthis.css('z-index') + 1);
 
     var p = jthis.position();
@@ -1863,8 +1858,6 @@ $.fn.xn_position = function (jfloat, pos, offset) {
         right: xn.floatval(jthis.css('border-right-width')),
         bottom: xn.floatval(jthis.css('border-bottom-width')),
     };
-    //alert('margin-top:'+p.margin.top+', border-top:'+p.border.top);
-
     if (pos == 12) {
         m.left = p.left + ((p.w - m.w) / 2);
         m.top = p.top - m.h;
@@ -1932,7 +1925,7 @@ $.fn.xn_position = function (jfloat, pos, offset) {
     jfloat.css({left: m.left + offset.left, top: m.top + offset.top});
 };
 
-// 菜单定位
+/*菜单定位*/
 /*
  11        12     1
  --------------------
@@ -1948,7 +1941,7 @@ $.fn.xn_position = function (jfloat, pos, offset) {
  $(this).xn_menu($('#menuid'), 6);
  */
 $.fn.xn_menu = function (jmenu, pos, option) {
-    // 生成一个箭头放到菜单的周围
+    /*生成一个箭头放到菜单的周围*/
     var jthis = $(this);
     var pos = pos || 6;
     var offset = {};
@@ -1987,8 +1980,6 @@ $.fn.xn_menu = function (jmenu, pos, option) {
     };
     jthis.xn_position(jmenu, pos, offset);
     jmenu.toggle();
-
-    // arrow
     var mpos = arr_pos_map[pos];
     if (!option.hidearrow) jmenu.xn_position(jmenu.jarrow, mpos, arr_offset_map[mpos]);
     if (!option.hidearrow) jmenu.jarrow.toggle();

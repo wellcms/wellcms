@@ -52,7 +52,7 @@
         var fid = $('select[name="fid"]').checked();
         var n = $('input[name="n"]').checked();
         if (!fid) $.alert('Fid is empty');
-        window.location = xn.url('other-increase') + '?type=1&fid=' + fid + '&n=' + n;
+        window.location = xn.url('other-increase', {type:1, fid:fid, n:n});
         return false;
     });
     <?php } ?>

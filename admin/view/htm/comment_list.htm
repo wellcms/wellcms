@@ -128,7 +128,7 @@
 
     $('input[name="post_verify"]').click(function () {
         if ($(this).checked() == 1) {
-            window.location = xn.url('comment-list-1')+'?verify=<?php echo $verify;?>';
+            window.location = xn.url('comment-list-1', {verify:<?php echo $verify;?>});
         } else {
             window.location = xn.url('comment-list');
         }
