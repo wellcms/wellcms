@@ -118,9 +118,10 @@ function forum_delete($fid)
 function forum_find($cond = array(), $orderby = array('rank' => -1), $page = 1, $pagesize = 1000)
 {
     static $cache = array();
-    if (!empty($cache)) return $cache;
-    $cache = forum__find($cond, $orderby, $page, $pagesize);
-    return $cache;
+    $key = md5(xn_json_encode($cond));
+    if (isset($cache[$key])) return $cache[$key];
+    $cache[$key] = forum__find($cond, $orderby, $page, $pagesize);
+    return $cache[$key];
 }
 
 // 统一调用格式化的数据

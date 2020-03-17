@@ -368,7 +368,9 @@ li.quote {
 #mobile_nav .navbar-nav .nav-link {
     margin-right: 1rem;
 }
-
+/*二级导航鼠标悬浮弹出*/
+.navbar-nav > li:hover .dropdown-menu {display: block;}
+span.dropdown:hover .dropdown-menu {display: block;}
 .bg-dark-blue{background: var(--dark-blue) !important;}
 .bg-black-red{background: var(--black-red) !important;}
 .bg-mobile-but{background: var(--mobile-but) !important;}

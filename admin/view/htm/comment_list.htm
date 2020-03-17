@@ -53,7 +53,7 @@
 
                                     <!--{hook admin_comment_list_inc_delete_before.htm}-->
                                     <?php if($_post['allowdelete']) { ?>
-                                    <a data-href="<?php echo url_path().url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" href="javascript:void(0);" class="text-grey post_delete _confirm mr-3"><i class="icon-remove" title="<?php echo lang('delete');?>"></i> <span class="d-none"><?php echo lang('delete');?></span></a>
+                                    <span data-href="<?php echo url_path().url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" class="btn text-grey post_delete _confirm mr-3"><i class="icon-remove" title="<?php echo lang('delete');?>"></i></span>
                                     <?php } ?>
                                     <!--{hook admin_comment_list_inc_delete_after.htm}-->
 

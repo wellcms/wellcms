@@ -1,3 +1,6 @@
+/*关闭click.bs.dropdown.data-api事件，使头部顶级菜单可点击*/
+$(document).off('click.bs.dropdown.data-api');
+
 /* 搜索使用 */
 $('#form-search').on('submit', function() {
     var jthis = $(this);
@@ -166,33 +169,6 @@ $(function () {
             $(obj).parents('.tags').find('.tags-val').val(str);
         }
     }
-});
-
-/* 导航子菜单 鼠标悬浮移除移入*/
-$(function () {
-    /*var dropdown = $(".dropdown");
-    dropdown.mouseover(function () {
-        $(this).addClass("show");
-        $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
-        $(this).find('.dropdown-menu').addClass("show");
-    });
-    dropdown.mouseleave(function () {
-        $(this).removeClass("show");
-        $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
-        $(this).find('.dropdown-menu').removeClass("show");
-    });
-    dropdown.click(function () {
-        var v = $(this).children('a.dropdown-toggle').attr("aria-expanded");
-        if (v == false) {
-            $(this).addClass("show");
-            $(this).children('a.dropdown-toggle').attr("aria-expanded", "true");
-            $(this).find('.dropdown-menu').addClass("show");
-        } else {
-            $(this).removeClass("show");
-            $(this).children('a.dropdown-toggle').attr("aria-expanded", "false");
-            $(this).find('.dropdown-menu').removeClass("show");
-        }
-    });*/
 });
 
 /*

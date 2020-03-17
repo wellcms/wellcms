@@ -84,8 +84,9 @@ function user_update($uid, $arr)
 function user_read($uid)
 {
     global $g_static_users;
-    if (empty($uid)) return array();
     $uid = intval($uid);
+    if (empty($uid)) return array();
+    if (isset($g_static_users[$uid])) return $g_static_users[$uid];
     // hook model_user_read_start.php
     $user = user__read(array('uid' => $uid));
     user_format($user);
