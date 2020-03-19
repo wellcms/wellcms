@@ -31,12 +31,31 @@ function well_thread__read($tid, $orderby = array(), $col = array(), $d = NULL)
     return $thread;
 }
 
-// 最后一条主题
-function well_thread_max_tid($col = array('tid'), $d = NULL)
+/*
+ * @param array $col 查询列
+ * @param array $cond 条件
+ * @param null $d 实例
+ * @return bool 返回最大tid
+ */
+function well_thread_max_tid($col = array('tid'), $cond = array(), $d = NULL)
 {
     // hook model__thread_max_tid_start.php
-    $thread = db_find_one('website_thread', array(), array('tid' => -1), $col, $d);
+    $tid = db_maxid('website_thread', $col, $cond, $d);
     // hook model__thread_max_tid_end.php
+    return $tid;
+}
+
+/*
+ * @param array $cond 条件/为空则返回最后一条
+ * @param array $col 查询列
+ * @param null $d 实例
+ * @return bool 返回最后一条主题
+ */
+function well_thread_last($cond = array(), $col = array(), $d = NULL)
+{
+    // hook model__thread_last_start.php
+    $thread = db_find_one('website_thread', $cond, array('tid' => -1), $col, $d);
+    // hook model__thread_last_end.php
     return $thread;
 }
 
@@ -446,11 +465,14 @@ function well_thread_inc_views($tid, $n = 1)
 
 function well_thread_read($tid)
 {
+    if (empty($tid)) return NULL;
+    static $cache = array();
+    if (isset($cache[$tid])) return $cache[$tid];
     // hook model__thread_read_start.php
-    $thread = well_thread__read($tid);
-    $thread AND well_thread_format($thread);
+    $cache[$tid] = well_thread__read($tid);
+    $cache[$tid] AND well_thread_format($cache[$tid]);
     // hook model__thread_read_end.php
-    return $thread;
+    return $cache[$tid];
 }
 
 // 只删除主题和缓存

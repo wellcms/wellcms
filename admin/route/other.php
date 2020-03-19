@@ -155,6 +155,14 @@ EOT;
                 $arrlist = thread_tid_find_by_fid($fid, $page, $pagesize, FALSE);
 
                 foreach ($arrlist as $_thread) {
+/*
+百度在标准Sitemap协议基础上增加了<mobile:mobile/>标签，四种取值：
+<mobile:mobile/> ：移动网页
+<mobile:mobile type="mobile"/> 移动网页
+<mobile:mobile type="pc,mobile"/> 自适应网页
+<mobile:mobile type="htmladapt"/> 代码适配
+如需要在浏览器查看，删除百度的标签
+*/
                     $xml .= '    <url>
         <loc>' . url_prefix() . '/' . map_url_format($fid, $_thread['tid']) . '</loc>
         <mobile:mobile type="pc,mobile"/>
