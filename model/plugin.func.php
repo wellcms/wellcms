@@ -287,7 +287,7 @@ function plugin_compile_srcfile($srcfile)
 }
 
 /* 只返回一个权重最高的文件名，最大值overwrite，read.php 文件:值
- * "hooks_rank":{"read.php": 100}
+ * "overwrites_rank":{"read.php": 100}
  * */
 function plugin_find_overwrite($srcfile)
 {
