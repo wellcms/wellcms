@@ -32,8 +32,8 @@ if ($action == 'list') {
     $header['title'] = lang('well_tag') . '-' . $conf['sitename'];
     $header['mobile_title'] = '';
     $header['mobile_link'] = url('tag-list', $extra);
-    $header['keywords'] = lang('well_tag') . '-' . $conf['sitename'];
-    $header['description'] = lang('well_tag') . '-' . $conf['sitename'];
+    $header['keywords'] = lang('well_tag') . ',' . $conf['sitename'];
+    $header['description'] = lang('well_tag') . ',' . $conf['sitename'];
     $_SESSION['fid'] = 0;
 
     // hook tag_list_end.php
@@ -77,7 +77,7 @@ if ($action == 'list') {
 
     // hook tag_after.php
 
-    $header['title'] = empty($read['title']) ? $read['name'] . lang('well_tag') . '-' . $conf['sitename'] : $read['title'];
+    $header['title'] = empty($read['title']) ? $read['name'] . '-' . lang('well_tag') . '-' . $conf['sitename'] : $read['title'];
     $header['mobile_title'] = '';
     $header['mobile_link'] = url('tag-' . $tagid, $extra);
     $header['keywords'] = empty($read['keywords']) ? $read['name'] : $read['keywords'];

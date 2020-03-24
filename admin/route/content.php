@@ -348,7 +348,14 @@ if ($action == 'list') {
         // hook admin_content_create_post_after.php
 
         $tag_json = well_tag_post($tid, $fid, $tags);
-        well_thread_update($tid, array('tag' => $tag_json)) === FALSE AND message(-1, lang('update_thread_failed'));
+        if (xn_strlen($subject) >= 120) {
+            $s = xn_substr($tag_json, -1, NULL);
+            if ($s != '}') {
+                $len = mb_strripos($tag_json, ',', 0, 'UTF-8');
+                $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
+            }
+        }
+        $tag_json AND well_thread_update($tid, array('tag' => $tag_json)) === FALSE AND message(-1, lang('update_thread_failed'));
 
         // 首页flag
         !empty($flag_index_arr) AND flag_create_thread(0, 1, $tid, $flag_index_arr) === FALSE AND message(-1, lang('create_failed'));
@@ -631,7 +638,13 @@ if ($action == 'list') {
         // hook admin_content_update_post_tag_center.php
 
         $tag_json = well_tag_post_update($tid, $fid, $tags, $thread['tag_text']);
-
+        if (xn_strlen($subject) >= 120) {
+            $s = xn_substr($tag_json, -1, NULL);
+            if ($s != '}') {
+                $len = mb_strripos($tag_json, ',', 0, 'UTF-8');
+                $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
+            }
+        }
         $arr['tag'] = $tag_json != $thread['tag_text'] ? $tag_json : $thread['tag_text'];
 
         // hook admin_content_update_post_tag_after.php
