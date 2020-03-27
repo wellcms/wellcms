@@ -179,7 +179,7 @@ if ($thread['type'] == 0) {
 
     // hook read_single_page_after.php
 
-    $header['title'] = $thread['subject'] . '-' . $forum['name'] . '-' . $conf['sitename'];
+    $header['title'] = $thread['subject'];
     $header['mobile_title'] = '';
     $header['mobile_link'] = url('read-' . $tid, $extra);
     $header['keywords'] = $thread['keyword'] ? $thread['keyword'] : $thread['subject'];

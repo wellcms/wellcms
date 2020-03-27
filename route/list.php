@@ -90,7 +90,7 @@ if ($forum['type'] == 1) {
 
         // hook list_header_before.php
 
-        $seo_title = ($forum['seo_title'] ? $forum['seo_title'] : $forum['name']) . '-' . $conf['sitename'];
+        $seo_title = $forum['seo_title'] ? $forum['seo_title'] : $forum['name'] . '-' . $conf['sitename'];
         $header['title'] = strip_tags($seo_title);
         $header['mobile_title'] = '';
         $header['mobile_link'] = url('list-' . $fid);

@@ -77,7 +77,7 @@ if ($action == 'list') {
 
     // hook tag_after.php
 
-    $header['title'] = empty($read['title']) ? $read['name'] . '-' . lang('well_tag') . '-' . $conf['sitename'] : $read['title'];
+    $header['title'] = empty($read['title']) ? $read['name'] : $read['title'];
     $header['mobile_title'] = '';
     $header['mobile_link'] = url('tag-' . $tagid, $extra);
     $header['keywords'] = empty($read['keywords']) ? $read['name'] : $read['keywords'];
