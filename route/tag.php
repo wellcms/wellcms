@@ -19,13 +19,13 @@ if ($action == 'list') {
 
     $count = well_tag_count();
 
-    $taglist = $count ? well_tag_find($page, $conf['pagesize']) : NULL;
+    $taglist = $count ? well_tag_find($page, $conf['tagsize']) : NULL;
 
     // hook tag_list_middle.php
 
     $threads = $count > $conf['tagsize'] * $conf['listsize'] ? $conf['tagsize'] * $conf['listsize'] : $count;
 
-    $pagination = pagination(url('tag-list-{page}', $extra), $threads, $page, $conf['pagesize']);
+    $pagination = pagination(url('tag-list-{page}', $extra), $threads, $page, $conf['tagsize']);
 
     // hook tag_list_after.php
 
