@@ -31,7 +31,12 @@ if (empty($action) || $action == 'index') {
 
     $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || $gid == 1;
 
-    $pagination = pagination(url('home-index-{page}', $extra), $user['articles'], $page, $pagesize);
+    $page_url = url('home-index-{page}', $extra);
+    $num = $user['articles'];
+
+    // hook home_index_pagination_before.php
+
+    $pagination = pagination($page_url, $num, $page, $pagesize);
 
     $header['title'] = lang('my_index_page');
 
@@ -79,7 +84,12 @@ if (empty($action) || $action == 'index') {
 
         $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || $gid == 1;
 
-        $pagination = pagination(url('home-comment-{page}', $extra), $user['comments'], $page, $pagesize);
+        $page_url = url('home-comment-{page}', $extra);
+        $num = $user['comments'];
+
+        // hook home_comment_pagination_before.php
+
+        $pagination = pagination($page_url, $num, $page, $pagesize);
 
         $safe_token = well_token_set($uid);
 

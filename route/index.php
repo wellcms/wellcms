@@ -145,7 +145,7 @@ if ($website_mode == 0) {
     // hook index_flat_start.php
 
     $page = param(1, 1);
-
+    $pagesize = $conf['pagesize'];
     $threadlist = $tidlist = NULL;
     $threads = 0;
 
@@ -202,11 +202,12 @@ if ($website_mode == 0) {
 
     // hook index_flat_after.php
 
-    $threads = $threads > $conf['pagesize'] * $conf['listsize'] ? $conf['pagesize'] * $conf['listsize'] : $threads;
+    $page_url = url($route . '-{page}', $extra);
+    $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
 
     // hook index_flat_pagination_before.php
 
-    $pagination = pagination(url($route . '-{page}', $extra), $threads, $page, $conf['pagesize']);
+    $pagination = pagination($page_url, $num, $page, $pagesize);
 
     // hook index_flat_end.php
 }

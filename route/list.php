@@ -82,11 +82,12 @@ if ($forum['type'] == 1) {
 
         // hook list_unified_pull_after.php
 
-        $forum_threads = $forum['threads'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $forum['threads'];
+        $page_url = url('list-' . $fid . '-{page}', $extra);
+        $num = $forum['threads'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $forum['threads'];
 
-        // hook list_forum_threads_after.php
+        // hook list_forum_pagination_before.php
 
-        $pagination = pagination(url('list-' . $fid . '-{page}', $extra), $forum_threads, $page, $pagesize);
+        $pagination = pagination($page_url, $num, $page, $pagesize);
 
         // hook list_header_before.php
 

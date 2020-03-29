@@ -31,11 +31,12 @@ if (empty($action)) {
 
     // hook user_index_center.php
 
-    $articles = $_user['articles'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $_user['articles'];
+    $page_url = url('user-' . $_user['uid'] . '-{page}', $extra);
+    $num = $_user['articles'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $_user['articles'];
 
     // hook user_index_middle.php
 
-    $pagination = pagination(url('user-' . $_user['uid'] . '-{page}', $extra), $articles, $page, $pagesize);
+    $pagination = pagination($page_url, $num, $page, $pagesize);
 
     // hook user_index_after.php
 
@@ -95,7 +96,12 @@ if (empty($action)) {
 
         $allowdelete = group_access($gid, 'allowdelete') || $gid == 1;
 
-        $pagination = pagination(url('user-comment-' . $_user['uid'] . '{page}', $extra), $_user['comments'], $page, $pagesize);
+        $page_url = url('user-comment-' . $_user['uid'] . '{page}', $extra);
+        $num = $_user['comments'];
+
+        // hook user_comment_pagination_before.php
+        
+        $pagination = pagination($page_url, $num, $page, $pagesize);
 
         // hook user_comment_after.php
 

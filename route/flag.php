@@ -20,7 +20,8 @@ if ($action == 'list') {
 
     // hook flag_list_before.php
 
-    $pagination = pagination(url('flag-list-{page}', $extra), $n, $page, $pagesize);
+    $page_url = url('flag-list-{page}', $extra);
+    $pagination = pagination($page_url, $num, $page, $pagesize);
 
     // hook flag_list_after.php
 
@@ -66,11 +67,12 @@ if ($action == 'list') {
         // hook flag_threadlist_after.php
     }
 
-    $threads = $read['count'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $read['count'];
+    $page_url = url('flag-' . $flagid . '-{page}', $extra);
+    $num = $read['count'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $read['count'];
 
     // hook flag_pagination_before.php
 
-    $pagination = pagination(url('flag-' . $flagid . '-{page}', $extra), $threads, $page, $pagesize);
+    $pagination = pagination($page_url, $num, $page, $pagesize);
 
     // hook flag_after.php
 

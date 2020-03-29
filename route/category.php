@@ -129,11 +129,12 @@ if ($forum['model'] == 0) {
 
         // hook category_article_flat_after.php
 
-        $threads = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
+        $page_url = url('category-' . $fid . '-{page}', $extra);
+        $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
 
         // hook category_article_flat_pagination_before.php
 
-        $pagination = pagination(url('category-' . $fid . '-{page}', $extra), $threads, $page, $pagesize);
+        $pagination = pagination($page_url, $num, $page, $pagesize);
 
         // hook category_article_flat_end.php
     }

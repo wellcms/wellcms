@@ -13,19 +13,23 @@ if ($action == 'list') {
     // hook tag_list_start.php
 
     $page = param(2, 1);
+    $pagesize = $conf['tagsize'];
     $extra = array(); // 插件预留
 
     // hook tag_list_before.php
 
     $count = well_tag_count();
 
-    $taglist = $count ? well_tag_find($page, $conf['tagsize']) : NULL;
+    $taglist = $count ? well_tag_find($page, $pagesize) : NULL;
 
     // hook tag_list_middle.php
 
-    $threads = $count > $conf['tagsize'] * $conf['listsize'] ? $conf['tagsize'] * $conf['listsize'] : $count;
+    $page_url = url('tag-list-{page}', $extra);
+    $num = $count > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $count;
 
-    $pagination = pagination(url('tag-list-{page}', $extra), $threads, $page, $conf['tagsize']);
+    // hook tag_list_after.php
+
+    $pagination = pagination($page_url, $num, $page, $pagesize);
 
     // hook tag_list_after.php
 
@@ -51,6 +55,8 @@ if ($action == 'list') {
     empty($tagid) AND message(-1, lang('data_malformation'));
 
     $page = param(2, 1);
+    $page = param(2, 1);
+    $pagesize = $conf['pagesize'];
     $extra = array(); // 插件预留
 
     // hook tag_before.php
@@ -60,20 +66,23 @@ if ($action == 'list') {
 
     // hook tag_center.php
 
-    $arr = well_tag_thread_find($tagid, $page, $conf['pagesize']);
+    $arr = well_tag_thread_find($tagid, $page, $pagesize);
     if (empty($arr)) {
         $threadlist = NULL;
     } else {
         $tidarr = arrlist_values($arr, 'tid');
-        $threadlist = well_thread_find($tidarr, $conf['pagesize']);
+        $threadlist = well_thread_find($tidarr, $pagesize);
     }
 
     // hook tag_middle.php
 
     $count = well_tag_count();
-    $threads = $read['count'] > $conf['pagesize'] * $conf['listsize'] ? $conf['pagesize'] * $conf['listsize'] : $read['count'];
+    $page_url = url('tag-' . $tagid . '-{page}', $extra);
+    $num = $read['count'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $read['count'];
 
-    $pagination = pagination(url('tag-' . $tagid . '-{page}', $extra), $threads, $page, $conf['pagesize']);
+    // hook tag_pagination_before.php
+    
+    $pagination = pagination($page_url, $num, $page, $pagesize);
 
     // hook tag_after.php
 
