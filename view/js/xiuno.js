@@ -558,7 +558,6 @@ xn.param = function (key) {
 /*模拟服务端 url() 函数 extra = {k1:v,k2:v}*/
 xn.url = function (u, extra, url_rewrite) {
     var on = window.url_rewrite_on || url_rewrite;
-    var url_path = window.url_path || ''; /*wellcms*/
     var admin_access = window.admin_access || false; /*wellcms*/
     if (xn.strpos(u, '/') != -1) {
         var path = xn.substr(u, 0, xn.strrpos(u, '/') + 1);
@@ -581,7 +580,7 @@ xn.url = function (u, extra, url_rewrite) {
     }
     /*wellcms*/
     if(admin_access && on > 1) {
-        r = '/admin' + url_path + r;
+        r = '/admin/' + r;
     }
     if(admin_access && (on == 1 || !on) && xn.strpos(u, 'attach-') != -1) {
         r = '../' + r;
