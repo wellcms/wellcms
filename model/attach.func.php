@@ -519,7 +519,7 @@ function well_attach_create_thumbnail($arr)
     foreach ($attachlist as $val) {
         ++$i;
         if ($val['isimage'] == 1 && $i == 1) {
-            well_image_clip_thumb($val['path'], $tmp_file, $pic_width, $pic_height);
+            array_value($conf, 'upload_resize', 'clip') == 'clip' ? well_image_clip_thumb($val['path'], $tmp_file, $pic_width, $pic_height) : well_image_thumb($val['path'], $tmp_file, $pic_width, $pic_height);
             break;
         }
     }
@@ -611,7 +611,7 @@ function well_save_remote_image($arr)
                     ++$i;
                     if ($i == 1) {
                         // 裁切保存到缩略图目录
-                        well_image_clip_thumb($destpath, $tmp_file, $pic_width, $pic_height);
+                        array_value($conf, 'upload_resize', 'clip') == 'clip' ? well_image_clip_thumb($destpath, $tmp_file, $pic_width, $pic_height) : well_image_thumb($destpath, $tmp_file, $pic_width, $pic_height);
                         well_thread_update($tid, array('icon' => $time));
                         if (empty($save_image)) continue;
                     }

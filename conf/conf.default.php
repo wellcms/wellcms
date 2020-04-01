@@ -99,18 +99,19 @@ return array(
     'tagsize' => 60,    // 显示tag的数量
     'comment_pagesize' => 20,  // 评论显示
     'cache_thread_list_pages' => 10,
-    'online_update_span' => 120,    // 在线更新频度，大站设置的长一些
-    'online_hold_time' => 3600, // 在线的时间
+    'online_update_span' => 120, // 在线更新频度，大站设置的长一些
+    'online_hold_time' => 3600,  // 在线的时间
     'session_delay_update' => 0, // 开启 session 延迟更新，减轻压力，会导致不重要的数据(useragent,url)显示有些延迟，单位为秒。
     'upload_image_width' => 927,    // 上传图片自动缩略的最大宽度
+    'upload_resize' => 'clip', // 上传图片clip裁切 thumb缩略
     'order_default' => 'lastpid',   // 作为BBS时帖子排序
-    'attach_dir_save_rule' => 'Ym',    // 附件存放规则，附件多用：Ymd，附件少：Ym
+    'attach_dir_save_rule' => 'Ym', // 附件存放规则，附件多用：Ymd，附件少：Ym
 
     'update_views_on' => 1,
     'user_create_email_on' => 0,
     'user_create_on' => 1,
     'user_resetpw_on' => 0,
-    'admin_bind_ip' => 0,        // 后台是否绑定 IP
+    'admin_bind_ip' => 0, // 后台是否绑定 IP
     'cdn_on' => 0,
     'api_on' => 0, // 默认关闭，打开后前台部分页面可通过api获取数据
     /* 支持多种 URL 格式：

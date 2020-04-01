@@ -173,7 +173,7 @@
                 qulity: '0.7',  /*压缩比例*/
                 width: picture_size.width || "<?php echo $pic_width; ?>",
                 height: picture_size.height || "<?php echo $pic_height; ?>",
-                action: 'clip',
+                action: "<?php echo array_value($conf, 'upload_resize', 'clip'); ?>",
                 n: n,
                 mode: 1, /*缩略图*/
                 water_image_url:'<?php echo admin_view_path();?>img/water-small.png',
