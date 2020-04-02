@@ -63,6 +63,22 @@ if (typeof console == 'undefined') {
     };
 }
 
+var well = {}; /*避免冲突，wellcms的命名空间*/
+/*从参数里获取数据 defval=0 整数型 空 字符串*/
+well.param = function (key, defval) {
+    var reg = new RegExp('(^|&)' + key + '=([^&]*)(&|$)');
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+        if (defval == 0) {
+            var i = parseInt(r[2]);
+            return isNaN(i) ? 0 : i;
+        } else {
+            return unescape(r[2]);
+        }
+    }
+    return '';
+};
+
 /********************* xn 模拟 php 函数 ************************/
 
 /*var xn = window; /!*browser， 如果要兼容以前的版本，请开启这里。*!/
@@ -548,11 +564,6 @@ xn.parse_url_param = function (url) {
         r = xn.array_merge(r, arr2);
     }
     return r;
-};
-
-/*从参数里获取数据*/
-xn.param = function (key) {
-
 };
 
 /*模拟服务端 url() 函数 extra = {k1:v,k2:v}*/
