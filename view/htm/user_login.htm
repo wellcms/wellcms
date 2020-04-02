@@ -68,6 +68,7 @@
 <script src="<?php echo view_path();?>js/md5.js"></script>
 
 <script>
+var safe_token = '<?php echo GLOBALS('safe_token');?>';
 var jform = $('#form');
 var jemail = $('#email');
 var jpassword = $('#password');
@@ -79,6 +80,7 @@ jform.on('submit', function() {
     jsubmit.button('loading');
 	var postdata = jform.serializeObject();
 	postdata.password = $.md5(postdata.password);
+	postdata.safe_token = safe_token;
 	$.xpost(jform.attr('action'), postdata, function(code, message) {
 		if(code == 0) {
             jsubmit.button(message).delay(1000).location(referer);

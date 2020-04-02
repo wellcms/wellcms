@@ -132,5 +132,6 @@ return array(
     'upload_token' => 0, // 0关闭 1开启上传验证 token
     'message_token' => 0, // 0关闭 1开启发布内容验证 token
     'comment_token' => 0, // 0关闭 1开启评论验证 token
+    'login_token' => 0, // 0关闭 1开启用户登陆 token
 );
 ?>

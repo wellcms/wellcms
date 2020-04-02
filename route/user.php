@@ -125,11 +125,20 @@ if (empty($action)) {
 
         $header['title'] = lang('user_login');
 
+        $safe_token = well_token_set(0);
+
         // hook user_login_get_end.php
 
         include _include(theme_load(10));
 
     } else if ($method == 'POST') {
+
+        // 验证token
+        if (array_value($conf, 'login_token', 0) == 1) {
+            $safe_token = param('safe_token');
+            well_token_verify(0, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+            well_token_set(0);
+        }
 
         // hook user_login_post_start.php
 

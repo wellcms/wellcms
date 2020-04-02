@@ -354,13 +354,16 @@ function url_path()
 }
 
 // 设置token
-function well_token_set($uid)
+function well_token_set($uid = 0)
 {
-    global $conf, $time;
-    if (empty($uid)) return FALSE;
-    $user = user_read_cache($uid);
-    if (empty($user)) return FALSE;
-    $pwd = md5($user['password']);
+    global $conf, $time, $useragent;
+    if ($uid) {
+        $user = user_read_cache($uid);
+        if (empty($user)) return FALSE;
+        $pwd = md5($user['password']);
+    } else {
+        $pwd = md5($useragent);
+    }
     $token = well_token_gen($uid, $pwd);
     setcookie('well_safe_token', $token, $time + 36800, '/', $conf['cookie_domain'], '', TRUE);
     return $token;
@@ -369,10 +372,15 @@ function well_token_set($uid)
 // 验证token 返回 FALSE 验证失败 $life token 生命期
 function well_token_verify($uid, $token, $life = 1800)
 {
-    if (empty($uid) || empty($token)) return FALSE;
-    $user = user_read_cache($uid);
-    if (empty($user)) return FALSE;
-    $pwd = md5($user['password']);
+    global $useragent;
+    if (empty($token)) return FALSE;
+    if ($uid) {
+        $user = user_read_cache($uid);
+        if (empty($user)) return FALSE;
+        $pwd = md5($user['password']);
+    } else {
+        $pwd = md5($useragent);
+    }
     $_token = param('well_safe_token');
     if (empty($_token) || $_token != $token) return FALSE;
     $r = well_token_decrypt($token, $uid, $pwd, $life);
