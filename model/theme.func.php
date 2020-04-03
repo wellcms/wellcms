@@ -116,6 +116,10 @@ function theme_load($type = '', $id = 0, $dir = '')
             // 我的头像
             $pre .= $default_pre .= 'my_avatar.htm';
             break;
+        case '20':
+            // 评论列表公用文件
+            $pre .= $default_pre .= 'comment_list.inc.htm';
+            break;
         // hook theme_load_case_end.php
         default:
             // 首页

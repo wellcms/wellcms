@@ -585,21 +585,19 @@ function pull_plugin_info($dir)
 function get_device()
 {
     $agent = _SERVER('HTTP_USER_AGENT');
-
+    static $cache = array();
+    $md5 = md5($agent);
+    if (isset($cache[$md5])) return $cache[$md5];
     if (strpos($agent, 'MicroMessenger') !== false) {
-
-        return 1;//微信
-
+        $cache[$md5] = 1;//微信
     } elseif (strpos($agent, 'pad') || strpos($agent, 'Pad')) {
-
-        return 2;//pad;
-
+        $cache[$md5] = 2;//pad;
     } elseif (isset($_SERVER['HTTP_X_WAP_PROFILE']) || (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], "wap") || stripos($agent, 'phone') || stripos($agent, 'mobile') || strpos($agent, 'ipod'))) {
-
-        return 3;// 手机
+        $cache[$md5] = 3;// 手机
+    } else {
+        $cache[$md5] = 0;
     }
-
-    return 0;
+    return $cache[$md5];
 }
 
 // random string, no number

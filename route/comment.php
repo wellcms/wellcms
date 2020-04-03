@@ -96,9 +96,8 @@ if ($action == 'create') {
         if ($return_html) {
             $filelist = array();
             ob_start();
-            include _include(APP_PATH . 'view/htm/comment_list.inc.htm');
+            include _include(theme_load(20));
             $s = ob_get_clean();
-
             message(0, $s);
         } else {
             message(0, lang('create_post_successfully'));
