@@ -73,7 +73,7 @@ well.param = function (key, defval) {
             var i = parseInt(r[2]);
             return isNaN(i) ? 0 : i;
         } else {
-            return unescape(r[2]);
+            return decodeURI(r[2]);
         }
     }
     return '';
