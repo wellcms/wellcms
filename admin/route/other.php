@@ -115,23 +115,18 @@ if ($action == 'cache') {
                     //str_replace('.html', '-' . $i, $_forum['url']);
                     //--------------生成栏目索引---------------
                     for ($i = 0; $i < $n; ++$i) {
-                        $forum_xml .= '    <loc>' . url_prefix() . '/' . $dir . str_replace('.html', '-' . $i, $_forum['url']) . '.xml</loc>
-    <lastmod>' . $lastmod . '</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>' . "\r\n";
+                        $forum_xml .= "\r\n<sitemap>
+    <loc>" . url_prefix() . '/' . $dir . str_replace('.html', '-' . $i, $_forum['url']) . '.xml</loc>
+</sitemap>';
                     }
 
                     if ($forum_xml) {
                         $forum_xml = trim($forum_xml, "\r\n");
                         $forum_map = <<<EOT
 <?xml version="1.0" encoding="utf-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<sitemapindex>
-    <sitemap>
-{$forum_xml}
-    </sitemap>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{$forum_xml}  
 </sitemapindex>
-</urlset>
 EOT;
 
                         file_put_contents_try(APP_PATH . $setting['map'] . '/index.xml', $forum_map);
