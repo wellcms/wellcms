@@ -19,6 +19,25 @@ function xn_log_post_data()
     xn_log(xn_json_encode($post), 'post_data');
 }
 
+// 捕获异常 (线上模式不抛出异常) 兼容其他开发者书写习惯throw new Exception('Message') / 正常使用 message('code', 'message') 抛出异常
+function exception_handler($message, $code = 0)
+{
+    if (IN_CMD) {
+        if (is_array($message) || is_object($message)) {
+            print_r($message);
+        } else {
+            echo $message;
+        }
+        exit;
+    } else {
+        if (defined('MESSAGE_HTM_PATH')) {
+            include _include(MESSAGE_HTM_PATH);
+        } else {
+            include _include(APP_PATH . "view/htm/message.htm");
+        }
+    }
+}
+
 // 中断流程很危险！可能会导致数据问题，线上模式不允许中断流程！
 function error_handle($errno, $errstr, $errfile, $errline)
 {

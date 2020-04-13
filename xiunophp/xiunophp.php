@@ -73,6 +73,9 @@ $useragent = _SERVER('HTTP_USER_AGENT');
 $errno = 0;
 $errstr = '';
 
+// 捕获异常 兼容其他开发者书写习惯throw new Exception('Message') / 正常使用 message('code', 'message') 抛出异常
+DEBUG AND set_exception_handler('exception_handler');
+
 // error_handle
 // register_shutdown_function('xn_shutdown_handle');
 DEBUG AND set_error_handler('error_handle', -1);
