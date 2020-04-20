@@ -115,9 +115,9 @@ return array(
     'cdn_on' => 0,
     'api_on' => 0, // 默认关闭，打开后前台部分页面可通过api获取数据
     /* 支持多种 URL 格式：
-        0: ?read-create-1.htm
-        1: read-create-1.htm
-        2: ?/read/create/1
+        0: ?read-create-1.html
+        1: read-create-1.html
+        2: /read/create/1.html
         3: /read/create/1
     */
     'url_rewrite_on' => 0,

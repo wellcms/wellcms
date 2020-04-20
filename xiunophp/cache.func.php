@@ -114,8 +114,6 @@ function cache_truncate($c = NULL) {
 	$cache = $_SERVER['cache'];
 	$c = $c ? $c : $cache;
 	if(!$c) return FALSE;
-	
-	//$k = $c->cachepre.$k;
 	$r = $c->truncate();
 	return $r;
 }
@@ -133,63 +131,6 @@ function cookie_cache_clear($key, $cookie = TRUE)
     global $conf, $time;
     $cookie == TRUE AND setcookie($key, '', $time - 86400, $conf['cookie_path'], $conf['cookie_domain']);
     $conf['cache']['type'] != 'mysql' AND cache_delete($key);
-}
-
-// set storage
-function storage_set($key, $value, $type = 0)
-{
-    $html = <<<EOT
-    <script language="javascript">
-        if (!window.localStorage || !window.sessionStorage || typeof '{$value}' == 'undefined') return false;
-        var type = {$type};
-        var value = JSON.stringify('{$value}');
-        if (type == 0) {
-            /*Permanent storage*/
-            var storage = window.localStorage;
-        } else {
-            /*Temporary storage*/
-            var storage = window.sessionStorage;
-        }
-        storage.setItem('{$key}', value);
-    </script>
-EOT;
-    echo $html;
-}
-
-// delete storage by key
-function storage_delete($key, $type = 0)
-{
-    $html = <<<EOT
-    <script language="javascript">
-        if (!window.localStorage || !window.sessionStorage || typeof '{$key}' == 'undefined') return false;
-        var type = {$type};
-        if (type == 0) {
-            var storage = window.localStorage;
-        } else {
-            var storage = window.sessionStorage;
-        }
-        storage.removeItem('{$key}');
-    </script>
-EOT;
-    echo $html;
-}
-
-// clear storage
-function storage_clear($type = 0)
-{
-    $html = <<<EOT
-    <script language="javascript">
-        if (!window.localStorage || !window.sessionStorage) return false;
-        var type = {$type};
-        if (type == 0) {
-            var storage = window.localStorage;
-        } else {
-            var storage = window.sessionStorage;
-        }
-        storage.clear();
-    </script>
-EOT;
-    echo $html;
 }
 
 ?>

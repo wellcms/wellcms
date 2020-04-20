@@ -911,11 +911,11 @@ function file_name($path)
 function http_url_path()
 {
     $port = _SERVER('SERVER_PORT');
-    //$portadd = ($port == 80 ? '' : ':'.$port);
-    $host = _SERVER('HTTP_HOST');  // host 里包含 port
+    $host = _SERVER('HTTP_HOST');
     $https = strtolower(_SERVER('HTTPS', 'off'));
     $proto = strtolower(_SERVER('HTTP_X_FORWARDED_PROTO'));
-    $path = substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
+    $n = strrpos($_SERVER['PHP_SELF'], '/');
+    $path = $n > 1 ? substr($_SERVER['PHP_SELF'], 0, $n) : '';
     $http = (($port == 443) || $proto == 'https' || ($https && $https != 'off')) ? 'https' : 'http';
     return "$http://$host$path/";
 }
@@ -980,11 +980,10 @@ function xn_url_parse($request_url)
 
     // 是否开启 /user/login 这种格式的 URL
     $conf = _SERVER('conf');
-    if (!empty($conf['url_rewrite_on']) && $conf['url_rewrite_on'] == 3) {
-        $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']) + $r;
-    }
+    if (!empty($conf['url_rewrite_on']) && in_array($conf['url_rewrite_on'], array(2, 3))) $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']) + $r;
 
     isset($r[0]) AND $r[0] == 'index.php' AND $r[0] = 'index';
+
     return $r;
 }
 
@@ -1010,7 +1009,7 @@ function xn_url_add_arg($url, $k, $v)
  */
 function xn_url_parse_path_format($s)
 {
-    $get = array();
+    $s = str_replace('.html', '', $s);
     substr($s, 0, 1) == '/' AND $s = substr($s, 1);
     $arr = explode('/', $s);
     $get = $arr;
@@ -1170,7 +1169,6 @@ function xn_rand($n = 16)
 // 检测文件是否可写，兼容 windows
 function xn_is_writable($file)
 {
-
     if (PHP_OS != 'WINNT') {
         return is_writable($file);
     } else {

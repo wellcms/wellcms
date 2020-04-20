@@ -31,7 +31,7 @@ function url($url, $extra = array())
     } elseif ($conf['url_rewrite_on'] == 1) {
         $r = $path . $query . '.html';
     } elseif ($conf['url_rewrite_on'] == 2) {
-        $r = $conf['path'] . $path . '?' . str_replace('-', '/', $query);
+        $r = $conf['path'] . $path . str_replace('-', '/', $query) . '.html';
     } elseif ($conf['url_rewrite_on'] == 3) {
         $r = $conf['path'] . $path . str_replace('-', '/', $query);
     }
