@@ -235,7 +235,7 @@ function xn_substr($s, $start, $len)
 // txt 转换到 html
 function xn_txt_to_html($s)
 {
-    $s = htmlspecialchars($s);
+    $s = htmlspecialchars($s, ENT_QUOTES);
     $s = str_replace(" ", '&nbsp;', $s);
     $s = str_replace("\t", ' &nbsp; &nbsp; &nbsp; &nbsp;', $s);
     $s = str_replace("\r\n", "\n", $s);

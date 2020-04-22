@@ -67,6 +67,9 @@ function comment_create($post)
 
     data_message_format($post);
 
+    // 格式化后为空不入库
+    if (empty($post['message'])) return FALSE;
+    
     $pid = comment__create($post);
     if ($pid === FALSE) return FALSE;
 

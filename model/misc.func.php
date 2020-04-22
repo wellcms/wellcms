@@ -427,13 +427,13 @@ function format_number($number)
 //---------------表单安全过滤---------------
 /*
  * 专门处理表单多维数组安全过滤 指定最终级一维数组key为字符串安全处理
-    $string 为需要按照字符串处理的key数组 array('key')
-    如需按照int型处理时 $string 数组为空或省略
-    $string = array('name','message','brief');
-	well_param(1, array(), $string);
+    $filter 为需要按照字符串处理的key数组 array('key1','key2')
+    如需按照int型处理时 $filter 数组为空或省略
+    $filter = array('name','message','brief');
+	well_param(1, array(), $filter);
     well_param('warm_up', array(), array('name','message','brief'));
 */
-function well_param($key, $defval = '', $string = array(), $htmlspecialchars = TRUE, $addslashes = FALSE)
+function well_param($key, $defval = '', $filter = array(), $htmlspecialchars = TRUE, $addslashes = FALSE)
 {
     if (!isset($_REQUEST[$key]) || ($key === 0 && empty($_REQUEST[$key]))) {
         if (is_array($defval)) {
@@ -443,19 +443,19 @@ function well_param($key, $defval = '', $string = array(), $htmlspecialchars = T
         }
     }
     $val = $_REQUEST[$key];
-    $val = well_param_force($val, $string, $htmlspecialchars, $addslashes);
+    $val = well_param_force($val, $filter, $htmlspecialchars, $addslashes);
     return $val;
 }
 
-function well_param_force($val, $string, $htmlspecialchars, $addslashes)
+function well_param_force($val, $filter, $htmlspecialchars, $addslashes)
 {
     if (empty($val)) return array();
 
     foreach ($val as $k => &$v) {
         if (is_array($v)) {
-            $v = well_mulit_array_safe($v, array(), $string, $htmlspecialchars, $addslashes);
+            $v = well_mulit_array_safe($v, array(), $filter, $htmlspecialchars, $addslashes);
         } else {
-            $defval = well_safe_defval($k, $string);
+            $defval = well_safe_defval($k, $filter);
             $v = well_safe($v, $defval, $htmlspecialchars, $addslashes);
         }
     }
@@ -463,15 +463,15 @@ function well_param_force($val, $string, $htmlspecialchars, $addslashes)
     return $val;
 }
 
-// 遍历多维数组安全过滤 $string一维数组中能找到的一律按照字符处理
-function well_mulit_array_safe($array, $arr = array(), $string, $htmlspecialchars, $addslashes)
+// 遍历多维数组安全过滤 $filter一维数组中能找到的一律按照字符处理
+function well_mulit_array_safe($array, $arr = array(), $filter, $htmlspecialchars, $addslashes)
 {
     if (is_array($array)) {
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                well_mulit_array_safe($value, $arr[$key], $string, $htmlspecialchars, $addslashes);
+                well_mulit_array_safe($value, $arr[$key], $filter, $htmlspecialchars, $addslashes);
             } else {
-                $defval = well_safe_defval($key, $string);
+                $defval = well_safe_defval($key, $filter);
                 $arr[$key] = well_safe($value, $defval, $htmlspecialchars, $addslashes);
             }
         }
@@ -480,12 +480,12 @@ function well_mulit_array_safe($array, $arr = array(), $string, $htmlspecialchar
 }
 
 // 返回1则按照字符串处理
-function well_safe_defval($key, $string)
+function well_safe_defval($key, $filter)
 {
     $defval = 0;
-    if (is_array($string)) {
+    if (is_array($filter)) {
         // 限定的 key值 按照字符串处理
-        $defval = in_array($key, $string) ? 1 : 0;
+        $defval = in_array($key, $filter) ? 1 : 0;
     }
     return $defval;
 }
@@ -499,24 +499,24 @@ function well_safe($val, $defval, $htmlspecialchars, $addslashes)
         //$val = trim($val);
         $addslashes AND empty($get_magic_quotes_gpc) && $val = addslashes($val);
         empty($addslashes) AND $get_magic_quotes_gpc && $val = stripslashes($val);
-        $htmlspecialchars AND $val = htmlspecialchars($val);
+        $htmlspecialchars AND $val = htmlspecialchars($val, ENT_QUOTES);
     } else {
         $val = intval($val);
     }
     return $val;
 }
 
-// 专门处理表单多维数组安全过滤 哪些表单限定数字提醒
+// 专门处理表单多维数组安全过滤 哪些表单限定数字
 // well_mulit_array_int(array(), array('id','fid'));
-function well_mulit_array_int($array = array(), $string = array())
+function well_mulit_array_int($array = array(), $filter = array())
 {
     if (empty($array)) return;
 
     foreach ($array as $key => $value) {
         if (is_array($value)) {
-            well_mulit_array_int($value, $string);
+            well_mulit_array_int($value, $filter);
         } else {
-            if (in_array($key, $string) && !is_numeric($value)) message(1, lang('well_please_fill_in_the_numbers'));
+            if (in_array($key, $filter) && !is_numeric($value)) message(1, lang('type_error'));
         }
     }
 }
@@ -823,7 +823,7 @@ function twenty_four_expired($time = NULL)
 
 /**
  * @param $url 提交地址
- * @param string $post POST数组
+ * @param string $post POST数组 / 空为GET获取数据 / $post='GET'获取连续跳转最终URL
  * @param string $cookie cookie
  * @param int $timeout 超时
  * @param int $ms 设为1是毫秒
@@ -852,6 +852,8 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
 
     is_array($cookie) AND $cookie = http_build_query($cookie);
     $curl = curl_init();
+    // 返回执行结果，不输出
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     //php5.5跟php5.6中的CURLOPT_SAFE_UPLOAD的默认值不同
     if (class_exists('\CURLFile')) {
         curl_setopt($curl, CURLOPT_SAFE_UPLOAD, true);
@@ -860,8 +862,22 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     }
     // 设定请求的RUL
     curl_setopt($curl, CURLOPT_URL, $url);
-    // 设定返回信息中包含响应信息头 启用时会将头文件的信息作为数据流输出
-    curl_setopt($curl, CURLOPT_HEADER, false);
+    // 设定返回信息中包含响应信息头
+    if (ini_get('safe_mode') && ini_get('open_basedir')) {
+        // $post参数必须为GET
+        if ($post == 'GET') {
+            // 安全模式时将头文件的信息作为数据流输出
+            curl_setopt($curl, CURLOPT_HEADER, true);
+            // 安全模式采用连续抓取
+            curl_setopt($curl, CURLOPT_NOBODY, true);
+        }
+    } else {
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        // 允许跳转10次
+        curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+        // 使用自动跳转，返回最后的Location
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+    }
     curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
     // 兼容HTTPS
     if (stripos($url, 'https://') !== FALSE) {
@@ -877,15 +893,12 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
 
     if ($post) {
+        // POST
         curl_setopt($curl, CURLOPT_POST, true);
-        // 使用自动跳转, 安全模式不允许
-        (!ini_get('safe_mode') && !ini_get('open_basedir')) && curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         // 自动设置Referer
         curl_setopt($curl, CURLOPT_AUTOREFERER, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
     }
-
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
     if ($ms) {
         curl_setopt($curl, CURLOPT_NOSIGNAL, true); // 设置毫秒超时
@@ -896,7 +909,10 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     //优先解析 IPv6 超时后IPv4
     //curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     curl_setopt($curl, CURLOPT_ENCODING, 'gzip');
+    // 返回执行结果
     $output = curl_exec($curl);
+    // 有效URL，输出URL非URL页面内容 CURLOPT_RETURNTRANSFER 必须为false
+    $post == 'GET' AND $output = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
     curl_close($curl);
     return $output;
 }

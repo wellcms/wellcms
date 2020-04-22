@@ -189,10 +189,10 @@ function data_message_format(&$post)
     // hook model_data_message_format_beofre.php
 
     // 格式转换: 类型，0: html, 1: txt; 2: markdown; 3: ubb
-    //$post['message'] = htmlspecialchars($post['message'], ENT_QUOTES); // html标签都会被转换
+    $post['message'] = htmlspecialchars($post['message'], ENT_QUOTES); // html标签全部转换
 
-    // 入库的时候进行转换
-    $post['doctype'] == 0 && $post['message'] = (group_access($post['gid'], 'managecontent') ? $post['message'] : xn_html_safe($post['message']));
+    // 入库过滤 非管理员全部过滤
+    $post['doctype'] == 0 && $post['message'] = ((isset($post['gid']) AND $post['gid'] == 1) ? $post['message'] : xn_html_safe($post['message']));
     $post['doctype'] == 1 && $post['message'] = xn_txt_to_html($post['message']);
 
     // hook model_data_message_format_after.php

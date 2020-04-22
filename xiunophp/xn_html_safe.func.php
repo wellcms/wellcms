@@ -1394,8 +1394,64 @@ class HTML_White
     private $listTags = array('dir', 'menu', 'ol', 'ul', 'dl');
     private $_liStack = array();
     private $_listScope = 0;
-
+    protected $protoRegexps = array();
+    protected $cssRegexps = array();
+    protected $allowTags = array();
     private $singleTags = array('area', 'br', 'img', 'input', 'hr', 'wbr');
+    public $deleteTags = array(
+        'applet', 'base',   'basefont', 'bgsound', 'blink',  'body',
+        'embed',  'frame',  'frameset', 'head',    'html',   'ilayer',
+        'iframe', 'layer',  'link',     'meta',    'object', 'style',
+        'title',  'script',
+    );
+    public $deleteTagsContent = array('script', 'style', 'title', 'xml', );
+    /**
+     * Type of protocols filtering ('white' or 'black')
+     *
+     * @var string
+     */
+    public $protocolFiltering = 'white';
+    /**
+     * List of "dangerous" protocols (used for blacklist-filtering)
+     *
+     * @var array
+     */
+    public $blackProtocols = array(
+        'about',   'chrome',     'data',       'disk',     'hcp',
+        'help',    'javascript', 'livescript', 'lynxcgi',  'lynxexec',
+        'ms-help', 'ms-its',     'mhtml',      'mocha',    'opera',
+        'res',     'resource',   'shell',      'vbscript', 'view-source',
+        'vnd.ms.radio',          'wysiwyg',
+    );
+    /**
+     * List of "safe" protocols (used for whitelist-filtering)
+     *
+     * @var array
+     */
+    public $whiteProtocols = array(
+        'ed2k',   'file', 'ftp',  'gopher', 'http',  'https',
+        'irc',    'mailto', 'news', 'nntp', 'telnet', 'webcal',
+        'xmpp',   'callto',
+    );
+    /**
+     * List of attributes that can contain protocols
+     *
+     * @var array
+     */
+    public $protocolAttributes = array(
+        'action', 'background', 'codebase', 'dynsrc', 'href', 'lowsrc', 'src',
+    );
+    /**
+     * List of dangerous attributes
+     *
+     * @var array
+     */
+    public $attributes = array('dynsrc', 'id', 'name', );
+    public $cssKeywords = array(
+        'absolute', 'behavior',       'behaviour',   'content', 'expression',
+        'fixed',    'include-source', 'moz-binding',
+    );
+
     private $noClose = array();
 
     private $white_tag = array();
@@ -1409,6 +1465,20 @@ class HTML_White
         $this->white_css = $white_css;
         $this->white_value = $white_value;
         $this->args = $args;
+
+        //making regular expressions based on Proto & CSS arrays
+        foreach ($this->blackProtocols as $proto) {
+            $preg = "/[\s\x01-\x1F]*";
+            for ($i=0; $i<strlen($proto); $i++) {
+                $preg .= $proto{$i} . "[\s\x01-\x1F]*";
+            }
+            $preg .= ":/i";
+            $this->protoRegexps[] = $preg;
+        }
+
+        foreach ($this->cssKeywords as $css) {
+            $this->cssRegexps[] = '/' . $css . '/i';
+        }
     }
 
     public function parse($doc)
@@ -1458,6 +1528,21 @@ class HTML_White
             return true;
         }
         foreach ($attrs as $name => $value) {
+
+            $name = strtolower($name);
+
+            if (strpos($name, 'on') === 0) {
+                continue;
+            }
+
+            if (strpos($name, 'data') === 0) {
+                continue;
+            }
+
+            if (in_array($name, $this->attributes)) {
+                continue;
+            }
+
             if ($name == 'style') {
                 // removes insignificant backslahes
                 $value = str_replace("\\", '', $value);
@@ -1473,7 +1558,9 @@ class HTML_White
                 $value = str_replace('&', '&amp;', $value);
 
                 preg_match_all('#\s*([\w\-]+)\s*:\s*([^;]+)\s*;?\s*#is', $value, $m);
+
                 $csskv = !empty($m[1]) && !empty($m[2]) ? array_combine($m[1], $m[2]) : array();
+
                 foreach ($csskv as $cssname => &$cssvalue) {
                     if (!isset($this->white_css[$cssname])) {
                         unset($csskv[$cssname]);
@@ -1517,6 +1604,18 @@ class HTML_White
                     $value .= "$k:$v; ";
                 }
                 $value = substr($value, 0, -1);
+
+                foreach ($this->cssRegexps as $css) {
+                    if (preg_match($css, $value)) {
+                        continue 2;
+                    }
+                }
+
+                foreach ($this->protoRegexps as $proto) {
+                    if (preg_match($proto, $value)) {
+                        continue 2;
+                    }
+                }
 
                 // 过滤危险 iframe / embed src=
             } elseif ($name == 'src') {
@@ -1568,12 +1667,30 @@ class HTML_White
                 continue;
             }
 
-            if (($value === TRUE) || (is_null($value))) {
+            if (($value === true) || (is_null($value))) {
                 $value = $name;
             }
 
             $tempval = preg_replace_callback('/&#(\d+);?/m', array($this, 'chr_callback'), $value); //"'
             $tempval = preg_replace_callback('/&#x([0-9a-f]+);?/mi', array($this, 'chr_hexdec_callback'), $tempval);
+
+            if ((in_array($name, $this->protocolAttributes)) && (strpos($tempval, ':') !== false)
+            ) {
+                if ($this->protocolFiltering == 'black') {
+                    foreach ($this->protoRegexps as $proto) {
+                        if (preg_match($proto, $tempval)) {
+                            continue 2;
+                        }
+                    }
+                } else {
+                    $_tempval = explode(':', $tempval);
+                    $proto    = $_tempval[0];
+
+                    if (!in_array($proto, $this->whiteProtocols)) {
+                        continue;
+                    }
+                }
+            }
 
             $value = str_replace("\"", "&quot;", $value);
             if ($value == '' && $name == 'style') {
@@ -1582,6 +1699,7 @@ class HTML_White
                 $this->_xhtml .= ' ' . $name . '="' . $value . '"';
             }
         }
+        return true;
     }
 
     private function chr_callback($matchs)
@@ -1600,6 +1718,19 @@ class HTML_White
     {
         $name = strtolower($name);
 
+        // 删除危险标签内容
+        if (in_array($name, $this->deleteTagsContent)) {
+            array_push($this->_dcStack, $name);
+            $this->_dcCounter[$name] = isset($this->_dcCounter[$name])
+                ? $this->_dcCounter[$name]+1 : 1;
+        }
+
+        // 删除危险标签
+        if (in_array($name, $this->deleteTags) && !in_array($name, $this->allowTags)
+        ) {
+            return true;
+        }
+
         // 删除标签和内容
         if (!in_array($name, $this->white_tag)) {
             array_push($this->_dcStack, $name);
@@ -1607,6 +1738,13 @@ class HTML_White
         }
 
         if (count($this->_dcStack) != 0) {
+            return true;
+        }
+
+        if (!preg_match("/^[a-z0-9]+$/i", $name)) {
+            if (preg_match("!(?:\@|://)!i", $name)) {
+                $this->_xhtml .= '&lt;' . $name . '&gt;';
+            }
             return true;
         }
 
@@ -1655,11 +1793,15 @@ class HTML_White
 
         $name = strtolower($name);
 
-        if (isset($this->_dcCounter[$name]) && ($this->_dcCounter[$name] > 0) && (!in_array($name, $this->white_tag))) {
+        if (isset($this->_dcCounter[$name])
+            && ($this->_dcCounter[$name] > 0)
+            && (in_array($name, $this->deleteTagsContent))
+        ) {
             while ($name != ($tag = array_pop($this->_dcStack))) {
-                $this->_dcCounter[$tag]--;
+                --$this->_dcCounter[$tag];
             }
-            $this->_dcCounter[$name]--;
+
+            --$this->_dcCounter[$name];
         }
 
         if (count($this->_dcStack) != 0) {
@@ -1695,10 +1837,10 @@ class HTML_White
             $this->_xhtml .= '</' . $tag . '>';
         }
 
-        $this->_counter[$tag]--;
+        --$this->_counter[$tag];
 
         if (in_array($tag, $this->listTags)) {
-            $this->_listScope--;
+            --$this->_listScope;
         }
 
         if ($tag == 'li') {

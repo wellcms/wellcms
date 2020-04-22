@@ -111,7 +111,7 @@ return array(
     'user_create_email_on' => 0,
     'user_create_on' => 1,
     'user_resetpw_on' => 0,
-    'admin_bind_ip' => 0, // 后台是否绑定 IP
+    'admin_bind_ip' => 1, // 后台是否绑定 IP 0关闭 1启用
     'cdn_on' => 0,
     'api_on' => 0, // 默认关闭，打开后前台部分页面可通过api获取数据
     /* 支持多种 URL 格式：
@@ -129,9 +129,9 @@ return array(
     'installed' => 0,
     'compress' => 1, // 代码压缩 0关闭 1仅压缩php、html代码(不压缩js代码) 2压缩全部代码 如果启用压缩出现错误，请关闭，删除html中的所有注释，并且js代码按照英文分号结束的地方加上分号;
     // token验证，开启后内容提交和上传都需要token，没有token无法操作，app建议开启，有效阻止抓包伪造提交等。开启后相当于单线程，仅限当前页有效。
-    'upload_token' => 0, // 0关闭 1开启上传验证 token
+    'upload_token' => 1, // 0关闭 1开启上传验证 token
     'message_token' => 0, // 0关闭 1开启发布内容验证 token
     'comment_token' => 0, // 0关闭 1开启评论验证 token
-    'login_token' => 0, // 0关闭 1开启用户登陆 token
+    'login_token' => 1, // 0关闭 1开启用户登陆 token
 );
 ?>
