@@ -974,6 +974,104 @@ function search_directory($path)
     }
 }
 
+// 一维数组转字符串 $url为urlencode转码GET参数字符串 $sign待签名字符串
+function well_array_to_string($arr, &$url = '', &$sign = '')
+{
+    if (count($arr) == count($arr, 1)) throw new Exception('Does not support multi-dimensional array to string');
+
+    // 注销签名
+    unset($arr['sign']);
+
+    // 排序
+    ksort($arr);
+    reset($arr);
+
+    // 转字符串做签名
+    $url = '';
+    $sign = '';
+    foreach ($arr as $key => $val) {
+        if (empty($val) || is_array($val)) continue;
+        $url .= $key . '=' . urlencode($val) . '&';
+        $sign .= $key . '=' . $val . '&';
+    }
+    $url = substr($url, 0, -1);
+    $sign = substr($sign, 0, -1);
+}
+
+// 私钥生成签名
+function well_rsa_create_sign($data, $key, $sign_type = 'RSA')
+{
+    if (function_exists('openssl_sign')) message(1, 'OpenSSL extension is not enabled');
+
+    if (!defined('OPENSSL_ALGO_SHA256')) message(1, 'Only versions above PHP 5.4.8 support SHA256');
+
+    if (empty($key)) throw new Exception('Private key is empty');
+    $key = wordwrap($key, 64, "\n", true);
+    if (empty($key)) throw new Exception('Private Error');
+
+    $key = "-----BEGIN RSA PRIVATE KEY-----\n$key\n-----END RSA PRIVATE KEY-----";
+
+    if ($sign_type == 'RSA2') {
+        openssl_sign($data, $sign, $key, OPENSSL_ALGO_SHA256);
+    } else {
+        openssl_sign($data, $sign, $key, OPENSSL_ALGO_SHA1);
+    }
+
+    // 加密
+    return base64_encode($sign);
+}
+
+// 公钥验证签名
+function well_rsa_verify_sign($data, $sign, $key, $sign_type = 'RSA')
+{
+    if (empty($key)) throw new Exception('Public key is empty');
+    $key = wordwrap($key, 64, "\n", true);
+    if (empty($key)) throw new Exception('Public Error');
+
+    $key = "-----BEGIN PUBLIC KEY-----\n$key\n-----END PUBLIC KEY-----";
+
+    // 签名正确返回1 签名不正确返回0 错误-1
+    if ($sign_type == 'RSA2') {
+        $result = openssl_verify($data, base64_decode($sign), $key, OPENSSL_ALGO_SHA256);
+    } else {
+        $result = openssl_verify($data, base64_decode($sign), $key, OPENSSL_ALGO_SHA1);
+    }
+
+    return $result === 1;
+}
+
+// Array to xml array('appid' => 'appid', 'code' => 'success')
+function well_array_to_xml($arr)
+{
+    if (!is_array($arr) || empty($arr)) throw new Exception('Array Error');
+
+    $xml = "<xml>";
+    foreach ($arr as $key => $val) {
+        if (is_numeric($val)) {
+            $xml .= "<" . $key . ">" . $val . "</" . $key . ">";
+        } else {
+            $xml .= "<" . $key . "><![CDATA[" . $val . "]]></" . $key . ">";
+        }
+    }
+    $xml .= "</xml>";
+    return $xml;
+}
+
+// Xml to array
+function well_xml_to_array($xml)
+{
+    if (!$xml) throw new Exception('XML error');
+
+    $old = libxml_disable_entity_loader(true);
+
+    // xml解析
+    $result = (array)simplexml_load_string($xml, null, LIBXML_NOCDATA | LIBXML_COMPACT);
+    // 恢复旧值
+    if ($old === FALSE) libxml_disable_entity_loader(false);
+
+    return $result;
+}
+
 // hook model_misc_end.php
 
 ?>
