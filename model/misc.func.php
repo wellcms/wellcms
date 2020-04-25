@@ -1010,9 +1010,8 @@ function rsa_create_sign($data, $key, $sign_type = 'RSA')
     
     if (!defined('OPENSSL_ALGO_SHA256')) throw new Exception('Only versions above PHP 5.4.8 support SHA256');
 
-    if (empty($key)) throw new Exception('Private key is empty');
     $key = wordwrap($key, 64, "\n", true);
-    if (empty($key)) throw new Exception('Private Error');
+    if ($key === FALSE) throw new Exception('Private Key Error');
 
     $key = "-----BEGIN RSA PRIVATE KEY-----\n$key\n-----END RSA PRIVATE KEY-----";
 
@@ -1029,9 +1028,8 @@ function rsa_create_sign($data, $key, $sign_type = 'RSA')
 // 公钥验证签名
 function rsa_verify_sign($data, $sign, $key, $sign_type = 'RSA')
 {
-    if (empty($key)) throw new Exception('Public key is empty');
     $key = wordwrap($key, 64, "\n", true);
-    if (empty($key)) throw new Exception('Public Error');
+    if ($key === FALSE) throw new Exception('Public Key Error');
 
     $key = "-----BEGIN PUBLIC KEY-----\n$key\n-----END PUBLIC KEY-----";
 
