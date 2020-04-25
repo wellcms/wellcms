@@ -1006,9 +1006,9 @@ function array_to_string($arr, &$sign = '', &$url = '')
 // 私钥生成签名
 function rsa_create_sign($data, $key, $sign_type = 'RSA')
 {
-    if (function_exists('openssl_sign')) message(1, 'OpenSSL extension is not enabled');
-
-    if (!defined('OPENSSL_ALGO_SHA256')) message(1, 'Only versions above PHP 5.4.8 support SHA256');
+    if (!function_exists('openssl_sign')) throw new Exception('OpenSSL extension is not enabled');
+    
+    if (!defined('OPENSSL_ALGO_SHA256')) throw new Exception('Only versions above PHP 5.4.8 support SHA256');
 
     if (empty($key)) throw new Exception('Private key is empty');
     $key = wordwrap($key, 64, "\n", true);
