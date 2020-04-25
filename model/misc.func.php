@@ -524,16 +524,21 @@ function well_mulit_array_int($array = array(), $filter = array())
 //---------------表单安全过滤结束---------------
 
 /*
- * @param $str 转换字符
- * @param string $type 转换编码
+ * @param $str 转换字符串
+ * @param string $charset 转换编码
+ * @param string $original 字符串原始编码
  * @return string
  */
-function code_conversion($str, $type = 'utf-8')
+function code_conversion($str, $charset = 'utf-8', $original = '')
 {
-    $encoding_list = $type == 'utf-8' ? array('gb2312', 'big5', 'ascii', 'gbk', 'utf-16', 'ucs-2', 'utf-8') : array('utf-8', 'utf-16', 'ascii', 'gb2312', 'gbk');
-    $encoding = mb_detect_encoding($str, $encoding_list);
-
-    return $encoding === FALSE ? mb_convert_encoding($str, $type, $encoding) : iconv($encoding, $type, $str);
+    if (!$original) {
+        $list = array('gb2312', 'big5', 'ascii', 'gbk', 'utf-16', 'ucs-2', 'utf-8');
+        $encoding_list = $charset == 'utf-8' ? $list : array('utf-8', 'utf-16', 'ascii', 'gb2312', 'gbk');
+        $encoding = mb_detect_encoding($str, $encoding_list);
+        // 强制转换
+        $encoding = in_array($encoding, $list) ? $encoding : $charset;
+    }
+    return $original ? iconv($original, $charset . "//IGNORE", $str) : mb_convert_encoding($str, $charset, $encoding);
 }
 
 // 过滤用户昵称里面的特殊字符
@@ -888,7 +893,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
         curl_setopt($curl, CURLOPT_SSLVERSION, true);
     }
 
-    $header = array('Content-type: application/x-www-form-urlencoded', 'X-Requested-With: XMLHttpRequest');
+    $header = array('Content-type: application/x-www-form-urlencoded;charset=UTF-8', 'X-Requested-With: XMLHttpRequest');
     $cookie AND $header[] = "Cookie: $cookie";
     curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
 
@@ -974,8 +979,8 @@ function search_directory($path)
     }
 }
 
-// 一维数组转字符串 $url为urlencode转码GET参数字符串 $sign待签名字符串
-function well_array_to_string($arr, &$url = '', &$sign = '')
+// 一维数组转字符串 $sign待签名字符串 $url为urlencode转码GET参数字符串
+function array_to_string($arr, &$sign = '', &$url = '')
 {
     if (count($arr) == count($arr, 1)) throw new Exception('Does not support multi-dimensional array to string');
 
@@ -999,7 +1004,7 @@ function well_array_to_string($arr, &$url = '', &$sign = '')
 }
 
 // 私钥生成签名
-function well_rsa_create_sign($data, $key, $sign_type = 'RSA')
+function rsa_create_sign($data, $key, $sign_type = 'RSA')
 {
     if (function_exists('openssl_sign')) message(1, 'OpenSSL extension is not enabled');
 
@@ -1022,7 +1027,7 @@ function well_rsa_create_sign($data, $key, $sign_type = 'RSA')
 }
 
 // 公钥验证签名
-function well_rsa_verify_sign($data, $sign, $key, $sign_type = 'RSA')
+function rsa_verify_sign($data, $sign, $key, $sign_type = 'RSA')
 {
     if (empty($key)) throw new Exception('Public key is empty');
     $key = wordwrap($key, 64, "\n", true);
@@ -1041,7 +1046,7 @@ function well_rsa_verify_sign($data, $sign, $key, $sign_type = 'RSA')
 }
 
 // Array to xml array('appid' => 'appid', 'code' => 'success')
-function well_array_to_xml($arr)
+function array_to_xml($arr)
 {
     if (!is_array($arr) || empty($arr)) throw new Exception('Array Error');
 
@@ -1058,7 +1063,7 @@ function well_array_to_xml($arr)
 }
 
 // Xml to array
-function well_xml_to_array($xml)
+function xml_to_array($xml)
 {
     if (!$xml) throw new Exception('XML error');
 
