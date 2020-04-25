@@ -531,14 +531,14 @@ function well_mulit_array_int($array = array(), $filter = array())
  */
 function code_conversion($str, $charset = 'utf-8', $original = '')
 {
-    if (!$original) {
-        $list = array('gb2312', 'big5', 'ascii', 'gbk', 'utf-16', 'ucs-2', 'utf-8');
-        $encoding_list = $charset == 'utf-8' ? $list : array('utf-8', 'utf-16', 'ascii', 'gb2312', 'gbk');
-        $encoding = mb_detect_encoding($str, $encoding_list);
-        // 强制转换
-        $encoding = in_array($encoding, $list) ? $encoding : $charset;
-    }
-    return $original ? iconv($original, $charset . "//IGNORE", $str) : mb_convert_encoding($str, $charset, $encoding);
+    if ($original) return iconv($original, $charset . "//IGNORE", $str);
+
+    $list = array('gb2312', 'big5', 'ascii', 'gbk', 'utf-16', 'ucs-2', 'utf-8');
+    $encoding_list = $charset == 'utf-8' ? $list : array('utf-8', 'utf-16', 'ascii', 'gb2312', 'gbk');
+    $encoding = mb_detect_encoding($str, $encoding_list);
+    // 强制转换
+    $encoding = in_array($encoding, $list) ? $encoding : $charset;
+    return mb_convert_encoding($str, $charset, $encoding);
 }
 
 // 过滤用户昵称里面的特殊字符
