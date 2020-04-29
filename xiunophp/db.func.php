@@ -221,7 +221,7 @@ function db_find_one($table, $cond = array(), $orderby = array(), $col = array()
 function db_errno_errstr($r, $d = NULL, $sql = '')
 {
     global $errno, $errstr;
-    if ($r === FALSE) { //  && $d->errno != 0
+    if (FALSE === $r) { //  && $d->errno != 0
         $errno = $d->errno;
         $errstr = db_errstr_safe($errno, $d->errstr);
         $s = 'SQL:' . $sql . "\r\nerrno: " . $errno . ", errstr: " . $errstr;
@@ -233,13 +233,13 @@ function db_errno_errstr($r, $d = NULL, $sql = '')
 function db_errstr_safe($errno, $errstr)
 {
     if (DEBUG) return $errstr;
-    if ($errno == 1049) {
+    if (1049 == $errno) {
         return '数据库名不存在，请手工创建';
-    } elseif ($errno == 2003) {
+    } elseif (2003 == $errno) {
         return '连接数据库服务器失败，请检查IP是否正确，或者防火墙设置';
-    } elseif ($errno == 1024) {
+    } elseif (1024 == $errno) {
         return '连接数据库失败';
-    } elseif ($errno == 1045) {
+    } elseif (1045 == $errno) {
         return '数据库账户密码错误';
     }
     return $errstr;
@@ -287,7 +287,7 @@ function db_cond_to_sqladd($cond)
                 */
             } else {
                 foreach ($v as $k1 => $v1) {
-                    if ($k1 == 'LIKE') {
+                    if ('LIKE' == $k1) {
                         $k1 = ' LIKE ';
                         $v1 = "%$v1%";
                     }
@@ -308,7 +308,7 @@ function db_orderby_to_sqladd($orderby)
         $s .= ' ORDER BY ';
         $comma = '';
         foreach ($orderby as $k => $v) {
-            $s .= $comma . "`$k` " . ($v == 1 ? ' ASC ' : ' DESC ');
+            $s .= $comma . "`$k` " . (1 == $v ? ' ASC ' : ' DESC ');
             $comma = ',';
         }
     }
@@ -330,7 +330,7 @@ function db_array_to_update_sqladd($arr)
     foreach ($arr as $k => $v) {
         $v = addslashes($v);
         $op = substr($k, -1);
-        if ($op == '+' || $op == '-') {
+        if ('+' == $op || '-' == $op) {
             $k = substr($k, 0, -1);
             $v = (is_int($v) || is_float($v)) ? $v : "'$v'";
             $s .= "`$k`=$k$op$v,";

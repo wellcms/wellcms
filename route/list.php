@@ -18,21 +18,22 @@ $active = 'default';
 // hook list_before.php
 
 $forum = forum_read($fid);
+// hook list_read_after.php
 empty($forum) AND message(1, lang('forum_not_exists'));
 
 // hook list_forum_after.php
 
 // 导航外链
-if ($forum['category'] == 3) {
+if (3 == $forum['category']) {
     // hook list_link_before.php
     http_location(trim($forum['brief']));
 }
 
 // hook list_link_after.php
 
-if ($forum['type'] == 1) {
+if (1 == $forum['type']) {
     // CMS版块
-    if ($forum['category'] == 0) {
+    if (0 == $forum['category']) {
         // 列表
         // hook list_access_before.php
 
@@ -58,9 +59,9 @@ if ($forum['type'] == 1) {
             // hook list_thread_before.php
 
             // 返回版块下tid
-            $orderby == FALSE AND $tidlist = well_thread_find_tid($fid, $page, $pagesize);
+            FALSE === $orderby AND $tidlist = well_thread_find_tid($fid, $page, $pagesize);
 
-            //$orderby == TRUE AND $tidlist = well_thread_find_desc($fid, $page, $pagesize);
+            //TRUE === $orderby AND $tidlist = well_thread_find_desc($fid, $page, $pagesize);
 
             // hook list_thread_end.php
         }
@@ -68,7 +69,7 @@ if ($forum['type'] == 1) {
         // hook list_sticky_before.php
 
         // 查找置顶 1栏目 2频道 3全局
-        $stickylist = $page == 1 ? sticky_list_thread($fid) : array();
+        $stickylist = 1 == $page ? sticky_list_thread($fid) : array();
 
         // hook list_sticky_after.php
 
@@ -125,9 +126,9 @@ if ($forum['type'] == 1) {
             }
         }
 
-    } elseif ($forum['category'] == 1) {
+    } elseif (1 == $forum['category']) {
         http_location(url('category-' . $forum['fid']));
-    } elseif ($forum['category'] == 2) {
+    } elseif (2 == $forum['category']) {
         $forum['threads'] ? http_location(url('read-' . trim($forum['brief']))) : message(1, lang('none'));
     }
 

@@ -13,7 +13,7 @@ if (DEBUG < 3) {
     // hook admin_index_inc_before.php
 
     // 管理组检查 / check admin group
-    if (group_access($gid, 'intoadmin') == FALSE) {
+    if (FALSE === group_access($gid, 'intoadmin')) {
         setcookie($conf['cookie_pre'] . 'sid', '', $time - 86400);
         http_location(url('../user-login'));
     }

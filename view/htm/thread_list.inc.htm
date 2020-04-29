@@ -11,7 +11,7 @@
         <div class="media">
             <?php if ($_thread['icon']) { ?>
             <div class="col-4 col-md-3">
-                <a href="<?php echo $_thread['url']; ?>" <?php echo ($_thread['type']==10?'rel="nofollow" target="_blank"':''); ?>>
+                <a href="<?php echo $_thread['url']; ?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
                     <img class="d-block w-100 rounded" src="<?php echo $_thread['icon_text'];?>" title='<?php echo $_thread['subject'];?>' alt='<?php echo $_thread['subject'];?>' />
                 </a>
             </div>
@@ -33,14 +33,14 @@
                     <!--{hook thread__list_inc_closed_before.htm}-->
                     <?php if($_thread['closed'] > 0) { ?>
                     <span class="mr-2">
-                        <i class="icon-lock text-<?php echo $_thread['closed']==1?'danger':'dark';?>"></i>
+                        <i class="icon-lock text-<?php echo 1==$_thread['closed']?'danger':'dark';?>"></i>
                     </span>
                     <?php } ?>
                     <!--{hook thread__list_inc_closed_after.htm}-->
 
                     <h2 class="break-all font-weight-bold d-inline">
                         <!--{hook thread__list_inc_subject_before.htm}-->
-                        <a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>" <?php echo ($_thread['type']==10?'rel="nofollow" target="_blank"':''); ?>>
+                        <a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
                         <?php echo $_thread['subject'];?>
                         </a>
                         <!--{hook thread__list_inc_subject_after.htm}-->

@@ -69,8 +69,8 @@
 					<?php  } ?>
 				</div>
 				<hr />
-				<!-- $verify_token === FALSE 登录-->
-                <?php if($verify_token === FALSE) { ?>
+				<!-- FALSE === $verify_token 登录-->
+                <?php if(FALSE === $verify_token) { ?>
                 <div class="col-md-4 mx-auto">
                     <p class="text-danger text-center font-weight-bold">
 						<?php echo lang('plugin_login_tips');?>
@@ -120,16 +120,14 @@
 				</div>
 				<?php } ?>
 
-				<?php if(!empty($plugin['storeid']) && $url) { ?>
-				<div class="row">
-					<div class="col-12" style="text-align: center;">
-						<div id="qrcode"></div>
-						<br>
-						<?php echo lang('plugin_wechat_qrcode_pay');?>
-						<br>
-						<span class="price">
-							<?php echo $plugin['official']['price']; ?>元
+				<?php if(FALSE !== $return && 1 == $return['code']) { ?>
+				<div class="row my-3">
+					<div class="col-12 text-center">
+						<span class="font-weight-bold text-danger m-3">
+							<?php echo $payment_tips; ?>
 						</span>
+                        <br>
+                        <a role="button" rel="nofollow" data-modal-title="<?php echo lang('buy_application'),'&nbsp;',lang('payment'),'&nbsp;',$payment_tips;?>" class="btn btn-primary buy mx-1" href="<?php echo url('plugin-buy-'.$dir); ?>"><?php echo lang('buy');?></a>
 					</div>
 				</div>
 				<?php } ?>
@@ -143,27 +141,27 @@
 					<a role="button" class="btn btn-primary mx-1" href="<?php echo url("plugin-setting-$dir"); ?>"><?php echo lang('setting');?></a>
 					<?php } ?>
 
-					<?php if($islocal && !$plugin['installed'] && $plugin['type'] != 1) { ?>
+					<?php if($islocal && !$plugin['installed'] && 1 != $plugin['type']) { ?>
 					<a role="button" class="btn btn-primary mx-1" href="<?php echo url("plugin-install-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('install');?></a>
 					<?php } ?>
 
-					<?php if($plugin['installed'] && $plugin['enable'] && $plugin['type'] != 1) { ?>
+					<?php if($plugin['installed'] && $plugin['enable'] && 1 != $plugin['type']) { ?>
 					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url("plugin-disable-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('disable');?></a>
 					<?php } ?>
 
-					<?php if($plugin['installed'] && !$plugin['enable'] && $plugin['type'] != 1) { ?>
+					<?php if($plugin['installed'] && !$plugin['enable'] && 1 != $plugin['type']) { ?>
 					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url("plugin-enable-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('enable');?></a>
 					<?php } ?>
 
-					<?php if($plugin['installed'] && $plugin['type'] != 1) { ?>
+					<?php if($plugin['installed'] && 1 != $plugin['type']) { ?>
 					<a role="button" class="btn btn-danger mx-1 confirm" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('uninstall');?></a>
 					<?php } ?>
 
-                    <?php if($islocal && !$plugin['installed'] && $plugin['type'] == 1) { ?>
+                    <?php if($islocal && !$plugin['installed'] && 1 == $plugin['type']) { ?>
                     <a role="button" class="btn btn-primary mx-1 install" data-href="<?php echo url('plugin-theme-'.$dir.'-1');?>" href="javascript:void(0);"><?php echo lang('install');?></a>
                     <?php } ?>
 
-                    <?php if($plugin['installed'] && $plugin['type'] == 1) { ?>
+                    <?php if($plugin['installed'] && 1 == $plugin['type']) { ?>
                     <a role="button" class="btn btn-danger mx-1 uninstall" data-href="<?php echo url('plugin-theme-'.$dir.'-0');?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
                     <?php } ?>
 
@@ -183,7 +181,7 @@
 </div>
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
-<script src="<?php echo admin_view_path();?>js/jquery.qrcode.min.js"></script>
+
 <script>
     var jform = $('#form');
     jform.on('submit', function() {
@@ -205,34 +203,6 @@
         });
         return false;
     });
-
-<?php if(!empty($plugin['storeid']) && $url && !is_dir(APP_PATH."plugin/$dir")) { ?>
-
-	/*定时查询，如果支付成功，则跳转到下载*/
-	var dir = '<?php echo $dir;?>';
-	var url = '<?php echo $url;?>';
-	 $('#qrcode').qrcode({
-		render: "canvas", /*设置渲染方式，有table和canvas，使用canvas方式渲染性能相对来说比较好*/
-		text: url, /*扫描二维码后显示的内容,可以直接填一个网址，扫描二维码后自动跳向该链接*/
-		width: 200, /*二维码的宽度*/
-		height: 200,
-		background: "#ffffff", /*二维码的后景色*/
-		foreground: "#000000", /*二维码的前景色*/
-		src: "",
-		imgWidth: 50,
-		imgHeight: 50
-	});
-
-	var t = setInterval(function() {
-		$.xget(xn.url('plugin-is_bought-'+dir), function(code, message) {
-			if(code == 0) {
-				/*支付成功，跳转到下载*/
-				clearInterval(t);
-				window.location = xn.url('plugin-download-'+dir);
-			}
-		});
-	}, 5000);
-<?php } ?>
 
     $('#nav li.nav-item-plugin').addClass('active');
     $('#plugin').addClass('show');

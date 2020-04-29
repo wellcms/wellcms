@@ -92,7 +92,7 @@ function forum_delete($fid)
 
     $cond = array('fid' => $fid);
     // 分类 0论坛 1cms
-    if ($forum['type'] == 1) {
+    if (1 == $forum['type']) {
         $threadlist = thread_tid__find($cond, array(), 1, 1000000, 'tid', array('tid', 'uid'));
         if ($threadlist) {
             foreach ($threadlist as $thread) {
@@ -192,13 +192,13 @@ function forum_format(&$forum)
 
         // hook model_forum_format_center.php
 
-        if ($forum['category'] == 0) {
+        if (0 == $forum['category']) {
             $forum['url'] = url('list-' . $forum['fid']);
-        } elseif ($forum['category'] == 1) {
+        } elseif (1 == $forum['category']) {
             $forum['url'] = url('category-' . $forum['fid']);
-        } elseif ($forum['category'] == 2) {
+        } elseif (2 == $forum['category']) {
             $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief'])) : url('list-' . $forum['fid']);
-        } elseif ($forum['category'] == 3) {
+        } elseif (3 == $forum['category']) {
             $forum['url'] = url('list-' . $forum['fid']);
         }
 
@@ -226,13 +226,13 @@ function forum_file_path()
     static $path = '';
     if ($path) return $path;
     $conf = _SERVER('conf');
-    if ($conf['attach_on'] == 0) {
+    if (0 == $conf['attach_on']) {
         // 本地
         $path = $conf['url_rewrite_on'] > 1 ? file_path() : $conf['upload_url'];
-    } elseif ($conf['attach_on'] == 1) {
+    } elseif (1 == $conf['attach_on']) {
         // 云储存
         $path = file_path();
-    } elseif ($conf['attach_on'] == 2) {
+    } elseif (2 == $conf['attach_on']) {
         // 云储存
         $path = file_path();
     }
@@ -271,19 +271,19 @@ function forum_maxid()
 // 从缓存中读取 forum_list 数据x
 function forum_list_cache()
 {
-    global $conf;
+    global $conf, $forumlist;
     // hook model_forum_list_cache_start.php
-    if ($conf['cache']['type'] == 'mysql') {
-        $forumlist = forum_list_get();
-    } else {
-        $forumlist = cache_get('forumlist');
-        if ($forumlist === NULL) {
-            $forumlist = forum_find_fmt();
-            cache_set('forumlist', $forumlist, 7200);
-        }
+    $key = 'forum-list';
+    static $cache = array(); // 用静态变量只能在当前 request 生命周期缓存，跨进程需要再加一层缓存：redis/memcached/xcache/apc
+    if (isset($cache[$key])) return $cache[$key];
+    $forumlist = cache_get('forumlist');
+    if (NULL === $forumlist) {
+        $forumlist = forum_find_fmt();
+        cache_set('forumlist', $forumlist, 7200);
     }
+    $cache[$key] = $forumlist ? $forumlist : NULL;
     // hook model_forum_list_cache_end.php
-    return $forumlist;
+    return $cache[$key];
 }
 
 // 更新 forumlist 缓存
@@ -293,10 +293,10 @@ function forum_list_cache_delete()
     static $deleted = FALSE;
     if ($deleted) return;
     // hook model_forum_list_cache_delete_start.php
-    $conf['cache']['type'] == 'mysql' ? forum_list_delete_cache() : cache_delete('forumlist');
-    $deleted = TRUE;
-    // 删除首页所有缓存
+    cache_delete('forumlist');
+    // 删除门户首页缓存
     cache_delete('portal_index_thread');
+    $deleted = TRUE;
     // hook model_forum_list_cache_delete_end.php
 }
 
@@ -311,7 +311,7 @@ function forum_list_access_filter($forumlist, $gid, $allow = 'allowread')
 
     // hook model_forum_list_access_filter_before.php
 
-    if ($gid == 1) return $forumlist;
+    if (1 == $gid) return $forumlist;
 
     $forumlist_filter = $forumlist;
     $group = $grouplist[$gid];
@@ -388,17 +388,17 @@ function forum_format_url($forum)
 {
     global $conf;
     // hook model_forum_format_url_start.php
-    if ($forum['category'] == 0) {
+    if (0 == $forum['category']) {
         // 列表URL
         // hook model_forum_format_url_list_before.php
         $url = url('list-' . $forum['fid']);
         // hook model_forum_format_url_list_after.php
-    } elseif ($forum['category'] == 1) {
+    } elseif (1 == $forum['category']) {
         // 频道
         // hook model_forum_format_url_category_before.php
         $url = url('category-' . $forum['fid']);
         // hook model_forum_format_url_category_after.php
-    } elseif ($forum['category'] == 2) {
+    } elseif (2 == $forum['category']) {
         // 单页
         // hook model_forum_format_url_read_before.php
         $url = url('read-' . trim($forum['brief']));
@@ -406,34 +406,6 @@ function forum_format_url($forum)
     }
     // hook model_forum_format_url_end.php
     return $url;
-}
-
-//--------------------------kv + cache--------------------------
-
-$g_forumlist = FALSE;
-function forum_list_get()
-{
-    global $g_forumlist;
-    $g_forumlist === FALSE AND $g_forumlist = website_get('forumlist');
-    if (empty($g_forumlist)) {
-        $g_forumlist = forum_find_fmt();
-        $g_forumlist AND forum_list_set($g_forumlist);
-    }
-    return $g_forumlist;
-}
-
-// set kv cache
-function forum_list_set($val)
-{
-    global $g_forumlist;
-    $g_forumlist = $val;
-    return website_set('forumlist', $g_forumlist);
-}
-
-function forum_list_delete_cache()
-{
-    website_set('forumlist', '');
-    return TRUE;
 }
 
 // hook model_forum_end.php

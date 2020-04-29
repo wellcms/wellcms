@@ -92,14 +92,14 @@ function category_list($forumlist, $model = 0, $display = 0, $category = 0)
     // hook model_category_list_start.php
     if ($display) {
         foreach ($forumlist as $k => $val) {
-            if ($val['display'] == 1 && $val['model'] == $model && $val['type'] == 1 && $val['category'] == $category) {
+            if (1 == $val['display'] && $val['model'] == $model && 1 == $val['type'] && $val['category'] == $category) {
                 $cache[$key][$k] = $val;
             }
         }
         // hook model_category_list_before.php
     } else {
         foreach ($forumlist as $k => $val) {
-            if ($val['type'] == 1 && $val['model'] == $model && $val['category'] == $category) {
+            if (1 == $val['type'] && $val['model'] == $model && $val['category'] == $category) {
                 $cache[$key][$k] = $val;
             }
         }
@@ -123,14 +123,14 @@ function category_list_show($forumlist, $display = 0, $category = 0)
     // hook model_category_list_show_start.php
     if ($display) {
         foreach ($forumlist as $k => $val) {
-            if ($val['display'] == 1 && $val['type'] == 1 && $val['category'] == $category) {
+            if (1 == $val['display'] && 1 == $val['type'] && $val['category'] == $category) {
                 $cache[$key][$k] = $val;
             }
         }
         // hook model_category_list_show_before.php
     } else {
         foreach ($forumlist as $k => $val) {
-            if ($val['type'] == 1 && $val['category'] == $category) {
+            if (1 == $val['type'] && $val['category'] == $category) {
                 $cache[$key][$k] = $val;
             }
         }
@@ -167,7 +167,7 @@ function nav_list($forumlist)
     if (!empty($cache)) return $cache;
     // hook model_nav_list_start.php
     foreach ($forumlist as $fid => $forum) {
-        if ($forum['nav_display'] == 0) {
+        if (0 == $forum['nav_display']) {
             unset($forumlist[$fid]);
         }
         // hook model_nav_list_before.php

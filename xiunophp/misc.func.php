@@ -10,7 +10,7 @@ function xn_message($code, $message)
 function xn_log_post_data()
 {
     $method = $_SERVER['method'];
-    if ($method != 'POST') return;
+    if ('POST' != $method) return;
     $post = $_POST;
     isset($post['password']) AND $post['password'] = '******';        // 干掉密码信息
     isset($post['password_new']) AND $post['password_new'] = '******';    // 干掉密码信息
@@ -43,10 +43,10 @@ function error_handle($errno, $errstr, $errfile, $errline)
 {
 
     // PHP 内部默认处理
-    if (DEBUG == 0) return FALSE;
+    if (0 == DEBUG) return FALSE;
 
     // 如果放在 register_shutdown_function 里面，文件句柄会被关闭，然后这里就写入不了文件了！
-    // if(strpos($s, 'error_log(') !== FALSE) return TRUE;
+    // if(FALSE !== strpos($s, 'error_log(')) return TRUE;
     $time = $_SERVER['time'];
     $ajax = $_SERVER['ajax'];
     IN_CMD AND $errstr = str_replace('<br>', "\n", $errstr);
@@ -70,7 +70,7 @@ function error_handle($errno, $errstr, $errfile, $errline)
 			<div>" . implode("<br>\r\n", $message) . "</div>
 		</fieldset>";
     echo ($ajax || IN_CMD) ? $txt : $html;
-    DEBUG == 2 AND xn_log($txt, 'debug_error');
+    2 == DEBUG AND xn_log($txt, 'debug_error');
     return TRUE;
 }
 
@@ -93,7 +93,7 @@ function xn_error($no, $str, $return = FALSE)
 */
 function param($key, $defval = '', $htmlspecialchars = TRUE, $addslashes = FALSE)
 {
-    if (!isset($_REQUEST[$key]) || ($key === 0 && empty($_REQUEST[$key]))) {
+    if (!isset($_REQUEST[$key]) || (0 == $key && empty($_REQUEST[$key]))) {
         if (is_array($defval)) {
             return array();
         } else {
@@ -217,7 +217,7 @@ function jump($message, $url = '', $delay = 3)
     $ajax = $_SERVER['ajax'];
     if ($ajax) return $message;
     if (!$url) return $message;
-    $url == 'back' AND $url = 'javascript:history.back()';
+    'back' == $url AND $url = 'javascript:history.back()';
     $htmladd = '<script>setTimeout(function() {window.location=\'' . $url . '\'}, ' . ($delay * 1000) . ');</script>';
     return '<a href="' . $url . '">' . $message . '</a>' . $htmladd;
 }
@@ -297,11 +297,11 @@ function xn_json_encode($data, $pretty = FALSE, $level = 0)
             foreach ($data as $key => $value) {
                 $output_indexed[] = xn_json_encode($value, $pretty, $level + 1);
                 $output_associative[] = $tab2 . '"' . $key . '":' . xn_json_encode($value, $pretty, $level + 1);
-                if ($output_index_count !== NULL && $output_index_count++ !== $key) {
+                if (NULL !== $output_index_count && $output_index_count++ !== $key) {
                     $output_index_count = NULL;
                 }
             }
-            if ($output_index_count !== NULL) {
+            if (NULL !== $output_index_count) {
                 return '[' . implode(",$br", $output_indexed) . ']';
             } else {
                 return "{{$br}" . implode(",$br", $output_associative) . "{$br}{$tab}}";
@@ -384,7 +384,7 @@ function humandate($timestamp, $lan = array())
     $lang = $_SERVER['lang'];
 
     static $custom_humandate = NULL;
-    if ($custom_humandate === NULL) $custom_humandate = function_exists('custom_humandate');
+    if (NULL === $custom_humandate) $custom_humandate = function_exists('custom_humandate');
     if ($custom_humandate) return custom_humandate($timestamp, $lan);
 
     $seconds = $time - $timestamp;
@@ -415,7 +415,7 @@ function humannumber($num)
 {
 
     static $custom_humannumber = NULL;
-    if ($custom_humannumber === NULL) $custom_humannumber = function_exists('custom_humannumber');
+    if (NULL === $custom_humannumber) $custom_humannumber = function_exists('custom_humannumber');
     if ($custom_humannumber) return custom_humannumber($num);
 
     $num > 100000 && $num = ceil($num / 10000) . '万';
@@ -426,7 +426,7 @@ function humansize($num)
 {
 
     static $custom_humansize = NULL;
-    if ($custom_humansize === NULL) $custom_humansize = function_exists('custom_humansize');
+    if (NULL === $custom_humansize) $custom_humansize = function_exists('custom_humansize');
     if ($custom_humansize) return custom_humansize($num);
 
     if ($num > 1073741824) {
@@ -495,7 +495,7 @@ function ip() {
 // 日志记录
 function xn_log($s, $file = 'error')
 {
-    if (DEBUG == 0 && strpos($file, 'error') === FALSE) return;
+    if (0 == DEBUG && FALSE === strpos($file, 'error')) return;
     $time = $_SERVER['time'];
     $ip = $_SERVER['ip'];
     $conf = _SERVER('conf');
@@ -522,12 +522,12 @@ function get__browser()
     );
     $agent = _SERVER('HTTP_USER_AGENT');
     // 主要判断是否为垃圾 IE6789
-    if (strpos($agent, 'msie') !== FALSE || stripos($agent, 'trident') !== FALSE) {
+    if (FALSE !== strpos($agent, 'msie') || FALSE !== stripos($agent, 'trident')) {
         $browser['name'] = 'ie';
         $browser['version'] = 8;
         preg_match('#msie\s*([\d\.]+)#is', $agent, $m);
         if (!empty($m[1])) {
-            if (strpos($agent, 'compatible; msie 7.0;') !== FALSE) {
+            if (FALSE !== strpos($agent, 'compatible; msie 7.0;')) {
                 $browser['version'] = 8;
             } else {
                 $browser['version'] = intval($m[1]);
@@ -537,8 +537,8 @@ function get__browser()
             preg_match('#Trident/([\d\.]+)#is', $agent, $m);
             if (!empty($m[1])) {
                 $trident = intval($m[1]);
-                $trident == 4 AND $browser['version'] = 8;
-                $trident == 5 AND $browser['version'] = 9;
+                4 == $trident AND $browser['version'] = 8;
+                5 == $trident AND $browser['version'] = 9;
                 $trident > 5 AND $browser['version'] = 10;
             }
         }
@@ -546,12 +546,12 @@ function get__browser()
 
     if (isset($_SERVER['HTTP_X_WAP_PROFILE']) || (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], "wap") || stripos($agent, 'phone') || stripos($agent, 'mobile') || strpos($agent, 'ipod'))) {
         $browser['device'] = 'mobile';
-    } elseif (strpos($agent, 'pad') !== FALSE) {
+    } elseif (FALSE !== strpos($agent, 'pad')) {
         $browser['device'] = 'pad';
         $browser['name'] = '';
         $browser['version'] = '';
         /*
-        } elseif(strpos($agent, 'miui') !== FALSE) {
+        } elseif(FALSE !== strpos($agent, 'miui')) {
             $browser['device'] = 'mobile';
             $browser['name'] = 'xiaomi';
             $browser['version'] = '';
@@ -559,7 +559,7 @@ function get__browser()
     } else {
         $robots = array('bot', 'spider', 'slurp');
         foreach ($robots as $robot) {
-            if (strpos($agent, $robot) !== FALSE) {
+            if (FALSE !== strpos($agent, $robot)) {
                 $browser['name'] = 'robot';
                 return $browser;
             }
@@ -570,7 +570,7 @@ function get__browser()
 
 function check_browser($browser)
 {
-    if ($browser['name'] == 'ie' && $browser['version'] < 8) {
+    if ('ie' == $browser['name'] && $browser['version'] < 8) {
         include _include(APP_PATH . 'view/htm/browser.htm');
         exit;
     }
@@ -582,7 +582,7 @@ function is_robot()
     $agent = strtolower($agent);
     $robots = array('bot', 'spider', 'slurp');
     foreach ($robots as $robot) {
-        if (strpos($agent, $robot) !== FALSE) {
+        if (FALSE !== strpos($agent, $robot)) {
             return TRUE;
         }
     }
@@ -594,9 +594,9 @@ function browser_lang()
     // return 'zh-cn';
     $accept = _SERVER('HTTP_ACCEPT_LANGUAGE');
     $accept = substr($accept, 0, strpos($accept, ';'));
-    if (strpos($accept, 'ko-kr') !== FALSE) {
+    if (FALSE !== strpos($accept, 'ko-kr')) {
         return 'ko-kr';
-        // } elseif(strpos($accept, 'en') !== FALSE) {
+        // } elseif(FALSE !== strpos($accept, 'en')) {
         // 	return 'en';
     } else {
         return 'zh-cn';
@@ -618,7 +618,7 @@ function http_get($url, $cookie = '', $timeout = 30, $times = 3)
 //			'CN_match'      => 'secure.example.com'
 //		)
 //	);
-    if (substr($url, 0, 8) == 'https://') {
+    if ('https://' == substr($url, 0, 8)) {
         return https_get($url, $cookie, $timeout, $times);
     }
     $arr = array(
@@ -630,14 +630,14 @@ function http_get($url, $cookie = '', $timeout = 30, $times = 3)
     $stream = stream_context_create($arr);
     while ($times-- > 0) {
         $s = file_get_contents($url, NULL, $stream, 0, 4096000);
-        if ($s !== FALSE) return $s;
+        if (FALSE !== $s) return $s;
     }
     return FALSE;
 }
 
 function http_post($url, $post = '', $cookie = '', $timeout = 30, $times = 3)
 {
-    if (substr($url, 0, 8) == 'https://') {
+    if ('https://' == substr($url, 0, 8)) {
         return https_post($url, $post, $cookie, $timeout, $times);
     }
     is_array($post) AND $post = http_build_query($post);
@@ -645,14 +645,14 @@ function http_post($url, $post = '', $cookie = '', $timeout = 30, $times = 3)
     $stream = stream_context_create(array('http' => array('header' => "Content-type: application/x-www-form-urlencoded\r\nx-requested-with: XMLHttpRequest\r\nCookie: $cookie\r\n", 'method' => 'POST', 'content' => $post, 'timeout' => $timeout)));
     while ($times-- > 0) {
         $s = file_get_contents($url, NULL, $stream, 0, 4096000);
-        if ($s !== FALSE) return $s;
+        if (FALSE !== $s) return $s;
     }
     return FALSE;
 }
 
 function https_get($url, $cookie = '', $timeout = 30, $times = 1)
 {
-    if (substr($url, 0, 7) == 'http://') {
+    if ('http://' == substr($url, 0, 7)) {
         return http_get($url, $cookie, $timeout, $times);
     }
     return https_post($url, '', $cookie, $timeout, $times, 'GET');
@@ -660,14 +660,14 @@ function https_get($url, $cookie = '', $timeout = 30, $times = 1)
 
 function https_post($url, $post = '', $cookie = '', $timeout = 30, $times = 1, $method = 'POST')
 {
-    if (substr($url, 0, 7) == 'http://') {
+    if ('http://' == substr($url, 0, 7)) {
         return http_post($url, $post, $cookie, $timeout, $times);
     }
     is_array($post) AND $post = http_build_query($post);
     is_array($cookie) AND $cookie = http_build_query($cookie);
     $w = stream_get_wrappers();
     $allow_url_fopen = strtolower(ini_get('allow_url_fopen'));
-    $allow_url_fopen = (empty($allow_url_fopen) || $allow_url_fopen == 'off') ? 0 : 1;
+    $allow_url_fopen = (empty($allow_url_fopen) || 'off' == $allow_url_fopen) ? 0 : 1;
     if (extension_loaded('openssl') && in_array('https', $w) && $allow_url_fopen) {
         $stream = stream_context_create(array('http' => array('header' => "Content-type: application/x-www-form-urlencoded\r\nx-requested-with: XMLHttpRequest\r\nCookie: $cookie\r\n", 'method' => $method, 'content' => $post, 'timeout' => $timeout)));
         $s = file_get_contents($url, NULL, $stream, 0, 4096000);
@@ -683,7 +683,7 @@ function https_post($url, $post = '', $cookie = '', $timeout = 30, $times = 1, $
     curl_setopt($ch, CURLOPT_USERAGENT, _SERVER('HTTP_USER_AGENT'));
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 从证书中检查SSL加密算法是否存在，默认可以省略
-    if ($method == 'POST') {
+    if ('POST' == $method) {
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
     }
@@ -706,7 +706,7 @@ function https_post($url, $post = '', $cookie = '', $timeout = 30, $times = 1, $
 
     list($header, $data) = explode("\r\n\r\n", $data);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if ($http_code == 301 || $http_code == 302) {
+    if (301 == $http_code || 302 == $http_code) {
         $matches = array();
         preg_match('/Location:(.*?)\n/', $header, $matches);
         $url = trim(array_pop($matches));
@@ -742,13 +742,13 @@ function http_multi_get($urls)
     }
     do {
         $mrc = curl_multi_exec($multi_handle, $active);
-    } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+    } while (CURLM_CALL_MULTI_PERFORM == $mrc);
 
-    while ($active and $mrc == CURLM_OK) {
+    while ($active and CURLM_OK == $mrc) {
         if (curl_multi_select($multi_handle) != -1) {
             do {
                 $mrc = curl_multi_exec($multi_handle, $active);
-            } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+            } while (CURLM_CALL_MULTI_PERFORM == $mrc);
         }
     }
     foreach ($urls as $i => $url) {
@@ -763,7 +763,7 @@ function http_multi_get($urls)
 function file_replace_var($filepath, $replace = array(), $pretty = FALSE)
 {
     $ext = file_ext($filepath);
-    if ($ext == 'php') {
+    if ('php' == $ext) {
         $arr = include $filepath;
         $arr = array_merge($arr, $replace);
         $s = "<?php\r\nreturn " . var_export($arr, true) . ";\r\n?>";
@@ -772,7 +772,7 @@ function file_replace_var($filepath, $replace = array(), $pretty = FALSE)
         $r = file_put_contents_try($filepath, $s);
         $r != strlen($s) ? file_backup_restore($filepath) : file_backup_unlink($filepath);
         return $r;
-    } elseif ($ext == 'js' || $ext == 'json') {
+    } elseif ('js' == $ext || 'json' == $ext) {
         $s = file_get_contents_try($filepath);
         $arr = xn_json_decode($s);
         if (empty($arr)) return FALSE;
@@ -798,7 +798,7 @@ function file_backname($filepath)
 
 function is_backfile($filepath)
 {
-    return strpos($filepath, '.backup.') !== FALSE;
+    return FALSE !== strpos($filepath, '.backup.');
 }
 
 // 备份文件
@@ -835,7 +835,7 @@ function file_get_contents_try($file, $times = 3)
         $fp = fopen($file, 'rb');
         if ($fp) {
             $size = filesize($file);
-            if ($size == 0) return '';
+            if (0 == $size) return '';
             $s = fread($fp, $size);
             fclose($fp);
             return $s;
@@ -869,7 +869,7 @@ function in_string($s, $str)
     if (!$s || !$str) return FALSE;
     $s = ",$s,";
     $str = ",$str,";
-    return strpos($str, $s) !== FALSE;
+    return FALSE !== strpos($str, $s);
 }
 
 function move_upload_file($srcfile, $destfile)
@@ -916,7 +916,7 @@ function http_url_path()
     $proto = strtolower(_SERVER('HTTP_X_FORWARDED_PROTO'));
     $n = strrpos($_SERVER['PHP_SELF'], '/');
     $path = $n > 1 ? substr($_SERVER['PHP_SELF'], 0, $n) : '';
-    $http = (($port == 443) || $proto == 'https' || ($https && $https != 'off')) ? 'https' : 'http';
+    $http = ((443 == $port) || 'https' == $proto || ($https && 'off' != $https)) ? 'https' : 'http';
     return "$http://$host$path/";
 }
 
@@ -941,11 +941,11 @@ function xn_url_parse($request_url)
 
     $q = array_value($arr, 'path');
     $pos = strrpos($q, '/');
-    $pos === FALSE && $pos = -1;
+    FALSE === $pos && $pos = -1;
     $q = substr($q, $pos + 1); // 截取最后一个 / 后面的内容
     // 查找第一个 ? & 进行分割
-    $sep = strpos($q, '?') === FALSE ? strpos($q, '&') : FALSE;
-    if ($sep !== FALSE) {
+    $sep = FALSE === strpos($q, '?') ? strpos($q, '&') : FALSE;
+    if (FALSE !== $sep) {
         // 对后半部分截取，并且分析
         $front = substr($q, 0, $sep);
         $behind = substr($q, $sep + 1);
@@ -954,7 +954,7 @@ function xn_url_parse($request_url)
         $behind = '';
     }
 
-    if (substr($front, -5) == '.html') $front = substr($front, 0, -5);
+    if ('.html' == substr($front, -5)) $front = substr($front, 0, -5);
     $r = $front ? (array)explode('-', $front) : array();
 
     // 将后半部分合并
@@ -982,7 +982,7 @@ function xn_url_parse($request_url)
     $conf = _SERVER('conf');
     if (!empty($conf['url_rewrite_on']) && in_array($conf['url_rewrite_on'], array(2, 3))) $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']) + $r;
 
-    isset($r[0]) AND $r[0] == 'index.php' AND $r[0] = 'index';
+    isset($r[0]) AND 'index.php' == $r[0] AND $r[0] = 'index';
 
     return $r;
 }
@@ -991,8 +991,8 @@ function xn_url_parse($request_url)
 function xn_url_add_arg($url, $k, $v)
 {
     $pos = strpos($url, '.html');
-    if ($pos === FALSE) {
-        return strpos($url, '?') === FALSE ? $url . "&$k=$v" : $url . "?$k=$v";
+    if (FALSE === $pos) {
+        return FALSE === strpos($url, '?') ? $url . '&' . $k . '=' . $v : $url . '?' . $k . '=' . $v;
     } else {
         return substr($url, 0, $pos) . '-' . $v . substr($url, $pos);
     }
@@ -1010,11 +1010,11 @@ function xn_url_add_arg($url, $k, $v)
 function xn_url_parse_path_format($s)
 {
     $s = str_replace('.html', '', $s);
-    substr($s, 0, 1) == '/' AND $s = substr($s, 1);
+    '/' == substr($s, 0, 1) AND $s = substr($s, 1);
     $arr = explode('/', $s);
     $get = $arr;
     $last = array_pop($arr);
-    if (strpos($last, '?') !== FALSE) {
+    if (FALSE !== strpos($last, '?')) {
         $get = $arr;
         $arr1 = explode('?', $last);
         parse_str($arr1[1], $arr2);
@@ -1037,10 +1037,10 @@ function glob_recursive($pattern, $flags = 0)
 // 递归删除目录，这个函数比较危险，传参一定要小心
 function rmdir_recusive($dir, $keepdir = 0)
 {
-    if ($dir == '/' || $dir == './' || $dir == '../') return FALSE;// 不允许删除根目录，避免程序意外删除数据。
+    if ('/' == $dir || './' == $dir || '../' == $dir) return FALSE;// 不允许删除根目录，避免程序意外删除数据。
     if (!is_dir($dir)) return FALSE;
 
-    substr($dir, -1) != '/' AND $dir .= '/';
+    '/' != substr($dir, -1) AND $dir .= '/';
 
     $files = glob($dir . '*'); // +glob($dir.'.*')
     foreach (glob($dir . '.*') as $v) {
@@ -1137,8 +1137,8 @@ function xn_get_dir($id)
 // 递归拷贝目录
 function copy_recusive($src, $dst)
 {
-    substr($src, -1) == '/' AND $src = substr($src, 0, -1);
-    substr($dst, -1) == '/' AND $dst = substr($dst, 0, -1);
+    '/' == substr($src, -1) AND $src = substr($src, 0, -1);
+    '/' == substr($dst, -1) AND $dst = substr($dst, 0, -1);
     $dir = opendir($src);
     !is_dir($dst) AND mkdir($dst);
     while (FALSE !== ($file = readdir($dir))) {
@@ -1229,7 +1229,7 @@ function xn_debug_info()
 // 解码客户端提交的 base64 数据
 function base64_decode_file_data($data)
 {
-    if (substr($data, 0, 5) == 'data:') {
+    if ('data:' == substr($data, 0, 5)) {
         $data = substr($data, strpos($data, ',') + 1);    // 去掉 data:image/png;base64,
     }
     $data = base64_decode($data);
@@ -1267,7 +1267,7 @@ function http_referer()
     $referer = param('referer');
     empty($referer) AND $referer = _SERVER('HTTP_REFERER');
     $referer2 = substr($referer, $len);
-    if (strpos($referer, url('user-login')) !== FALSE || strpos($referer, url('user-logout')) !== FALSE || strpos($referer, url('user-create')) !== FALSE) {
+    if (FALSE !== strpos($referer, url('user-login')) || FALSE !== strpos($referer, url('user-logout')) || FALSE !== strpos($referer, url('user-create'))) {
         $referer = './';
     }
     // 安全过滤，只支持站内跳转，不允许跳到外部，否则可能会被 XSS
@@ -1281,7 +1281,7 @@ function http_referer()
 function str_push($str, $v, $sep = '_')
 {
     if (empty($str)) return $v;
-    if (strpos($str, $v . $sep) === FALSE) {
+    if (FALSE === strpos($str, $v . $sep)) {
         return $str . $sep . $v;
     }
     return $str;
@@ -1297,13 +1297,13 @@ function y2f($rmb)
 function f2y($rmb, $round = 'float')
 {
     $rmb = floor($rmb * 100) / 10000;
-    if ($round == 'float') {
+    if ('float' == $round) {
         $rmb = number_format($rmb, 2, '.', '');
-    } elseif ($round == 'round') {
+    } elseif ('round' == $round) {
         $rmb = round($rmb);
-    } elseif ($round == 'ceil') {
+    } elseif ('ceil' == $round) {
         $rmb = ceil($rmb);
-    } elseif ($round == 'floor') {
+    } elseif ('floor' == $round) {
         $rmb = floor($rmb);
     }
     return $rmb;

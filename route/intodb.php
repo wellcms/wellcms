@@ -18,7 +18,7 @@ empty($check) AND exit(lang('password_incorrect'));
 
 $_fid = param(3, 0);
 
-if ($method == 'GET') {
+if ('GET' == $method) {
 
     // 返回CMS栏目数据(仅列表)
     $columnlist = category_list($forumlist);
@@ -31,7 +31,7 @@ if ($method == 'GET') {
     header('Content-Type:text/html;charset=utf-8');
     echo "<select class=\"custom-select mr-1 w-auto\" name=\"fid\">$s</select>";
 
-} elseif ($method == 'POST') {
+} elseif ('POST' == $method) {
 
     $fid = param('fid', $_fid);
     $forum = array_value($forumlist, $fid);
@@ -60,7 +60,7 @@ if ($method == 'GET') {
     $doctype > 10 AND exit(lang('doc_type_not_supported'));
 
     $message = $_message = '';
-    if ($link == 0) {
+    if (0 == $link) {
         $message = param('message', '', FALSE);
         $message = trim($message);
         empty($message) ? exit(lang('please_input_message')) : xn_strlen($message) > 2028000 AND exit(lang('message_too_long'));
@@ -97,13 +97,13 @@ if ($method == 'GET') {
     $thread = array('fid' => $fid, 'type' => $type, 'doctype' => $doctype, 'subject' => $subject, 'brief' => $brief, 'keyword' => $keyword, 'description' => $description, 'closed' => $closed, 'flags' => $flags, 'thumbnail' => $thumbnail, 'save_image' => $save_image, 'delete_pic' => $delete_pic, 'message' => $message);
 
     $tid = well_thread_create($thread);
-    $tid === FALSE AND exit(lang('create_failed'));
+    FALSE === $tid AND exit(lang('create_failed'));
     unset($thread);
 
     $tag_json = well_tag_post($tid, $fid, $tags);
     if (xn_strlen($subject) >= 120) {
         $s = xn_substr($tag_json, -1, NULL);
-        if ($s != '}') {
+        if ('}' != $s) {
             $len = mb_strripos($tag_json, ',', 0, 'UTF-8');
             $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
         }
@@ -111,13 +111,13 @@ if ($method == 'GET') {
     $tag_json AND well_thread_update($tid, array('tag' => $tag_json));
 
     // 首页flag
-    !empty($flag_index_arr) AND flag_create_thread(0, 1, $tid, $flag_index_arr) === FALSE AND exit(lang('create_failed'));
+    !empty($flag_index_arr) AND FALSE === flag_create_thread(0, 1, $tid, $flag_index_arr) AND exit(lang('create_failed'));
 
     // 频道flag
-    $forum['fup'] AND !empty($flag_cate_arr) AND flag_create_thread($forum['fup'], 2, $tid, $flag_cate_arr) === FALSE AND exit(lang('create_failed'));
+    $forum['fup'] AND !empty($flag_cate_arr) AND FALSE === flag_create_thread($forum['fup'], 2, $tid, $flag_cate_arr) AND exit(lang('create_failed'));
 
     // 栏目flag
-    !empty($flag_forum_arr) AND flag_create_thread($fid, 3, $tid, $flag_forum_arr) === FALSE AND exit(lang('create_failed'));
+    !empty($flag_forum_arr) AND FALSE === flag_create_thread($fid, 3, $tid, $flag_forum_arr) AND exit(lang('create_failed'));
 
     exit('success');
 }

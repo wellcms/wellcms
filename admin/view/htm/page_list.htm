@@ -23,7 +23,7 @@
                     <div>
                         <select class="custom-select mr-1 w-auto" name="fid">
                             <!--{hook admin_page_list_select_strat.htm}-->
-                            <option value="0"><?php echo $route=='sticky'?lang('top_3'):lang('select'); ?></option>
+                            <option value="0"><?php echo 'sticky'==$route?lang('top_3'):lang('select'); ?></option>
                             <!--{hook admin_page_list_select_before.htm}-->
                             <?php foreach ($columnlist as $v) { ?>
                             <option value="<?php echo $v['fid']; ?>"><?php echo $v['name']; ?></option>

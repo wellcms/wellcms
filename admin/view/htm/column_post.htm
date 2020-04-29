@@ -63,7 +63,7 @@
         </ol>
         <div class="card">
 
-            <?php if ($next == 1 || $action == 'update') { ?>
+            <?php if (1 == $next || 'update' == $action) { ?>
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" role="tablist">
                     <!--{hook admin_column_post_header_start.htm}-->
@@ -90,7 +90,7 @@
             <?php } ?>
 
             <div class="card-body">
-                <?php if ($next == 0 && $action == 'create') { ?>
+                <?php if (0 == $next && 'create' == $action) { ?>
                 <div class="col-md-6 offset-md-3 my-4 py-4">
                     <div class="form-group row text-center">
                         <div class="col-sm-12 next">
@@ -105,7 +105,7 @@
                 </div>
                 <?php } ?>
 
-                <?php if ($next == 1 || $action == 'update') { ?>
+                <?php if (1 == $next || 'update' == $action) { ?>
                 <form action="<?php echo $form_action;?>" method="post" id="form">
                     <?php echo $input['safe_token'];?>
                     <div class="tab-content">
@@ -122,7 +122,7 @@
                             <!--{hook admin_column_post_name_after.htm}-->
                             <?php if ($category != 2) { ?>
                             <div class="form-group row">
-                                <label class="col-sm-2 form-control-label"><?php echo $category==3?lang('outer_chain'):lang('brief');?>：</label>
+                                <label class="col-sm-2 form-control-label"><?php echo 3==$category?lang('outer_chain'):lang('brief');?>：</label>
                                 <div class="col-sm-10">
                                     <?php echo $input['brief'];?>
                                 </div>
@@ -169,7 +169,7 @@
                             <?php } ?>
 
                             <!--{hook admin_column_post_model_after.htm}-->
-                            <?php if (in_array($category, array(0,1)) && $action == 'update') { ?>
+                            <?php if (in_array($category, array(0,1)) && 'update' == $action) { ?>
                             <!--栏目属性 选择频道 下面的.fup不显示-->
                             <div class="form-group row">
                                 <label class="col-sm-2 form-control-label"><?php echo lang('column').lang('flag');?>：</label>
@@ -204,7 +204,7 @@
                             </div>
 
                             <!--{hook admin_column_post_comment_before.htm}-->
-                            <?php if ($category == 0) { ?>
+                            <?php if (0 == $category) { ?>
                             <!--comment / 频道不显示评论 -->
                             <div class="form-group row">
                                 <label class="col-sm-2 form-control-label"><?php echo lang('comment');?>：</label>
@@ -265,7 +265,7 @@
                         <?php if ($category < 2) { ?>
                         <div class="tab-pane fade" id="option" role="tabpanel" aria-labelledby="option-tab">
 
-                            <?php if ($category == 0) { ?>
+                            <?php if (0 == $category) { ?>
                             <div class="form-group row">
                                 <label class="col-sm-2 form-control-label" for="display"><?php echo lang('index_display');?>：</label>
                                 <div class="col-sm-10">
@@ -301,7 +301,7 @@
                                 </div>
                             </div>
                             <!--{hook admin_column_post_pagesize_after.htm}-->
-                            <?php if ($category == 0) { ?>
+                            <?php if (0 == $category) { ?>
                             <!--{hook admin_column_post_thumbnail_start.htm}-->
                             <div class="form-group row">
                                 <label class="col-sm-2 form-control-label"><?php echo lang('thumbnail').lang('width');?>：</label>
@@ -342,7 +342,7 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    <?php if ($next == 1 || $action == 'update') { ?>
+    <?php if (1 == $next || 'update' == $action) { ?>
     var jform = $("#form");
     jform.on('submit', function(){
         jform.reset();
@@ -384,15 +384,15 @@
         $('body').on('click', 'input[name="category"],button#next', function(){
         var category = $('input[name="category"]').checked();
         if (category == 0) {
-            var action = '<?php echo url('column-create-'.$fup, array('category' => 0, 'next' => 1));?>';
+            var fup = '<?php echo $fup;?>';
+            window.location = xn.url('column-create-'+fup,{category:0,next:1});
         } else if (category == 1) {
-            var action = '<?php echo url('column-create', array('category' => 1, 'next' => 1));?>';
+            window.location = xn.url('column-create',{category:1,next:1});
         } else if (category == 2) {
-            var action = '<?php echo url('column-create', array('category' => 2, 'next' => 1));?>';
+            window.location = xn.url('column-create',{category:2,next:1});
         } else if (category == 3) {
-            var action = '<?php echo url('column-create', array('category' => 3, 'next' => 1));?>';
+            window.location = xn.url('column-create',{category:3,next:1});
         }
-        window.location = action;
         return false;
     });
     <?php } ?>

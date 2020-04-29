@@ -5,7 +5,7 @@
 
 !defined('DEBUG') AND exit('Access Denied.');
 
-group_access($gid, 'managecontent') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+FALSE === group_access($gid, 'managecontent') AND message(1, lang('user_group_insufficient_privilege'));
 
 $action = param(1, 'list');
 
@@ -16,12 +16,12 @@ $columnlist = category_list($forumlist);
 
 // hook admin_content_before.php
 
-if ($action == 'list') {
+if ('list' == $action) {
     // content-list-fid-page
 
     // hook admin_content_list_start.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_content_list_get_start.php
 
@@ -54,7 +54,7 @@ if ($action == 'list') {
             // hook admin_content_list_get_forum_thread_before.php
 
             // 栏目下主题
-            if ($orderby == 0) {
+            if (0 == $orderby) {
                 // 返回栏目下tid
                 $tidlist = $n ? well_thread_find_tid($fid, $page, $pagesize) : NULL;
             }
@@ -82,7 +82,7 @@ if ($action == 'list') {
         // hook admin_content_list_get_middle.php
 
         // 查找置顶 1栏目 2频道 3全局
-        if ($page == 1) {
+        if (1 == $page) {
             $stickylist = $fid ? sticky_list_thread($fid) : sticky_index_thread();
             $tidlist = (array)$stickylist + (array)$tidlist;
         }
@@ -111,10 +111,10 @@ if ($action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/content_list.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         // hook admin_content_list_post_start.php
 
@@ -135,11 +135,11 @@ if ($action == 'list') {
         // hook admin_content_list_post_end.php
     }
 
-} elseif ($action == 'create') {
+} elseif ('create' == $action) {
 
     // hook admin_content_create_start.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_content_create_get_start.php
 
@@ -183,12 +183,12 @@ if ($action == 'list') {
         $form_subject = $form_message = $form_brief = $form_link = $form_closed = $form_keyword = $form_description = $tagstr = '';
 
         $setting = array_value($config, 'setting');
-        $thumbnail_on = array_value($setting, 'thumbnail_on', 0) == 1 ? 'checked="checked"' : '';
-        $save_image = array_value($setting, 'save_image_on', 0) == 1 ? 'checked="checked"' : '';
+        $thumbnail_on = 1 == array_value($setting, 'thumbnail_on', 0) ? 'checked="checked"' : '';
+        $save_image = 1 == array_value($setting, 'save_image_on', 0) ? 'checked="checked"' : '';
         $form_doctype = 0;
         $_fid = 0;
         $page = 0;
-        
+
         // 初始化附件
         well_attach_clear_tmp();
 
@@ -205,25 +205,29 @@ if ($action == 'list') {
         $forumlist = forum_filter($forumlist);
 
         $safe_token = well_token_set($uid);
-        
-        // hook admin_content_create_get_template.php
 
-        // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
-        if ($model == 0) {
-            include _include(ADMIN_PATH . 'view/htm/content_post.htm');
-        }
-        
         // hook admin_content_create_get_end.php
 
-    } elseif ($method == 'POST') {
+        // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
+        switch ($model) {
+            case '0':
+                include _include(ADMIN_PATH . 'view/htm/content_post.htm');
+                break;
+            // hook admin_content_create_get_case_end.php
+            default:
+                include _include(ADMIN_PATH . 'view/htm/content_post.htm');
+                break;
+        }
+
+    } elseif ('POST' == $method) {
 
         // 验证token
         if (array_value($conf, 'message_token', 0)) {
             $safe_token = param('safe_token');
-            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
         }
 
-        group_access($gid, 'managecreatethread') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managecreatethread') AND message(1, lang('user_group_insufficient_privilege'));
 
         // hook admin_content_create_post_start.php
 
@@ -262,7 +266,7 @@ if ($action == 'list') {
         // hook admin_content_create_post_before.php
 
         $message = $_message = '';
-        if ($link == 0) {
+        if (0 == $link) {
             $message = param('message', '', FALSE);
             $message = trim($message);
             empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
@@ -342,7 +346,7 @@ if ($action == 'list') {
         // hook admin_content_create_post_middle.php
 
         $tid = well_thread_create($thread);
-        $tid === FALSE AND message(-1, lang('create_thread_failed'));
+        FALSE === $tid AND message(-1, lang('create_thread_failed'));
         unset($thread);
 
         // hook admin_content_create_post_after.php
@@ -350,30 +354,30 @@ if ($action == 'list') {
         $tag_json = well_tag_post($tid, $fid, $tags);
         if (xn_strlen($subject) >= 120) {
             $s = xn_substr($tag_json, -1, NULL);
-            if ($s != '}') {
+            if ('}' != $s) {
                 $len = mb_strripos($tag_json, ',', 0, 'UTF-8');
                 $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
             }
         }
-        $tag_json AND well_thread_update($tid, array('tag' => $tag_json)) === FALSE AND message(-1, lang('update_thread_failed'));
+        $tag_json AND FALSE === well_thread_update($tid, array('tag' => $tag_json)) AND message(-1, lang('update_thread_failed'));
 
         // 首页flag
-        !empty($flag_index_arr) AND flag_create_thread(0, 1, $tid, $flag_index_arr) === FALSE AND message(-1, lang('create_failed'));
+        !empty($flag_index_arr) AND FALSE === flag_create_thread(0, 1, $tid, $flag_index_arr) AND message(-1, lang('create_failed'));
 
         // 频道flag
-        $forum['fup'] AND !empty($flag_cate_arr) AND flag_create_thread($forum['fup'], 2, $tid, $flag_cate_arr) === FALSE AND message(-1, lang('create_failed'));
+        $forum['fup'] AND !empty($flag_cate_arr) AND FALSE === flag_create_thread($forum['fup'], 2, $tid, $flag_cate_arr) AND message(-1, lang('create_failed'));
 
         // 栏目flag
-        !empty($flag_forum_arr) AND flag_create_thread($fid, 3, $tid, $flag_forum_arr) === FALSE AND message(-1, lang('create_failed'));
+        !empty($flag_forum_arr) AND FALSE === flag_create_thread($fid, 3, $tid, $flag_forum_arr) AND message(-1, lang('create_failed'));
 
         // hook admin_content_create_post_end.php
 
         message(0, lang('create_successfully'));
     }
 
-} elseif ($action == 'update') {
+} elseif ('update' == $action) {
 
-    group_access($gid, 'managecreatethread') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+    FALSE === group_access($gid, 'managecreatethread') AND message(1, lang('user_group_insufficient_privilege'));
 
     // hook admin_content_update_start.php
 
@@ -398,14 +402,14 @@ if ($action == 'list') {
 
     // hook admin_content_update_end.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_content_update_get_start.php
 
         $thread_data['message'] = htmlspecialchars($thread_data['message']);
 
         ($uid != $thread['uid']) AND $thread_data['message'] = xn_html_safe($thread_data['message']);
-        
+
         $forum = array_value($forumlist, $fid);
         $model = array_value($forum, 'model', 0);
 
@@ -421,7 +425,7 @@ if ($action == 'list') {
 
         // 初始化附件
         well_attach_clear_tmp();
-        
+
         // hook admin_content_update_get_icon_after.php
 
         $picture = $config['picture_size'];
@@ -444,10 +448,10 @@ if ($action == 'list') {
         $form_action = url('content-update-' . $tid . '-' . $page);
         $form_submit_txt = lang('submit');
         $form_subject = $thread['subject'];
-        $form_message = strpos($thread_data['message'], '="upload/') !== FALSE ? str_replace('="upload/', '="../upload/', $thread_data['message']) : $thread_data['message'];
+        $form_message = FALSE !== strpos($thread_data['message'], '="upload/') ? str_replace('="upload/', '="../upload/', $thread_data['message']) : $thread_data['message'];
         $form_brief = $thread['brief'];
         $form_doctype = $thread_data['doctype'];
-        $form_link = $thread['type'] == 10 ? 'checked="checked"' : '';
+        $form_link = 10 == $thread['type'] ? 'checked="checked"' : '';
         $form_closed = $thread['closed'] >= 1 ? 'checked="checked"' : '';
         $form_keyword = $thread['keyword'];
         $form_description = $thread['description'];
@@ -455,7 +459,7 @@ if ($action == 'list') {
         $thumbnail = $thread['icon_text'];
 
         $setting = array_value($config, 'setting');
-        $save_image = array_value($setting, 'save_image_on', 0) == 1 ? 'checked="checked"' : '';
+        $save_image = 1 == array_value($setting, 'save_image_on', 0) ? 'checked="checked"' : '';
         // hook admin_content_update_get_form_after.php
 
         $breadcrumb_flag = lang('edit');
@@ -467,26 +471,29 @@ if ($action == 'list') {
 
         // 过滤版块相关数据
         $forumlist = forum_filter($forumlist);
-
-        // hook admin_content_update_get_template.php
-
         $safe_token = well_token_set($uid);
 
-        // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
-        if ($model == 0) {
-            include _include(ADMIN_PATH . 'view/htm/content_post.htm');
-        }
-        
         // hook admin_content_update_get_end.php
 
-    } elseif ($method == 'POST') {
+        // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
+		switch ($model) {
+            case '0':
+                include _include(ADMIN_PATH . 'view/htm/content_post.htm');
+                break;
+            // hook admin_content_update_get_case_end.php
+            default:
+                include _include(ADMIN_PATH . 'view/htm/content_post.htm');
+                break;
+        }
+
+    } elseif ('POST' == $method) {
 
         // 验证token
         if (array_value($conf, 'message_token', 0)) {
             $safe_token = param('safe_token');
-            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
         }
-        
+
         // hook admin_content_update_post_start.php
 
         $arr = array();
@@ -509,9 +516,9 @@ if ($action == 'list') {
         // hook admin_content_update_post_subject_after.php
 
         $link = param('link', 0);
-        if ($link && $thread['type'] != 10) {
+        if ($link && 10 != $thread['type']) {
             $arr['type'] = 10;
-        } elseif (empty($link) && $thread['type'] == 10) {
+        } elseif (empty($link) && 10 == $thread['type']) {
             $arr['type'] = 0;
         }
 
@@ -528,7 +535,7 @@ if ($action == 'list') {
         // hook admin_content_update_post_message_before.php
 
         $message = $_message = '';
-        if ($link == 0) {
+        if (0 == $link) {
             $message = param('message', '', FALSE);
             $message = trim($message);
             empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
@@ -640,7 +647,7 @@ if ($action == 'list') {
         $tag_json = well_tag_post_update($tid, $fid, $tags, $thread['tag_text']);
         if (xn_strlen($subject) >= 120) {
             $s = xn_substr($tag_json, -1, NULL);
-            if ($s != '}') {
+            if ('}' != $s) {
                 $len = mb_strripos($tag_json, ',', 0, 'UTF-8');
                 $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
             }
@@ -676,14 +683,14 @@ if ($action == 'list') {
         // hook admin_content_update_post_arr_after.php
 
         if (!empty($arr)) {
-            well_thread_update($tid, $arr) === FALSE AND message(-1, lang('update_thread_failed'));
+            FALSE === well_thread_update($tid, $arr) AND message(-1, lang('update_thread_failed'));
             unset($arr);
         }
 
         // hook admin_content_update_post_before.php
 
         // $link = 1 为站外链接 无需更新数据表
-        if ($link == 0) {
+        if (0 == $link) {
 
             // 如果开启云储存或使用图床，需要把内容中的附件链接替换掉
             $message = data_message_replace_url($tid, $message);
@@ -699,7 +706,7 @@ if ($action == 'list') {
 
                 $update = array('tid' => $tid, 'gid' => $gid, 'doctype' => $doctype, 'message' => $message);
                 // hook admin_content_data_update_before.php
-                data_update($tid, $update) === FALSE AND message(-1, lang('update_post_failed'));
+                FALSE === data_update($tid, $update) AND message(-1, lang('update_post_failed'));
                 unset($update);
             }
         }
@@ -707,18 +714,18 @@ if ($action == 'list') {
         // hook admin_content_update_post_center.php
 
         // 首页flag
-        !empty($new_index_flagids) AND flag_create_thread(0, 1, $tid, $new_index_flagids) === FALSE AND message(-1, lang('create_failed'));
+        !empty($new_index_flagids) AND FALSE === flag_create_thread(0, 1, $tid, $new_index_flagids) AND message(-1, lang('create_failed'));
 
         // 返回首页被取消的flagid
         !empty($old_index_flagids) AND flag_thread_delete_by_ids($old_index_flagids, $flagarr);
 
         // 频道flag
-        $forum['fup'] AND !empty($new_cate_flagids) AND flag_create_thread($forum['fup'], 2, $tid, $new_cate_flagids) === FALSE AND message(-1, lang('create_failed'));
+        $forum['fup'] AND !empty($new_cate_flagids) AND FALSE === flag_create_thread($forum['fup'], 2, $tid, $new_cate_flagids) AND message(-1, lang('create_failed'));
         // 返回频道被取消的flagid
         !empty($old_cate_flagids) AND flag_thread_delete_by_ids($old_cate_flagids, $flagarr);
 
         // 栏目flag
-        !empty($new_forum_flagids) AND flag_create_thread($fid, 3, $tid, $new_forum_flagids) === FALSE AND message(-1, lang('create_failed'));
+        !empty($new_forum_flagids) AND FALSE === flag_create_thread($fid, 3, $tid, $new_forum_flagids) AND message(-1, lang('create_failed'));
         // 返回被取消的flagid
         !empty($old_forum_flagids) AND flag_thread_delete_by_ids($old_forum_flagids, $flagarr);
 

@@ -50,7 +50,7 @@ class cache_memcached {
         public function get($k) {
                 if(!$this->link && !$this->connect()) return FALSE;
                 $r = $this->link->get($k);
-                return $r === FALSE ? NULL : $r;
+                return FALSE === $r ? NULL : $r;
         }
         public function delete($k) {
                 if(!$this->link && !$this->connect()) return FALSE;

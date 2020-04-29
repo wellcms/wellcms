@@ -15,10 +15,10 @@
                                 </div>
                             </a>
                             <div class="text-center py-1">
-                                <?php if($theme['installed']==0) { ?>
+                                <?php if(0==$theme['installed']) { ?>
                                 <a role="button" class="btn btn-primary btn-sm install" data-href="<?php echo url('plugin-theme-'.$dir.'-1');?>" href="javascript:void(0);"><?php echo lang('install');?></a>
                                 <?php } ?>
-                                <?php if($theme['installed']==1) { ?>
+                                <?php if(1==$theme['installed']) { ?>
                                 <a role="button" class="btn btn-danger btn-sm uninstall" data-href="<?php echo url('plugin-theme-'.$dir.'-0');?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
                                 <?php } ?>
                             </div>

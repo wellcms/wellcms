@@ -4,13 +4,13 @@
  */
 !defined('DEBUG') AND exit('Access Denied.');
 
-group_access($gid, 'manageuser') === FALSE AND message(1, lang('user_group_insufficient_privilege'));
+FALSE === group_access($gid, 'manageuser') AND message(1, lang('user_group_insufficient_privilege'));
 
-$action = param(1);
+$action = param(1, 'list');
 
 // hook admin_user_start.php
 
-if (empty($action) || $action == 'list') {
+if ('list' == $action) {
 
     $header['title'] = lang('user_admin');
     $header['mobile_title'] = lang('user_admin');
@@ -29,7 +29,7 @@ if (empty($action) || $action == 'list') {
 
     if ($keyword) {
         !in_array($srchtype, $allowtype) AND $srchtype = 'uid';
-        $cond[$srchtype] = $srchtype == 'create_ip' ? sprintf('%u', ip2long($keyword)) : $keyword;
+        $cond[$srchtype] = 'create_ip' == $srchtype ? sprintf('%u', ip2long($keyword)) : $keyword;
     }
 
     // hook admin_user_list_cond_after.php
@@ -48,11 +48,11 @@ if (empty($action) || $action == 'list') {
 
     include _include(ADMIN_PATH . "view/htm/user_list.htm");
 
-} elseif ($action == 'create') {
+} elseif ('create' == $action) {
 
     // hook admin_user_create_get_post.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_user_create_get_start.php
 
@@ -72,12 +72,12 @@ if (empty($action) || $action == 'list') {
 
         include _include(ADMIN_PATH . "view/htm/user_create.htm");
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
-        group_access($gid, 'managecreateuser') === FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managecreateuser') AND message(1, lang('user_group_insufficient_privilege'));
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         $email = param('email');
         $username = param('username');
@@ -106,7 +106,7 @@ if (empty($action) || $action == 'list') {
             'create_ip' => $longip,
             'create_date' => $time
         ));
-        $r === FALSE AND message(-1, lang('create_failed'));
+        FALSE === $r AND message(-1, lang('create_failed'));
 
         // hook admin_user_create_post_end.php
 
@@ -114,13 +114,13 @@ if (empty($action) || $action == 'list') {
 
     }
 
-} elseif ($action == 'update') {
+} elseif ('update' == $action) {
 
     $_uid = param(2, 0);
 
     // hook admin_user_update_get_post.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_user_update_get_start.php
 
@@ -142,12 +142,12 @@ if (empty($action) || $action == 'list') {
 
         include _include(ADMIN_PATH . "view/htm/user_update.htm");
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
-        group_access($gid, 'manageupdateuser') === FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'manageupdateuser') AND message(1, lang('user_group_insufficient_privilege'));
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         $email = param('email');
         $username = param('username');
@@ -186,21 +186,21 @@ if (empty($action) || $action == 'list') {
         $update = array_diff_value($arr, $old);
         empty($update) AND message(-1, lang('data_not_changed'));
 
-        user_update($_uid, $update) === FALSE AND message(-1, lang('update_failed'));
+        FALSE === user_update($_uid, $update) AND message(-1, lang('update_failed'));
 
         // hook admin_user_update_post_end.php
 
         message(0, lang('update_successfully'));
     }
 
-} elseif ($action == 'delete') {
+} elseif ('delete' == $action) {
 
-    if ($method != 'POST') message(-1, lang('method_error'));
+    if ('POST' != $method) message(-1, lang('method_error'));
 
-    group_access($gid, 'managedeleteuser') === FALSE AND message(1, lang('user_group_insufficient_privilege'));
+    FALSE === group_access($gid, 'managedeleteuser') AND message(1, lang('user_group_insufficient_privilege'));
 
     $safe_token = param('safe_token');
-    well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+    FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
     $_uid = param('uid', 0);
 
@@ -208,9 +208,9 @@ if (empty($action) || $action == 'list') {
 
     $_user = user_read($_uid);
     empty($_user) AND message(-1, lang('user_not_exists'));
-    ($_user['gid'] == 1) AND message(-1, 'admin_cant_be_deleted');
+    (1 == $_user['gid']) AND message(-1, 'admin_cant_be_deleted');
 
-    user_delete($_uid) === FALSE AND message(-1, lang('delete_failed'));
+    FALSE === user_delete($_uid) AND message(-1, lang('delete_failed'));
 
     // hook admin_user_delete_end.php
 

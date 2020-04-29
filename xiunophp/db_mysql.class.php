@@ -37,7 +37,7 @@ class db_mysql {
 	public function connect_slave() {
 		if($this->rlink) return $this->rlink;
 		if(empty($this->conf['slaves'])) {
-			if($this->wlink === NULL) $this->wlink = $this->connect_master();
+			if(NULL === $this->wlink) $this->wlink = $this->connect_master();
 			$this->rlink = $this->wlink;
 			$this->rconf = $this->conf['master'];
 		} else {
@@ -53,7 +53,7 @@ class db_mysql {
 		$link = @mysql_connect($host, $user, $password); // 如果用户名相同，则返回同一个连接。 fastcgi 持久连接更省资源
 		if(!$link) { $this->error(mysql_errno(), '连接数据库服务器失败:'.mysql_error()); return FALSE; }
 		if(!mysql_select_db($name, $link)) { $this->error(mysql_errno(), '选择数据库失败:'.mysql_error()); return FALSE; }
-		//strtolower($engine) == 'innodb' AND $this->query("SET innodb_flush_log_at_trx_commit=no", $link);
+		//'innodb' == strtolower($engine) AND $this->query("SET innodb_flush_log_at_trx_commit=no", $link);
 		$charset AND $this->query("SET names $charset, sql_mode=''", $link);
 		return $link;
 	}
@@ -62,7 +62,7 @@ class db_mysql {
 		if(!$query) return $query;
 		// 如果结果为空，返回 FALSE
 		$r = mysql_fetch_assoc($query);
-		if($r === FALSE) {
+		if(FALSE === $r) {
 			// $this->error();
 			return NULL;
 		}
@@ -105,7 +105,7 @@ class db_mysql {
 		$t1 = microtime(1);
 		$query = mysql_query($sql, $link);
 		$t2 = microtime(1);
-		if($query === FALSE) $this->error();
+		if(FALSE === $query) $this->error();
 		
 		$t3 = substr($t2 - $t1, 0, 6);
 		DEBUG AND xn_log("[$t3]".$sql, 'db_sql');
@@ -119,7 +119,7 @@ class db_mysql {
 			if(!$this->wlink && !$this->connect_master()) return FALSE;
 			$link = $this->link = $this->wlink;
 		}
-		if(strtoupper(substr($sql, 0, 12) == 'CREATE TABLE')) {
+		if('CREATE TABLE' == strtoupper(substr($sql, 0, 12))) {
 			$fulltext = strpos($sql, 'FULLTEXT(') !== FALSE;
 			$highversion = version_compare($this->version(), '5.6') >= 0;
 			if(!$fulltext || ($fulltext && $highversion)) {
@@ -137,11 +137,11 @@ class db_mysql {
 		DEBUG AND xn_log("[$t3]".$sql, 'db_sql');
 		if(count($this->sqls) < 1000) $this->sqls[] = "[$t3]".$sql;
 		
-		if($query !== FALSE) {
+		if(FALSE !== $query) {
 			$pre = strtoupper(substr(trim($sql), 0, 7));
-			if($pre == 'INSERT ' || $pre == 'REPLACE') {
+			if('INSERT ' == $pre || 'REPLACE' == $pre) {
 				return mysql_insert_id($this->wlink);
-			} elseif($pre == 'UPDATE ' || $pre == 'DELETE ') {
+			} elseif('UPDATE ' == $pre || 'DELETE ' == $pre) {
 				return mysql_affected_rows($this->wlink);
 			}
 		} else {
@@ -154,7 +154,7 @@ class db_mysql {
 	// 如果为 innodb，条件为空，并且有权限读取 information_schema
 	public function count($table, $cond = array()) {
 		$this->connect_slave();
-		if(empty($cond) && $this->rconf['engine'] == 'innodb') {
+		if(empty($cond) && 'innodb' == $this->rconf['engine']) {
 			$dbname = $this->rconf['name'];
 			$sql = "SELECT TABLE_ROWS as num FROM information_schema.tables WHERE TABLE_SCHEMA='$dbname' AND TABLE_NAME='$table'";
 		} else {

@@ -50,7 +50,7 @@ class db_pdo_mysql {
 	}
 	
 	public function real_connect($host, $user, $password, $name, $charset = '', $engine = '') {
-		if(strpos($host, ':') !== FALSE) {
+		if(FALSE !== strpos($host, ':')) {
 			list($host, $port) = explode(':', $host);
 		} else {
 			$port = 3306;
@@ -78,7 +78,7 @@ class db_pdo_mysql {
 		if(!$query) return $query;
 		$query->setFetchMode(PDO::FETCH_ASSOC);
 		$r = $query->fetch();
-		if($r === FALSE) {
+		if(FALSE === $r) {
 			// $this->error();
 			return NULL;
 		}
@@ -126,7 +126,7 @@ class db_pdo_mysql {
 			$this->error($e->getCode(), $e->getMessage());
 			return FALSE;
 	        }
-		if($query === FALSE) $this->error();
+		if(FALSE === $query) $this->error();
 		if(count($this->sqls) < 1000) $this->sqls[] = substr($t2 - $t1, 0, 6).' '.$sql;
 		return $query;
 	}
@@ -136,7 +136,7 @@ class db_pdo_mysql {
 		$link = $this->link = $this->wlink;
 		$n = $t3 = 0;
 		try {
-			if(strtoupper(substr($sql, 0, 12) == 'CREATE TABLE')) {
+			if('CREATE TABLE' == strtoupper(substr($sql, 0, 12))) {
 				$fulltext = strpos($sql, 'FULLTEXT(') !== FALSE;
 				$highversion = version_compare($this->version(), '5.6') >= 0;
 				if(!$fulltext || ($fulltext && $highversion)) {
@@ -159,9 +159,9 @@ class db_pdo_mysql {
 	        }
 		if(count($this->sqls) < 1000) $this->sqls[] = "[$t3]".$sql;
 		
-		if($n !== FALSE) {
+		if(FALSE !== $n) {
 			$pre = strtoupper(substr(trim($sql), 0, 7));
-			if($pre == 'INSERT ' || $pre == 'REPLACE') {
+			if('INSERT ' == $pre || 'REPLACE' == $pre) {
 				return $this->last_insert_id();
 			}
 		} else {
@@ -176,7 +176,7 @@ class db_pdo_mysql {
 	// SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$table';
 	public function count($table, $cond = array()) {
 		$this->connect_slave();
-		if(empty($cond) && $this->rconf['engine'] == 'innodb') {
+		if(empty($cond) && 'innodb' == $this->rconf['engine']) {
 			$dbname = $this->rconf['name'];
 			$sql = "SELECT TABLE_ROWS as num FROM information_schema.tables WHERE TABLE_SCHEMA='$dbname' AND TABLE_NAME='$table'";
 		} else {

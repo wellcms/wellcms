@@ -62,7 +62,7 @@ function cache_delete($k, $c = NULL) {
 function cache_update($key = NULL, $arr = array(), $life = 0)
 {
     global $conf;
-    if (empty($key) || empty($arr) || $conf['cache']['type'] == 'mysql') return NULL;
+    if (empty($key) || empty($arr) || 'mysql' == $conf['cache']['type']) return NULL;
 
     $cache = cache_get($key);
     if (empty($cache)) return NULL;
@@ -99,10 +99,10 @@ function cache_merge_data($arr = array(), $update = array())
     if (empty($arr) || empty($update)) return TRUE;
     foreach ($update as $k => $v) {
         $op = substr($k, -1);
-        if ($op == '+' || $op == '-') {
+        if ('+' == $op || '-' == $op) {
             $k = substr($k, 0, -1);
             !isset($arr[$k]) AND $arr[$k] = 0;
-            $v = $op == '+' ? ($arr[$k] + $v) : ($arr[$k] - $v);
+            $v = '+' == $op ? ($arr[$k] + $v) : ($arr[$k] - $v);
         }
         $arr[$k] = $v;
     }
@@ -129,8 +129,8 @@ function cookie_set($key, $value, $life = 8640000)
 function cookie_cache_clear($key, $cookie = TRUE)
 {
     global $conf, $time;
-    $cookie == TRUE AND setcookie($key, '', $time - 86400, $conf['cookie_path'], $conf['cookie_domain']);
-    $conf['cache']['type'] != 'mysql' AND cache_delete($key);
+    TRUE == $cookie AND setcookie($key, '', $time - 86400, $conf['cookie_path'], $conf['cookie_domain']);
+    'mysql' != $conf['cache']['type'] AND cache_delete($key);
 }
 
 ?>

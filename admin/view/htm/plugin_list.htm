@@ -10,7 +10,7 @@
                     <?php echo $plugin_cate_html;?>
                 </div>
             </div>
-            <?php if($action == 'store' && $data_verify !== FALSE){ ?>
+            <?php if('store' == $action && FALSE !== $data_verify){ ?>
             <div class="col-md-4 text-right">
                 <div class="btn-group mb-3" role="group">
                     <a role="button" class="sync btn btn-secondary" href="javascript:void(0);"><?php echo lang('sync_official');?></a>
@@ -23,7 +23,7 @@
 		<div class="card">
 			<div class="card-body">
 				<div class="table-responsive">
-					<?php if ($action == 'store' && $data_verify === FALSE) { ?>
+					<?php if ('store' == $action && FALSE === $data_verify) { ?>
 
                     <div class="col-md-4 mx-auto">
                         <p class="text-danger text-center font-weight-bold">
@@ -70,7 +70,7 @@
 
 						<?php $plugin['name'] = array_value($plugin, 'name');
 							$plugin['brief'] = array_value($plugin, 'brief');
-							$plugin['version_fmt'] = $action == 'local' ? $plugin['version'] : array_value($plugin, 'official_version');
+							$plugin['version_fmt'] = 'local' == $action ? $plugin['version'] : array_value($plugin, 'official_version');
 						?>
 
 						<tr valign="top" dir="<?php echo $dir; ?>">
@@ -116,12 +116,12 @@
 							<td width="250" align="right">
 
                                 <!-- 付费查看详情 -->
-								<?php if($action == 'official_fee' && !$plugin['downloaded']) { ?>
+								<?php if('official_fee' == $action && !$plugin['downloaded']) { ?>
 								<a role="button" class="btn btn-primary btn-sm buy mx-1" href="<?php echo url("plugin-read-$dir"); ?>"><?php echo lang('buy');?></a>
 								<?php } ?>
 
                                 <!-- 免费按钮 -->
-								<?php if($action == 'official_free' && !$plugin['downloaded']) { ?>
+								<?php if('official_free' == $action && !$plugin['downloaded']) { ?>
 								<a role="button" class="btn btn-primary btn-sm download mx-1" href="<?php echo url("plugin-download-$dir"); ?>"><?php echo lang('download');?></a>
 								<?php } ?>
 
@@ -176,7 +176,7 @@
 
 <script>
     var safe_token = '<?php echo $safe_token;?>';
-    <?php if ($action == 'store') { ?>
+    <?php if ('store' == $action) { ?>
         $('a.sync').on('click', function () {
             $.xpost(xn.url('plugin-storehouse'), {safe_token: safe_token}, function (code, message) {
                 if (code == 0) {
@@ -187,7 +187,7 @@
             });
         });
 
-        <?php if ($data_verify === FALSE) { ?>
+        <?php if (FALSE === $data_verify) { ?>
             var jform = $('#form');
             jform.on('submit', function() {
                 jform.reset();

@@ -28,7 +28,7 @@ function theme_load($type = '', $id = 0, $dir = '')
     $pre = $default_pre = '';
 
     if ($tpl_mode && $detect) {
-        if ($tpl_mode == 2 && $detect == 2) {
+        if (2 == $tpl_mode && 2 == $detect) {
             $pre = 'pad.'; // 平板端 pad.list.htm
         } else {
             $pre = 'm.'; // 移动端 m.list.htm
@@ -155,15 +155,15 @@ function theme_mode_pre($type = 0)
     $pre = '';
 
     // 首页文件前缀
-    if ($mode == 1) {
+    if (1 == $mode) {
         // 门户模式
-        $pre .= $type == 2 ? 'portal_category.htm' : 'portal.htm';
-    } elseif ($mode == 2) {
+        $pre .= 2 == $type ? 'portal_category.htm' : 'portal.htm';
+    } elseif (2 == $mode) {
         // 扁平模式
-        $pre .= $type == 2 ? 'flat_category.htm' : 'flat.htm';
+        $pre .= 2 == $type ? 'flat_category.htm' : 'flat.htm';
     } else {
         // 自定义模式
-        $pre .= $type == 2 ? 'index_category.htm' : 'index.htm';
+        $pre .= 2 == $type ? 'index_category.htm' : 'index.htm';
     }
     return $pre;
 }

@@ -10,11 +10,11 @@ include _include(APP_PATH . 'model/smtp.func.php');
 $smtplist = smtp_init(APP_PATH . 'conf/smtp.conf.php');
 // hook admin_setting_start.php
 
-if ($action == 'base') {
+if ('base' == $action) {
 
     // hook admin_setting_base_get_post.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_setting_base_get_start.php
 
@@ -36,12 +36,12 @@ if ($action == 'base') {
 
         include _include(ADMIN_PATH . 'view/htm/setting_base.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-        group_access($gid, 'managesetting') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
 
         $sitebrief = param('sitebrief', '', FALSE);
         $sitename = param('sitename', '', FALSE);
@@ -71,11 +71,11 @@ if ($action == 'base') {
         message(0, lang('modify_successfully'));
     }
 
-} elseif ($action == 'smtp') {
+} elseif ('smtp' == $action) {
 
     // hook admin_setting_smtp_get_post.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_setting_smtp_get_start.php
 
@@ -90,12 +90,12 @@ if ($action == 'base') {
 
         include _include(ADMIN_PATH . "view/htm/setting_smtp.htm");
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-        group_access($gid, 'managesetting') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
 
         // hook admin_setting_smtp_post_start.php
 
@@ -122,13 +122,13 @@ if ($action == 'base') {
 
         message(0, lang('save_successfully'));
     }
-} elseif ($action == 'website') {
+} elseif ('website' == $action) {
 
     // hook admin_setting_website_start.php
 
     $setting = array_value($config, 'setting');
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         $header['title'] = lang('admin_site_setting');
         $header['mobile_title'] = lang('admin_site_setting');
@@ -152,12 +152,12 @@ if ($action == 'base') {
 
         include _include(ADMIN_PATH . 'view/htm/setting_website.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-        group_access($gid, 'managesetting') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
 
         // hook admin_setting_website_post_start.php
 

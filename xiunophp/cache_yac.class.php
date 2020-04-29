@@ -20,7 +20,7 @@ class cache_yac {
         // 取不到数据的时候返回 NULL，不是 FALSE
         public function get($k) {
                 $r = $this->yac->get($k);
-                if($r === FALSE) $r = NULL;
+                if(FALSE === $r) $r = NULL;
                 return $r;
         }
         public function delete($k) {

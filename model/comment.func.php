@@ -71,7 +71,7 @@ function comment_create($post)
     if (empty($post['message'])) return FALSE;
     
     $pid = comment__create($post);
-    if ($pid === FALSE) return FALSE;
+    if (FALSE === $pid) return FALSE;
 
     // hook model_comment_create_center.php
 
@@ -83,7 +83,7 @@ function comment_create($post)
     // hook model_comment_create_after.php
 
     // 我的回复 审核成功写入website_post_pid
-    if ($gid == 1 || !group_access($gid, 'commentverify')) {
+    if (1 == $gid || !group_access($gid, 'commentverify')) {
         // 不需要审核 插入回复小表
         $arr = array('pid' => $pid, 'fid' => $post['fid'], 'tid' => $post['tid'], 'uid' => $uid);
         // hook model_comment_create_post_pid.php
@@ -127,7 +127,7 @@ function comment_update($pid, $update)
     // hook model_comment_update_before.php
 
     // 我的回复 审核成功写入website_post_pid
-    if ($gid == 1 || !group_access($gid, 'commentverify')) {
+    if (1 == $gid || !group_access($gid, 'commentverify')) {
         $update['status'] = 0;
     } else {
         // hook model_comment_update_verify_start.php
@@ -192,7 +192,7 @@ function comment_find($pidarr, $pagesize = 20, $desc = TRUE)
 
     // hook model_comment_find_start.php
 
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $postlist = comment__find(array('pid' => $pidarr), array('pid' => $orderby), 1, $pagesize);
 
     if (empty($postlist)) return NULL;
@@ -216,7 +216,7 @@ function comment_find_by_pid($pidarr, $pagesize = 20, $desc = TRUE)
 
     // hook model_comment_find_by_pid_start.php
 
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $postlist = comment__find(array('pid' => $pidarr), array('pid' => $orderby), 1, $pagesize);
 
     // hook model_comment_find_by_pid_end.php
@@ -273,7 +273,7 @@ function comment_delete($pid)
     if (empty($pid)) return FALSE;
     // hook model_comment_delete_start.php
     $r = comment__delete(array('pid' => $pid));
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
     // 删除小表
     $r = comment_pid_delete($pid);
     // hook model_comment_delete_end.php
@@ -289,7 +289,7 @@ function comment_delete_by_tid($tid)
     // hook model_comment_delete_by_tid_start.php
 
     $posts = $thread['posts'];
-    if ($posts == 0) return FALSE;
+    if (0 == $posts) return FALSE;
 
     $size = 1000;
     if ($posts > $size) {

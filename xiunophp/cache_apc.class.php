@@ -22,7 +22,7 @@ class cache_apc {
         }
         public function get($k) {
                 $r = apc_fetch($k);
-                if($r === FALSE) $r = NULL;
+                if(FALSE === $r) $r = NULL;
                 return $r;
         }
         public function delete($k) {

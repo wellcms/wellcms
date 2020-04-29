@@ -7,19 +7,19 @@
             <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel">
                 <ol class="carousel-indicators">
                     <?php $n = count($slide) / 2;for ($i = 0; $i < $n; ++$i) { ?>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $i; ?>" <?php if($i == 0) {echo 'class="active"';} ?>></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $i; ?>" <?php if(0 == $i) {echo 'class="active"';} ?>></li>
                     <?php } ?>
                 </ol>
 
                 <div class="carousel-inner">
                     <?php $i = 0;foreach($slide as &$_thread) { $i++; ?>
 
-                    <?php if ($i % 2 == 1) { ?>
-                    <div class="carousel-item <?php if ($i == 1) {echo 'active';} ?>">
+                    <?php if (1 == $i % 2) { ?>
+                    <div class="carousel-item <?php if (1 == $i) {echo 'active';} ?>">
                         <div class="row">
                             <?php } ?>
 
-                            <div class="col-6 <?php if ($i % 2 == 1) {echo 'pl-0 pr-1';} elseif ($i%2 == 0) {echo 'pl-1 pr-0';} ?>">
+                            <div class="col-6 <?php if (1 == $i % 2) {echo 'pl-0 pr-1';} elseif (0 == $i % 2) {echo 'pl-1 pr-0';} ?>">
                                 <a href="<?php echo $_thread['url'];?>">
                                     <img class="d-block w-100 rounded" src="<?php echo $_thread['icon_text']; ?>" alt='<?php echo $_thread['subject'];?>'>
                                     <!--<div class="carousel-caption d-none d-md-block">
@@ -30,7 +30,7 @@
                                 </a>
                             </div>
 
-                            <?php if($i%2 == 0) { ?>
+                            <?php if(0 == $i % 2) { ?>
                         </div>
                     </div>
                     <?php } ?>

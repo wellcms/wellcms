@@ -77,10 +77,10 @@ if (DEBUG) {
 /*
 function xn_php_strip_whitespace($file) {
 	$s = php_strip_whitespace($file);
-	if(substr($s, 0, 5) == '<?php') {
+	if('<?php' == substr($s, 0, 5)) {
 		$s = substr($s, 5);
 	}
-	if(substr($s, -2) == '?>') {
+	if('?>' == substr($s, -2)) {
 		$s = substr($s, 0, -2);
 	}
 	return $s;

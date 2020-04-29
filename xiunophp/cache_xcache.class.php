@@ -23,7 +23,7 @@ class cache_xcache {
         // 取不到数据的时候返回 NULL，不是 FALSE
         public function get($k) {
                 $r = xcache_get($k);
-                if($r === FALSE) $r = NULL;
+                if(FALSE === $r) $r = NULL;
                 return $r;
         }
         public function delete($k) {

@@ -31,7 +31,7 @@ function portal_index_thread_cache($forumlist)
     if (isset($cache[$key])) return $cache[$key];
     // hook model_portal_index_thread_cache_before.php
     $arr = cache_get($key);
-    if ($arr === NULL) {
+    if (NULL === $arr) {
         $arr = portal_index_thread($forumlist);
         empty($arr) || cache_set($key, $arr);
     }
@@ -205,7 +205,7 @@ function portal_channel_thread_cache($fid)
     if (isset($cache[$key])) return $cache[$key];
     // hook model_portal_channel_thread_cache_before.php
     $arr = cache_get($key);
-    if ($arr === NULL) {
+    if (NULL === $arr) {
         $arr = portal_channel_thread($fid);
         empty($arr) || cache_set($key, $arr, 300);
     }

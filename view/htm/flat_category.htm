@@ -8,7 +8,7 @@
         <div class="card-header bg-light shadow">
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo $active == 'default' ? 'active' : '';?>" href="<?php echo $conf['path'];?>">
+                    <a class="nav-link <?php echo 'default' == $active ? 'active' : '';?>" href="<?php echo $conf['path'];?>">
                         <?php echo lang('new_thread');?>
                     </a>
                 </li>
@@ -112,7 +112,7 @@
                 <?php if(isset($_flag['list'])){foreach($_flag['list'] as $_thread) { ?>
                 <li class="list-group-item bg-white">
                     <h4 class="my-0">
-                        <a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo ($_thread['type']==10?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
+                        <a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                             <?php echo $_thread['subject'];?>
                         </a>
                     </h4>

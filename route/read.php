@@ -14,6 +14,7 @@ $extra = array(); // 插件预留
 // hook read_start.php
 
 $thread = well_thread_read_cache($tid);
+// hook read_cache_after.php
 empty($thread) AND message(-1, lang('thread_not_exists'));
 
 // hook read_before.php
@@ -34,7 +35,7 @@ well_thread_inc_views($tid);
 
 // hook read_after.php
 
-if ($thread['type'] == 0) {
+if (0 == $thread['type']) {
     // 文章 / Article
 
     // hook read_article_start.php
@@ -46,7 +47,7 @@ if ($thread['type'] == 0) {
 
     // hook read_article_default_start.php
 
-    if ($thread_read_from_default == 1) {
+    if (1 == $thread_read_from_default) {
 
         // hook read_article_default_before.php
 
@@ -54,7 +55,7 @@ if ($thread['type'] == 0) {
 
         // hook read_article_default_center.php
 
-        if ($page == 1) {
+        if (1 == $page) {
 
             $attachlist = array();
             $imagelist = array();
@@ -88,7 +89,7 @@ if ($thread['type'] == 0) {
 
     // hook read_article_center.php
 
-    if ($pull_other_from_default == 1) {
+    if (1 == $pull_other_from_default) {
         // hook read_article_pull_other_start.php
 
         // 相关主题等调用，统一遍历tid合并去重，再遍历主题表
@@ -141,11 +142,11 @@ if ($thread['type'] == 0) {
         }
     }
 
-} elseif ($thread['type'] == 10) {
+} elseif (10 == $thread['type']) {
     // 主题外链 / thread external link
     // hook read_link_before.php
     http_location(trim($thread['description']));
-} elseif ($thread['type'] == 11) {
+} elseif (11 == $thread['type']) {
     // 单页 / single page
     // hook read_single_page_start.php
 

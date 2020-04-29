@@ -9,7 +9,7 @@
 
 $action = param(1);
 
-if ($action == 'list') {
+if ('list' == $action) {
 
     $page = param(2, 1);
 
@@ -54,6 +54,7 @@ if ($action == 'list') {
     // hook flag_before.php
 
     $read = flag_read_cache($flagid);
+    // hook flag_read_after.php
     empty($read)AND message(1, lang('thread_not_exists'));
 
     // hook flag_center.php

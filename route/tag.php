@@ -8,7 +8,7 @@ $action = param(1);
 
 // hook tag_start.php
 
-if ($action == 'list') {
+if ('list' == $action) {
 
     // hook tag_list_start.php
 
@@ -62,6 +62,7 @@ if ($action == 'list') {
     // hook tag_before.php
 
     $read = well_tag_read_by_tagid_cache($tagid);
+    // hook tag_cache_after.php
     empty($read) AND message(-1, lang('well_tag_not_existed'));
 
     // hook tag_center.php

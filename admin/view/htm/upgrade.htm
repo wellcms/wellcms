@@ -6,7 +6,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <?php if ($type == 0 || $type == 2) { ?>
+                    <?php if (0 == $type || 2 == $type) { ?>
                     <div class="row">
                         <div class="col-lg-12">
                             <p class="text-center">
@@ -19,19 +19,19 @@
                             <?php echo '<hr>',array_value($official, 'message', 'Nothing message'),'<hr>'; ?>
 
                             <p class="text-center font-weight-bold">
-                                <?php if ($type == 0) { ?>
+                                <?php if (0 == $type) { ?>
                                 <?php if ($upgrade) { ?>
                                 <button class="btn btn-danger btn-lock col-md-2 mx-auto" id="upgrade"><?php echo lang('online_upgrade');?></button>
                                 <?php } else {echo lang('no_upgrade_required');} ?>
                                 <?php } ?>
 
-                                <?php if ($type == 2) {echo lang('upgrade_successfully');} ?>
+                                <?php if (2 == $type) {echo lang('upgrade_successfully');} ?>
                             </p>
                         </div>
                     </div>
                     <?php } ?>
 
-                    <?php if ($type == 1) { ?>
+                    <?php if (1 == $type) { ?>
                     <p class="text-center font-weight-bold">
                         <?php echo lang('upgrading'); ?>
                     </p>

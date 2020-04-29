@@ -62,7 +62,7 @@
                             <div class="message mt-1 break-all">
 
                                 <!--{hook admin_comment_list_inc_subject_before.htm}-->
-                                <?php if($route != 'read' && !empty($_post['subject'])) { ?>
+                                <?php if('read' != $route && !empty($_post['subject'])) { ?>
                                 <h6><a href="<?php echo url('read-' . $_post['tid']);?>" target="_blank"><?php echo $_post['subject'];?></a></h6>
                                 <?php } ?>
                                 <!--{hook admin_comment_list_inc_subject_after.htm}-->

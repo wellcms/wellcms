@@ -40,7 +40,7 @@ function install_sql_file($tablepre, $sqlfile)
     foreach ($arr as $sql) {
         $sql = trim($sql);
         if (empty($sql)) continue;
-        db_exec($sql) === FALSE AND message(-1, "sql: $sql, errno: $errno, errstr: $errstr");
+        FALSE === db_exec($sql) AND message(-1, "sql: $sql, errno: $errno, errstr: $errstr");
     }
 }
 

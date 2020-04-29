@@ -16,8 +16,8 @@
 
 function_exists('ini_set') AND ini_set('display_errors', DEBUG ? '1' : '0');
 error_reporting(DEBUG ? E_ALL : 0);
-version_compare(PHP_VERSION, '5.3.0', '<') AND set_magic_quotes_runtime(0);
-$get_magic_quotes_gpc = get_magic_quotes_gpc();
+version_compare(PHP_VERSION, '5.3.0', '<') AND set_magic_quotes_runtime(FALSE);
+$get_magic_quotes_gpc = version_compare(PHP_VERSION, '5.4.0', '<') ? get_magic_quotes_gpc() : FALSE;
 $starttime = microtime(1);
 $time = time();
 
@@ -91,7 +91,7 @@ $_REQUEST = array_merge($_COOKIE, $_POST, $_GET, xn_url_parse($_SERVER['REQUEST_
 !isset($_SERVER['REMOTE_ADDR']) AND $_SERVER['REMOTE_ADDR'] = '';
 !isset($_SERVER['SERVER_ADDR']) AND $_SERVER['SERVER_ADDR'] = '';
 
-// $_SERVER['REQUEST_METHOD'] === 'PUT' ? @parse_str(file_get_contents('php://input', false , null, -1 , $_SERVER['CONTENT_LENGTH']), $_PUT) : $_PUT = array(); // 不需要支持 PUT
+// $_SERVER['REQUEST_METHOD'] == 'PUT' ? @parse_str(file_get_contents('php://input', false , null, -1 , $_SERVER['CONTENT_LENGTH']), $_PUT) : $_PUT = array(); // 不需要支持 PUT
 $ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower(trim($_SERVER['HTTP_X_REQUESTED_WITH'])) == 'xmlhttprequest') || param('ajax');
 $method = $_SERVER['REQUEST_METHOD'];
 

@@ -14,6 +14,7 @@ $extra = array(); // 插件预留
 // hook category_extra.php
 
 $forum = array_value($forumlist_show, $fid);
+// hook category_read.php
 empty($forum) AND message(-1, lang('forum_not_exists'));
 
 // 管理时使用
@@ -32,7 +33,7 @@ $tpl_mode = $website_setting['tpl_mode'];
 
 // hook category_after.php
 
-if ($forum['model'] == 0) {
+if (0 == $forum['model']) {
     // 频道下显示的版块和主题 频道置顶
     // hook category_article_start.php
 
@@ -41,7 +42,7 @@ if ($forum['model'] == 0) {
 
     // hook category_article_mode_before.php
 
-    if ($website_mode == 0 || $website_mode == 1) {
+    if (0 == $website_mode || 1 == $website_mode) {
         // 门户模式 portal
 
         // hook category_article_portal_start.php
@@ -60,11 +61,10 @@ if ($forum['model'] == 0) {
         // 轮播凑整 双列排版 防止错版 单一列注释该代码
         $slide = array_value($arrlist, 'sticky');
         /*if ($slide) {
-            if (count($arrlist['sticky']) % 2 != 0) {
+            if (0 != count($arrlist['sticky']) % 2) {
                 $i = 0;
                 foreach ($arrlist['sticky'] as $key => &$_thread) {
-                    $i++;
-                    if ($i == 1) {
+                    if (1 == ++$i) {
                         $slide[] = $_thread;
                     }
                 }
@@ -80,7 +80,7 @@ if ($forum['model'] == 0) {
 
         // hook category_article_portal_end.php
 
-    } elseif ($website_mode == 2) {
+    } elseif (2 == $website_mode) {
         // 扁平模式
 
         // hook category_article_flat_start.php
@@ -100,7 +100,7 @@ if ($forum['model'] == 0) {
             $threads = 0;
             if ($forumlist_show) {
                 foreach ($forumlist_show as $key => $val) {
-                    if ($val['fup'] == $fid && $val['type'] == 1 && $val['category'] == 0) {
+                    if ($val['fup'] == $fid && 1 == $val['type'] && 0 == $val['category']) {
                         $fids[] = $val['fid'];
                         $threads += $val['threads'];
                     }
@@ -115,7 +115,7 @@ if ($forum['model'] == 0) {
         // hook category_article_flat_center.php
 
         // 置顶
-        $stickylist = $page == 1 ? sticky_index_thread() : array();
+        $stickylist = 1 == $page ? sticky_index_thread() : array();
 
         // hook category_article_flat_sticky_after.php
 

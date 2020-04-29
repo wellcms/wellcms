@@ -60,7 +60,7 @@ function comment_pid_read($pid)
 function comment_pid_find($tid, $page = 1, $pagesize = 20, $desc = TRUE)
 {
     // hook model_comment_pid_find_start.php
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $arr = comment_pid__find(array('tid' => $tid), array('pid' => $orderby), $page, $pagesize);
     // hook model_comment_pid_find_end.php
     return $arr;
@@ -69,7 +69,7 @@ function comment_pid_find($tid, $page = 1, $pagesize = 20, $desc = TRUE)
 // 遍历栏目下所有回复
 function comment_pid_find_by_uid($uid, $page = 1, $pagesize = 20, $desc = TRUE)
 {
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     // hook model_comment_pid_find_by_uid_start.php
     $arr = comment_pid__find(array('uid' => $uid), array('pid' => $orderby), $page, $pagesize);
     // hook model_comment_pid_find_by_uid_end.php
@@ -79,7 +79,7 @@ function comment_pid_find_by_uid($uid, $page = 1, $pagesize = 20, $desc = TRUE)
 // 遍历栏目下所有回复
 function comment_pid_find_all($page = 1, $pagesize = 20, $desc = TRUE)
 {
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     // hook model_comment_pid_find_by_fid_start.php
     $arr = comment_pid__find(array(), array('pid' => $orderby), $page, $pagesize);
     // hook model_comment_pid_find_by_fid_end.php

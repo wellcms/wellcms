@@ -66,7 +66,7 @@
                         <div class="col-lg-12 message mt-2 break-all">
 
                             <!--{hook comment_list_inc_subject_before.htm}-->
-                            <?php if($route != 'read' && !empty($_post['subject'])) { ?>
+                            <?php if('read' != $route && !empty($_post['subject'])) { ?>
                             <h6 class="post-subject">
                                 <a href="<?php echo url('read-' . $_post['tid']);?>" target="_blank">
                                     <?php echo $_post['subject'];?>

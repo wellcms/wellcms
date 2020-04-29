@@ -5,7 +5,7 @@
             <div class="nav-scroller overflow-hidden position-relative p-1">
                 <ul class="nav nav-pills small">
                     <!--{hook common_header_nav_start.htm}-->
-                    <?php if($route == 'my'){ ?>
+                    <?php if('my' == $route){ ?>
                     <!--个人中心-->
                     <!--{hook common_header_nav_profile_before.htm}-->
                     <li class="nav-item pb-2 mx-1">
@@ -30,7 +30,7 @@
 
                     <!--{hook common_header_nav_before.htm}-->
 
-                    <?php if($route == 'home'){ ?>
+                    <?php if('home' == $route){ ?>
                     <!--我的首页-->
                     <!--{hook common_header_nav_thread_before.htm}-->
                     <li class="nav-item pb-2 mx-1">

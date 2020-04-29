@@ -16,7 +16,7 @@ function form_radio($name, $arr, $checked = 0, $disabled = FALSE)
 
     foreach ((array)$arr as $k => $v) {
         $add = $k == $checked ? ' checked="checked"' : '';
-        $add .= $disabled == TRUE ? ' disabled' : '';
+        $add .= FALSE !== $disabled ? ' disabled' : '';
         $s .= "<label class=\"custom-input custom-radio\"><input type=\"radio\" name=\"$name\" value=\"$k\"$add /> $v</label> &nbsp; \r\n";
     }
     return $s;
@@ -45,8 +45,8 @@ function form_multi_checkbox($name, $arr, $checked = array())
 function form_select($name, $arr, $checked = 0, $id = TRUE, $disabled = FALSE)
 {
     if (empty($arr)) return '';
-    $idadd = $id === TRUE ? "id=\"$name\"" : ($id ? "id=\"$id\"" : '');
-    $add = $disabled == TRUE ? ' disabled="disabled"' : '';
+    $idadd = TRUE == $id ? "id=\"$name\"" : ($id ? "id=\"$id\"" : '');
+    $add = FALSE != $disabled ? ' disabled="disabled"' : '';
     $s = "<select name=\"$name\" class=\"custom-select w-auto\" $idadd $add> \r\n";
     $s .= form_options($arr, $checked);
     $s .= "</select> \r\n";
@@ -66,7 +66,7 @@ function form_options($arr, $checked = 0)
 function form_text($name, $value, $width = FALSE, $holdplacer = '')
 {
     $style = '';
-    if ($width !== FALSE) {
+    if (FALSE !== $width) {
         is_numeric($width) AND $width .= 'px';
         $style = " style=\"width: $width\"";
     }
@@ -83,7 +83,7 @@ function form_hidden($name, $value)
 function form_textarea($name, $value, $holdplacer = '', $width = FALSE, $height = FALSE)
 {
     $style = '';
-    if ($width !== FALSE) {
+    if (FALSE !== $width) {
         is_numeric($width) AND $width .= 'px';
         is_numeric($height) AND $height .= 'px';
         $style = " style=\"width: $width; height: $height; \"";
@@ -95,7 +95,7 @@ function form_textarea($name, $value, $holdplacer = '', $width = FALSE, $height 
 function form_password($name, $value, $width = FALSE)
 {
     $style = '';
-    if ($width !== FALSE) {
+    if (FALSE !== $width) {
         is_numeric($width) AND $width .= 'px';
         $style = " style=\"width: $width\"";
     }
@@ -107,7 +107,7 @@ function form_password($name, $value, $width = FALSE)
 function form_time($name, $value = 0, $width = FALSE)
 {
     $style = '';
-    if ($width !== FALSE) {
+    if (FALSE !== $width) {
         is_numeric($width) AND $width .= 'px';
         $style = " style=\"width: $width\"";
     }
@@ -120,7 +120,7 @@ function form_time($name, $value = 0, $width = FALSE)
 function form_date($name, $value = 0, $width = FALSE)
 {
     $style = '';
-    if ($width !== FALSE) {
+    if (FALSE !== $width) {
         is_numeric($width) AND $width .= 'px';
         $style = " style=\"width: $width\"";
     }

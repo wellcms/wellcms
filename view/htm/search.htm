@@ -16,10 +16,10 @@
 						</div>
 					</div>
 				
-					<?php if($search_type == 'like') { ?>
+					<?php if('like' == $search_type) { ?>
 					<div class="form-group">
 						<label class="form-check-inline">
-							<input class="form-check-input" type="radio" name="range" value="1" <?php echo $range == '1' ? 'checked' : '';?>> 主题
+							<input class="form-check-input" type="radio" name="range" value="1" <?php echo 1 == $range ? 'checked' : '';?>> 主题
 						</label>
 					</div>
 					<?php } ?>
@@ -28,14 +28,14 @@
 		</div>
 
 		<?php if($keyword) { ?>
-		<?php if($range == 1) { ?>
+		<?php if(1 == $range) { ?>
 		<?php if(!empty($threadlist)) { ?>
 		
 		<div class="card">
 			<div class="card-header">
 				<ul class="nav nav-tabs card-header-tabs">
 					<li class="nav-item">
-						<a class="nav-link <?php echo $active == 'default' ? 'active' : '';?>" href="<?php echo $conf['path'];?>">
+						<a class="nav-link <?php echo 'default' == $active ? 'active' : '';?>" href="<?php echo $conf['path'];?>">
 							<?php echo lang('thread_list');?>
 						</a>
 					</li>

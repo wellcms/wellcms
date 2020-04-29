@@ -8,7 +8,7 @@
 		<!--{hook single_page_list_start.htm}-->
         <div class="threadlist list-group nowrap shadow text-center">
             <?php foreach($threadlist as $_thread) { ?>
-            <a data-active="tid-<?php echo $_thread['tid'];?>" href="<?php echo $_thread['url'];?>" class=" list-group-item list-group-item-action d-block ellipsis" <?php echo ($_thread['type']==10?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
+            <a data-active="tid-<?php echo $_thread['tid'];?>" href="<?php echo $_thread['url'];?>" class=" list-group-item list-group-item-action d-block ellipsis" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
             	<?php echo $_thread['subject'];?>
             </a>
             <?php } ?>

@@ -75,7 +75,7 @@ function user_update($uid, $arr)
     // hook model_user_update_start.php
     if (empty($uid)) return FALSE;
     $r = user__update($uid, $arr);
-    $conf['cache']['type'] != 'mysql' AND cache_delete('user-' . $uid);
+    'mysql' != $conf['cache']['type'] AND cache_delete('user-' . $uid);
     isset($g_static_users[$uid]) AND $g_static_users[$uid] = array_merge($g_static_users[$uid], $arr);
     // hook model_user_update_end.php
     return $r;
@@ -102,12 +102,12 @@ function user_read_cache($uid)
     if (isset($g_static_users[$uid])) return $g_static_users[$uid];
     // hook model_user_read_cache_start.php
     // 游客
-    if ($uid == 0) return user_guest();
-    if ($conf['cache']['type'] == 'mysql') {
+    if (0 == $uid) return user_guest();
+    if ('mysql' == $conf['cache']['type']) {
         $r = user_read($uid);
     } else {
         $r = cache_get('user-' . $uid);
-        if ($r === NULL) {
+        if (NULL === $r) {
             $r = user_read($uid);
             $r AND cache_set('user-' . $uid, $r, 7200);
         }
@@ -129,7 +129,7 @@ function user_delete($uid)
     $user['avatar_path'] AND xn_unlink($user['avatar_path']);
     $r = user__delete($uid);
     // hook model_user_delete_center.php
-    $conf['cache']['type'] == 'mysql' || cache_delete('user-' . $uid);
+    'mysql' == $conf['cache']['type'] || cache_delete('user-' . $uid);
     if (isset($g_static_users[$uid])) unset($g_static_users[$uid]);
     well_thread_delete_all_by_uid($uid);
     // hook model_user_delete_after.php
@@ -383,11 +383,11 @@ function user_http_referer()
     $referer = str_replace(array('\"', '"', '<', '>', ' ', '*', "\t", "\r", "\n"), '', $referer); // 干掉特殊字符 strip special chars
     if (
         !preg_match('#^(http|https)://[\w\-=/\.]+/[\w\-=.%\#?]*$#is', $referer)
-        || strpos($referer, 'user-login.html') !== FALSE
-        || strpos($referer, 'user-logout.html') !== FALSE
-        || strpos($referer, 'user-create.html') !== FALSE
-        || strpos($referer, 'user-setpw.html') !== FALSE
-        || strpos($referer, 'user-resetpw_complete.html') !== FALSE
+        || FALSE !== strpos($referer, 'user-login.html')
+        || FALSE !== strpos($referer, 'user-logout.html')
+        || FALSE !== strpos($referer, 'user-create.html')
+        || FALSE !== strpos($referer, 'user-setpw.html')
+        || FALSE !== strpos($referer, 'user-resetpw_complete.html')
     ) {
         $referer = './';
     }

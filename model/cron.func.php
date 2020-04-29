@@ -16,7 +16,7 @@ function cron_run($force = 0)
     // 每隔 5 分钟执行一次的计划任务
     if ($time > $cron_1_last_date || $force) {
         $lock = cache_get('cron_lock_1');
-        if ($lock === NULL) {
+        if (NULL === $lock) {
             cache_set('cron_lock_1', 1, 10); // 设置 10 秒超时
 
             sess_gc($conf['online_hold_time']);
@@ -35,7 +35,7 @@ function cron_run($force = 0)
     if ($time > $cron_2_last_date || $force) {
 
         $lock = cache_get('cron_lock_2'); // 高并发下, 如果使用mysql缓存机制实现的锁锁不住
-        if ($lock === NULL) {
+        if (NULL === $lock) {
             cache_set('cron_lock_2', 1, 10); // 设置 10 秒超时
 
             // hook model_cron_daily_start.php

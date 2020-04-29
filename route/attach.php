@@ -20,12 +20,12 @@ $t = param('t', 0); // 0 CMS上传/1 BBS上传
 
 // hook attach_start.php
 
-if ($action == 'create') {
+if ('create' == $action) {
 
     // 验证token
     if (array_value($conf, 'upload_token', 0)) {
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
     }
 
     user_login_check();
@@ -53,12 +53,12 @@ if ($action == 'create') {
     $ext = file_ext($name, 7);
     $filetypes = include APP_PATH . 'conf/attach.conf.php';
 
-    if ($mode == 1 && !in_array($ext, $filetypes['image'])) message(1, lang('data_malformation'));
+    if (1 == $mode && !in_array($ext, $filetypes['image'])) message(1, lang('data_malformation'));
 
     // hook attach_create_file_ext_before.php
 
     // 主图为图片 附件文件后缀不在规定范围内 改变后缀名
-    $mode == 1 ? $ext = 'jpeg' : (!in_array($ext, $filetypes['all']) AND $ext = '_' . $ext);
+    1 == $mode ? $ext = 'jpeg' : (!in_array($ext, $filetypes['all']) AND $ext = '_' . $ext);
 
     // hook attach_create_file_ext_after.php
 
@@ -118,7 +118,7 @@ if ($action == 'create') {
         count(_SESSION($key)) > 30 AND well_attach_delete_tmp(_SESSION($key));
         $_SESSION[$key][$n] = $attach;
         // hook attach_create_website_files_after.php
-    } elseif ($mode == 1) {
+    } elseif (1 == $mode) {
         // 缩略图 / 主图
         $thumbnail = _SESSION($key);
         isset($thumbnail['path']) AND is_file($thumbnail['path']) AND unlink($thumbnail['path']);
@@ -135,7 +135,7 @@ if ($action == 'create') {
 
     message(0, $attach);
 
-} elseif ($action == 'delete') {
+} elseif ('delete' == $action) {
 
     user_login_check();
 
@@ -146,7 +146,7 @@ if ($action == 'create') {
     // hook attach_delete_before.php
 
     // 临时的文件 id / temp attach id : _0 _1 _2 _3 ...
-    if (substr($aid, 0, 1) == '_') {
+    if ('_' == substr($aid, 0, 1)) {
         $key = intval(substr($aid, 1));
         if (empty($t)) {
             $tmp_files = _SESSION('tmp_website_files');
@@ -174,7 +174,7 @@ if ($action == 'create') {
         $allowdelete = forum_access_mod($thread['fid'], $gid, 'allowdelete');
         $attach['uid'] != $uid AND !$allowdelete AND message(0, lang('insufficient_privilege'));
         if (empty($t)) {
-            well_attach_delete($aid) === FALSE AND message(-1, lang('delete_failed'));
+            FALSE === well_attach_delete($aid) AND message(-1, lang('delete_failed'));
             well_thread_update($thread['tid'], array('files-' => 1));
         }
         // hook attach_delete_aid_after.php
@@ -184,7 +184,7 @@ if ($action == 'create') {
 
     message(0, 'delete_successfully');
 
-} elseif ($action == 'download') {
+} elseif ('download' == $action) {
 
     // hook attach_download_start.php
 
@@ -203,9 +203,9 @@ if ($action == 'create') {
 
     // hook attach_output_before.php
 
-    if ($conf['attach_on'] == 1) {
+    if (1 == $conf['attach_on']) {
         $attachurl = $conf['cloud_url'] . $conf['upload_url'] . $path . $attach['filename'];
-    } elseif ($conf['attach_on'] == 2) {
+    } elseif (2 == $conf['attach_on']) {
         $attachurl = empty($attach['image_url']) ? $conf['upload_url'] . $path . $attach['filename'] : $attach['image_url'];
     } else {
         $attachpath = $conf['upload_path'] . $path . $attach['filename'];
@@ -218,13 +218,13 @@ if ($action == 'create') {
     // hook attach_output_after.php
 
     // php 输出
-    if ($type == 'php') {
+    if ('php' == $type) {
         // hook attach_download_update_before.php
         if (empty($t)) {
             well_attach_update($aid, array('downloads+' => 1));
         }
         // hook attach_download_update_after.php
-        if (stripos($_SERVER["HTTP_USER_AGENT"], 'MSIE') !== FALSE || stripos($_SERVER["HTTP_USER_AGENT"], 'Edge') !== FALSE || stripos($_SERVER["HTTP_USER_AGENT"], 'Trident') !== FALSE) {
+        if (FALSE !== stripos($_SERVER["HTTP_USER_AGENT"], 'MSIE') || FALSE !== stripos($_SERVER["HTTP_USER_AGENT"], 'Edge') || FALSE !== stripos($_SERVER["HTTP_USER_AGENT"], 'Trident')) {
             $attach['orgfilename'] = urlencode($attach['orgfilename']);
             $attach['orgfilename'] = str_replace("+", "%20", $attach['orgfilename']);
         }

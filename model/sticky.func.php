@@ -75,7 +75,7 @@ function sticky_thread_delete($tid)
     // hook model_sticky_delete_start.php
     $thread = well_thread__read($tid);
     if (empty($thread)) return FALSE;
-    if ($thread['sticky'] == 3) {
+    if (3 == $thread['sticky']) {
         $config['index_stickys'] -= 1;
         setting_set('conf', $config);
     }
@@ -121,7 +121,7 @@ function sticky_index_thread()
     // hook model_index_sticky_thread_before.php
     $arr = array();
     foreach ($arrlist as $val) {
-        if ($val['sticky'] == 3) {
+        if (3 == $val['sticky']) {
             $arr[$val['tid']] = $val;
         }
     }
@@ -152,7 +152,7 @@ function sticky_list_thread($fid)
     $fids = array();
     foreach ($forumlist_show as $val) {
         if ($val['type'] && $val['display']) {
-            if ($forum['category'] == 1) {
+            if (1 == $forum['category']) {
                 if ($val['fup'] == $fid) {
                     $fids[] = $val['fid'];
                 }
@@ -169,23 +169,23 @@ function sticky_list_thread($fid)
     $sticky1 = array();
     $sticky2 = array();
     $sticky3 = array();
-    if ($forum['category'] == 1) {
+    if (1 == $forum['category']) {
         // 频道和全局置顶主题
         foreach ($arrlist as $val) {
-            if (in_array($val['fid'], $fids) && $val['sticky'] == 2) {
+            if (in_array($val['fid'], $fids) && 2 == $val['sticky']) {
                 $sticky2[$val['tid']] = $val;
-            } elseif ($val['sticky'] == 3) {
+            } elseif (3 == $val['sticky']) {
                 $sticky3[$val['tid']] = $val;
             }
         }
     } else {
         // 栏目/上级频道/全局置顶
         foreach ($arrlist as $val) {
-            if ($forum['fid'] == $val['fid'] && $val['sticky'] == 1) {
+            if ($forum['fid'] == $val['fid'] && 1 == $val['sticky']) {
                 $sticky1[$val['tid']] = $val;
-            } elseif (in_array($val['fid'], $fids) && $val['sticky'] == 2) {
+            } elseif (in_array($val['fid'], $fids) && 2 == $val['sticky']) {
                 $sticky2[$val['tid']] = $val;
-            } elseif ($val['sticky'] == 3) {
+            } elseif (3 == $val['sticky']) {
                 $sticky3[$val['tid']] = $val;
             }
         }
@@ -215,11 +215,11 @@ function sticky_thread_find_cache()
 
     // hook model_sticky_thread_find_cache_before.php
 
-    if ($conf['cache']['type'] == 'mysql') {
+    if ('mysql' == $conf['cache']['type']) {
         $arr = sticky_thread__find(array(), array('tid' => -1), 1, 5000);
     } else {
         $arr = cache_get($key);
-        if ($arr === NULL) {
+        if (NULL === $arr) {
             $arr = sticky_thread__find(array(), array('tid' => -1), 1, 5000);
             $arr AND cache_set($key, $arr, 1800);
         }

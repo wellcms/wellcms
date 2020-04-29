@@ -1,6 +1,6 @@
 <?php if(group_access($gid, 'allowdelete') || group_access($gid, 'managedeletethread')) { ?>
 <div class="text-center">
-	<?php if(param(0) != 'thread') { ?>
+	<?php if(!in_array(param(0),array('read','thread'))) { ?>
 	<label class="mr-1">
 		<input type="checkbox" data-target='input[name="modtid"]' class="checkall mt-2 mr-2" value="" aria-label="<?php echo lang('checkall');?>" />
 		<?php echo lang('checkall');?>

@@ -18,7 +18,7 @@ function url($url, $extra = array())
     !isset($conf['url_rewrite_on']) AND $conf['url_rewrite_on'] = 0;
     // hook model_url_start.php
     $r = $path = $query = '';
-    if (strpos($url, '/') !== FALSE) {
+    if (FALSE !== strpos($url, '/')) {
         $path = substr($url, 0, strrpos($url, '/') + 1);
         $query = substr($url, strrpos($url, '/') + 1);
     } else {
@@ -26,21 +26,21 @@ function url($url, $extra = array())
         $query = $url;
     }
     // hook model_url_before.php
-    if ($conf['url_rewrite_on'] == 0) {
+    if (0 == $conf['url_rewrite_on']) {
         $r = $path . '?' . $query . '.html';
-    } elseif ($conf['url_rewrite_on'] == 1) {
+    } elseif (1 == $conf['url_rewrite_on']) {
         $r = $path . $query . '.html';
-    } elseif ($conf['url_rewrite_on'] == 2) {
+    } elseif (2 == $conf['url_rewrite_on']) {
         $r = $conf['path'] . $path . str_replace('-', '/', $query) . '.html';
-    } elseif ($conf['url_rewrite_on'] == 3) {
+    } elseif (3 == $conf['url_rewrite_on']) {
         $r = $conf['path'] . $path . str_replace('-', '/', $query);
     }
     $admin_access = GLOBALS('admin_access');
-    if (isset($admin_access) && $conf['url_rewrite_on'] > 1 && strpos($r, '/operate/') === FALSE) $r = '/admin' . $r;
+    if (isset($admin_access) && $conf['url_rewrite_on'] > 1 && FALSE === strpos($r, '/operate/')) $r = '/admin' . $r;
     // 附加参数
     if ($extra) {
         $args = http_build_query($extra);
-        $sep = strpos($r, '?') === FALSE ? '?' : '&';
+        $sep = FALSE === strpos($r, '?') ? '?' : '&';
         $r .= $sep . $args;
     }
     // hook model_url_end.php
@@ -55,7 +55,7 @@ function check_runlevel()
         'user' => array('login', 'create', 'logout', 'sendinitpw', 'resetpw', 'resetpw_sendcode', 'resetpw_complete', 'synlogin')
     );
     // hook model_check_runlevel_start.php
-    if ($gid == 1) return;
+    if (1 == $gid) return;
     $param0 = param(0);
     $param1 = param(1);
     foreach ($rules as $route => $actions) {
@@ -71,13 +71,13 @@ function check_runlevel()
             message(-1, lang('runlevel_reson_1'));
             break;
         case 2:
-            ($gid == 0 || $method != 'GET') AND message(-1, lang('runlevel_reson_2'));
+            (0 == $gid || 'GET' != $method) AND message(-1, lang('runlevel_reson_2'));
             break;
         case 3:
-            $gid == 0 AND message(-1, lang('runlevel_reson_3'));
+            0 == $gid AND message(-1, lang('runlevel_reson_3'));
             break;
         case 4:
-            $method != 'GET' AND message(-1, lang('runlevel_reson_4'));
+            'GET' != $method AND message(-1, lang('runlevel_reson_4'));
             break;
         //case 5: break;
     }
@@ -160,7 +160,7 @@ function xn_lock_end($lockname = '')
 
 // class xn_html_safe 由 axiuno@gmail.com 编写
 
-include_once XIUNOPHP_PATH . 'xn_html_safe.func.php';
+include _include(XIUNOPHP_PATH . 'xn_html_safe.func.php');
 
 function xn_html_safe($doc, $arg = array())
 {
@@ -280,7 +280,7 @@ function view_path()
     static $path = '';
     if ($path) return $path;
     $conf = _SERVER('conf');
-    if ($conf['view_url'] == 'view/') {
+    if ('view/' == $conf['view_url']) {
         $admin_access = GLOBALS('admin_access');
         // 使用目录化伪静态 域名"/"结尾或使用绝对路径"/"
         $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['view_url'] : (empty($admin_access) ? $conf['view_url'] : '../' . $conf['view_url']);
@@ -296,7 +296,7 @@ function admin_view_path()
     static $path = '';
     if ($path) return $path;
     $conf = _SERVER('conf');
-    if ($conf['view_url'] == 'view/') {
+    if ('view/' == $conf['view_url']) {
         $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['view_url'] : '../' . $conf['view_url'];
     } else {
         $path = $conf['view_url']; // 云储存
@@ -310,14 +310,14 @@ function file_path()
     static $path = '';
     if ($path) return $path;
     $conf = _SERVER('conf');
-    if ($conf['attach_on'] == 0) {
+    if (0 == $conf['attach_on']) {
         // 本地
         $admin_access = GLOBALS('admin_access');
         $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : (empty($admin_access) ? $conf['upload_url'] : '../' . $conf['upload_url']);
-    } elseif ($conf['attach_on'] == 1) {
+    } elseif (1 == $conf['attach_on']) {
         // 云储存
         $path = $conf['cloud_url'] . $conf['upload_url'];
-    } elseif ($conf['attach_on'] == 2) {
+    } elseif (2 == $conf['attach_on']) {
         // 云储存
         $path = $conf['cloud_url'] . $conf['upload_url'];
     }
@@ -330,13 +330,13 @@ function admin_file_path()
     static $path = '';
     if ($path) return $path;
     $conf = _SERVER('conf');
-    if ($conf['attach_on'] == 0) {
+    if (0 == $conf['attach_on']) {
         // 本地
         $path = $conf['url_rewrite_on'] > 1 ? file_path() : '../' . $conf['upload_url'];
-    } elseif ($conf['attach_on'] == 1) {
+    } elseif (1 == $conf['attach_on']) {
         // 云储存
         $path = file_path();
-    } elseif ($conf['attach_on'] == 2) {
+    } elseif (2 == $conf['attach_on']) {
         // 云储存
         $path = file_path();
     }
@@ -435,7 +435,7 @@ function format_number($number)
 */
 function well_param($key, $defval = '', $filter = array(), $htmlspecialchars = TRUE, $addslashes = FALSE)
 {
-    if (!isset($_REQUEST[$key]) || ($key === 0 && empty($_REQUEST[$key]))) {
+    if (!isset($_REQUEST[$key]) || (0 == $key && empty($_REQUEST[$key]))) {
         if (is_array($defval)) {
             return array();
         } else {
@@ -495,7 +495,7 @@ function well_safe($val, $defval, $htmlspecialchars, $addslashes)
 {
     $get_magic_quotes_gpc = _SERVER('get_magic_quotes_gpc');
     // 处理字符串
-    if ($defval == 1) {
+    if (1 == $defval) {
         //$val = trim($val);
         $addslashes AND empty($get_magic_quotes_gpc) && $val = addslashes($val);
         empty($addslashes) AND $get_magic_quotes_gpc && $val = stripslashes($val);
@@ -593,7 +593,7 @@ function get_device()
     static $cache = array();
     $md5 = md5($agent);
     if (isset($cache[$md5])) return $cache[$md5];
-    if (strpos($agent, 'MicroMessenger') !== false) {
+    if (FALSE !== strpos($agent, 'MicroMessenger')) {
         $cache[$md5] = 1;//微信
     } elseif (strpos($agent, 'pad') || strpos($agent, 'Pad')) {
         $cache[$md5] = 2;//pad;
@@ -635,9 +635,9 @@ function code_safe($arr)
         // 格式转换: 类型，0: html, 1: txt; 2: markdown; 3: ubb
         $message = htmlspecialchars($message, ENT_QUOTES);
         // html格式过滤不安全代码 管理员html格式时不转换
-        $doctype == 0 && $message = group_access($gid, 'managecontent') ? $message : xn_html_safe($message);
+        0 == $doctype && $message = group_access($gid, 'managecontent') ? $message : xn_html_safe($message);
         // text转html格式\r\n会被转换html代码
-        $doctype == 1 && $message = xn_txt_to_html($message);
+        1 == $doctype && $message = xn_txt_to_html($message);
     }
 
     return $message;
@@ -663,7 +663,7 @@ function filter_html($text)
     $html_enable = array_value($arr, 'html_enable');
     $html_tag = array_value($arr, 'html_tag');
 
-    if ($html_enable == 0 || empty($html_tag)) return TRUE;
+    if (0 == $html_enable || empty($html_tag)) return TRUE;
     $html_tag = htmlspecialchars_decode($html_tag);
 
     $text = trim($text);
@@ -692,11 +692,11 @@ function filter_keyword($keyword, $type, &$error)
     $enable = array_value($arr, 'enable');
     $wordarr = array_value($arr, 'keyword');
 
-    if ($enable == 0 || empty($wordarr)) return FALSE;
+    if (0 == $enable || empty($wordarr)) return FALSE;
 
     foreach ($wordarr as $_keyword) {
         $r = strpos(strtolower($keyword), strtolower($_keyword));
-        if ($r !== FALSE) {
+        if (FALSE !== $r) {
             $error = $_keyword;
             return TRUE;
         }
@@ -707,7 +707,7 @@ function filter_keyword($keyword, $type, &$error)
 // return http://domain.com OR https://domain.com
 function url_prefix()
 {
-    $http = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
+    $http = ((isset($_SERVER['HTTPS']) && 'on' == $_SERVER['HTTPS']) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
     return $http . $_SERVER['HTTP_HOST'];
 }
 
@@ -870,7 +870,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     // 设定返回信息中包含响应信息头
     if (ini_get('safe_mode') && ini_get('open_basedir')) {
         // $post参数必须为GET
-        if ($post == 'GET') {
+        if ('GET' == $post) {
             // 安全模式时将头文件的信息作为数据流输出
             curl_setopt($curl, CURLOPT_HEADER, true);
             // 安全模式采用连续抓取
@@ -885,7 +885,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     }
     curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
     // 兼容HTTPS
-    if (stripos($url, 'https://') !== FALSE) {
+    if (FALSE !== stripos($url, 'https://')) {
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
         //ssl版本控制
@@ -917,7 +917,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     // 返回执行结果
     $output = curl_exec($curl);
     // 有效URL，输出URL非URL页面内容 CURLOPT_RETURNTRANSFER 必须为false
-    $post == 'GET' AND $output = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
+    'GET' == $post AND $output = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
     curl_close($curl);
     return $output;
 }
@@ -963,7 +963,7 @@ function search_directory($path)
         $paths = scandir($path);
         foreach ($paths as $val) {
             $sub_path = $path . '/' . $val;
-            if ($val == '.' || $val == '..') {
+            if ('.' == $val || '..' == $val) {
                 continue;
             } else if (is_dir($sub_path)) {
                 //echo '目录名:' . $val . '<br/>';
@@ -1011,11 +1011,11 @@ function rsa_create_sign($data, $key, $sign_type = 'RSA')
     if (!defined('OPENSSL_ALGO_SHA256')) throw new Exception('Only versions above PHP 5.4.8 support SHA256');
 
     $key = wordwrap($key, 64, "\n", true);
-    if ($key === FALSE) throw new Exception('Private Key Error');
+    if (FALSE === $key) throw new Exception('Private Key Error');
 
     $key = "-----BEGIN RSA PRIVATE KEY-----\n$key\n-----END RSA PRIVATE KEY-----";
 
-    if ($sign_type == 'RSA2') {
+    if ('RSA2' == $sign_type) {
         openssl_sign($data, $sign, $key, OPENSSL_ALGO_SHA256);
     } else {
         openssl_sign($data, $sign, $key, OPENSSL_ALGO_SHA1);
@@ -1029,12 +1029,12 @@ function rsa_create_sign($data, $key, $sign_type = 'RSA')
 function rsa_verify_sign($data, $sign, $key, $sign_type = 'RSA')
 {
     $key = wordwrap($key, 64, "\n", true);
-    if ($key === FALSE) throw new Exception('Public Key Error');
+    if (FALSE === $key) throw new Exception('Public Key Error');
 
     $key = "-----BEGIN PUBLIC KEY-----\n$key\n-----END PUBLIC KEY-----";
 
     // 签名正确返回1 签名不正确返回0 错误-1
-    if ($sign_type == 'RSA2') {
+    if ('RSA2' == $sign_type) {
         $result = openssl_verify($data, base64_decode($sign), $key, OPENSSL_ALGO_SHA256);
     } else {
         $result = openssl_verify($data, base64_decode($sign), $key, OPENSSL_ALGO_SHA1);
@@ -1070,7 +1070,7 @@ function xml_to_array($xml)
     // xml解析
     $result = (array)simplexml_load_string($xml, null, LIBXML_NOCDATA | LIBXML_COMPACT);
     // 恢复旧值
-    if ($old === FALSE) libxml_disable_entity_loader(false);
+    if (FALSE === $old) libxml_disable_entity_loader(false);
 
     return $result;
 }

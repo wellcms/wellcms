@@ -48,12 +48,12 @@ class cache_mysql
             'expiry' => $expiry,
         );
         $r = db_replace($this->table, $arr, $this->db);
-        if ($r === FALSE) {
+        if (FALSE === $r) {
             $this->errno = $this->db->errno;
             $this->errstr = $this->db->errstr;
             return FALSE;
         }
-        return $r !== FALSE;
+        return FALSE !== $r;
     }
 
     public function get($k)
@@ -61,7 +61,7 @@ class cache_mysql
         $time = time();
         $arr = db_find_one($this->table, array('k' => $k), array(), array(), $this->db);
         // 如果表不存在，则建立表 pre_cache
-        if ($arr === FALSE) {
+        if (FALSE === $arr) {
             $this->errno = $this->db->errno;
             $this->errstr = $this->db->errstr;
             return FALSE;
@@ -77,7 +77,7 @@ class cache_mysql
     public function delete($k)
     {
         $r = db_delete($this->table, array('k' => $k), $this->db);
-        if ($r === FALSE) {
+        if (FALSE === $r) {
             $this->errno = $this->db->errno;
             $this->errstr = $this->db->errstr;
             return FALSE;
@@ -88,7 +88,7 @@ class cache_mysql
     public function truncate()
     {
         $r = db_truncate($this->table, $this->db);
-        if ($r === FALSE) {
+        if (FALSE === $r) {
             $this->errno = $this->db->errno;
             $this->errstr = $this->db->errstr;
             return FALSE;

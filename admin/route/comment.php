@@ -5,17 +5,17 @@
 
 !defined('DEBUG') AND exit('Access Denied.');
 
-group_access($gid, 'managecomment') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+FALSE === group_access($gid, 'managecomment') AND message(1, lang('user_group_insufficient_privilege'));
 
 $action = param(1, 'list');
 
 // hook website_admin_reply_start.php
 
-if ($action == 'list') {
+if ('list' == $action) {
 
     // hook website_admin_reply_list_start.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook website_admin_reply_list_get_start.php
         // 0已验证 1待验证
@@ -29,7 +29,7 @@ if ($action == 'list') {
         // hook website_admin_reply_list_get_before.php
 
         // 所有审核过的回复
-        if ($verify == 0) {
+        if (0 == $verify) {
 
             // hook website_admin_reply_list_get_pid_before.php
 
@@ -41,7 +41,7 @@ if ($action == 'list') {
             $n AND $postlist = comment_find_all($page, $pagesize);
 
             // hook website_admin_reply_list_get_postlist_after.php
-        } elseif ($verify == 1) {
+        } elseif (1 == $verify) {
 
             // hook website_admin_reply_list_get_verify_start.php
 

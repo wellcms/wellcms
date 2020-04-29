@@ -40,7 +40,7 @@ function kv_delete($k)
 function kv_cache_get($k)
 {
     $r = cache_get($k);
-    if ($r === NULL) {
+    if (NULL === $r) {
         $r = kv_get($k);
         cache_set($k, $r);
     }
@@ -66,7 +66,7 @@ $g_setting = FALSE;
 function setting_get($k)
 {
     global $g_setting;
-    $g_setting === FALSE AND $g_setting = kv_cache_get('setting');
+    FALSE === $g_setting AND $g_setting = kv_cache_get('setting');
     empty($g_setting) AND $g_setting = array();
     return array_value($g_setting, $k, NULL);
 }
@@ -75,7 +75,7 @@ function setting_get($k)
 function setting_set($k, $v)
 {
     global $g_setting;
-    $g_setting === FALSE AND $g_setting = kv_cache_get('setting');
+    FALSE === $g_setting AND $g_setting = kv_cache_get('setting');
     empty($g_setting) AND $g_setting = array();
     $g_setting[$k] = $v;
     return kv_cache_set('setting', $g_setting);
@@ -84,7 +84,7 @@ function setting_set($k, $v)
 function setting_delete($k)
 {
     global $g_setting;
-    $g_setting === FALSE AND $g_setting = kv_cache_get('setting');
+    FALSE === $g_setting AND $g_setting = kv_cache_get('setting');
     empty($g_setting) AND $g_setting = array();
     if (isset($g_setting[$k])) unset($g_setting[$k]);
     kv_cache_set('setting', $g_setting);
@@ -96,7 +96,7 @@ $g_website = FALSE;
 function website_get($k)
 {
     global $g_website;
-    $g_website === FALSE AND $g_website = kv_cache_get('website');
+    FALSE === $g_website AND $g_website = kv_cache_get('website');
     empty($g_website) AND $g_website = array();
     return array_value($g_website, $k, NULL);
 }
@@ -105,7 +105,7 @@ function website_get($k)
 function website_set($k, $v)
 {
     global $g_website;
-    $g_website === FALSE AND $g_website = kv_cache_get('website');
+    FALSE === $g_website AND $g_website = kv_cache_get('website');
     empty($g_website) AND $g_website = array();
     $g_website[$k] = $v;
     return kv_cache_set('website', $g_website);
@@ -114,7 +114,7 @@ function website_set($k, $v)
 function website_delete($k)
 {
     global $g_website;
-    $g_website === FALSE AND $g_website = kv_cache_get('website');
+    FALSE === $g_website AND $g_website = kv_cache_get('website');
     empty($g_website) AND $g_website = array();
     if (isset($g_website[$k])) unset($g_website[$k]);
     kv_cache_set('website', $g_website);

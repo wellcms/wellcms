@@ -119,7 +119,7 @@ function well_thread_create($arr)
     if (empty($delete_pic)) {
         if (!empty($upload_thumbnail)) {
             $thread['icon'] = $time;
-        } elseif ($thumbnail && (!empty($upload_file) || stripos($message, 'src="http') !== FALSE)) {
+        } elseif ($thumbnail && (!empty($upload_file) || FALSE !== stripos($message, 'src="http'))) {
             $thread['icon'] = $time;
         }
     }
@@ -128,7 +128,7 @@ function well_thread_create($arr)
 
     // 主题入库
     $tid = well_thread__create($thread);
-    if ($tid === FALSE) return FALSE;
+    if (FALSE === $tid) return FALSE;
     unset($thread);
 
     // hook model__thread_create_after.php
@@ -176,7 +176,7 @@ function well_thread_create($arr)
     // hook model__thread_create_data_after.php
 
     $tid = data_create($data);
-    if ($tid === FALSE) return FALSE;
+    if (FALSE === $tid) return FALSE;
     unset($data);
 
     $forum_update = array('threads+' => 1, 'todaythreads+' => 1);
@@ -190,7 +190,7 @@ function well_thread_create($arr)
     if (!group_access($gid, 'publishverify') || group_access($gid, 'managecreatethread')) {
 
         // hook model__thread_create_tid_start.php
-        if (array_value($forum, 'model') == 0) {
+        if (0 == array_value($forum, 'model')) {
             // hook model__thread_create_tid_before.php
             thread_tid_create(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid));
             // hook model__thread_create_tid_center.php
@@ -206,7 +206,7 @@ function well_thread_create($arr)
     } else {
         // 待审核 / Waiting for verification
         // hook model__thread_create_tid_verify_start.php
-        if (array_value($forum, 'model') == 0) {
+        if (0 == array_value($forum, 'model')) {
             // hook model__thread_create_tid_verify_before.php
         }
         // hook model__thread_create_tid_verify_end.php
@@ -215,7 +215,7 @@ function well_thread_create($arr)
     // hook model__thread_create_verify_after.php
 
     // 全站内容数
-    if (array_value($forum, 'model') == 0) {
+    if (0 == array_value($forum, 'model')) {
         runtime_set('articles+', 1);
         runtime_set('todayarticles+', 1);
     }
@@ -223,7 +223,7 @@ function well_thread_create($arr)
     // hook model__thread_create_articles_after.php
 
     // 门户模式删除首页所有缓存
-    if (array_value($config, 'model') == 1) {
+    if (1 == array_value($config, 'model')) {
         cache_delete('portal_index_thread');
         $fid AND cache_delete('portal_channel_thread_' . $fid);
     }
@@ -244,11 +244,11 @@ function well_thread_update($tid, $update)
     // hook model__thread_update_before.php
 
     $r = well_thread__update($tid, $update);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     // hook model__thread_update_after.php
 
-    if ($conf['cache']['type'] != 'mysql') {
+    if ('mysql' != $conf['cache']['type']) {
         if (is_array($tid)) {
             foreach ($tid as $_tid) cache_delete('website_thread_' . $_tid);
         } else {
@@ -271,7 +271,7 @@ function well_thread_update_all($tid, $update)
     // hook model__thread_update_all_before.php
 
     $r = well_thread_update($tid, $update);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     // hook model__thread_update_all_after.php
 
@@ -282,7 +282,7 @@ function well_thread_update_all($tid, $update)
         $pids = arrlist_values($arrlist, 'pid');
 
         $r = comment__update($pids, $update);
-        if ($r === FALSE) return FALSE;
+        if (FALSE === $r) return FALSE;
     }
 
     // hook model__thread_update_all_end.php
@@ -400,7 +400,7 @@ function well_thread_find_by_uid($uid, $page = 1, $pagesize = 20)
 function well_thread_find($tidarr, $pagesize = 20, $desc = TRUE)
 {
     // hook model__thread_find_start.php
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $threadlist = well_thread__find(array('tid' => $tidarr), array('tid' => $orderby), 1, $pagesize);
 
     // hook model__thread_find_before.php
@@ -485,9 +485,9 @@ function well_thread_delete($tid)
     // hook model__thread_delete_start.php
 
     $r = well_thread__delete($tid);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
-    if (is_array($tid) && $conf['cache']['type'] != 'mysql') {
+    if (is_array($tid) && 'mysql' != $conf['cache']['type']) {
         if (is_array($tid)) {
             foreach ($tid as $_tid) cache_delete('website_thread_' . $_tid);
         } else {
@@ -541,21 +541,21 @@ function well_thread_delete_all($tid)
     // 删除置顶
     if ($thread['sticky']) {
         $r = sticky_thread_delete($tid);
-        if ($r === FALSE) return FALSE;
+        if (FALSE === $r) return FALSE;
         $forumupdate['tops-'] = 1;
     }
 
     // 删除主题属性 同时更新
     if ($thread['flags']) {
         $r = flag_thread_delete_by_tid($tid);
-        if ($r === FALSE) return FALSE;
+        if (FALSE === $r) return FALSE;
     }
 
     // hook model_thread_delete_all_data_before.php
 
     // 删除内容
     $r = data_delete($tid);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     // hook model_thread_delete_all_post_before.php
 
@@ -571,13 +571,13 @@ function well_thread_delete_all($tid)
 
     // 删除主题
     $r = well_thread_delete($tid);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     $user_update = array();
     // 新闻模型
-    if (array_value($forum, 'model') == 0) {
+    if (0 == array_value($forum, 'model')) {
         $r = thread_tid_delete($tid);
-        if ($r === FALSE) return FALSE;
+        if (FALSE === $r) return FALSE;
 
         // 内容数-1
         $user_update = array('articles-' => 1);
@@ -686,11 +686,11 @@ function well_thread_delete_all_by_uid($uid)
 
     // 删除主题
     $r = well_thread_delete($tidarr);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     // 删除主题小表
     $r = thread_tid_delete($tidarr);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     // hook model__thread_delete_all_by_uid_after.php
 
@@ -806,11 +806,11 @@ function well_thread_format(&$thread)
 
     $thread['sticky_class'] = '';
     if ($thread['sticky'] > 0) {
-        if ($thread['sticky'] == 1) {
+        if (1 == $thread['sticky']) {
             $thread['sticky_class'] = 'success';
-        } elseif ($thread['sticky'] == 2) {
+        } elseif (2 == $thread['sticky']) {
             $thread['sticky_class'] = 'warning';
-        } elseif ($thread['sticky'] == 3) {
+        } elseif (3 == $thread['sticky']) {
             $thread['sticky_class'] = 'danger';
         }
     }
@@ -830,11 +830,11 @@ function well_thread_format(&$thread)
             $thread['icon_text'] = is_file($destfile) ? file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
         }
 
-        if ($conf['attach_on'] == 1) {
+        if (1 == $conf['attach_on']) {
             // 云储存
             $thread['icon_text'] = file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
 
-        } elseif ($conf['attach_on'] == 2 && $thread['attach_on'] == 2) {
+        } elseif (2 == $conf['attach_on'] && 2 == $thread['attach_on']) {
             // 图床 未上传成功 本地图片在的话使用本地，不在则默认
             $thread['icon_text'] = $thread['image_url'] ? $thread['image_url'] : $thread['icon_text'];
         }
@@ -873,7 +873,7 @@ function well_thread_list_access_filter(&$threadlist, $gid)
 {
     global $forumlist;
 
-    if ($threadlist == NULL) return NULL;
+    if (empty($threadlist)) return NULL;
 
     // hook model__thread_list_access_filter_start.php
 
@@ -946,10 +946,10 @@ function well_thread_delete_content($tid)
     // hook model_thread_delete_content_center.php
 
     // 默认彻底删除
-    if ($delete_from_default == 1) {
+    if (1 == $delete_from_default) {
         switch ($forum['model']) {
             case '0': // 删除文章全部数据
-                well_thread_delete_all($tid) === FALSE AND message(-1, lang('delete_failed'));
+                FALSE === well_thread_delete_all($tid) AND message(-1, lang('delete_failed'));
                 break;
             // hook operate_delete_foreach_case.php
         }
@@ -1136,11 +1136,11 @@ function well_thread_read_cache($tid)
     $key = 'website_thread_' . $tid;
     static $cache = array(); // 用静态变量只能在当前 request 生命周期缓存，跨进程需要再加一层缓存：redis/memcached/xcache/apc
     if (isset($cache[$key])) return $cache[$key];
-    if ($conf['cache']['type'] == 'mysql') {
+    if ('mysql' == $conf['cache']['type']) {
         $r = well_thread_read($tid);
     } else {
         $r = cache_get($key);
-        if ($r === NULL) {
+        if (NULL === $r) {
             $r = well_thread_read($tid);
             $r AND cache_set($key, $r, 1800);
         }

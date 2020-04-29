@@ -39,7 +39,7 @@ function is_username($username, &$err = '') {
 	if($len > 16) {
 		$err = lang('username_too_long', array('length'=>$len));
 		return FALSE;
-	} elseif(strpos($username, ' ') !== FALSE || strpos($username, '　') !== FALSE) {
+	} elseif(FALSE !== strpos($username, ' ') || FALSE !== strpos($username, '　')) {
 		$err = lang('username_cant_include_cn_space');
 		return FALSE;
 	} elseif(!preg_match('#^[\w\x{4E00}-\x{9FA5}\x{1100}-\x{11FF}\x{3130}-\x{318F}\x{AC00}-\x{D7AF}]+$#u', $username)) {
@@ -55,10 +55,10 @@ function is_username($username, &$err = '') {
 function is_password($password, &$err = '') {
 	$len = strlen($password);
 	// hook model_is_password_start.php
-	if($len == 0) {
+	if(0 == $len) {
 		$err = lang('password_is_empty');
 		return FALSE;
-	} elseif($len != 32) {
+	} elseif(32 != $len) {
 		$err = lang('password_length_incorrect');
 		return FALSE;
 	} elseif($password == 'd41d8cd98f00b204e9800998ecf8427e') {

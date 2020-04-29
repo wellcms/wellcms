@@ -89,11 +89,11 @@ function well_tag_update($tagid, $update)
     // hook model__tag_update_start.php
 
     $r = well_tag__update(array('tagid' => $tagid), $update);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     // hook model__tag_update_before.php
 
-    if ($conf['cache']['type'] != 'mysql') {
+    if ('mysql' != $conf['cache']['type']) {
         if (is_array($tagid)) {
             foreach ($tagid as $_tagid) {
                 cache_delete('web_tag_' . $_tagid);
@@ -161,11 +161,11 @@ function well_tag_delete($tagid)
     // hook model__tag_delete_before.php
 
     $r = well_tag__delete($tagid);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     // hook model__tag_delete_after.php
 
-    if ($conf['cache']['type'] != 'mysql') {
+    if ('mysql' != $conf['cache']['type']) {
         $key = 'web_tag_' . $tagid;
         cache_delete($key);
         $key = 'web_tag_' . md5($read['name']);
@@ -197,11 +197,11 @@ function well_tag_read_by_tagid_cache($tagid)
     // hook model__tag_read_by_tagid_cache_before.php
     static $cache = array();
     if (isset($cache[$key])) return $cache[$key];
-    if ($conf['cache']['type'] == 'mysql') {
+    if ('mysql' == $conf['cache']['type']) {
         $r = well_tag_read_tagid($tagid);
     } else {
         $r = cache_get($key);
-        if ($r === NULL) {
+        if (NULL === $r) {
             $r = well_tag_read_tagid($tagid);
             $r AND cache_set($key, $r, 1800);
         }
@@ -220,11 +220,11 @@ function well_tag_read_by_name_cache($name)
     // hook model__tag_read_by_name_cache_before.php
     static $cache = array();
     if (isset($cache[$key])) return $cache[$key];
-    if ($conf['cache']['type'] == 'mysql') {
+    if ('mysql' == $conf['cache']['type']) {
         $r = well_tag_read_name($name);
     } else {
         $r = cache_get($key);
-        if ($r === NULL) {
+        if (NULL === $r) {
             $r = well_tag_read_name($name);
             $r AND ache_set($key, $r, 1800);
         }
@@ -287,7 +287,7 @@ function well_tag_post_update($tid, $fid, $newtag, $oldtag)
             // 搜索数组键值，并返回对应的键名
             $tagname = filter_all_html($tagname);
             $key = array_search($tagname, $oldtag);
-            if ($key === false) {
+            if (FALSE === $key) {
                 // 创建新数组$new_tags
                 $create_tag[] = $tagname;
             } else {
@@ -330,7 +330,7 @@ function well_oldtag_delete($tagids, $tid)
     $ids = array();
     foreach ($arrlist as $val) {
         // hook model_tag_oldtag_delete_foreach_start.php
-        if ($val['count'] == 1) {
+        if (1 == $val['count']) {
             // 只有一个主题
             well_tag_delete($val['tagid']);
             // hook model_tag_oldtag_delete_foreach_after.php
@@ -379,7 +379,7 @@ function well_tag_process($tid = 0, $fid, $new_tags = array(), $tagarr = array()
                     $arr = array('name' => $name, 'count' => 1);
                     // hook model_tag_process_create.php
                     $tagid = well_tag_create($arr);
-                    $tagid === FALSE AND message(-1, lang('create_failed'));
+                    FALSE === $tagid AND message(-1, lang('create_failed'));
                     $read = array('tagid' => $tagid, 'name' => $name);
                     // hook model_tag_process_create_after.php
                 }

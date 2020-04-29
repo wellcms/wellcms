@@ -7,7 +7,7 @@ $themes = array(); // 初始化主题 作者上传后再根据作者增加uid
 // 我的仓库列表
 $official_plugins = array();
 
-define('PLUGIN_OFFICIAL_URL', DEBUG == 3 ? 'http://www.x.com/' : 'http://www.wellcms.cn/');
+define('PLUGIN_OFFICIAL_URL', 3 == DEBUG ? 'http://www.x.com/' : 'http://www.wellcms.cn/');
 
 $g_include_slot_kv = array();
 function _include($srcfile)
@@ -23,24 +23,24 @@ function _include($srcfile)
         // 支持 <template> <slot>$g_include_slot_kv = array();
         for ($i = 0; $i < 10; ++$i) {
             $s = preg_replace_callback('#<template\sinclude="(.*?)">(.*?)</template>#is', '_include_callback_1', $s);
-            if (strpos($s, '<template') === FALSE) break;
+            if (FALSE === strpos($s, '<template')) break;
         }
 
         file_put_contents_try($tmpfile, $s);
 
-        if (file_ext($tmpfile) == 'php' && DEBUG == 0 && $conf['compress'] > 0) {
+        if ('php' == file_ext($tmpfile) && 0 == DEBUG && $conf['compress'] > 0) {
 
             $s = trim(php_strip_whitespace($tmpfile));
 
-        } elseif (in_array(file_ext($tmpfile), array('htm', 'html')) && DEBUG == 0 && $conf['compress'] > 0) {
+        } elseif (in_array(file_ext($tmpfile), array('htm', 'html')) && 0 == DEBUG && $conf['compress'] > 0) {
 
             $s = plugin_compile_srcfile($tmpfile);
 
-            if ($conf['compress'] == 1) {
+            if (1 == $conf['compress']) {
                 // 不压缩换行
                 $s = str_replace(array("\t"), '', $s);
                 $s = preg_replace(array("#> *([^ ]*) *<#", "#<!--[\\w\\W\r\\n]*?-->#", "#\" #", "# \"#", '#>\s+<#', "#/\*[^*]*\*/#", "//", '#\/\*(\s|.)*?\*\/#', "#>\s+\r\n#"), array(">\\1<", '', "\"", "\"", '><', '', '', '', '>'), $s);
-            } elseif ($conf['compress'] == 2) {
+            } elseif (2 == $conf['compress']) {
                 // 全压缩
                 $s = preg_replace(array("#> *([^ ]*) *<#", "#[\s]+#", "#<!--[\\w\\W\r\\n]*?-->#", "#\" #", "# \"#", "#/\*[^*]*\*/#", "//", '#>\s+<#', '#\/\*(\s|.)*?\*\/#'), array(">\\1<", ' ', '', "\"", "\"", '', '', '><', ''), $s);
             }
@@ -275,7 +275,7 @@ function plugin_compile_srcfile($srcfile)
 
     // 最多支持 10 层 合并html模板hook和php文件hook
     for ($i = 0; $i <= 10; ++$i) {
-        if (strpos($s, '<!--{hook') !== FALSE || strpos($s, '// hook') !== FALSE) {
+        if (FALSE !== strpos($s, '<!--{hook') || FALSE !== strpos($s, '// hook')) {
             $s = preg_replace('#<!--{hook\s+(.*?)}-->#', '// hook \\1', $s);
             $s = preg_replace_callback('#//\s*hook\s+(\S+)#is', 'plugin_compile_srcfile_callback', $s);
         } else {
@@ -351,7 +351,7 @@ function plugin_compile_srcfile_callback($m)
         $fileext = file_ext($hookname);
         foreach ($hooks[$hookname] as $path) {
             $t = file_get_contents($path);
-            if ($fileext == 'php' && preg_match('#^\s*<\?php\s+exit;#is', $t)) {
+            if ('php' == $fileext && preg_match('#^\s*<\?php\s+exit;#is', $t)) {
                 // 正则表达式去除兼容性比较好。
                 $t = preg_replace('#^\s*<\?php\s*exit;(.*?)(?:\?>)?\s*$#is', '\\1', $t);
             }
@@ -398,11 +398,11 @@ function plugin_official_store($type = 0)
         if ($r) return cache_get('plugin_official_list');
     }
 
-    $s = DEBUG == 3 ? NULL : cache_get('plugin_official_list');
-    if ($s === NULL || $type) {
+    $s = 3 == DEBUG ? NULL : cache_get('plugin_official_list');
+    if (NULL === $s || $type) {
 
         $arr = plugin_data_verify();
-        if ($arr === FALSE) {
+        if (FALSE === $arr) {
             setting_delete('plugin_data');
             return NULL;
         }

@@ -7,9 +7,9 @@ function runtime_init()
     global $conf;
     // hook model_runtime_init_start.php
     // 实时运行的数据，初始化！
-    $runtime = $conf['cache']['type'] == 'mysql' ? website_get('runtime') : cache_get('runtime');
+    $runtime = 'mysql' == $conf['cache']['type'] ? website_get('runtime') : cache_get('runtime');
 
-    if ($runtime === NULL || empty($runtime['users'])) {
+    if (NULL === $runtime || empty($runtime['users'])) {
         $runtime = array();
         $runtime['users'] = user_count();
 
@@ -24,7 +24,7 @@ function runtime_init()
 
         // hook model_runtime_init_before.php
 
-        $conf['cache']['type'] == 'mysql' ? website_set('runtime', $runtime) : cache_set('runtime', $runtime);
+        'mysql' == $conf['cache']['type'] ? website_set('runtime', $runtime) : cache_set('runtime', $runtime);
     }
     // hook model_runtime_init_end.php
     return $runtime;
@@ -43,10 +43,10 @@ function runtime_set($k, $v)
     global $conf, $runtime;
     // hook model_runtime_set_start.php
     $op = substr($k, -1);
-    if ($op == '+' || $op == '-') {
+    if ('+' == $op || '-' ==$op) {
         $k = substr($k, 0, -1);
         isset($runtime[$k]) || $runtime[$k] = 0;
-        $v = $op == '+' ? ($runtime[$k] + $v) : ($runtime[$k] - $v);
+        $v = '+' == $op ? ($runtime[$k] + $v) : ($runtime[$k] - $v);
     }
 
     $runtime[$k] = $v;
@@ -71,7 +71,7 @@ function runtime_save()
 
     function_exists('chdir') AND chdir(APP_PATH);
 
-    $r = $conf['cache']['type'] == 'mysql' ? website_set('runtime', $runtime) : cache_set('runtime', $runtime);
+    $r = 'mysql' == $conf['cache']['type'] ? website_set('runtime', $runtime) : cache_set('runtime', $runtime);
 
     // hook model_runtime_save_end.php
 }
@@ -80,7 +80,7 @@ function runtime_truncate()
 {
     global $conf;
     // hook model_runtime_truncate_start.php
-    $conf['cache']['type'] == 'mysql' ? website_set('runtime', '') : cache_delete('runtime');
+    'mysql' == $conf['cache']['type'] ? website_set('runtime', '') : cache_delete('runtime');
     // hook model_runtime_truncate_end.php
 }
 

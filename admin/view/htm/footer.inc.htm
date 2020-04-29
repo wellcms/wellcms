@@ -74,7 +74,7 @@
         }
         my_url.attr('href', my_href);
 
-        <?php if ($action!='login') { ?>
+        <?php if ('login' != $action) { ?>
         $(document).ready(function () {
             window_width_auto();
         });

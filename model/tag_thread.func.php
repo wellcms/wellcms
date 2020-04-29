@@ -28,7 +28,7 @@ function well_tag_thread_delete($tagid, $tid, $d = NULL)
     if (empty($tagid) || empty($tid)) return FALSE;
     // hook model_tag_thread_delete_start.php
     $r = db_delete('website_tag_thread', array('tagid' => $tagid, 'tid' => $tid), $d);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
     // hook model_tag_thread_delete_end.php
     return $r;
 }

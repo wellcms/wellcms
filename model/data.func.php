@@ -84,7 +84,7 @@ function data_update($tid, $update)
 
     // hook model_data_update_after.php
 
-    $r AND $conf['cache']['type'] != 'mysql' AND cache_delete('website_data_' . $tid);
+    $r AND 'mysql' != $conf['cache']['type'] AND cache_delete('website_data_' . $tid);
     // hook model_data_update_end.php
 
     return $r;
@@ -116,7 +116,7 @@ function data_delete($tid)
     if (empty($tid)) return FALSE;
     // hook model_data_delete_before.php
     $r = data__delete($tid);
-    $r AND $conf['cache']['type'] != 'mysql' AND cache_delete('website_data_' . $tid);
+    $r AND 'mysql' != $conf['cache']['type'] AND cache_delete('website_data_' . $tid);
     // hook model_data_delete_end.php
     return $r;
 }
@@ -129,10 +129,10 @@ function data_format(&$val)
     if (empty($val)) return;
 
     // 使用云储存
-    $conf['attach_on'] == 1 || $conf['attach_on'] == 0 AND $val['message'] = str_replace('="upload/', '="' . file_path(), $val['message']);
+    1 == $conf['attach_on'] || 0 == $conf['attach_on'] AND $val['message'] = str_replace('="upload/', '="' . file_path(), $val['message']);
 
     // 使用图床
-    if ($conf['attach_on'] == 2) {
+    if (2 == $conf['attach_on']) {
 
         list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($val['tid']);
 
@@ -141,7 +141,7 @@ function data_format(&$val)
             $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
 
             // 替换成图床
-            $val['message'] = strpos($val['message'], $url) !== FALSE && $attach['image_url'] ? str_replace($url, $attach['image_url'], $val['message']) : $val['message'];
+            $val['message'] = FALSE !== strpos($val['message'], $url) && $attach['image_url'] ? str_replace($url, $attach['image_url'], $val['message']) : $val['message'];
         }
     }
     //$val['message'] = stripslashes(htmlspecialchars_decode($val['message']));
@@ -156,12 +156,12 @@ function data_message_replace_url($tid, $message)
 
     // hook model_data_message_replace_url_start.php
 
-    if ($conf['attach_on'] == 0) {
-        $message = strpos($message, '="../upload/') !== FALSE ? str_replace('="../upload/', '="upload/', $message) : $message;
-    } elseif ($conf['attach_on'] == 1) {
+    if (0 == $conf['attach_on']) {
+        $message = FALSE !== strpos($message, '="../upload/') ? str_replace('="../upload/', '="upload/', $message) : $message;
+    } elseif (1 == $conf['attach_on']) {
         // 使用云储存
         $message = str_replace('="' . $conf['cloud_url'] . 'upload/', '="upload/', $message);
-    } elseif ($conf['attach_on'] == 2) {
+    } elseif (2 == $conf['attach_on']) {
 
         // 使用图床
         list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($tid);
@@ -169,7 +169,7 @@ function data_message_replace_url($tid, $message)
         foreach ($imagelist as $key => $attach) {
             $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
             // 替换回相对链接
-            $message = $attach['image_url'] && strpos($message, $attach['image_url']) !== FALSE ? str_replace($attach['image_url'], $url, $message) : $message;
+            $message = $attach['image_url'] && FALSE !== strpos($message, $attach['image_url']) ? str_replace($attach['image_url'], $url, $message) : $message;
         }
     }
 
@@ -192,8 +192,8 @@ function data_message_format(&$post)
     $message = htmlspecialchars($post['message'], ENT_QUOTES); // html标签全部转换
 
     // 入库过滤 非管理员全部过滤
-    $post['doctype'] == 0 && $message = ((isset($post['gid']) AND $post['gid'] == 1) ? $post['message'] : xn_html_safe($post['message']));
-    $post['doctype'] == 1 && $message = xn_txt_to_html($post['message']);
+    0 == $post['doctype'] && $message = ((isset($post['gid']) AND 1 == $post['gid']) ? $post['message'] : xn_html_safe($post['message']));
+    1 == $post['doctype'] && $message = xn_txt_to_html($post['message']);
 
     // hook model_data_message_format_after.php
 
@@ -220,7 +220,7 @@ function data_file_list_html($filelist, $include_delete = FALSE, $access = FALSE
 
     // hook model_data_file_list_html_start.php
 
-    if ($path === TRUE) {
+    if (FALSE != $path) {
         if ($conf['url_rewrite_on'] > 1) {
             $path = $conf['path'];
         } else {
@@ -235,7 +235,7 @@ function data_file_list_html($filelist, $include_delete = FALSE, $access = FALSE
     $s .= '<ul class="list-unstyled attachlist nowrap">' . "\r\n";
     foreach ($filelist as &$attach) {
         $s .= '<li aid="' . $attach['aid'] . '" class="p-1">' . "\r\n";
-        $s .= '		<div class="w-75"><a href="' . ($access === TRUE ? $path . $attach['url'] : url('attach-download-' . $attach['aid'])) . '" target="_blank" class="d-block ellipsis">' . "\r\n";
+        $s .= '		<div class="w-75"><a href="' . (FALSE != $access ? $path . $attach['url'] : url('attach-download-' . $attach['aid'])) . '" target="_blank" class="d-block ellipsis">' . "\r\n";
         $s .= '			<i class="icon filetype ' . $attach['filetype'] . '"></i>' . "\r\n";
         $s .= '			' . $attach['orgfilename'] . "\r\n";
         $s .= '		</a></div>' . "\r\n";
@@ -261,11 +261,11 @@ function data_read_cache($tid)
     $key = 'website_data_' . $tid;
     static $cache = array(); // 用静态变量只能在当前 request 生命周期缓存，要跨进程，可以再加一层缓存： memcached/xcache/apc/
     if (isset($cache[$key])) return $cache[$key];
-    if ($conf['cache']['type'] == 'mysql') {
+    if ('mysql' == $conf['cache']['type']) {
         $r = data_read($tid);
     } else {
         $r = cache_get($key);
-        if ($r === NULL) {
+        if (NULL === $r) {
             $r = data_read($tid);
             $r AND cache_set($key, $r, 3600); // 60分钟
         }

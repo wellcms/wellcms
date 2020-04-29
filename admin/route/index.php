@@ -8,11 +8,11 @@ $action = param(1);
 
 // hook admin_index_start.php
 
-if ($action == 'login') {
+if ('login' == $action) {
 
     // hook admin_index_login_get_post.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_index_login_get_start.php
 
@@ -20,7 +20,7 @@ if ($action == 'login') {
 
         include _include(ADMIN_PATH . "view/htm/index_login.htm");
 
-    } else if ($method == 'POST') {
+    } else if ('POST' == $method) {
 
         // hook admin_index_login_post_start.php
 
@@ -41,7 +41,7 @@ if ($action == 'login') {
 
     }
 
-} elseif ($action == 'logout') {
+} elseif ('logout' == $action) {
 
     // hook admin_index_logout_start.php
 
@@ -49,11 +49,9 @@ if ($action == 'login') {
 
     message(0, jump(lang('logout_successfully'), './'));
 
-} elseif ($action == 'phpinfo') {
+} elseif ('phpinfo' == $action) {
 
-    unset($_SERVER['conf']);
-    unset($_SERVER['db']);
-    unset($_SERVER['cache']);
+    unset($_SERVER['conf'], $_SERVER['db'], $_SERVER['cache']);
     phpinfo();
     exit;
 
@@ -63,7 +61,7 @@ if ($action == 'login') {
 
     $header['title'] = lang('admin_page');
 
-    group_access($gid, 'intoadmin') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+    FALSE === group_access($gid, 'intoadmin') AND message(1, lang('user_group_insufficient_privilege'));
 
     $info = array();
     $info['disable_functions'] = ini_get('disable_functions');

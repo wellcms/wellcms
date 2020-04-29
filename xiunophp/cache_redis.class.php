@@ -45,9 +45,9 @@ class cache_redis
         $v = xn_json_encode($v);
         //EX时秒 PX毫秒
         $type = $timeout ? 'PX' : 'EX';
-        if ($lock == 1) {
+        if (1 == $lock) {
             $lock = 'NX'; // NX 仅在键不存在时设置键(上锁)
-        } elseif ($lock == 2) {
+        } elseif (2 == $lock) {
             $lock = 'XX'; // XX 只有在键已存在时才设置(上锁)
         }
         if ($life) {
@@ -63,7 +63,7 @@ class cache_redis
     {
         if (!$this->link && !$this->connect()) return FALSE;
         $r = $this->link->get($k);
-        return $r === FALSE ? NULL : xn_json_decode($r);
+        return FALSE === $r ? NULL : xn_json_decode($r);
     }
 
     public function delete($k)

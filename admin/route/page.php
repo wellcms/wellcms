@@ -14,13 +14,13 @@ $columnlist = category_list_show($forumlist, 0, 2);
 
 // hook admin_page_before.php
 
-if ($action == 'list') {
+if ('list' == $action) {
 
     $fid = param(2, 0);
 
     // hook admin_page_list_start.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_page_list_get_start.php
 
@@ -95,13 +95,13 @@ if ($action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/page_list.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         // 排序时最大值作为首页
-        group_access($gid, 'managepage') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managepage') AND message(1, lang('user_group_insufficient_privilege'));
 
         $arr = _POST('data');
 
@@ -123,7 +123,7 @@ if ($action == 'list') {
 
     // hook admin_page_list_end.php
 
-} elseif ($action == 'create') {
+} elseif ('create' == $action) {
 
     // hook admin_page_create_start.php
 
@@ -131,7 +131,7 @@ if ($action == 'list') {
 
     // hook admin_page_create_before.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_page_create_get_start.php
 
@@ -168,15 +168,15 @@ if ($action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/page_post.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         // 验证token
         if (array_value($conf, 'message_token', 0)) {
             $safe_token = param('safe_token');
-            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
         }
 
-        group_access($gid, 'managepage') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managepage') AND message(1, lang('user_group_insufficient_privilege'));
 
         // hook admin_page_create_post_start.php
 
@@ -216,7 +216,7 @@ if ($action == 'list') {
         // hook admin_page_create_post_after.php
 
         $tid = well_thread__create(array('fid' => $fid, 'uid' => $uid, 'type' => 11, 'subject' => $subject, 'userip' => $longip, 'create_date' => $time));
-        $tid === FALSE AND message(-1, lang('create_thread_failed'));
+        FALSE === $tid AND message(-1, lang('create_thread_failed'));
 
         // 关联附件
         $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => 0, 'files' => 0, 'message' => $message);
@@ -225,9 +225,9 @@ if ($action == 'list') {
         unset($attach);
 
         $tid = data_create(array('tid' => $tid, 'gid' => $gid, 'message' => $message, 'doctype' => $doctype));
-        $tid === FALSE AND message(-1, lang('create_thread_failed'));
+        FALSE === $tid AND message(-1, lang('create_thread_failed'));
 
-        page_create(array('tid' => $tid, 'fid' => $fid)) === FALSE AND message(-1, lang('create_thread_failed'));
+        FALSE === page_create(array('tid' => $tid, 'fid' => $fid)) AND message(-1, lang('create_thread_failed'));
 
         $update = array('threads+' => 1, 'todaythreads+' => 1);
         // 第一篇主题作为单页的首页
@@ -243,7 +243,7 @@ if ($action == 'list') {
         message(0, lang('create_thread_successfully'));
     }
 
-} elseif ($action == 'update') {
+} elseif ('update' == $action) {
 
     // hook admin_page_update_start.php
 
@@ -260,7 +260,7 @@ if ($action == 'list') {
 
     // hook admin_page_update_end.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_page_update_get_start.php
 
@@ -273,7 +273,7 @@ if ($action == 'list') {
         $form_action = url('page-update-' . $tid);
         $form_submit_txt = lang('submit');
         $form_subject = $thread['subject'];
-        $form_message = strpos($thread_data['message'], '="upload/') !== FALSE ? str_replace('="upload/', '="../upload/', $thread_data['message']) : $thread_data['message'];
+        $form_message = FALSE !== strpos($thread_data['message'], '="upload/') ? str_replace('="upload/', '="../upload/', $thread_data['message']) : $thread_data['message'];
         $form_doctype = $thread_data['doctype'];
 
         // hook admin_page_update_get_center.php
@@ -291,15 +291,15 @@ if ($action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/page_post.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         // 验证token
         if (array_value($conf, 'message_token', 0)) {
             $safe_token = param('safe_token');
-            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
         }
 
-        group_access($gid, 'managepage') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managepage') AND message(1, lang('user_group_insufficient_privilege'));
 
         // hook admin_page_update_post_start.php
 
@@ -366,7 +366,7 @@ if ($action == 'list') {
 
         $longip != $thread['userip'] AND $arr['userip'] = $longip;
 
-        !empty($arr) AND well_thread_update($tid, $arr) === FALSE AND message(-1, lang('update_thread_failed'));
+        !empty($arr) AND FALSE === well_thread_update($tid, $arr) AND message(-1, lang('update_thread_failed'));
         unset($arr);
 
         // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
@@ -379,16 +379,16 @@ if ($action == 'list') {
         // 如果开启云储存或使用图床，需要把内容中的附件链接替换掉
         $message = data_message_replace_url($tid, $message);
 
-        data_update($tid, array('tid' => $tid, 'gid' => $gid, 'doctype' => $doctype, 'message' => $message)) === FALSE AND message(-1, lang('update_post_failed'));
+        FALSE === data_update($tid, array('tid' => $tid, 'gid' => $gid, 'doctype' => $doctype, 'message' => $message)) AND message(-1, lang('update_post_failed'));
 
         // hook admin_page_update_post_end.php
 
         message(0, lang('update_successfully'));
     }
 
-} elseif ($action == 'delete') {
-    group_access($gid, 'managepage') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
-    if ($method == 'POST') {
+} elseif ('delete' == $action) {
+    FALSE === group_access($gid, 'managepage') AND message(1, lang('user_group_insufficient_privilege'));
+    if ('POST' == $method) {
 
         // hook admin_page_delete_start.php
 
@@ -415,12 +415,12 @@ if ($action == 'list') {
         // hook admin_page_delete_after.php
 
         // 删除单页
-        page_delete($tid) === FALSE AND message(-1, lang('delete_failed'));
+        FALSE === page_delete($tid) AND message(-1, lang('delete_failed'));
 
         $forum = array_value($forumlist, $thread['fid']);
         $update = array('threads-' => 1);
         if ($tid == trim($forum['brief'])) {
-            if ($forum['threads'] == 1) {
+            if (1 == $forum['threads']) {
                 $update['brief'] = '';
             } else {
                 // 查找rank最大值

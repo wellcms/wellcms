@@ -132,7 +132,7 @@ function sess_read($sid)
         sess_new($sid);
         return '';
     }
-    if ($arr['bigdata'] == 1) {
+    if (1 == $arr['bigdata']) {
         $arr2 = session_data_read($sid);
         $arr['data'] = $arr2['data'];
     }
@@ -233,13 +233,13 @@ function sess_write($sid, $data)
 
     // 判断数据是否超长
     $len = strlen($data);
-    if ($len > 255 && $g_session['bigdata'] == 0) {
+    if ($len > 255 && 0 == $g_session['bigdata']) {
         session_data_create(array('sid' => $sid));
     }
     if ($len <= 255) {
         $update = array_diff_value($arr, $g_session);
         session_update($sid, $update);
-        if (!empty($g_session) && $g_session['bigdata'] == 1) {
+        if (!empty($g_session) && 1 == $g_session['bigdata']) {
             session_data_delete(array('sid' => $sid));
         }
     } else {
@@ -313,7 +313,7 @@ function online_count()
 function online_list_cache()
 {
     $onlinelist = cache_get('online_list');
-    if ($onlinelist === NULL) {
+    if (NULL === $onlinelist) {
         $onlinelist = session_find(array('uid' => array('>' => 0)), array('last_date' => -1), 1, 500);
         foreach ($onlinelist as &$online) {
             $user = user_read_cache($online['uid']);

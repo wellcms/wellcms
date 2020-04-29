@@ -9,7 +9,7 @@
 				<?php echo lang('user_login');?>
 				<!--{hook user_login_title_after.htm}-->
 			</div>
-			<div class="card-body ajax_modal_body">
+			<div class="card-body ajax-body">
 				<form action="<?php echo url('user-login');?>" method="post" id="form">
 					<div class="form-group input-group">
 						<div class="input-group-prepend">
@@ -67,7 +67,7 @@
 
 <script src="<?php echo view_path();?>js/md5.js"></script>
 
-<script>
+<script ajax-eval="true">
 var safe_token = '<?php echo GLOBALS('safe_token');?>';
 var jform = $('#form');
 var jemail = $('#email');
@@ -83,7 +83,10 @@ jform.on('submit', function() {
 	postdata.safe_token = safe_token;
 	$.xpost(jform.attr('action'), postdata, function(code, message) {
 		if(code == 0) {
-            jsubmit.button(message).delay(1000).location(referer);
+            jsubmit.button(message);
+            setTimeout(function () {
+                (referer == './' || referer == '/') ? window.location.reload() : window.location = referer;
+            }, 1000);
 		} else if(xn.is_number(code)) {
             $.alert(message);
             jsubmit.button('reset');

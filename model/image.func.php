@@ -12,7 +12,7 @@ function well_image_clip_thumb($sourcefile, $destfile, $forcedwidth = 170, $forc
     } else {
         $src_width = $getimgsize[0];
         $src_height = $getimgsize[1];
-        if ($src_width == 0 || $src_height == 0) {
+        if (0 == $src_width || 0 == $src_height) {
             return 0;
         }
     }
@@ -71,7 +71,7 @@ function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheig
     $imginfo = getimagesize($sourcefile);
     $src_width = $imginfo[0];
     $src_height = $imginfo[1];
-    if ($src_width == 0 || $src_height == 0) {
+    if (0 == $src_width || 0 == $src_height) {
         return $return;
     }
 
@@ -127,7 +127,7 @@ function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheig
     imagecopyresampled($img_dst, $img_src, 0, 0, 0, 0, $des_width, $des_height, $src_width, $src_height);
 
     $tmppath = isset($conf['tmp_path']) ? $conf['tmp_path'] : ini_get('upload_tmp_dir') . '/';
-    $tmppath == '/' AND $tmppath = './tmp/';
+    '/' == $tmppath AND $tmppath = './tmp/';
 
     $tmpfile = $tmppath . md5($destfile) . '.tmp';
     switch ($destext) {
@@ -171,7 +171,7 @@ function well_image_clip($sourcefile, $destfile, $clipx, $clipy, $clipwidth, $cl
     } else {
         $imgwidth = $getimgsize[0];
         $imgheight = $getimgsize[1];
-        if ($imgwidth == 0 || $imgheight == 0) {
+        if (0 == $imgwidth || 0 == $imgheight) {
             return 0;
         }
     }
@@ -199,7 +199,7 @@ function well_image_clip($sourcefile, $destfile, $clipx, $clipy, $clipwidth, $cl
     imagecopyresampled($img_dst, $imgcolor, 0, 0, $clipx, $clipy, $imgwidth, $imgheight, $imgwidth, $imgheight);
 
     $tmppath = isset($conf['tmp_path']) ? $conf['tmp_path'] : ini_get('upload_tmp_dir') . '/';
-    $tmppath == '/' AND $tmppath = './tmp/';
+    '/' == $tmppath AND $tmppath = './tmp/';
 
     $tmpfile = $tmppath . md5($destfile) . '.tmp';
     imagejpeg($img_dst, $tmpfile, 100);

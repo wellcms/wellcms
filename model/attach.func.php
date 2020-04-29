@@ -203,7 +203,7 @@ function attach_type($name, $types)
     // hook model_attach_type_start.php
     $ext = file_ext($name);
     foreach ($types as $type => $exts) {
-        if ($type == 'all') continue;
+        if ('all' == $type) continue;
         if (in_array($ext, $exts)) return $type;
     }
     // hook model_attach_type_end.php
@@ -239,14 +239,14 @@ function well_attach_assoc_post($arr = array())
     // hook model__attach_assoc_post_before.php
     $arr['sess_tmp_files'] = well_attach_assoc_type($assoc);
     // hook model__attach_assoc_post_center.php
-    if ($assoc == 'thumbnail') {
+    if ('thumbnail' == $assoc) {
         // 主图缩略图
         // hook model__attach_assoc_post_thumbnail_start.php
         if (empty($arr['sess_tmp_files'])) return FALSE;
         // hook model__attach_assoc_post_thumbnail_before.php
         well_attach_assoc_thumbnail($arr);
         // hook model__attach_assoc_post_thumbnail_end.php
-    } elseif ($assoc == 'post') {
+    } elseif ('post' == $assoc) {
         // hook model__attach_assoc_post_file_start.php
         $message = well_attach_assoc_file($arr);
         // hook model__attach_assoc_post_file_end.php
@@ -277,10 +277,10 @@ function well_attach_assoc_thumbnail($arr = array())
 
     // 默认位置存图
     $thumbnail_save_default = 1;
-    // array_value($arr, 'type', 0) == 10 AND $thumbnail_default = 2;
+    // 10 == array_value($arr, 'type', 0) AND $thumbnail_default = 2;
     // hook model_attach_assoc_thumbnail_center.php
 
-    if ($thumbnail_save_default == 1) {
+    if (1 == $thumbnail_save_default) {
         $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
 
         $thumbnail_path = $conf['upload_path'] . 'thumbnail';
@@ -348,7 +348,7 @@ function well_attach_assoc_file($arr = array())
             // hook model_attach_assoc_file_foreach_start.php
 
             // 后台提交的内容需要替换掉../
-            $file['url'] = $file['backstage'] && strpos($file['url'], '../upload/') !== FALSE ? str_replace('../upload/', 'upload/', $file['url']) : $file['url'];
+            $file['url'] = $file['backstage'] && FALSE !== strpos($file['url'], '../upload/') ? str_replace('../upload/', 'upload/', $file['url']) : $file['url'];
 
             // hook model_attach_assoc_file_foreach_before.php
 
@@ -427,15 +427,15 @@ function well_attach_assoc_file($arr = array())
 
                 // hook model_attach_assoc_file_filter_delete_before.php
 
-                if (strpos($arr['message'], $url) === FALSE) {
+                if (FALSE === strpos($arr['message'], $url)) {
                     unset($imagelist[$key]);
                     well_attach_delete($attach['aid']);
                     // hook model_attach_assoc_file_filter_delete.php
                 }
 
-                //$conf['attach_delete'] == 1 开启云储存后删除本地附件
+                //1 == $conf['attach_delete'] 开启云储存后删除本地附件
                 /*$path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
-                if ($conf['attach_delete'] == 1 && is_file($path)) unlink($path);*/
+                if (1 == $conf['attach_delete'] && is_file($path)) unlink($path);*/
 
                 // hook model_attach_assoc_file_filter_center.php
             }
@@ -518,8 +518,8 @@ function well_attach_create_thumbnail($arr)
     $i = 0;
     foreach ($attachlist as $val) {
         ++$i;
-        if ($val['isimage'] == 1 && $i == 1) {
-            array_value($conf, 'upload_resize', 'clip') == 'clip' ? well_image_clip_thumb($val['path'], $tmp_file, $pic_width, $pic_height) : well_image_thumb($val['path'], $tmp_file, $pic_width, $pic_height);
+        if (1 == $val['isimage'] && 1 == $i) {
+            'clip' == array_value($conf, 'upload_resize', 'clip') ? well_image_clip_thumb($val['path'], $tmp_file, $pic_width, $pic_height) : well_image_thumb($val['path'], $tmp_file, $pic_width, $pic_height);
             break;
         }
     }
@@ -595,7 +595,7 @@ function well_save_remote_image($arr)
                 $filesize = strlen($imgdata);
                 if ($filesize < 10) continue;
                 // hook model_attach_save_remote_image_put_before.php
-                if (empty($ext) || $ext == 'webp') {
+                if (empty($ext) || 'webp' == $ext) {
                     $tmpfile = $conf['upload_path'] . 'tmp/' . $filename;
                     file_put_contents_try($tmpfile, $imgdata);
                     $img = imagecreatefromwebp($tmpfile);
@@ -608,10 +608,9 @@ function well_save_remote_image($arr)
                 }
 
                 if ($thumbnail) {
-                    ++$i;
-                    if ($i == 1) {
+                    if (1 == ++$i) {
                         // 裁切保存到缩略图目录
-                        array_value($conf, 'upload_resize', 'clip') == 'clip' ? well_image_clip_thumb($destpath, $tmp_file, $pic_width, $pic_height) : well_image_thumb($destpath, $tmp_file, $pic_width, $pic_height);
+                        'clip' == array_value($conf, 'upload_resize', 'clip') ? well_image_clip_thumb($destpath, $tmp_file, $pic_width, $pic_height) : well_image_thumb($destpath, $tmp_file, $pic_width, $pic_height);
                         well_thread_update($tid, array('icon' => $time));
                         if (empty($save_image)) continue;
                     }

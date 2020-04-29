@@ -99,7 +99,7 @@ function page_update_rank($tid, $rank)
 function page_find($page = 1, $pagesize = 20, $desc = TRUE)
 {
     // hook model_page_find_by_uid_start.php
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $arrlist = page__find($cond = array(), array('tid' => $orderby), $page, $pagesize, 'tid', array('tid','rank'));
     // hook model_page_find_by_uid_end.php
     return $arrlist;
@@ -115,7 +115,7 @@ function page_find($page = 1, $pagesize = 20, $desc = TRUE)
 function page_find_by_fid($fid, $page = 1, $pagesize = 1000, $desc = TRUE)
 {
     // hook model_page_find_by_fid_start.php
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $arrlist = page__find($cond = array('fid' => $fid), array('rank' => $orderby), $page, $pagesize, 'tid', array('tid','rank'));
     // hook model_page_find_by_fid_end.php
     return $arrlist;

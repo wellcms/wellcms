@@ -143,8 +143,8 @@ if (empty($action)) {
                 if ($type == 'mysql') {
                     mysql_query("CREATE DATABASE $name");
                     $r = db_connect($db);
-                } elseif ($type == 'pdo_mysql') {
-                    if (strpos(':', $host) !== FALSE) {
+                } elseif ('pdo_mysql' == $type) {
+                    if (FALSE !== strpos(':', $host)) {
                         $arr = explode(':', $host);
                         $host = $arr[0];
                         $port = $arr[1];

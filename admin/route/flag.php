@@ -5,18 +5,18 @@
 
 !defined('DEBUG') AND exit('Access Denied.');
 
-group_access($gid, 'managecategory') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+FALSE === group_access($gid, 'managecategory') AND message(1, lang('user_group_insufficient_privilege'));
 
 $action = param(1, 'list');
 
 $columnlist = all_category($forumlist);
 // hook admin_flag_start.php
 
-if ($action == 'list') {
+if ('list' == $action) {
 
     // hook admin_flag_list_start.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_flag_list_get_start.php
 
@@ -53,16 +53,16 @@ if ($action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/flag_list.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         $type = param('type', 0);
 
         // hook admin_flag_list_post_start.php
 
-        if ($type == 1) {
+        if (1 == $type) {
             // 排序
             $arr = _POST('data');
 
@@ -112,9 +112,9 @@ if ($action == 'list') {
             // hook admin_flag_list_post_after.php
 
             // 清空主题 大数据量超时 暂时这样处理，以后优化再改成遍历主键删除
-            flag_thread_delete_by_flagid($flagid) === FALSE AND message(-1, lang('delete_failed'));
+            FALSE === flag_thread_delete_by_flagid($flagid) AND message(-1, lang('delete_failed'));
 
-            flag_delete($flagid) === FALSE AND message(-1, lang('delete_failed'));
+            FALSE === flag_delete($flagid) AND message(-1, lang('delete_failed'));
 
             $iconfile = $conf['upload_path'] . 'flag/' . $flagid . '.png';
             file_exists($iconfile) AND unlink($iconfile);
@@ -124,11 +124,11 @@ if ($action == 'list') {
             message(0, lang('delete_successfully'));
         }
     }
-} elseif ($action == 'create') {
+} elseif ('create' == $action) {
 
     // hook admin_flag_create_start.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_flag_create_get_start.php
 
@@ -161,10 +161,10 @@ if ($action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/flag_post.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         // hook admin_flag_create_post_start.php
 
@@ -211,9 +211,9 @@ if ($action == 'list') {
         // hook admin_flag_create_post_array.php
 
         $flagid = flag_create($arr);
-        $flagid === FALSE AND message(-1, lang('create_failed'));
+        FALSE === $flagid AND message(-1, lang('create_failed'));
 
-        if ($delete == 0 && $icon) {
+        if (0 == $delete && $icon) {
             $data = substr($icon, strpos($icon, ',') + 1);
             $data = base64_decode($data);
             $path = $conf['upload_path'] . 'flag/';
@@ -249,7 +249,7 @@ if ($action == 'list') {
         message(0, lang('create_successfully'));
     }
 
-} elseif ($action == 'update') {
+} elseif ('update' == $action) {
 
     // hook admin_flag_update_start.php
 
@@ -265,7 +265,7 @@ if ($action == 'list') {
 
     // hook admin_flag_update_end.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_flag_update_get_start.php
 
@@ -293,10 +293,10 @@ if ($action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/flag_post.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         // hook admin_flag_update_post_start.php
 
@@ -366,7 +366,7 @@ if ($action == 'list') {
         }
 
         $icon = param('icon');
-        if ($delete == 0 && $icon) {
+        if (0 == $delete && $icon) {
             $update['icon'] = $time;
             $data = substr($icon, strpos($icon, ',') + 1);
             $data = base64_decode($data);
@@ -378,14 +378,14 @@ if ($action == 'list') {
 
         // hook admin_flag_update_post_after.php
 
-        !empty($update) AND flag_update($read['flagid'], $update) === FALSE AND message(-1, lang('update_failed'));
+        !empty($update) AND FALSE === flag_update($read['flagid'], $update) AND message(-1, lang('update_failed'));
 
         // hook admin_flag_update_post_end.php
 
         message(0, lang('update_successfully'));
     }
 
-} elseif ($action == 'read') {
+} elseif ('read' == $action) {
 
     // hook admin_flag_read_start.php
 
@@ -395,7 +395,7 @@ if ($action == 'list') {
 
     // hook admin_flag_read_end.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_flag_read_get_start.php
 
@@ -436,7 +436,7 @@ if ($action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/flag_read_list.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         // hook admin_flag_read_post_start.php
 
@@ -476,7 +476,7 @@ if ($action == 'list') {
 
         // hook admin_flag_read_post_after.php
 
-        flag_thread_delete($id) === FALSE AND message(-1, lang('delete_failed'));
+        FALSE === flag_thread_delete($id) AND message(-1, lang('delete_failed'));
         // hook admin_flag_read_post_end.php
 
         message(0, lang('delete_successfully'));

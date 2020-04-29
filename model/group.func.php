@@ -138,8 +138,8 @@ function group_access($gid, $access)
     static $result = array();
     $k = 'group_' . $gid . '-' . $access;
     if (isset($result[$k])) return $result[$k];
-    if (DEBUG == 3) return TRUE;
-    if ($gid == 1) return TRUE; // 管理员有所有权限
+    if (3 == DEBUG) return TRUE;
+    if (1 == $gid) return TRUE; // 管理员有所有权限
     $group = $grouplist[$gid];
     $result[$k] = empty($group[$access]) ? FALSE : TRUE;
     // hook model_group_access_end.php
@@ -151,11 +151,11 @@ function group_list_cache()
 {
     global $conf;
     // hook model_group_list_cache_start.php
-    if ($conf['cache']['type'] == 'mysql') {
+    if ('mysql' == $conf['cache']['type']) {
         $grouplist = group_get();
     } else {
         $grouplist = cache_get('grouplist');
-        if ($grouplist === NULL || $grouplist === FALSE) {
+        if (NULL === $grouplist || FALSE === $grouplist) {
             $grouplist = group_find();
             cache_set('grouplist', $grouplist);
         }
@@ -169,7 +169,7 @@ function group_list_cache_delete()
 {
     global $conf;
     // hook model_group_list_cache_delete_start.php
-    $r = $conf['cache']['type'] == 'mysql' ? group_delete_cache() : cache_delete('grouplist');
+    $r = 'mysql' == $conf['cache']['type'] ? group_delete_cache() : cache_delete('grouplist');
     // hook model_group_list_cache_delete_end.php
     return $r;
 }
@@ -180,7 +180,7 @@ $g_grouplist = FALSE;
 function group_get()
 {
     global $g_grouplist;
-    $g_grouplist === FALSE AND $g_grouplist = website_get('grouplist');
+    FALSE === $g_grouplist AND $g_grouplist = website_get('grouplist');
     if (empty($g_grouplist)) {
         $g_grouplist = group_find();
         $g_grouplist AND group_set($g_grouplist);

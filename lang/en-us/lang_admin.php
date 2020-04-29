@@ -185,9 +185,6 @@ return array(
 	'plugin_is_not_free'=>'This plugin is not free, please pay first.',
 	'plugin_is_bought'=>'Already bought',
 	'plugin_not_bought'=>'Not bought',
-	'plugin_wechat_qrcode_pay'=>'Wechat SCAN for Pay',
-	'plugin_service_qq'=>'Service QQ',
-
     'manage_content' => 'Manage Content',
     'content_list' => 'Content',
     'sticky_list' => 'Sticky',

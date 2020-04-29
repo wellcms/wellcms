@@ -6,7 +6,7 @@
 			</button>
 			
 			<!--{hook header_nav_logo_before.htm}-->
-			<?php if ($route == 'index') { ?>
+			<?php if ('index' == $route) { ?>
 			<h1 class="d-none"><?php echo $conf['sitename'] ;?></h1>
 			<?php } ?>
 			<a class="navbar-brand text-truncate" href="<?php echo $header['mobile_link'];?>">
@@ -41,7 +41,7 @@
                     <!-- li 格式 重新定义或添加新 class -->
 					<li class="nav-item" fid="<?php echo $_forum['fid'];?>" data-active="fid-<?php echo $_forum['fid'];?>">
                         <!-- a标签格式 重新定义或添加新 class -->
-						<a class="nav-link" href="<?php echo $_forum['url'];?>" <?php if ($_forum['category'] == 3){echo 'target="_blank"';}?>><i class="icon-circle-o d-md-none"></i>&nbsp;<?php echo $_forum['name'];?></a>
+						<a class="nav-link" href="<?php echo $_forum['url'];?>" <?php if (3 == $_forum['category']){echo 'target="_blank"';}?>><i class="icon-circle-o d-md-none"></i>&nbsp;<?php echo $_forum['name'];?></a>
 					</li>
 					<!--{hook header_nav_forumlist_loop_end.htm}-->
 					<?php }} ?>
@@ -67,7 +67,7 @@
 					</li>
 					<!--{hook header_nav_user_start.htm}-->
 				<?php if(empty($uid)) { ?>
-					<li class="nav-item"><a class="nav-link" rel="nofollow" href="<?php echo url('user-login');?>"><i class="icon-user"></i>&nbsp;<?php echo lang('login');?></a></li>
+					<li class="nav-item"><a class="nav-link" rel="nofollow" data-modal-title="<?php echo lang('login');?>" data-modal-size="md" href="<?php echo url('user-login');?>"><i class="icon-user"></i>&nbsp;<?php echo lang('login');?></a></li>
 					<!--<li class="nav-item"><a class="nav-link" href="<?php echo url('user-create');?>"><?php echo lang('register');?></a></li>-->
 				<?php } else { ?>
 					<li class="nav-item username"><a class="nav-link" rel="nofollow" href="<?php echo url('home');?>"><img class="avatar-1 mr-1" src="<?php echo $user['avatar_url'];?>">&nbsp;<?php echo $user['username'];?></a></li>
@@ -76,7 +76,7 @@
 					<li class="nav-item"><a class="nav-link" rel="nofollow" href="<?php echo $conf['path'];?>admin/"><i class="icon-home"></i>&nbsp;<?php echo lang('admin_page');?></a></li>
 					<?php } ?>
 					<!--{hook header_nav_admin_page_after.htm}-->
-					<li class="nav-item"><a class="nav-link" rel="nofollow" href="<?php echo url('user-logout');?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a></li>
+					<li class="nav-item"><a class="nav-link" rel="nofollow" id="user-logout" href="<?php echo url('user-logout');?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a></li>
 				<?php } ?>
 					<!--{hook header_nav_user_end.htm}-->
 				</ul>

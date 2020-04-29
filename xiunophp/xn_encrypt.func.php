@@ -95,7 +95,7 @@ if(!function_exists('xxtea_encrypt')) {
 	}
 	
 	function xxtea_encrypt($str, $key) {
-		if($str == '') return '';
+		if('' == $str) return '';
 		$v = xxtea_str2long($str, TRUE);
 		$k = xxtea_str2long($key, FALSE);
 		if (count($k) < 4) {
@@ -126,7 +126,7 @@ if(!function_exists('xxtea_encrypt')) {
 	}
 	
 	function xxtea_decrypt($str, $key) {
-		if($str == '') return '';
+		if('' == $str) return '';
 		$v = xxtea_str2long($str, FALSE);
 		$k = xxtea_str2long($key, FALSE);
 		if(count($k) < 4) {

@@ -8,13 +8,13 @@
 
                 <ol class="carousel-indicators">
                     <?php $n = count($slide);for ($i = 0; $i < $n; ++$i) { ?>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $i; ?>" <?php if($i == 0) {echo 'class="active"';} ?>></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $i; ?>" <?php if(0 == $i) {echo 'class="active"';} ?>></li>
                     <?php } ?>
                 </ol>
 
                 <div class="carousel-inner">
                     <?php $i =0;foreach($slide as &$_thread) {++$i;?>
-                    <div class="carousel-item <?php if ($i == 1) {echo 'active';} ?>">
+                    <div class="carousel-item <?php if (1 == $i) {echo 'active';} ?>">
                         <a href="<?php echo $_thread['url'];?>">
                             <img class="d-block w-100" src="<?php echo $_thread['icon_text']; ?>" alt='<?php echo $_thread['subject'];?>'>
                             <!--<div class="carousel-caption d-none d-md-block">

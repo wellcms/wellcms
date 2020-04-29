@@ -4,17 +4,17 @@
  */
 !defined('DEBUG') AND exit('Access Denied.');
 
-$action = param(1);
+$action = param(1, 'list');
 
 $system_group = array(0, 1, 2, 3, 4, 5, 6, 7, 101);
 
 // hook admin_group_start.php
 
-if (empty($action) || $action == 'list') {
+if ('list' == $action) {
 
     // hook admin_group_list_get_post.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_group_list_get_start.php
 
@@ -28,12 +28,12 @@ if (empty($action) || $action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/group_list.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-        group_access($gid, 'managegroup') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managegroup') AND message(1, lang('user_group_insufficient_privilege'));
 
         $gidarr = param('_gid', array(0));
         $namearr = param('name', array(''));
@@ -67,7 +67,7 @@ if (empty($action) || $action == 'list') {
         message(0, lang('save_successfully'));
     }
 
-} elseif ($action == 'update') {
+} elseif ('update' == $action) {
 
     $_gid = param(2, 0);
     $_group = group_read($_gid);
@@ -75,14 +75,14 @@ if (empty($action) || $action == 'list') {
 
     // hook admin_group_update_get_post.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook admin_group_update_get_start.php
 
         $header['title'] = lang('group_admin');
         $header['mobile_title'] = lang('group_admin');
 
-        group_access($gid, 'manageupdategroup') == FALSE AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'manageupdategroup') AND message(1, lang('user_group_insufficient_privilege'));
 
         $input = array();
         $input['name'] = form_text('name', $_group['name']);
@@ -133,10 +133,10 @@ if (empty($action) || $action == 'list') {
 
         include _include(ADMIN_PATH . 'view/htm/group_update.htm');
 
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         $safe_token = param('safe_token');
-        well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         $name = param('name');
         $creditsfrom = param('creditsfrom');

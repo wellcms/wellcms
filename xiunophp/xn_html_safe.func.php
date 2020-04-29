@@ -851,7 +851,7 @@ class XML_HTMLSax3_StateParser
     function scanCharacter()
     {
         if ($this->position < $this->length) {
-            return $this->rawtext{$this->position++};
+            return $this->rawtext[$this->position++];
         }
     }
 
@@ -1014,7 +1014,7 @@ class XML_HTMLSax3_StateParser_Lt430 extends XML_HTMLSax3_StateParser
     function scanUntilCharacters($string)
     {
         $startpos = $this->position;
-        while ($this->position < $this->length && strpos($string, $this->rawtext{$this->position}) === FALSE) {
+        while ($this->position < $this->length && strpos($string, $this->rawtext[$this->position]) === FALSE) {
             $this->position++;
         }
         return substr($this->rawtext, $startpos, $this->position - $startpos);
@@ -1028,7 +1028,7 @@ class XML_HTMLSax3_StateParser_Lt430 extends XML_HTMLSax3_StateParser
     function ignoreWhitespace()
     {
         while ($this->position < $this->length &&
-            strpos(" \n\r\t", $this->rawtext{$this->position}) !== FALSE) {
+            strpos(" \n\r\t", $this->rawtext[$this->position]) !== FALSE) {
             $this->position++;
         }
     }
@@ -1399,12 +1399,12 @@ class HTML_White
     protected $allowTags = array();
     private $singleTags = array('area', 'br', 'img', 'input', 'hr', 'wbr');
     public $deleteTags = array(
-        'applet', 'base',   'basefont', 'bgsound', 'blink',  'body',
-        'embed',  'frame',  'frameset', 'head',    'html',   'ilayer',
-        'iframe', 'layer',  'link',     'meta',    'object', 'style',
-        'title',  'script',
+        'applet', 'base', 'basefont', 'bgsound', 'blink', 'body',
+        'embed', 'frame', 'frameset', 'head', 'html', 'ilayer',
+        'iframe', 'layer', 'link', 'meta', 'object', 'style',
+        'title', 'script',
     );
-    public $deleteTagsContent = array('script', 'style', 'title', 'xml', );
+    public $deleteTagsContent = array('script', 'style', 'title', 'xml',);
     /**
      * Type of protocols filtering ('white' or 'black')
      *
@@ -1417,11 +1417,11 @@ class HTML_White
      * @var array
      */
     public $blackProtocols = array(
-        'about',   'chrome',     'data',       'disk',     'hcp',
-        'help',    'javascript', 'livescript', 'lynxcgi',  'lynxexec',
-        'ms-help', 'ms-its',     'mhtml',      'mocha',    'opera',
-        'res',     'resource',   'shell',      'vbscript', 'view-source',
-        'vnd.ms.radio',          'wysiwyg',
+        'about', 'chrome', 'data', 'disk', 'hcp',
+        'help', 'javascript', 'livescript', 'lynxcgi', 'lynxexec',
+        'ms-help', 'ms-its', 'mhtml', 'mocha', 'opera',
+        'res', 'resource', 'shell', 'vbscript', 'view-source',
+        'vnd.ms.radio', 'wysiwyg',
     );
     /**
      * List of "safe" protocols (used for whitelist-filtering)
@@ -1429,9 +1429,9 @@ class HTML_White
      * @var array
      */
     public $whiteProtocols = array(
-        'ed2k',   'file', 'ftp',  'gopher', 'http',  'https',
-        'irc',    'mailto', 'news', 'nntp', 'telnet', 'webcal',
-        'xmpp',   'callto',
+        'ed2k', 'file', 'ftp', 'gopher', 'http', 'https',
+        'irc', 'mailto', 'news', 'nntp', 'telnet', 'webcal',
+        'xmpp', 'callto',
     );
     /**
      * List of attributes that can contain protocols
@@ -1446,10 +1446,10 @@ class HTML_White
      *
      * @var array
      */
-    public $attributes = array('dynsrc', 'id', 'name', );
+    public $attributes = array('dynsrc', 'id', 'name',);
     public $cssKeywords = array(
-        'absolute', 'behavior',       'behaviour',   'content', 'expression',
-        'fixed',    'include-source', 'moz-binding',
+        'absolute', 'behavior', 'behaviour', 'content', 'expression',
+        'fixed', 'include-source', 'moz-binding',
     );
 
     private $noClose = array();
@@ -1469,8 +1469,8 @@ class HTML_White
         //making regular expressions based on Proto & CSS arrays
         foreach ($this->blackProtocols as $proto) {
             $preg = "/[\s\x01-\x1F]*";
-            for ($i=0; $i<strlen($proto); $i++) {
-                $preg .= $proto{$i} . "[\s\x01-\x1F]*";
+            for ($i = 0; $i < strlen($proto); $i++) {
+                $preg .= $proto[$i] . "[\s\x01-\x1F]*";
             }
             $preg .= ":/i";
             $this->protoRegexps[] = $preg;
@@ -1531,17 +1531,11 @@ class HTML_White
 
             $name = strtolower($name);
 
-            if (strpos($name, 'on') === 0) {
-                continue;
-            }
+            if (strpos($name, 'on') !== FALSE) continue;
 
-            if (strpos($name, 'data') === 0) {
-                continue;
-            }
+            if (strpos($name, 'data') !== FALSE) continue;
 
-            if (in_array($name, $this->attributes)) {
-                continue;
-            }
+            if (in_array($name, $this->attributes)) continue;
 
             if ($name == 'style') {
                 // removes insignificant backslahes
@@ -1674,7 +1668,7 @@ class HTML_White
             $tempval = preg_replace_callback('/&#(\d+);?/m', array($this, 'chr_callback'), $value); //"'
             $tempval = preg_replace_callback('/&#x([0-9a-f]+);?/mi', array($this, 'chr_hexdec_callback'), $tempval);
 
-            if ((in_array($name, $this->protocolAttributes)) && (strpos($tempval, ':') !== false)
+            /*if ((in_array($name, $this->protocolAttributes)) && (strpos($tempval, ':') !== false)
             ) {
                 if ($this->protocolFiltering == 'black') {
                     foreach ($this->protoRegexps as $proto) {
@@ -1684,13 +1678,13 @@ class HTML_White
                     }
                 } else {
                     $_tempval = explode(':', $tempval);
-                    $proto    = $_tempval[0];
+                    $proto = $_tempval[0];
 
                     if (!in_array($proto, $this->whiteProtocols)) {
                         continue;
                     }
                 }
-            }
+            }*/
 
             $value = str_replace("\"", "&quot;", $value);
             if ($value == '' && $name == 'style') {
@@ -1722,7 +1716,7 @@ class HTML_White
         if (in_array($name, $this->deleteTagsContent)) {
             array_push($this->_dcStack, $name);
             $this->_dcCounter[$name] = isset($this->_dcCounter[$name])
-                ? $this->_dcCounter[$name]+1 : 1;
+                ? $this->_dcCounter[$name] + 1 : 1;
         }
 
         // 删除危险标签

@@ -1,3 +1,5 @@
+var body = $('body');
+
 /*
 关闭click.bs.dropdown.data-api事件，使头部顶级菜单可点击
 鼠标移动弹出下拉菜单 css 追加
@@ -5,6 +7,22 @@
 span.dropdown:hover .dropdown-menu {display: block;}
 $(document).off('click.bs.dropdown.data-api');
 */
+
+/*
+ ajax 推出登陆 绑定id="user-logout"
+ <a class="nav-link" rel="nofollow" id="user-logout" href="<?php echo url('user-logout');?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a>
+ */
+body.on('click', '#user-logout', function () {
+    var href = $(this).attr('href') || $(this).data('href');
+    $.xpost(href, function(code, message) {
+        if(code == 0) {
+            $.alert(message).delay(1000).location();
+        } else {
+            alert(message);
+        }
+    });
+    return false;
+});
 
 /* 搜索使用 */
 $('#form-search').on('submit', function() {
@@ -233,7 +251,6 @@ $('input.checkall').on('click', function () {
  });*/
 
 /*引用 / Quote*/
-var body = $('body');
 body.on('click', '.post_reply', function () {
     var jthis = $(this);
     var tid = jthis.data('tid');

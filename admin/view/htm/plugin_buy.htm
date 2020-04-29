@@ -1,0 +1,90 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<div class="card">
+    <div class="card-header">
+        <?php echo $payment_tips;?>
+    </div>
+    <div class="card-body ajax-body">
+        <?php if (in_array($return['pay_api'], array(1,2))) {?>
+        <div id="qrcode" class="d-flex justify-content-around my-3">
+
+        </div>
+        <?php } else {?>
+        <form action="<?php echo url('plugin-buy');?>" method="post" id="form">
+            <div class="form-group">
+                <?php echo lang('for_safe_input_official_login_password');?>
+            </div>
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="icon-lock"></i></span>
+                </div>
+                <input type="password" class="form-control" placeholder="<?php echo lang('password');?>" id="password" name="password">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block col-md-4 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('submit');?></button>
+            </div>
+        </form>
+        <?php }?>
+    </div>
+</div>
+
+<?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
+<script src="<?php echo admin_view_path();?>js/md5.js"></script>
+<script src="<?php echo admin_view_path();?>js/jquery.qrcode.min.js"></script>
+<script ajax-eval="true">
+    var pay_api = '<?php echo $return['pay_api'];?>';
+    var qrcode = '<?php echo $return['url'];?>';
+    var dir = '<?php echo $dir;?>';
+
+    if(1 == pay_api) {
+        $('.qrcode').html('<iframe runat="server" width="200px" height="210px" frameborder="no" allowtransparency="yes" scrolling="yes" src="' + qrcode + '" style="margin: 0 auto;"></iframe>');
+    } else if(2 == pay_api) {
+        $('#qrcode').qrcode({
+            render: 'canvas', /*使用canvas方式渲染*/
+            text: qrcode, /*扫描二维码后显示的内容,可以直接填一个网址，扫描二维码后自动跳向该链接*/
+            width: 200, /*二维码的宽度*/
+            height: 200,
+            background: '#ffffff', /*二维码的后景色*/
+            foreground: '#000000', /*二维码的前景色*/
+            src: '',
+            imgWidth: 50,
+            imgHeight: 50
+        });
+    } else {
+        var jform = $('#form');
+        jform.on('submit', function() {
+            jform.reset();
+            var jthis = $(this);
+            var jsubmit = jthis.find('#submit');
+            jsubmit.button('loading');
+            var postdata = jform.serializeObject();
+            postdata.password = $.md5(postdata.password);
+            $.xpost(jform.attr('action'), postdata, function(code, message) {
+                if(code == 0) {
+                    jsubmit.button(message);
+                    setTimeout(function() {
+                        if(jmodal) jmodal.modal('dispose');
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    $.alert(message);
+                    jsubmit.button('reset');
+                }
+            });
+            return false;
+        });
+    }
+
+    if(1 == pay_api || 2 == pay_api) {
+        var t = setInterval(function() {
+            $.xget(xn.url('plugin-is_bought-'+dir), function(code, message) {
+                clearInterval(t);
+                if(code == 0) {
+                    window.location = xn.url('plugin-download-'+dir);
+                } else {
+                    $.alert(message);
+                }
+            });
+        }, 3000);
+    }
+</script>

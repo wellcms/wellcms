@@ -35,14 +35,14 @@ return array(
     'admin_plugin_official_fee_list' => '收费插件',
 
     'admin_token_error' => '管理令牌错误，可能因为您的网络环境不稳定，可以尝试取消后台绑定 IP，配置 conf.php，admin_bind_ip => 0 ',
-    'admin_token_expiry' => '管理登陆令牌失效，请重新登录',
+    'admin_token_expiry' => '管理登录令牌失效，请重新登录',
     'user_edit' => '用户编辑',
     'edit_successfully' => '编辑成功',
     'item_not_exists' => '{item} 不存在',
     'item_not_moderator' => '{item} 不是版主',
     'group_not_exists' => '用户组不存在',
 
-    'admin_login' => '管理登陆',
+    'admin_login' => '管理登录',
     'save_conf_failed' => '保存数据到配置文件 {file} 失败，请检查文件的可写权限',
     'user_already_exists' => '用户已经存在',
     'email_already_exists' => '邮箱已经存在',
@@ -144,7 +144,7 @@ return array(
     'view_user_info' => '查看用户信息',
 
     // 插件
-    'plugin_token_error' => '令牌错误', // 20200101
+    'plugin_token_error' => '令牌错误',
     'plugin_dir' => '插件目录名',
     'plugin_version' => '要求 WellCMS 最低版本',
     'price' => '价格',
@@ -186,10 +186,8 @@ return array(
     'plugin_return_data_error' => '返回数据有误：',
     'plugin_is_free' => '该插件免费。',
     'plugin_is_not_free' => '该插件需要付费购买，请先支付。',
-    'plugin_is_bought' => '已经购买过。',
-    'plugin_not_bought' => '还没购买过。',
-    'plugin_wechat_qrcode_pay' => '微信扫码支付。',
-    'plugin_service_qq' => '客服 QQ',
+    'plugin_is_bought' => '已经购买过',
+    'plugin_not_bought' => '还没购买过',
     'content_list' => '内容列表',
     'sticky_list' => '置顶列表',
     'comment_list' => '评论列表',

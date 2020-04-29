@@ -49,7 +49,7 @@
                         <?php if ($arrlist) { foreach($arrlist as $_fid=>$_forum) { ?>
                         <input type="hidden" class="form-control" name="fid[<?php echo $_fid;?>]" value="<?php echo $_forum['fid']; ?>" placeholder="<?php echo lang('forum_id');?>" />
                         <!--频道-->
-                        <?php if ($_forum['category'] == 1) { ?>
+                        <?php if (1 == $_forum['category']) { ?>
 
                         <tr fid="<?php echo $_forum['fid']; ?>">
                             <td>

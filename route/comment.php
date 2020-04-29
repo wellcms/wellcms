@@ -11,7 +11,7 @@ $action = param(1);
 
 // hook comment_before.php
 
-if ($action == 'create') {
+if ('create' == $action) {
     // 创建评论
     // hook comment_create_start.php
 
@@ -38,18 +38,18 @@ if ($action == 'create') {
     // hook comment_create_after.php
 
     // 已关闭评论
-    (($thread['closed'] || empty($forum['comment'])) && ($gid == 0 || $gid > 5)) AND message(1, lang('thread_has_already_closed'));
+    (($thread['closed'] || empty($forum['comment'])) && (0 == $gid || $gid > 5)) AND message(1, lang('thread_has_already_closed'));
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
         // hook comment_create_get_start.php
 
         // hook comment_create_get_end.php
-    } elseif ($method == 'POST') {
+    } elseif ('POST' == $method) {
 
         // 验证token
-        if (array_value($conf, 'comment_token', 0) == 1) {
+        if (1 == array_value($conf, 'comment_token', 0)) {
             $safe_token = param('safe_token');
-            well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
         }
 
         // hook comment_create_post_start.php
@@ -76,7 +76,7 @@ if ($action == 'create') {
             'message' => $message,
         );
         $pid = comment_create($post);
-        $pid === FALSE AND message(-1, lang('create_post_failed'));
+        FALSE === $pid AND message(-1, lang('create_post_failed'));
 
         // thread_sticky_create($fid, $tid);
 
@@ -103,22 +103,22 @@ if ($action == 'create') {
             message(0, lang('create_post_successfully'));
         }
     }
-} elseif ($action == 'delete') {
+} elseif ('delete' == $action) {
     // 删除回复 type = 1支持批量删除，直接传pid一维数组pid = array(1,2,3)
 
     $safe_token = param('safe_token');
-    well_token_verify($uid, $safe_token) === FALSE AND message(1, lang('illegal_operation'));
+    FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
     $type = param('type', 0);
     $pid = $type ? param('pid', array()) : param(2, 0);
 
     // hook comment_delete_start.php
 
-    if ($method != 'POST') message(1, lang('method_error'));
+    if ('POST' != $method) message(1, lang('method_error'));
 
     include _include(APP_PATH . 'model/operate.func.php');
 
-    $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || $gid == 1;
+    $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || 1 == $gid;
 
     empty($allowdelete) AND message(-1, lang('user_group_insufficient_privilege'));
 

@@ -61,7 +61,7 @@ function flag_create($arr)
 
     // hook model_flag_create_start.php
     $r = flag__create($arr);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
 
     flag_delete_cache($arr['fid']);
 
@@ -145,7 +145,7 @@ function flag_delete($flagid)
     if (empty($read)) return FALSE;
     // hook model_flag_delete_before.php
     $r = flag__delete($flagid);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
     // hook model_flag_delete_after.php
     flag_delete_cache_by_flagid($read['fid'], $flagid);
     // hook model_flag_delete_end.php
@@ -241,11 +241,11 @@ function flag_read_cache($flagid)
 
     // hook model_flag_read_cache_before.php
 
-    if ($conf['cache']['type'] == 'mysql') {
+    if ('mysql' == $conf['cache']['type']) {
         $r = flag_read($flagid);
     } else {
         $r = cache_get($key);
-        if ($r === NULL) {
+        if (NULL === $r) {
             $r = flag_read($flagid);
             $r AND cache_set($key, $r, 300);
         }
@@ -282,7 +282,7 @@ function flag_get($fid)
 {
     global $forumlist, $g_flag, $config;
 
-    $g_flag === FALSE AND $g_flag = website_get('flag');
+    FALSE === $g_flag AND $g_flag = website_get('flag');
     if (isset($g_flag[$fid])) return $g_flag[$fid];
 
     empty($g_flag) AND $g_flag = array();
@@ -311,7 +311,7 @@ function flag_get($fid)
 function flag_set($key, $val)
 {
     global $g_flag;
-    $g_flag === FALSE AND $g_flag = website_get('flag');
+    FALSE === $g_flag AND $g_flag = website_get('flag');
     empty($g_flag) AND $g_flag = array();
     $g_flag[$key] = $val;
     return website_set('flag', $g_flag);
@@ -321,7 +321,7 @@ function flag_set($key, $val)
 function flag_delete_cache($fid)
 {
     global $g_flag;
-    $g_flag === FALSE AND $g_flag = website_get('flag');
+    FALSE === $g_flag AND $g_flag = website_get('flag');
     empty($g_flag) AND $g_flag = array();
     if (isset($g_flag[$fid])) {
         unset($g_flag[$fid]);
@@ -334,7 +334,7 @@ function flag_delete_cache($fid)
 function flag_delete_cache_by_flagid($fid, $flagid)
 {
     global $g_flag;
-    $g_flag === FALSE AND $g_flag = website_get('flag');
+    FALSE === $g_flag AND $g_flag = website_get('flag');
     empty($g_flag) AND $g_flag = array();
     if (isset($g_flag[$fid][$flagid])) {
         unset($g_flag[$fid][$flagid]);

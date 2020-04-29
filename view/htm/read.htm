@@ -87,7 +87,7 @@
 				</div>
 				<hr />
 				<div class="message break-all">
-				<?php if($page == 1) { ?>
+				<?php if(1 == $page) { ?>
 					<!--需要 主图 文字环绕 删除下面的注释代码即可-->
                     <!--<div class="clearfix float-left mx-2">
                         <img src="<?php echo $thread['icon_text'];?>" alt="<?php echo $thread['subject'];?>" />
@@ -120,7 +120,7 @@
 				</div>
 				<!--{hook read_plugin_after.htm}-->
 
-				<?php if ($page == 1) { ?>
+				<?php if (1 == $page) { ?>
 				<?php if ($thread['tag']) { ?>
 				<hr>
 				<div class="row">
@@ -165,7 +165,7 @@
 				<ul class="postlist list-group list-group-flush">
 					<?php include _include(APP_PATH.'view/htm/comment_list.inc.htm'); ?>
 					
-					<?php if(!empty($user) && $thread['closed'] == 0) { ?>
+					<?php if(!empty($user) && 0 == $thread['closed']) { ?>
 					<li class="row post newpost media">
                         <div class="col-lg-12 d-flex justify-content-between small text-muted">
                             <!--{hook read_comment_post_start.htm}-->
@@ -243,7 +243,7 @@
 				<?php if(isset($_flag['list'])){foreach($_flag['list'] as $_thread) { ?>
                 <li class="thread bg-white">
                     <h4 class="my-0 mx-3">
-						<a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo ($_thread['type']==10?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
+						<a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                             <?php echo $_thread['subject'];?>
 						</a>
 					</h4>
@@ -359,7 +359,7 @@ jmessage.on('blur', function() {jmessage.t = setTimeout(function() { jmessage.cs
 $('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
 </script>
 
-<?php if($thread['closed'] && ($gid == 0 || $gid > 5)) { ?>
+<?php if($thread['closed'] && (0 == $gid || $gid > 5)) { ?>
 <script>
 jmessage.val('<?php echo lang('thread_has_already_closed');?>').attr('readonly', 'readonly');
 </script>

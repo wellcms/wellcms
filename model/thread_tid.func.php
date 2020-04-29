@@ -63,7 +63,7 @@ function thread_tid_create($arr)
     if (empty($arr)) return FALSE;
     // hook model_thread_tid_create_start.php
     $r = thread_tid__create($arr);
-    if ($r === FALSE) return FALSE;
+    if (FALSE === $r) return FALSE;
     // hook model_thread_tid_create_end.php
     return $r;
 }
@@ -111,7 +111,7 @@ function thread_tid_update_rank($tid, $rank)
 function thread_tid_find($page = 1, $pagesize = 20, $desc = TRUE)
 {
     // hook model_thread_tid_find_by_uid_start.php
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $arr = thread_tid__find($cond = array(), array('tid' => $orderby), $page, $pagesize, 'tid', array('tid', 'verify_date'));
     // hook model_thread_tid_find_by_uid_end.php
     return $arr;
@@ -129,7 +129,7 @@ function thread_tid_find_by_uid($uid, $page = 1, $pagesize = 1000, $desc = TRUE,
 {
     if (empty($uid)) return array();
     // hook model_thread_tid_find_by_uid_start.php
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $arr = thread_tid__find($cond = array('uid' => $uid), array('tid' => $orderby), $page, $pagesize, $key, $col);
     // hook model_thread_tid_find_by_uid_end.php
     return $arr;
@@ -140,7 +140,7 @@ function thread_tid_find_by_fid($fid, $page = 1, $pagesize = 1000, $desc = TRUE)
 {
     if (empty($fid)) return array();
     // hook model_thread_tid_find_by_fid_start.php
-    $orderby = $desc == TRUE ? -1 : 1;
+    $orderby = TRUE == $desc ? -1 : 1;
     $arr = thread_tid__find($cond = array('fid' => $fid), array('tid' => $orderby), $page, $pagesize, 'tid', array('tid', 'verify_date'));
     // hook model_thread_tid_find_by_fid_end.php
     return $arr;
@@ -191,9 +191,9 @@ function thread_hot_get_tid($n = 20)
 {
     global $config, $g_hot;
 
-    if ($config['setting']['hot_on'] == 0) return NULL;
+    if (0 == $config['setting']['hot_on']) return NULL;
 
-    $g_hot === FALSE AND $g_hot = thread_hot_get();
+    FALSE === $g_hot AND $g_hot = thread_hot_get();
     if (empty($g_hot)) return NULL;
 
     //$tids = array();
@@ -214,9 +214,9 @@ function thread_hot_get()
 {
     global $config, $g_hot;
 
-    if ($config['setting']['hot_on'] == 0) return NULL;
+    if (0 == $config['setting']['hot_on']) return NULL;
 
-    $g_hot === FALSE AND $g_hot = website_get('hot');
+    FALSE === $g_hot AND $g_hot = website_get('hot');
 
     if (empty($g_hot)) {
         $g_hot = thread_hot_pull();
@@ -232,9 +232,9 @@ function thread_hot_set($thread)
     global $conf, $config, $g_hot;
 
     $hot_view = array_value($conf, 'hot_view', 10);
-    if ($config['setting']['hot_on'] == 0 || $thread['views'] < $hot_view) return FALSE;
+    if (0 == $config['setting']['hot_on'] || $thread['views'] < $hot_view) return FALSE;
 
-    $g_hot === FALSE AND $g_hot = thread_hot_get();
+    FALSE === $g_hot AND $g_hot = thread_hot_get();
 
     if (empty($g_hot)) {
         $g_hot = array($thread['tid'] => $thread['views']);
@@ -282,9 +282,9 @@ function thread_hot_delete($tid)
 {
     global $config, $g_hot;
 
-    if ($config['setting']['hot_on'] == 0) return NULL;
+    if (0 == $config['setting']['hot_on']) return NULL;
 
-    $g_hot === FALSE AND $g_hot = website_get('hot');
+    FALSE === $g_hot AND $g_hot = website_get('hot');
     if (empty($g_hot)) return NULL;
     unset($g_hot[$tid]);
 

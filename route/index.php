@@ -25,7 +25,7 @@ $thread_list_from_default = 1;
 
 // hook index_mode_before.php
 
-if ($website_mode == 0) {
+if (0 == $website_mode) {
     // 自定义模式 custom 仅调用首页属性主题和置顶
     $tidlist = array();
     // hook index_custom_start.php
@@ -95,7 +95,7 @@ if ($website_mode == 0) {
 
     // hook index_custom_end.php
 
-} elseif ($website_mode == 1) {
+} elseif (1 == $website_mode) {
     // 门户模式 portal
 
     // hook index_portal_start.php
@@ -115,11 +115,10 @@ if ($website_mode == 0) {
     // 轮播凑整 双列排版 防止错版 单一列注释该代码
     $slide = array_value($arrlist, 'sticky');
     /*if ($slide) {
-        if (count($arrlist['sticky']) % 2 != 0) {
+        if (0 != count($arrlist['sticky']) % 2) {
             $i = 0;
             foreach ($arrlist['sticky'] as $key => &$_thread) {
-                $i++;
-                if ($i == 1) {
+                if (1 == ++$i) {
                     $slide[] = $_thread;
                 }
             }
@@ -139,7 +138,7 @@ if ($website_mode == 0) {
 
     // hook index_portal_end.php
 
-} elseif ($website_mode == 2) {
+} elseif (2 == $website_mode) {
     // 扁平模式
 
     // hook index_flat_start.php
@@ -164,7 +163,7 @@ if ($website_mode == 0) {
             $fids = array();
             $threads = 0;
             foreach ($forumlist_show as $key => $val) {
-                if ($val['type'] == 1 && $val['display'] == 1 && $val['category'] == 0) {
+                if (1 == $val['type'] && 1 == $val['display'] && 0 == $val['category']) {
                     $fids[] = $val['fid'];
                     $threads += $val['threads'];
                 }
@@ -183,7 +182,7 @@ if ($website_mode == 0) {
     // hook index_flat_center.php
 
     // 置顶
-    $stickylist = $page == 1 ? sticky_index_thread() : array();
+    $stickylist = 1 == $page ? sticky_index_thread() : array();
 
     // hook index_flat_sticky_after.php
 

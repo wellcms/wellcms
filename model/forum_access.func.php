@@ -164,8 +164,8 @@ function forum_access_mod($fid, $gid, $access)
     $k = $fid . '-' . $gid . '-' . $access;
     if (isset($result[$k])) return $result[$k];
 
-    if ($gid == 1 || $gid == 2) return TRUE; // 管理员有所有权限
-    if ($gid == 3 || $gid == 4) {
+    if (1 == $gid || 2 == $gid) return TRUE; // 管理员有所有权限
+    if (3 == $gid || 4 == $gid) {
         $group = $grouplist[$gid];
         $forum = $forumlist[$fid];
         $r = !empty($group[$access]) && in_string($uid, $forum['moduids']);
@@ -182,9 +182,9 @@ function forum_is_mod($fid, $gid, $uid)
     global $grouplist, $forumlist;
     // hook forum_is_mod_start.php
 
-    if ($gid == 1 || $gid == 2) return TRUE; // 管理员有所有权限
-    if ($gid == 3 || $gid == 4) {
-        if ($fid == 0) return TRUE; // 此处不严谨！
+    if (1 == $gid || 2 == $gid) return TRUE; // 管理员有所有权限
+    if (3 == $gid || 4 == $gid) {
+        if (0 == $fid) return TRUE; // 此处不严谨！
         $group = $grouplist[$gid];
         $forum = $forumlist[$fid];
         return in_string($uid, $forum['moduids']);

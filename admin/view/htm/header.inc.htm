@@ -42,7 +42,7 @@ $static_version = $conf['static_version'];
 
     <!--{hook admin_header_start.htm}-->
 
-    <header class="navbar fixed-top navbar-expand-lg <?php if ($action=='login') {echo 'navbar-dark bg-dark-blue';} ?>">
+    <header class="navbar fixed-top navbar-expand-lg <?php if ('login'==$action) {echo 'navbar-dark bg-dark-blue';} ?>">
         <!-- 左：折叠菜单的图标 ☰ -->
         <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#nav" aria-controls="navbar_collapse" aria-expanded="false" aria-label="<?php echo lang('toggler_menu');?>">
             <span class="navbar-toggler-icon"></span>
@@ -60,7 +60,7 @@ $static_version = $conf['static_version'];
         <a class="navbar-brand d-md-none" href="<?php echo url_path();?>" title="<?php echo lang('front_index_page');?>"><i class="icon-home"></i></a>
 
         <!--{hook admin_header_logo_after.htm}-->
-        <div class="collapse navbar-collapse py-1 <?php if ($action!='login') {echo 'navbar-light bg-light border-bottom';} ?>">
+        <div class="collapse navbar-collapse py-1 <?php if ('login' != $action) {echo 'navbar-light bg-light border-bottom';} ?>">
             <!-- right -->
             <ul class="navbar-nav ml-auto">
                 <!--{hook admin_header_user_start.htm}-->
@@ -85,7 +85,7 @@ $static_version = $conf['static_version'];
     <main id="body">
         <div class="container-fluid">
             <div class="row">
-                <?php if ($action!='login') { ?>
+                <?php if ('login' != $action) { ?>
                 <nav id="nav" class="admin-nav collapse navbar-collapse col-lg-2 d-lg-block navbar-expand-lg navbar-dark bg-dark-blue sidebar" style="z-index: 1020;">
                     <div class="sidebar-sticky" id="wellcms-nav">
                         <!--{hook admin_header_nav_start.htm}-->
@@ -127,4 +127,4 @@ $static_version = $conf['static_version'];
                 </nav>
                 <?php } ?>
 
-                <div role="main" class="<?php if ($action=='login') {echo 'col-md-12';} else {echo 'admin-content';} ?> px-4">
+                <div role="main" class="<?php if ('login'==$action) {echo 'col-md-12';} else {echo 'admin-content';} ?> px-4">

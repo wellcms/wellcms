@@ -11,11 +11,11 @@ $columnlist = category_list($forumlist);
 
 // hook website_admin_sticky_start.php
 
-if ($action == 'list') {
+if ('list' == $action) {
 
     // hook website_admin_sticky_list_start.php
 
-    if ($method == 'GET') {
+    if ('GET' == $method) {
 
         // hook website_admin_sticky_list_get_start.php
 
