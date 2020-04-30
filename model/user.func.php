@@ -89,8 +89,10 @@ function user_read($uid)
     if (isset($g_static_users[$uid])) return $g_static_users[$uid];
     // hook model_user_read_start.php
     $user = user__read(array('uid' => $uid));
-    user_format($user);
-    $g_static_users[$uid] = $user;
+    if ($user) {
+        user_format($user);
+        $g_static_users[$user['uid']] = $user;
+    }
     // hook model_user_read_end.php
     return $user;
 }
@@ -159,8 +161,10 @@ function user_read_by_email($email)
     global $g_static_users;
     // hook model_user_read_by_email_start.php
     $user = user__read(array('email' => $email));
-    user_format($user);
-    $g_static_users[$user['uid']] = $user;
+    if ($user) {
+        user_format($user);
+        $g_static_users[$user['uid']] = $user;
+    }
     // hook model_user_read_by_email_end.php
     return $user;
 }
@@ -170,8 +174,10 @@ function user_read_by_username($username)
     global $g_static_users;
     // hook model_user_read_by_username_start.php
     $user = user__read(array('username' => $username));
-    user_format($user);
-    $g_static_users[$user['uid']] = $user;
+    if ($user) {
+        user_format($user);
+        $g_static_users[$user['uid']] = $user;
+    }
     // hook model_user_read_by_username_end.php
     return $user;
 }

@@ -72,7 +72,7 @@ function forum_read($fid)
         return empty($forumlist[$fid]) ? array() : $forumlist[$fid];
     } else {
         $forum = forum__read($fid);
-        forum_format($forum);
+        $forum AND forum_format($forum);
         return $forum;
     }
     // hook model_forum_read_end.php
