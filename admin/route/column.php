@@ -272,7 +272,7 @@ switch ($action) {
             $announcement = $_forum['announcement'];
 
             $moduids = $_forum['moduids'];
-            $modnames = user_names_to_ids($moduids);
+            $modnames = user_ids_to_names($moduids);
 
             $category = $_forum['category']; // 0列表 1频道
             $catearr = array(lang('first_level_forum'), lang('channel'), lang('single_page'), lang('outer_chain'));
