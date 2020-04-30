@@ -191,8 +191,8 @@ if (0 == $website_mode) {
     // hook index_flat_unified_pull_before.php
 
     $arrlist = thread_unified_pull($arr);
-    $threadlist = $arrlist['threadlist'];
-    $flaglist = $arrlist['flaglist'];
+    $threadlist = array_value($arrlist, 'threadlist');
+    $flaglist = array_value($arrlist, 'flaglist');
 
     // hook index_flat_unified_pull_after.php
 

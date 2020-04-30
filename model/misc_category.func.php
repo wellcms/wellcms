@@ -8,6 +8,7 @@
 // 获取CMS全部栏目，包括频道的二叉树结构
 function category_tree($forumlist)
 {
+    if (empty($forumlist)) return NULL;
     static $cache = array();
     if (!empty($cache)) return $cache;
     $arrlist = arrlist_cond_orderby($forumlist, array('type' => 1), array(), 1, 1000);
@@ -35,6 +36,7 @@ function channel_category($fid)
 // 返回网站所有频道
 function all_channel($forumlist)
 {
+    if (empty($forumlist)) return NULL;
     static $cache = array();
     if (!empty($cache)) return $cache;
     $channellist = arrlist_cond_orderby($forumlist, array('type' => 1, 'category' => 1), array(), 1, 100);
@@ -71,6 +73,7 @@ function category_tree_format($forumlist)
  */
 function all_category($forumlist)
 {
+    if (empty($forumlist)) return NULL;
     static $cache = array();
     if (!empty($cache)) return $cache;
     $cache = arrlist_cond_orderby($forumlist, array('type' => 1, 'category' => array('<' => 2)), array(), 1, 1000);
@@ -86,6 +89,7 @@ function all_category($forumlist)
  */
 function category_list($forumlist, $model = 0, $display = 0, $category = 0)
 {
+    if (empty($forumlist)) return NULL;
     static $cache = array();
     $key = $model . '-' . $display . '-' . $category;
     if (isset($cache[$key])) return $cache[$key];
@@ -117,6 +121,7 @@ function category_list($forumlist, $model = 0, $display = 0, $category = 0)
  */
 function category_list_show($forumlist, $display = 0, $category = 0)
 {
+    if (empty($forumlist)) return NULL;
     static $cache = array();
     $key = $display . '-' . $category;
     if (isset($cache[$key])) return $cache[$key];
@@ -163,6 +168,7 @@ function forum_list($forumlist)
 // 导航显示的版块
 function nav_list($forumlist)
 {
+    if (empty($forumlist)) return NULL;
     static $cache = array();
     if (!empty($cache)) return $cache;
     // hook model_nav_list_start.php
