@@ -243,14 +243,17 @@ function user_update_group($uid)
     // 遍历 credits 范围，调整用户组
     foreach ($grouplist as $group) {
         if ($group['gid'] < 100) continue;
-        $n = $user['articles'] + $user['comments']; // 根据发文章和评论
+        // 根据发文章和评论 砍掉根据需要咨询hook
+        //$n = $user['articles'] + $user['comments'];
+
         // hook model_user_update_group_policy_start.php
-        if ($n > $group['creditsfrom'] && $n < $group['creditsto']) {
+
+        /*if ($n > $group['creditsfrom'] && $n < $group['creditsto']) {
             if ($user['gid'] != $group['gid']) {
                 user_update($uid, array('gid' => $group['gid']));
                 return TRUE;
             }
-        }
+        }*/
     }
     // hook model_user_update_group_end.php
     return FALSE;
