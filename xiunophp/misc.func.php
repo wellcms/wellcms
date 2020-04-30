@@ -31,7 +31,7 @@ function exception_handler($message, $code = 0)
         exit;
     } else {
         if (defined('MESSAGE_HTM_PATH')) {
-            include _include(MESSAGE_HTM_PATH);
+            include MESSAGE_HTM_PATH;
         } else {
             include _include(APP_PATH . "view/htm/message.htm");
         }
