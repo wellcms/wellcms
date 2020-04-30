@@ -35,6 +35,7 @@ function exception_handler($exception)
 // 中断流程很危险！可能会导致数据问题，线上模式不允许中断流程！
 function error_handle($errno, $errstr, $errfile, $errline)
 {
+
     // PHP 内部默认处理
     if (0 == DEBUG) return FALSE;
 

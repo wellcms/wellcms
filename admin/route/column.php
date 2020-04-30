@@ -457,6 +457,7 @@ switch ($action) {
 
 function user_names_to_ids($names, $sep = ',')
 {
+    if (empty($names)) return '';
     $namearr = explode($sep, $names);
     $r = array();
     foreach ($namearr as $name) {
@@ -469,6 +470,7 @@ function user_names_to_ids($names, $sep = ',')
 
 function user_ids_to_names($ids, $sep = ',')
 {
+    if (empty($ids)) return '';
     $idarr = explode($sep, $ids);
     $r = array();
     foreach ($idarr as $id) {
