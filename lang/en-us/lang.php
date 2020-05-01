@@ -380,6 +380,8 @@ return array(
     'payment_failed' => 'payment failed',
     'waiting_payment' => 'waiting for payment',
     'already_paid' => 'already paid',
+    'buy'=>'Buy',
+    'buy_now'=>'Buy now',
     'insufficient_balance' => 'Insufficient balance, please recharge.',
     'buy_application' => 'Buy application',
     'alipay_scan_qrcode'=>'Alipay SCAN for Pay',

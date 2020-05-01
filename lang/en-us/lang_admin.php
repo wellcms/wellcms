@@ -5,7 +5,6 @@ return array(
 	'forum'=>'Forum',
 	'plugin'=>'Plugin',
 	'other'=>'Other',
-	'buy'=>'Buy',
 	
 	'user_admin'=>'User Admin',
 	'group_admin'=>'Group Admin',

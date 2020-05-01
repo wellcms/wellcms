@@ -142,7 +142,7 @@
 								<?php } ?>
 
 								<?php if($plugin['installed']) { ?>
-								<a role="button" class="btn btn-danger btn-sm confirm mx-1" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('uninstall');?></a>
+								<a role="button" class="btn btn-danger btn-sm confirm mx-1" data-method="post" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('uninstall');?></a>
 								<?php } ?>
 
 								<?php if($plugin['have_upgrade']) { ?>

@@ -5,7 +5,6 @@ return array(
     'forum' => '版塊',
     'plugin' => '插件',
     'other' => '其他',
-    'buy' => '購買',
 
     'user_admin' => '用戶管理',
     'group_admin' => '用戶組管理',

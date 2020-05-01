@@ -154,7 +154,7 @@
 					<?php } ?>
 
 					<?php if($plugin['installed'] && 1 != $plugin['type']) { ?>
-					<a role="button" class="btn btn-danger mx-1 confirm" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('uninstall');?></a>
+					<a role="button" class="btn btn-danger mx-1 confirm" data-method="post" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('uninstall');?></a>
 					<?php } ?>
 
                     <?php if($islocal && !$plugin['installed'] && 1 == $plugin['type']) { ?>

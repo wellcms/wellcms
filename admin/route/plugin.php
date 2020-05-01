@@ -351,6 +351,9 @@ switch ($action) {
         message(0, jump($msg, url('plugin-list'), 2));
         break;
     case 'uninstall':
+
+        if ('POST' != $method) message(1, lang('method_error'));
+        
         $safe_token = param('safe_token');
         FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 

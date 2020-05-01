@@ -379,6 +379,8 @@ return array(
     'insufficient_balance' => '余额不足，请充值。',
     'waiting_payment' => '未支付',
     'already_paid' => '已支付',
+    'buy' => '购买',
+    'buy_now' => '立即购买',
     'buy_application' => '购买应用',
     'alipay_scan_qrcode' => '支付宝扫码',
     'wechat_scan_qrcode' => '微信扫码',
