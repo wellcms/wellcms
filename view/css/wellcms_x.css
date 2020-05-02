@@ -436,6 +436,7 @@ li.quote {
         position: sticky;
     }
 }
+.sidebar-sticky::-webkit-scrollbar {width: 0;height: auto;}
 /*.sidebar ul{border-bottom: 1px solid var(--gray-800)}*/
 .sidebar ul li {border-top: 1px solid var(--bali-blue); border-bottom: 1px solid var(--gray-900);}
 /*.sidebar ul li.active{background-color: var(--info) !important;border-color: var(--info) !important;}*/
