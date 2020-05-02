@@ -94,7 +94,7 @@ a:hover {
 #body > .container > .row > .aside {
     padding-left: 0;
 }
-
+.menu-icon {display: inline-block;width: 18px;text-align: center;}
 .table th {
     border-top: none;
 }
