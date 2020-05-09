@@ -583,13 +583,10 @@ xn.url = function (u, extra, url_rewrite) {
     } else if (on == 1) {
         r = path + query + ".html";
     } else if (on == 2) {
-        /*r = path + '?' + xn.str_replace('-', '/', query);*/
-        r = path + '?' + xn.str_replace('-', '/', query);
+        r = path + xn.str_replace('-', '/', query) + ".html";
     } else if (on == 3) {
-        /*r = path + xn.str_replace('-', '/', query);*/
         r = path + xn.str_replace('-', '/', query);
     }
-    /*wellcms*/
     if(admin_access && on > 1) {
         r = '/admin/' + r;
     }

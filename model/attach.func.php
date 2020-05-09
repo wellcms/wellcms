@@ -598,9 +598,13 @@ function well_save_remote_image($arr)
                 if (empty($ext) || 'webp' == $ext) {
                     $tmpfile = $conf['upload_path'] . 'tmp/' . $filename;
                     file_put_contents_try($tmpfile, $imgdata);
-                    $img = imagecreatefromwebp($tmpfile);
-                    imagejpeg($img, $destpath, 70);
-                    imagedestroy($img);
+                    if (FALSE === getimagesize($tmpfile)) {
+                        $img = imagecreatefromwebp($tmpfile);
+                        imagejpeg($img, $destpath, 70);
+                        imagedestroy($img);
+                    } else {
+                        xn_copy($tmpfile, $destpath);
+                    }
                     is_file($tmpfile) AND unlink($tmpfile);
                 } else {
                     if (!in_array($ext, array('gif', 'jpg', 'jpeg', 'png'))) continue;

@@ -91,7 +91,7 @@ $static_version = $conf['static_version'];
                         <!--{hook admin_header_nav_start.htm}-->
                         <ul class="navbar-nav flex-column">
                             <li class="nav-item home">
-                                <a class="nav-link" href="./">
+                                <a class="nav-link" href="<?php echo $conf['url_rewrite_on']>1 ? '/admin/' : './';?>">
                                     <div class="menu-icon">
                                         <i class="icon-home"></i>
                                     </div>

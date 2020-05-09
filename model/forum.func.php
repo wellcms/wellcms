@@ -202,6 +202,8 @@ function forum_format(&$forum)
             $forum['url'] = url('list-' . $forum['fid']);
         }
 
+        $conf['url_rewrite_on'] > 1 AND $forum['url'] = str_replace('/admin', '', $forum['url']);
+        
         // hook model_forum_format_middle.php
     }
 
