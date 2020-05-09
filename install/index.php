@@ -116,12 +116,12 @@ if (empty($action)) {
         $conf['db']['pdo_mysql']['master']['password'] = $password;
         $conf['db']['pdo_mysql']['master']['tablepre'] = $tablepre;
         $conf['db']['pdo_mysql']['master']['engine'] = $engine;
-        $conf['cache']['memcached']['cachepre'] = $tablepre;
-        $conf['cache']['redis']['cachepre'] = $tablepre;
-        $conf['cache']['xcache']['cachepre'] = $tablepre;
-        $conf['cache']['yac']['cachepre'] = $tablepre;
-        $conf['cache']['apc']['cachepre'] = $tablepre;
-        $conf['cache']['mysql']['cachepre'] = $tablepre;
+        $conf['cache']['memcached']['cachepre'] = $_SERVER['HTTP_HOST'];
+        $conf['cache']['redis']['cachepre'] = $_SERVER['HTTP_HOST'];
+        $conf['cache']['xcache']['cachepre'] = $_SERVER['HTTP_HOST'];
+        $conf['cache']['yac']['cachepre'] = $_SERVER['HTTP_HOST'];
+        $conf['cache']['apc']['cachepre'] = $_SERVER['HTTP_HOST'];
+        $conf['cache']['mysql']['cachepre'] = $_SERVER['HTTP_HOST'];
 
         // 初始化
         copy(APP_PATH . 'conf/conf.default.php', APP_PATH . 'conf/conf.php');
