@@ -121,7 +121,7 @@ return array(
     'create_user' => '創建用戶',
     'user_group' => '用戶組',
     'create_ip' => '創建 IP',
-    'uid' => '用戶 ID',
+    'uid' => '用戶ID',
     'search' => '搜索',
     'operation' => '操作',
     'illegal_operation' => '非法操作',

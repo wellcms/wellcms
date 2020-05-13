@@ -119,7 +119,7 @@ return array(
     'create_user' => '创建用户',
     'user_group' => '用户组',
     'create_ip' => '创建 IP',
-    'uid' => '用户 ID',
+    'uid' => '用户ID',
     'search' => '搜索',
     'operation' => '操作',
     'illegal_operation' => '非法操作',

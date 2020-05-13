@@ -41,7 +41,7 @@
                 </ul>
                 <div class="row">
                     <div class="col-lg-12">
-                        robots.txt 添加 Sitemap:<?php echo url_prefix() . '/' . array_value($setting, 'map');?>/index.xml
+                        robots.txt 添加 Sitemap:<?php echo $http_url . array_value($setting, 'map');?>/index.xml
                     </div>
                 </div>
                 <?php } ?>

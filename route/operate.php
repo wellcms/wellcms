@@ -400,7 +400,7 @@ switch ($action) {
         }
         break;
     case 'search':
-// hook operate_search_start.php
+        // hook operate_search_start.php
 
         $keyword = param('keyword');
         empty($keyword) AND $keyword = param(2);

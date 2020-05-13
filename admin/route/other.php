@@ -75,6 +75,8 @@ switch ($action) {
             // 1生成地图
             $type = param('type', 0);
 
+            $http_url = str_replace($conf['url_rewrite_on'] < 2 ? '/admin/' : 'admin/', '', http_url_path());
+
             if (1 == $type) {
 
                 // hook admin_other_map_xml_start.php
@@ -107,16 +109,22 @@ switch ($action) {
                     foreach ($forumlist_show as $_forum) {
 
                         if (0 == $_forum['threads']) continue;
-                        if (in_array($_forum['category'], array(1, 2))) continue;
+                        if (in_array($_forum['category'], array(1, 2)) || 0 == $_forum['type']) continue;
 
                         $fids .= $_forum['fid'] . '|';
 
                         $n = ceil($_forum['threads'] / $pagesize);
-                        //str_replace('.html', '-' . $i, $_forum['url']);
+
+                        if ($conf['url_rewrite_on'] > 1) {
+                            $strlen = xn_strlen($_forum['url']);
+                            $_forum['url'] = str_replace('/', '-', xn_substr($_forum['url'], 1, $strlen));
+                        }
+
                         //--------------生成栏目索引---------------
+
                         for ($i = 0; $i < $n; ++$i) {
                             $forum_xml .= "\r\n<sitemap>
-    <loc>" . url_prefix() . '/' . $dir . str_replace('.html', '-' . $i, $_forum['url']) . '.xml</loc>
+    <loc>" . $http_url . $dir . str_replace('.html', '-' . $i, $_forum['url']) . '.xml</loc>
 </sitemap>';
                         }
 
@@ -142,25 +150,25 @@ EOT;
                     $fidarr = explode('|', $fids);
                     empty($fid) AND $fid = $fidarr[0];
 
-                    // 按照栏目生成内容索引 可以创建已生成标识，不用重复生成旧数据，VIP版再添加吧
-
+                    // 按照栏目生成内容索引
                     $forum = $forumlist_show[$fid];
                     empty($n) AND $n = ceil($forum['threads'] / $pagesize);
 
-                    $arrlist = thread_tid_find_by_fid($fid, $page, $pagesize, FALSE);
+                    $arrlist = thread_tid_find_by_fid($fid, $page, $pagesize);
+                    $tidarr = arrlist_values($arrlist, 'tid');
+                    $threadlist = well_thread_find($tidarr, $pagesize, FALSE);
 
-                    foreach ($arrlist as $_thread) {
+                    foreach ($threadlist as $_thread) {
                         /*
                         百度在标准Sitemap协议基础上增加了<mobile:mobile/>标签，四种取值：
                         <mobile:mobile/> ：移动网页
                         <mobile:mobile type="mobile"/> 移动网页
                         <mobile:mobile type="pc,mobile"/> 自适应网页
                         <mobile:mobile type="htmladapt"/> 代码适配
-                        如需要在浏览器查看，删除百度的标签
+                        如需兼容百度的标签，</loc>后换行追加即可
                         */
                         $xml .= '    <url>
-        <loc>' . url_prefix() . '/' . map_url_format($fid, $_thread['tid']) . '</loc>
-        <mobile:mobile type="pc,mobile"/>
+        <loc>' . $http_url . str_replace('/admin/', '', $_thread['url']) . '</loc>
         <lastmod>' . $lastmod . '</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
@@ -168,6 +176,12 @@ EOT;
                     }
 
                     if ($xml) {
+
+                        if ($conf['url_rewrite_on'] > 1) {
+                            $strlen = xn_strlen($forum['url']);
+                            $forum['url'] = str_replace('/', '-', xn_substr($forum['url'], 1, $strlen));
+                        }
+
                         $xml = trim($xml, "\r\n");
                         $map = <<<EOT
 <?xml version="1.0" encoding="utf-8"?>
@@ -207,8 +221,10 @@ EOT;
 
                 $arr = array();
                 if (array_value($setting, 'map')) {
-                    foreach (glob('../' . array_value($setting, 'map') . '/' . '*.*') as $file) {
-                        $arr[] = url_prefix() . '/' . str_replace('../', '', $file);
+                    $start = xn_strlen(APP_PATH);
+                    foreach (glob(APP_PATH . array_value($setting, 'map') . '/' . '*.*') as $file) {
+                        $end = xn_strlen($file);
+                        $arr[] = $http_url . xn_substr($file, $start, $end);
                     }
                 }
             }
@@ -359,7 +375,7 @@ EOT;
                     $fids[] = $val['fid'];
                 }
 
-                forum_update($fids, array('threads' => 0,'flagstr' => '','flags' => 0));
+                forum_update($fids, array('threads' => 0, 'flagstr' => '', 'flags' => 0));
 
                 // 灌水标识
                 if (1 == $installed) {
@@ -529,29 +545,5 @@ EOT;
 }
 
 // hook admin_other_end.php
-
-function map_url_format($fid, $tid)
-{
-    global $forumlist;
-    // hook model_url_format_start.php
-    if (empty($forumlist[$fid])) return url('read-' . $tid);
-    // hook model_url_format_before.php
-    $forum = $forumlist[$fid];
-    // hook model_url_format_after.php
-    if ($forum['type']) {
-        // CMS
-        // hook model_url_format_model_start.php
-        // 自己可以根据需要按照model区分路径
-        $url = url('read-' . $tid);
-        // hook model_url_format_model_end.php
-    } else {
-        // BBS
-        // hook model_url_format_thread_before.php
-        $url = url('thread-' . $tid);
-        // hook model_url_format_thread_after.php
-    }
-    // hook model_url_format_end.php
-    return $url;
-}
 
 ?>
