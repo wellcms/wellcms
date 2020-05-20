@@ -62,13 +62,11 @@
                                 </div>
                                 <!--{hook admin_thread_post_inc_addicon_end.htm}-->
                                 <div class="form-group text-center">
-                                    <?php if ('create' == $action) { ?>
                                     <!--{hook admin_thread_post_inc_thumbnail_before.htm}-->
                                     <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="thumbnail" value="1"  <?php echo $thumbnail_on;?>/>
                                         <?php echo lang('get_the_thumbnail');?>
                                     </label>
                                     <!--{hook admin_thread_post_inc_thumbnail_after.htm}-->
-                                    <?php } ?>
 
                                     <!--{hook admin_thread_post_inc_delete_before.htm}-->
                                     <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="delete_pic" value="1" />

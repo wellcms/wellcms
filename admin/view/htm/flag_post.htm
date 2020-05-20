@@ -1,13 +1,13 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_flag_post_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
 	<div class="col-lg-12">
 		<!--{hook admin_flag_post_breadcrumb_before.htm}-->
 		<?php if(empty($hide_breadcrumb)) { ?>
 		<ol class="breadcrumb d-none d-md-flex text-muted">
-			<li class="breadcrumb-item"><a href="<?php echo url('flag-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+			<li class="breadcrumb-item"><a href="<?php echo url('flag-list', '', TRUE);?>"><i class="icon-home" aria-hidden="true"></i></a></li>
 			<?php if ($fid) { ?>
 			<li class="breadcrumb-item"><?php echo $forum['name'];?></li>
 			<?php } ?>
@@ -101,9 +101,9 @@
 
 <script>
     var fid = <?php echo $fid;?>;
-    var jform = $('#form');
     var select_fid = $('select[name="fid"]');
-
+    select_fid.checked(fid);
+    var jform = $('#form');
     /*对文件进行 base64 编码，处理文件上传，很方便*/
     jform.base64_encode_file(500,500,'clip');
 
@@ -117,7 +117,7 @@
         $.xpost(jform.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 $.alert(message);
-                jsubmit.button(message).delay(1000).location(xn.url('flag-list-' + post_fid));
+                jsubmit.button(message).delay(1000).location(xn.url('flag-list',{fid:post_fid}));
             } else if(xn.is_number(code)) {
                 $.alert(message);
                 jsubmit.button('reset');
@@ -128,8 +128,6 @@
         });
         return false;
     });
-
-    select_fid.checked(<?php echo $fid;?>);
 
     $('#category').addClass('show');
     $('.sidebar-sticky li.menu-flag').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');

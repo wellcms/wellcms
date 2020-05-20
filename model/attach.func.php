@@ -283,9 +283,6 @@ function well_attach_assoc_thumbnail($arr = array())
     if (1 == $thumbnail_save_default) {
         $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
 
-        $thumbnail_path = $conf['upload_path'] . 'thumbnail';
-        is_dir($thumbnail_path) || mkdir($thumbnail_path, 0777, TRUE);
-
         $day = date($attach_dir_save_rule, $time);
         $path = $conf['upload_path'] . 'thumbnail/' . $day;
 
@@ -339,9 +336,6 @@ function well_attach_assoc_file($arr = array())
     if (!empty($arr['sess_tmp_files'])) {
 
         // hook model_attach_assoc_file_center.php
-
-        $upload_path = $conf['upload_path'] . 'website_attach';
-        is_dir($upload_path) || mkdir($upload_path, 0777, TRUE);
 
         foreach ($arr['sess_tmp_files'] as $file) {
 
@@ -504,9 +498,6 @@ function well_attach_create_thumbnail($arr)
     $attachlist = well_attach_assoc_type('post');
     if (empty($attachlist)) return;
 
-    $website_path = $conf['upload_path'] . 'thumbnail';
-    is_dir($website_path) || mkdir($website_path, 0777, TRUE);
-
     $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
 
     $day = date($attach_dir_save_rule, $time);
@@ -531,8 +522,6 @@ function well_save_remote_image($arr)
 {
     global $conf, $time, $forumlist, $config;
 
-    // hook model_attach_save_remote_image_start.php
-
     $message = array_value($arr, 'message');
     $tid = array_value($arr, 'tid', 0);
     $fid = array_value($arr, 'fid', 0);
@@ -542,12 +531,9 @@ function well_save_remote_image($arr)
 
     $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
 
-    $website_path = $conf['upload_path'] . 'website_attach';
-    is_dir($website_path) || mkdir($website_path, 0777, TRUE);
-
     $day = date($attach_dir_save_rule, $time);
-    $attach_dir = $conf['upload_path'] . 'website_attach/' . $day;
-    $attach_url = $conf['upload_url'] . 'website_attach/' . $day;
+    $attach_dir = $conf['upload_path'] . 'website_attach/' . $day . '/';
+    $attach_url = $conf['upload_url'] . 'website_attach/' . $day . '/';
     is_dir($attach_dir) || mkdir($attach_dir, 0777, TRUE);
 
     if ($thumbnail) {
@@ -558,12 +544,10 @@ function well_save_remote_image($arr)
         $pic_width = $picture['width'];
         $pic_height = $picture['height'];
 
-        $thumbnail_path = $conf['upload_path'] . 'thumbnail';
-        is_dir($thumbnail_path) || mkdir($thumbnail_path, 0777, TRUE);
-        $thumbnail_path = $thumbnail_path . '/' . $day;
+        $thumbnail_path = $conf['upload_path'] . 'thumbnail/' . $day . '/';
         is_dir($thumbnail_path) || mkdir($thumbnail_path, 0777, TRUE);
 
-        $tmp_file = $thumbnail_path . '/' . $uid . '_' . $tid . '_' . $time . '.jpeg';
+        $tmp_file = $thumbnail_path . $uid . '_' . $tid . '_' . $time . '.jpeg';
     }
 
     $localurlarr = array(
@@ -571,71 +555,76 @@ function well_save_remote_image($arr)
         'https://' . $_SERVER['SERVER_NAME'] . '/',
     );
 
-    // hook model_attach_save_remote_image_before.php
-
     preg_match_all('#<img[^>]+src="(http.*?)"#i', $message, $match);
 
     if (!empty($match[1])) {
         $n = 0;
         $i = 0;
         foreach ($match[1] as $url) {
+
             foreach ($localurlarr as $localurl) {
                 if ($localurl == substr($url, 0, strlen($localurl))) continue 2;
             }
-            // hook model_attach_save_remote_image_imageurl_before.php
-            $imageurl = well_get_image_url($url);
-            $ext = $imageurl ? file_ext($imageurl) : '';
-            // hook model_attach_save_remote_image_center.php
-            $filename = $uid . '_' . xn_rand(16) . '.' . ($ext ? $ext : 'jpeg');
-            $destpath = $attach_dir . '/' . $filename;
-            $desturl = $attach_url . '/' . $filename;
+
+            $imagesize = getimagesize($url);
+            if (FALSE === $imagesize) continue; // 非图片跳出
+
+            $filename = $uid . '_' . xn_rand(16);
+            if (1 == $imagesize[2]) {
+                $filename .= '.gif';
+                $destpath = $attach_dir . $filename;
+            } elseif (in_array($imagesize[2], array(2, 3, 15, 18))) {
+                $filename .= '.jpeg';
+                $destpath = $attach_dir . $filename;
+            } else {
+                continue; // 非常见图片格式跳出
+                /*$imgdata = https_request($url);
+                $imageurl = well_get_image_url($url);
+                $ext = $imageurl ? file_ext($imageurl) : '';
+                $filename = $uid . '_' . xn_rand(16) . '.' . ($ext ? $ext : 'jpeg');
+                $destpath = $attach_dir . $filename;
+                file_put_contents_try($destpath, $imgdata);*/
+            }
+
+            $desturl = $attach_url . $filename;
+
             $_message = str_replace($url, $desturl, $message);
             if ($message != $_message) {
-                $imgdata = https_request($url);
-                $filesize = strlen($imgdata);
-                if ($filesize < 10) continue;
-                // hook model_attach_save_remote_image_put_before.php
-                if (empty($ext) || 'webp' == $ext) {
-                    $tmpfile = $conf['upload_path'] . 'tmp/' . $filename;
-                    file_put_contents_try($tmpfile, $imgdata);
-                    if (FALSE === getimagesize($tmpfile)) {
-                        $img = imagecreatefromwebp($tmpfile);
-                        imagejpeg($img, $destpath, 70);
-                        imagedestroy($img);
-                    } else {
-                        xn_copy($tmpfile, $destpath);
-                    }
-                    is_file($tmpfile) AND unlink($tmpfile);
-                } else {
-                    if (!in_array($ext, array('gif', 'jpg', 'jpeg', 'png'))) continue;
-                    file_put_contents_try($destpath, $imgdata);
+                switch ($imagesize[2]) {
+                    case 1: // GIF
+                        $imgdata = imagecreatefromgif($url);
+                        break;
+                    case 2: // JPG
+                        $imgdata = imagecreatefromjpeg($url);
+                        break;
+                    case 3: // PNG
+                        $imgdata = imagecreatefrompng($url);
+                        break;
+                    case 15: // WBMP
+                        $imgdata = imagecreatefromwbmp($url);
+                        break;
+                    case 18: // WEBP
+                        $imgdata = imagecreatefromwebp($url);
+                        break;
                 }
+                imagejpeg($imgdata, $destpath, array_value($conf, 'save_image_quality', 75));
+                imagedestroy($imgdata);
+
+                $filesize = filesize($destpath);
 
                 if ($thumbnail) {
                     if (1 == ++$i) {
                         // 裁切保存到缩略图目录
                         'clip' == array_value($conf, 'upload_resize', 'clip') ? well_image_clip_thumb($destpath, $tmp_file, $pic_width, $pic_height) : well_image_thumb($destpath, $tmp_file, $pic_width, $pic_height);
                         well_thread_update($tid, array('icon' => $time));
-                        if (empty($save_image)) continue;
+                    }
+                    if (empty($save_image)) {
+                        is_file($destpath) AND unlink($destpath);
+                        continue;
                     }
                 }
-                // hook model_attach_save_remote_image_put_after.php
-                list($width, $height) = getimagesize($destpath);
-                // hook model_attach_save_remote_image_middle.php
-                $attach = array(
-                    'tid' => $tid,
-                    'uid' => $uid,
-                    'filesize' => $filesize,
-                    'width' => $width,
-                    'height' => $height,
-                    'filename' => "$day/$filename",
-                    'orgfilename' => $filename,
-                    'filetype' => 'image',
-                    'create_date' => $time,
-                    'comment' => '',
-                    'downloads' => 0,
-                    'isimage' => 1
-                );
+
+                $attach = array('tid' => $tid, 'uid' => $uid, 'filesize' => $filesize, 'width' => $imagesize[0], 'height' => $imagesize[1], 'filename' => "$day/$filename", 'orgfilename' => $filename, 'filetype' => 'image', 'create_date' => $time, 'comment' => '', 'downloads' => 0, 'isimage' => 1);
                 $aid = well_attach_create($attach);
                 $n++;
             }
@@ -666,27 +655,6 @@ function well_get_image_url($url)
     $url = $n ? mb_substr($url, 0, $_n, 'UTF-8') : NULL;
 
     return $url;
-}
-
-function well_attach_clear_tmp()
-{
-    // hook model_attach_clear_tmp_start.php
-
-    $thumbnail = _SESSION('tmp_thumbnail');
-    isset($thumbnail['path']) AND is_file($thumbnail['path']) AND unlink($thumbnail['path']);
-    $_SESSION['tmp_thumbnail'] = array();
-
-    well_attach_delete_tmp(_SESSION('tmp_website_files'));
-    $_SESSION['tmp_website_files'] = array();
-
-    // hook model_attach_clear_tmp_end.php
-}
-
-function well_attach_delete_tmp($tmp_files)
-{
-    if (empty($tmp_files)) return;
-
-    foreach ($tmp_files as $_file) is_file($_file['path']) AND unlink($_file['path']);
 }
 
 // hook model__attach_end.php

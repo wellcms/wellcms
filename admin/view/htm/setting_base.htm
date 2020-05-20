@@ -1,12 +1,12 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_setting_base_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
 	<div class="col-lg-12">
 		<div class="card">
 			<div class="card-body">
-				<form action="<?php echo url('setting-base');?>" method="post" id="form">
+				<form action="<?php echo url('setting-base', '', TRUE);?>" method="post" id="form">
 					<?php echo $input['safe_token'];?>
 					<!--{hook admin_setting_sitename_before.htm}-->
 					<div class="form-group row">

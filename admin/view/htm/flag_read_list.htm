@@ -1,13 +1,13 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_flag_read_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
 	<div class="col-lg-12">
 		<!--{hook admin_flag_read_breadcrumb_before.htm}-->
 		<?php if(empty($hide_breadcrumb)) { ?>
 		<ol class="breadcrumb d-none d-md-flex text-muted">
-            <li class="breadcrumb-item"><a href="<?php echo url('flag-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><a href="<?php echo url('flag-list', '', TRUE);?>"><i class="icon-home" aria-hidden="true"></i></a></li>
             <li class="breadcrumb-item"><?php echo $read['name'];?></li>
             <li class="breadcrumb-item"><?php echo lang('list');?></li>
             <!--{hook admin_flag_read_breadcrumb.htm}-->
@@ -34,7 +34,7 @@
 						</td>
                         <!--{hook admin_flag_read_table_after.htm}-->
 						<td class="small">
-                            <a data-href="<?php echo url('flag-read-' . $flagid . '-' . $idarr[$v['tid']]);?>" href="javascript:void(0);" class="text-grey delete"><i class="icon-remove"></i> <?php echo lang('delete');?></a>
+                            <a data-href="<?php echo url('flag-read', array('flagid'=>$flagid,'id'=>$idarr[$v['tid']]));?>" href="javascript:void(0);" class="text-grey delete"><i class="icon-remove"></i> <?php echo lang('delete');?></a>
 						</td>
                         <!--{hook admin_flag_read_table_end.htm}-->
 					</tr>
@@ -50,7 +50,7 @@
             </label>
             <div class="btn-group mod-button my-3" role="group" aria-label="">
                 <!--{hook thread_list_mod_delete_before.htm}-->
-                <button class="btn btn-secondary delete" data-href="<?php echo url('flag-read-'.$flagid, array('type' => 1));?>"><?php echo lang('delete');?></button>
+                <button class="btn btn-secondary delete" data-href="<?php echo url('flag-read', array('flagid' => $flagid,'type' => 1));?>"><?php echo lang('delete');?></button>
                 <!--{hook thread_list_mod_close_after.htm}-->
             </div>
         </div>

@@ -11,7 +11,7 @@ return array(
     'adminpass_is_empty' => 'Administrator password can not be empty',
     'conguralation_installed' => 'Congratulations, installation success, please remove install directory for security.',
 
-    'step_1_title' => '1. Environmental Check',
+    'step_1_title' => 'Environmental Check',
     'runtime_env_check' => 'Runtime environment detection',
     'required' => 'Required',
     'current' => 'Current',
@@ -27,7 +27,7 @@ return array(
     'unix_like' => 'UNIX Like',
     'php_version' => 'PHP Version',
 
-    'step_2_title' => '2. Database settings',
+    'step_2_title' => 'Database settings',
     'db_type' => 'Database type',
     'db_engine' => 'Database Engine',
     'db_host' => 'Database Host',

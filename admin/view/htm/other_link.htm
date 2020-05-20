@@ -1,7 +1,7 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_link_list_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
     <div class="col-lg-12">
         <!--{hook admin_link_list_breadcrumb_before.htm}-->
@@ -41,7 +41,7 @@
                                 <?php echo $val['url'];?>
                             </td>
                             <td>
-                                <a data-href="<?php echo url('other-link-'.$val['id']);?>" class="btn delete" role="button" tabindex="0"><?php echo lang('delete');?></a>
+                                <a data-href="<?php echo url('other-link', array('id'=>$val['id']), TRUE);?>" class="btn delete" role="button" tabindex="0"><?php echo lang('delete');?></a>
                             </td>
                         </tr>
 

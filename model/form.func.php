@@ -42,12 +42,14 @@ function form_multi_checkbox($name, $arr, $checked = array())
     return $s;
 }
 
-function form_select($name, $arr, $checked = 0, $id = TRUE, $disabled = FALSE)
+function form_select($name, $arr, $checked = 0, $id = TRUE, $disabled = FALSE, $multiple = FALSE)
 {
     if (empty($arr)) return '';
     $idadd = TRUE == $id ? "id=\"$name\"" : ($id ? "id=\"$id\"" : '');
-    $add = FALSE != $disabled ? ' disabled="disabled"' : '';
-    $s = "<select name=\"$name\" class=\"custom-select w-auto\" $idadd $add> \r\n";
+    $add = FALSE !== $disabled ? ' disabled="disabled"' : '';
+    $multiple = FALSE != $multiple ? ' multiple' : '';
+    $auto = FALSE == $multiple ? ' auto' : '';
+    $s = "<select name=\"$name\" class=\"custom-select $auto\" $multiple $idadd $add> \r\n";
     $s .= form_options($arr, $checked);
     $s .= "</select> \r\n";
     return $s;

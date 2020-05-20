@@ -1,13 +1,17 @@
 <?php include INSTALL_PATH.'view/htm/header.inc.htm';?>
 
-
+<div class="container">
 <form action="index.php?action=db" method="post" id="form">
 
 <div class="row mt-3">
 	<div class="col-lg-8 offset-lg-2">
 		<div class="card">
 			<div class="card-body">
-				<h3 class="card-title"><?php echo lang('step_2_title');?></h3>
+				<div class="mb-3 text-center">
+					<a target="_blank" href="http://www.wellcms.cn/"><img src="../view/img/logo.png" class="logo-2"></a>
+				</div>
+				<h2 class="mb-3 text-center size5"><?php echo lang('step_2_title');?></h2>
+				<hr>
 				<div class="form-group row">
 					<label class="col-sm-3 form-control-label"><?php echo lang('db_type');?>：</label>
 					<div class="col-sm-9">
@@ -82,7 +86,7 @@
 </div>
 
 </form>
-
+</div>
 <?php include INSTALL_PATH.'view/htm/footer.inc.htm';?>
 
 <script>

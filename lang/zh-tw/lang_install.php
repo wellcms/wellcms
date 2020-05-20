@@ -11,7 +11,7 @@ return array(
 	'adminpass_is_empty' => '管理員密碼不能為空',
 	'conguralation_installed' => '恭喜，安裝成功！為了安全請刪除 install 目錄。',
 	
-	'step_1_title' => '壹、安裝環境檢測',
+	'step_1_title' => '安裝環境檢測',
 	'runtime_env_check' => '網站運行環境檢測',
 	'required' => '需要',
 	'current' => '當前',
@@ -27,7 +27,7 @@ return array(
 	'unix_like' => '類 UNIX',
 	'php_version' => 'PHP 版本',
 	
-	'step_2_title' => '二、數據庫設置',
+	'step_2_title' => '數據庫設置',
 	'db_type' => '數據庫類型',
 	'db_engine' => '數據庫引擎',
 	'db_host' => '數據庫服務器',

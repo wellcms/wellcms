@@ -1,6 +1,6 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
 	<div class="col-12">
 		<div class="btn-group mb-3" role="group">
@@ -11,7 +11,7 @@
 			<div class="card-body">
 				<div class="media">
 					<div>
-						<img src="<?php echo $plugin['icon_url']; ?>" width="54" height="54" class="mr-3" />
+						<img src="../<?php echo $plugin['icon_url']; ?>" width="54" height="54" class="mr-3" />
 					</div>
 					<div class="media-body">
 						<h4>
@@ -76,7 +76,7 @@
 						<?php echo lang('plugin_login_tips');?>
                     </p>
                     <div class="ajax_modal_body">
-                        <form action="<?php echo url('plugin-read');?>" method="post" id="form">
+                        <form action="<?php echo url('plugin-read', $extra, TRUE);?>" method="post" id="form">
                             <div class="form-group input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="icon icon-user icon-fw"></i></span>
@@ -127,7 +127,7 @@
 							<?php echo $payment_tips; ?>
 						</span>
                         <br>
-                        <a role="button" rel="nofollow" data-modal-title="<?php echo lang('buy_application'),'&nbsp;',lang('payment'),'&nbsp;',$payment_tips;?>" class="btn btn-primary buy mx-1" href="<?php echo url('plugin-buy-'.$dir); ?>"><?php echo lang('buy');?></a>
+                        <a role="button" rel="nofollow" data-modal-title="<?php echo lang('buy_application'),'&nbsp;',lang('payment'),'&nbsp;',$payment_tips;?>" class="btn btn-primary buy mx-1" href="<?php echo url('plugin-buy', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('buy');?></a>
 					</div>
 				</div>
 				<?php } ?>
@@ -138,46 +138,45 @@
 					<?php } ?>
 
 					<?php if($plugin['setting_url']) { ?>
-					<a role="button" class="btn btn-primary mx-1" href="<?php echo url("plugin-setting-$dir"); ?>"><?php echo lang('setting');?></a>
+					<a role="button" class="btn btn-primary mx-1" href="<?php echo url('plugin-setting', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('setting');?></a>
 					<?php } ?>
 
 					<?php if($islocal && !$plugin['installed'] && 1 != $plugin['type']) { ?>
-					<a role="button" class="btn btn-primary mx-1" href="<?php echo url("plugin-install-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('install');?></a>
+					<a role="button" class="btn btn-primary mx-1" href="<?php echo url('plugin-install', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('install');?></a>
 					<?php } ?>
 
 					<?php if($plugin['installed'] && $plugin['enable'] && 1 != $plugin['type']) { ?>
-					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url("plugin-disable-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('disable');?></a>
+					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url('plugin-disable', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('disable');?></a>
 					<?php } ?>
 
 					<?php if($plugin['installed'] && !$plugin['enable'] && 1 != $plugin['type']) { ?>
-					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url("plugin-enable-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('enable');?></a>
+					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url('plugin-enable', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('enable');?></a>
 					<?php } ?>
 
 					<?php if($plugin['installed'] && 1 != $plugin['type']) { ?>
-					<a role="button" class="btn btn-danger mx-1 confirm" data-method="post" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-uninstall-$dir", array('safe_token' => $safe_token)); ?>"><?php echo lang('uninstall');?></a>
+					<a role="button" class="btn btn-danger mx-1 confirm" data-method="post" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url('plugin-uninstall', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('uninstall');?></a>
 					<?php } ?>
 
                     <?php if($islocal && !$plugin['installed'] && 1 == $plugin['type']) { ?>
-                    <a role="button" class="btn btn-primary mx-1 install" data-href="<?php echo url('plugin-theme-'.$dir.'-1');?>" href="javascript:void(0);"><?php echo lang('install');?></a>
+                    <a role="button" class="btn btn-primary mx-1 install" data-href="<?php echo url('plugin-theme', array('dir'=>$dir,'type'=>1,'safe_token' => $safe_token), TRUE);?>" href="javascript:void(0);"><?php echo lang('install');?></a>
                     <?php } ?>
 
                     <?php if($plugin['installed'] && 1 == $plugin['type']) { ?>
-                    <a role="button" class="btn btn-danger mx-1 uninstall" data-href="<?php echo url('plugin-theme-'.$dir.'-0');?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
+                    <a role="button" class="btn btn-danger mx-1 uninstall" data-href="<?php echo url('plugin-theme', array('dir'=>$dir,'type'=>0,'safe_token' => $safe_token), TRUE);?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
                     <?php } ?>
 
 					<?php if($plugin['have_upgrade']) { ?>
-					<a role="button" class="btn btn-primary mx-1 upgrade" href="<?php echo url("plugin-upgrade-$dir"); ?>"><?php echo lang('update');?></a>
+					<a role="button" class="btn btn-primary mx-1 upgrade" href="<?php echo url('plugin-upgrade', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('update');?></a>
 					<?php } ?>
 
 				</p>
-		</div>
-
-			<p class="mt-3 text-center">
-                <a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
-            </p>
+		    </div>
 		</div>
     </div>
 </div>
+	<p class="text-center">
+		<a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
+	</p>
 </div>
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>

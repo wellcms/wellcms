@@ -5,45 +5,68 @@
 // hook model_misc_start.php
 
 /*
-	url("thread-create-1.htm");
-	根据 $conf['url_rewrite_on'] 设置，返回以下四种格式：
-	?thread-create-1.htm
-	thread-create-1.htm
-	?/thread/create/1
-	/thread/create/1
-*/
-function url($url, $extra = array())
+ * 传入url('user-login', array('pid' => 1))
+ * 根据 $conf['url_rewrite_on'] 设置，返回以下四种格式
+ * 0:?user-login.html&pid=1
+ * 1:user-login.html?pid=1
+ * 2:/user/login.html?pid=1
+ * 3:/user/login?pid=1
+ *
+ * @param $url  解析链接格式 'user-login'
+ * @param array $extra 附加参数格式 array('pid' => 1, 'uid' => 1)
+ * @param bool $url_access FALSE前台链接 TRUE后台链接 2后台调用前台链接 3不受限后台链接(不受过滤限制)
+ * @return string 返回解析的链接
+ */
+function url($url, $extra = array(), $url_access = FALSE)
 {
     $conf = _SERVER('conf');
+    FALSE === $url_access AND $url_access = GLOBALS('url_access');
+
     !isset($conf['url_rewrite_on']) AND $conf['url_rewrite_on'] = 0;
+
     // hook model_url_start.php
+
     $r = $path = $query = '';
-    if (FALSE !== strpos($url, '/')) {
+    if ($url && FALSE !== strpos($url, '/')) {
         $path = substr($url, 0, strrpos($url, '/') + 1);
         $query = substr($url, strrpos($url, '/') + 1);
     } else {
         $path = '';
         $query = $url;
     }
+
     // hook model_url_before.php
+
     if (0 == $conf['url_rewrite_on']) {
         $r = $path . '?' . $query . '.html';
     } elseif (1 == $conf['url_rewrite_on']) {
         $r = $path . $query . '.html';
-    } elseif (2 == $conf['url_rewrite_on']) {
-        $r = $conf['path'] . $path . str_replace('-', '/', $query) . '.html';
-    } elseif (3 == $conf['url_rewrite_on']) {
-        $r = $conf['path'] . $path . str_replace('-', '/', $query);
+    } elseif (2 == $conf['url_rewrite_on'] || 3 == $conf['url_rewrite_on']) {
+
+        $arr = explode('-', $query);
+        $filter = array('operate', 'attach', 'read', 'category', 'list', 'my', 'forum', 'thread');
+
+        // hook model_url_center.php
+
+        // 后台链接
+        if ((TRUE === $url_access && !in_array($arr[0], $filter)) || 3 === $url_access) {
+            $r = 'index.php?' . http_build_query($arr);
+        } else {
+            $r = $conf['path'] . str_replace('-', '/', $query) . (2 == $conf['url_rewrite_on'] ? '.html' : '');
+        }
     }
-    $admin_access = GLOBALS('admin_access');
-    if (isset($admin_access) && $conf['url_rewrite_on'] > 1 && FALSE === strpos($r, '/operate/')) $r = '/admin' . $r;
+
+    // hook model_url_after.php
+
     // 附加参数
     if ($extra) {
         $args = http_build_query($extra);
         $sep = FALSE === strpos($r, '?') ? '?' : '&';
         $r .= $sep . $args;
     }
+
     // hook model_url_end.php
+
     return $r;
 }
 
@@ -274,37 +297,27 @@ function xn_html_safe($doc, $arg = array())
     return $result;
 }
 
-// view目录下文件路径
+// 前台访问view目录下文件路径/支持分离
 function view_path()
 {
     static $path = '';
     if ($path) return $path;
     $conf = _SERVER('conf');
-    if ('view/' == $conf['view_url']) {
-        $admin_access = GLOBALS('admin_access');
-        // 使用目录化伪静态 域名"/"结尾或使用绝对路径"/"
-        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['view_url'] : (empty($admin_access) ? $conf['view_url'] : '../' . $conf['view_url']);
-    } else {
-        $path = $conf['view_url']; // 云储存
-    }
+    $path = 'view/' == $conf['view_url'] ? $conf['path'] . $conf['view_url'] : $conf['view_url'];
     return $path;
 }
 
-// 后台访问前台view目录下文件路径
+// 后台访问view目录下文件路径/支持分离
 function admin_view_path()
 {
     static $path = '';
     if ($path) return $path;
     $conf = _SERVER('conf');
-    if ('view/' == $conf['view_url']) {
-        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['view_url'] : '../' . $conf['view_url'];
-    } else {
-        $path = $conf['view_url']; // 云储存
-    }
+    $path = 'view/' == $conf['view_url'] ? '../' . $conf['view_url'] : $conf['view_url'];
     return $path;
 }
 
-// 附件路径
+// 附件路径/支持分离
 function file_path()
 {
     static $path = '';
@@ -312,8 +325,8 @@ function file_path()
     $conf = _SERVER('conf');
     if (0 == $conf['attach_on']) {
         // 本地
-        $admin_access = GLOBALS('admin_access');
-        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : (empty($admin_access) ? $conf['upload_url'] : '../' . $conf['upload_url']);
+        $url_access = GLOBALS('url_access');
+        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : (empty($url_access) ? $conf['upload_url'] : '../' . $conf['upload_url']);
     } elseif (1 == $conf['attach_on']) {
         // 云储存
         $path = $conf['cloud_url'] . $conf['upload_url'];
@@ -349,7 +362,7 @@ function url_path()
     static $path = '';
     if ($path) return $path;
     $conf = _SERVER('conf');
-    $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] : '../';
+    $path = $conf['url_rewrite_on'] > 1 ? '' : '../';
     return $path;
 }
 
@@ -421,7 +434,8 @@ function well_token_clear()
 // 格式化数字 1k
 function format_number($number)
 {
-    return $number ? ($number / 1000) . 'k' : $number;
+    $number = intval($number);
+    return $number > 1000 ? ($number > 1100 ? number_format(($number / 1000), 1) : intval($number / 1000)) . 'k+' : $number;
 }
 
 //---------------表单安全过滤---------------
@@ -943,7 +957,7 @@ function save_image($img)
     return $output;
 }
 
-// 绝对路径 获取图片信息:数组返回[0]宽度 [1]高度 [2]类型 返回数字，其中1 = GIF，2 = JPG，3 = PNG，4 = SWF，5 = PSD，6 = BMP，7 = TIFF(intel byte order)，8 = TIFF(motorola byte order)，9 = JPC，10 = JP2，11 = JPX，12 = JB2，13 = SWC，14 = IFF，15 = WBMP，16 = XBM
+// 绝对路径 获取图片信息:数组返回[0]宽度 [1]高度 [2]类型 返回数字，其中1 = GIF，2 = JPG，3 = PNG，4 = SWF，5 = PSD，6 = BMP，7 = TIFF(intel byte order)，8 = TIFF(motorola byte order)，9 = JPC，10 = JP2，11 = JPX，12 = JB2，13 = SWC，14 = IFF，15 = WBMP，16 = XBM，18 = WEBP
 function image_size($image_url)
 {
     return getimagesize($image_url);
@@ -1007,7 +1021,7 @@ function array_to_string($arr, &$sign = '', &$url = '')
 function rsa_create_sign($data, $key, $sign_type = 'RSA')
 {
     if (!function_exists('openssl_sign')) throw new Exception('OpenSSL extension is not enabled');
-    
+
     if (!defined('OPENSSL_ALGO_SHA256')) throw new Exception('Only versions above PHP 5.4.8 support SHA256');
 
     $key = wordwrap($key, 64, "\n", true);

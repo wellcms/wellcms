@@ -1,25 +1,25 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
-<div class="container-fluid px-0">
+<div class="container-fluid">
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
 					<div class="row">
-                        <?php foreach($themes as $dir=>$theme) {?>
+                        <?php foreach($pluginlist as $dir=>$theme) {?>
                         <div class="col-lg-2 col-md-3 col-6">
-                            <a href="<?php echo url('plugin-read-'.$dir);?>">
-                                <img src="<?php echo $theme['icon'];?>" class="img-thumbnail mx-auto d-block" alt="<?php echo $theme['name'];?>">
+                            <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
+                                <img src="../<?php echo $theme['icon'];?>" class="img-thumbnail mx-auto d-block" alt="<?php echo $theme['name'];?>">
                                 <div class="text-center py-1">
                                     <?php echo $theme['name'];?>
                                 </div>
                             </a>
                             <div class="text-center py-1">
                                 <?php if(0==$theme['installed']) { ?>
-                                <a role="button" class="btn btn-primary btn-sm install" data-href="<?php echo url('plugin-theme-'.$dir.'-1');?>" href="javascript:void(0);"><?php echo lang('install');?></a>
+                                <a role="button" class="btn btn-primary btn-sm install" data-href="<?php echo url('plugin-theme', array('dir'=>$dir,'type'=>1), TRUE);?>" href="javascript:void(0);"><?php echo lang('install');?></a>
                                 <?php } ?>
                                 <?php if(1==$theme['installed']) { ?>
-                                <a role="button" class="btn btn-danger btn-sm uninstall" data-href="<?php echo url('plugin-theme-'.$dir.'-0');?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
+                                <a role="button" class="btn btn-danger btn-sm uninstall" data-href="<?php echo url('plugin-theme', array('dir'=>$dir,'type'=>0), TRUE);?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
                                 <?php } ?>
                             </div>
                         </div>

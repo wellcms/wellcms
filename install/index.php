@@ -35,7 +35,7 @@ is_file(APP_PATH . 'conf/conf.php') AND message(0, jump(lang('installed_tips'), 
 if (empty($action)) {
     if ($method == 'GET') {
         $input = array();
-        $input['lang'] = form_select('lang', array('zh-cn' => '简体中文', 'zh-tw' => '正體中文', 'en-us' => 'English'), $conf['lang']);
+        $input['lang'] = form_select('lang', array('zh-cn' => '简体中文', 'zh-tw' => '正體中文', 'en-us' => 'English'), $conf['lang'], TRUE, FALSE, TRUE);
 
         // 修改 conf.php
         include INSTALL_PATH . "view/htm/index.htm";
@@ -116,12 +116,13 @@ if (empty($action)) {
         $conf['db']['pdo_mysql']['master']['password'] = $password;
         $conf['db']['pdo_mysql']['master']['tablepre'] = $tablepre;
         $conf['db']['pdo_mysql']['master']['engine'] = $engine;
-        $conf['cache']['memcached']['cachepre'] = $_SERVER['HTTP_HOST'];
-        $conf['cache']['redis']['cachepre'] = $_SERVER['HTTP_HOST'];
-        $conf['cache']['xcache']['cachepre'] = $_SERVER['HTTP_HOST'];
-        $conf['cache']['yac']['cachepre'] = $_SERVER['HTTP_HOST'];
-        $conf['cache']['apc']['cachepre'] = $_SERVER['HTTP_HOST'];
-        $conf['cache']['mysql']['cachepre'] = $_SERVER['HTTP_HOST'];
+        $pre = $_SERVER['HTTP_HOST'].'_';
+        $conf['cache']['memcached']['cachepre'] = $pre;
+        $conf['cache']['redis']['cachepre'] = $pre;
+        $conf['cache']['xcache']['cachepre'] = $pre;
+        $conf['cache']['yac']['cachepre'] = $pre;
+        $conf['cache']['apc']['cachepre'] = $pre;
+        $conf['cache']['mysql']['cachepre'] = $pre;
 
         // 初始化
         copy(APP_PATH . 'conf/conf.default.php', APP_PATH . 'conf/conf.php');

@@ -11,7 +11,7 @@ return array(
 	'adminpass_is_empty' => '管理员密码不能为空',
 	'conguralation_installed' => '恭喜，安装成功！为了安全请删除 install 目录。',
 	
-	'step_1_title' => '一、安装环境检测',
+	'step_1_title' => '安装环境检测',
 	'runtime_env_check' => '网站运行环境检测',
 	'required' => '需要',
 	'current' => '当前',
@@ -27,7 +27,7 @@ return array(
 	'unix_like' => '类 UNIX',
 	'php_version' => 'PHP 版本',
 	
-	'step_2_title' => '二、数据库设置',
+	'step_2_title' => '数据库设置',
 	'db_type' => '数据库类型',
 	'db_engine' => '数据库引擎',
 	'db_host' => '数据库服务器',

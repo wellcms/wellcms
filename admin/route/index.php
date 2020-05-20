@@ -108,12 +108,12 @@ function get_last_version($stat)
     $domain = _SERVER('HTTP_HOST');
     if (!filter_var(gethostbyname($domain), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || $time < array_value($config, 'last_version', 0)) return;
 
-    $url = 'http://www.wellcms.cn/version.html?type=1&sitename=' . xn_urlencode($conf['sitename']) . '&domain=' . xn_urlencode($domain) . '&app_url=' . xn_urlencode(http_url_path()) . '&users=' . $stat['users'] . '&articles=' . $stat['articles'] . '&threads=' . $stat['threads'] . '&posts=' . $stat['posts'] . '&comments=' . $stat['comments'] . '&siteid=' . plugin_siteid() . '&version=' . array_value($config,'version') . '&version_date=' . array_value($config, 'version_date', 0);
+    $url = 'http://www.wellcms.cn/version.html?type=1&sitename=' . xn_urlencode($conf['sitename']) . '&domain=' . xn_urlencode($domain) . '&app_url=' . xn_urlencode(http_url_path()) . '&users=' . $stat['users'] . '&articles=' . $stat['articles'] . '&threads=' . $stat['threads'] . '&posts=' . $stat['posts'] . '&comments=' . $stat['comments'] . '&siteid=' . plugin_siteid() . '&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0);
     $json = https_request($url, '', '', 500, 1);
-    if (!in_array($json, array('1', '2', 'failed'))) {
+    if (isset($json) && !in_array($json, array('1', '2', 'fail'))) {
         $official = xn_json_decode($json);
         if (is_array($official)) {
-            if ($official['version'] != $config['official_version'] || $official['version_date'] > array_value($config, 'version_date', 0)) {
+            if (-1 == version_compare($config['official_version'], $official['version']) || $official['version_date'] > array_value($config, 'version_date', 0)) {
                 $config['official_version'] = $official['version'];
                 $config['version_date'] = array_value($official, 'version_date', 0);
                 $config['upgrade'] = 1; // 有更新

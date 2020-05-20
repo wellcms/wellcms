@@ -82,7 +82,7 @@ well.param = function (key, defval) {
 /********************* xn 模拟 php 函数 ************************/
 
 /*var xn = window; /!*browser， 如果要兼容以前的版本，请开启这里。*!/
-var xn = global; /!*nodejs*!/*/
+ var xn = global; /!*nodejs*!/*/
 var xn = {}; /*避免冲突，自己的命名空间。*/
 
 /*针对国内的山寨套壳浏览器检测不准确*/
@@ -566,10 +566,14 @@ xn.parse_url_param = function (url) {
     return r;
 };
 
-/*模拟服务端 url() 函数 extra = {k1:v,k2:v}*/
-xn.url = function (u, extra, url_rewrite) {
-    var on = window.url_rewrite_on || url_rewrite;
-    var admin_access = window.admin_access || false; /*wellcms*/
+/*
+ 模拟服务端 url() 函数 extra = {k1:v,k2:v}
+ url_access = true后台链接 2后台调用前台链接 3不受限后台链接(不受过滤限制)
+ */
+xn.url = function (u, extra, url_access) {
+    var on = window.url_rewrite_on || 0;
+    var url_access = url_access || window.url_access || false;
+
     if (xn.strpos(u, '/') != -1) {
         var path = xn.substr(u, 0, xn.strrpos(u, '/') + 1);
         var query = xn.substr(u, xn.strrpos(u, '/') + 1);
@@ -577,33 +581,41 @@ xn.url = function (u, extra, url_rewrite) {
         var path = '';
         var query = u;
     }
+
     var r = '';
     if (!on) {
         r = path + '?' + query + '.html';
-    } else if (on == 1) {
-        r = path + query + ".html";
-    } else if (on == 2) {
-        r = path + xn.str_replace('-', '/', query) + ".html";
-    } else if (on == 3) {
-        r = path + xn.str_replace('-', '/', query);
+    } else if (1 == on) {
+        r = path + query + '.html';
+    } else if (2 == on || 3 == on) {
+        var arr = xn.explode('-', u);
+        var url_filter = window.url_filter || ['operate', 'attach', 'read', 'category', 'list', 'my', 'forum', 'thread'];
+
+        if ((true == url_access && false == xn.in_array(arr[0], url_filter)) || 3 == url_access) {
+            var str = '';
+            $.each(arr, function (k, v) {
+                str += '&' + k + '=' + v;
+            });
+            r = 'index.php?' + str.replace('&','');
+        } else {
+            var url_path = window.url_path || '/';
+            r = url_path + xn.str_replace('-', '/', query);
+            if (2 == on) r = r + '.html';
+        }
     }
-    if(admin_access && on > 1) {
-        r = '/admin/' + r;
-    }
-    if(admin_access && (on == 1 || !on) && xn.strpos(u, 'attach-') != -1) {
-        r = '../' + r;
-    }
+
+    if(2 == url_access && 2 > on) r = '../' + r;
+
     if (extra) {
         var args = '';
         $.each(extra, function (k, v) {
-            if (k && v) {
-                args += '&' + k + '=' + v;
-            }
+            args += '&' + k + '=' + v;
         });
         args = args.replace('&','');
         var sep = r.indexOf('?') == -1 ? '?' : '&';
         r += sep + args;
     }
+
     return r;
 };
 
@@ -1111,7 +1123,7 @@ $.fn.base64_encode_file = function (width, height, action) {
         $('.input_' + jassoc.attr('id')).removeDeep();
         /*燃烧的冰20181111 创建一个隐藏域，用来保存 base64 数据*/
         var jhidden = $('<input class="input_' + jassoc.attr('id') + '" type="hidden" name="' + obj.name + '" />').appendTo(jform);
-        
+
         var reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function (e) {
@@ -1218,17 +1230,17 @@ xn.image_background_opacity = function (data, width, height, callback) {
     var n = 0;
     while (1) {
         /*//if(k++ > 100000) break;
-        //if(checked.length > 10000) return;
-        //(n++ % 10000 == 0) {
-        //alert(n);
-        //console.log(unchecked_arr);
-        //console.log(unchecked);
-        //break;
-        //}
-        // 遍历未检测的区域，并且不在 checked 列表的，放进去。*/
+         //if(checked.length > 10000) return;
+         //(n++ % 10000 == 0) {
+         //alert(n);
+         //console.log(unchecked_arr);
+         //console.log(unchecked);
+         //break;
+         //}
+         // 遍历未检测的区域，并且不在 checked 列表的，放进去。*/
         var curr = get_one_unchecked();
         /*//if(unchecked.length > 1000) return;
-        // 遍历完毕，终止遍历*/
+         // 遍历完毕，终止遍历*/
         if (!curr) break;
         var x = xn.intval(curr[0]);
         var y = xn.intval(curr[1]);
@@ -1305,9 +1317,9 @@ xn.image_resize = function (file_base64_data, callback, options) {
             });
 
             /*// width, height: 计算出来的宽高（求）
-            // thumb_width, thumb_height: 要求的缩略宽高
-            // img_width, img_height: 原始图片宽高
-            // canvas_width, canvas_height: 画布宽高*/
+             // thumb_width, thumb_height: 要求的缩略宽高
+             // img_width, img_height: 原始图片宽高
+             // canvas_width, canvas_height: 画布宽高*/
             if (action == 'thumb') {
                 if (img_width < thumb_width && img_height && thumb_height) {
                     width = img_width;
@@ -1362,11 +1374,10 @@ xn.image_resize = function (file_base64_data, callback, options) {
             var ctx = canvas.getContext("2d");
 
             /*//ctx.fillStyle = 'rgb(255,255,255)';
-            //ctx.fillRect(0,0,width,height);*/
+             //ctx.fillRect(0,0,width,height);*/
 
-            ctx.clearRect(0, 0, width, height); /*// canvas清屏*/
-            ctx.drawImage(img, 0, 0, img_width, img_height, dx, dy, width, height); /*// 将图像绘制到canvas上*/
-
+            ctx.clearRect(0, 0, width, height); /*canvas清屏*/
+            ctx.drawImage(img, 0, 0, img_width, img_height, dx, dy, width, height); /*将图像绘制到canvas上*/
 
             if (water_on) {
                 var water_width = water_img.width;
@@ -1384,17 +1395,16 @@ xn.image_resize = function (file_base64_data, callback, options) {
                 }
             }
 
-
             var imagedata = ctx.getImageData(0, 0, canvas_width, canvas_height);
             var data = imagedata.data;
             /*// 判断与 [0,0] 值相同的并且连续的像素为背景
 
-            //xn.image_background_opacity(data, canvas_width, canvas_height);
+             //xn.image_background_opacity(data, canvas_width, canvas_height);
 
-            // 将修改后的代码复制回画布中*/
+             // 将修改后的代码复制回画布中*/
             ctx.putImageData(imagedata, 0, 0);
 
-           /*//filetype = 'png';*/
+            /*//filetype = 'png';*/
             if (filetype == 'jpg') filetype = 'jpeg';
             var s = canvas.toDataURL('image/' + filetype, qulity);
             if (callback) callback(0, {width: width, height: height, data: s});
@@ -1453,8 +1463,8 @@ xn.upload_file = function (file, upload_url, postdata, complete_callback, progre
         };
 
         /*// gif 直接上传
-        // 图片进行缩放，然后上传
-        //  && xn.substr(base64_data, 0, 14) != 'data:image/gif'*/
+         // 图片进行缩放，然后上传
+         //  && xn.substr(base64_data, 0, 14) != 'data:image/gif'*/
         if (xn.substr(base64_data, 0, 10) == 'data:image') {
             var filename = file.name ? file.name : (file.type == 'image/png' ? 'capture.png' : 'capture.jpg');
             xn.image_resize(base64_data, function (code, message) {
@@ -1552,7 +1562,6 @@ $.fn.son = $.fn.children;
 
 /*
  用来增强 $.fn.val()
-
  用来选中和获取 select radio checkbox 的值，用法：
  $('#select1').checked(1);			// 设置 value="1" 的 option 为选中状态
  $('#select1').checked();			// 返回选中的值。
@@ -1564,8 +1573,8 @@ $.fn.son = $.fn.children;
 $.fn.checked = function (v) {
     /*转字符串*/
     if (v) v = v instanceof Array ? v.map(function (vv) {
-            return vv + ""
-        }) : v + "";
+        return vv + ""
+    }) : v + "";
     var filter = function () {
         return !(v instanceof Array) ? (this.value == v) : ($.inArray(this.value, v) != -1)
     };

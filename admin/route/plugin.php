@@ -5,30 +5,71 @@ FALSE === group_access($gid, 'manageplugin') AND message(1, lang('user_group_ins
 
 include XIUNOPHP_PATH . 'xn_zip.func.php';
 
-$action = param(1);
+$action = param(1, 'list');
 
 // 初始化插件变量 / init plugin var
 plugin_init();
 
-empty($action) AND $action = 'local';
-
 switch ($action) {
     case 'list':
-        // 本地插件 local plugin list
-        $pluginlist = $plugins;
 
-        $pagination = $plugin_cate_html = '';
+        $page = param('page', 1);
+        $type = param('type', 0);
+        $pagesize = 20;
         $safe_token = well_token_set($uid);
+        $extra = array('page' => '{page}', 'type' => $type, 'safe_token' => $safe_token);
+
+        $plugin_cates = array(0 => lang('all'), 1 => lang('enabled'), 2 => lang('not_enabled'), 3 => lang('disable'));
+        $plugin_cate_html = plugin_cate_active($action, $plugin_cates, $type, $page);
+
+        if (1 == $type) {
+            $cond = array('installed' => 1, 'enable' => 1);
+        } elseif (2 == $type) {
+            $cond = array('installed' => 0, 'enable' => 0);
+        } elseif (3 == $type) {
+            $cond = array('installed' => 1, 'enable' => 0);
+        } else {
+            $cond = array();
+        }
+
+        // 本地插件 local plugin list
+        $pluginlist = plugin_list($cond, $orderby = array(), $page, $pagesize, TRUE);
+        $total = arrlist_cond_orderby($plugins, $cond, array(), 1, 1000);
+
+        $pagination = pagination(url('plugin-' . $action, $extra, TRUE), count($total), $page, $pagesize);
 
         $header['title'] = lang('local_plugin');
         $header['mobile_title'] = lang('local_plugin');
+        $active = 'plugin';
 
         include _include(ADMIN_PATH . 'view/htm/plugin_list.htm');
         break;
     case 'theme':
         if ('GET' == $method) {
 
-            $pagination = '';
+            $page = param('page', 1);
+            $pagesize = 30;
+            $safe_token = well_token_set($uid);
+            $extra = array('page' => '{page}', 'safe_token' => $safe_token);
+            $cond = array();
+            $pluginlist = plugin_list($cond, $orderby = array(), $page, $pagesize, FALSE);
+            $total = arrlist_cond_orderby($themes, $cond, array(), 1, 1000);
+
+            $read = array_value($pluginlist, $config['theme']);
+            if (!array_value($read, 'installed')) {
+                foreach ($pluginlist as $dir => $theme) {
+                    if (1 == $theme['installed']) {
+                        $read = $theme;
+                        theme_install($dir);
+                        unset($pluginlist[$dir]);
+                        continue;
+                    }
+                }
+            }
+
+            !empty($read) AND $pluginlist = array($config['theme'] => $read) + $pluginlist;
+
+            $pagination = pagination(url('plugin-' . $action, $extra, TRUE), count($total), $page, $pagesize);
 
             $header['title'] = lang('local') . lang('theme');
             $header['mobile_title'] = lang('local') . lang('theme');
@@ -39,12 +80,12 @@ switch ($action) {
 
             FALSE === group_access($gid, 'manageplugin') AND message(1, lang('user_group_insufficient_privilege'));
 
-            $dir = param_word(2);
-            $type = param(3, 0);
+            $dir = param_word('dir');
+            $type = param('type', 0);
 
             empty($dir) AND message(1, lang('data_malformation'));
 
-            if ($type) {
+            if (1 == $type) {
                 plugin_check_dependency($dir);
                 theme_install($dir);
 
@@ -60,13 +101,17 @@ switch ($action) {
     case 'store':
         if ('GET' == $method) {
             // 0 所有插件 1主题风格 2功能增强 3大型插件 4接口整合
-            $type = param(2, 0);
-            $page = param(3, 1);
-            $free = param('free', 0); // 免费和付费插件
-            $extra = array('free' => $free);
+            $extra = array();
+            $page = param('page', 1);
             $pagesize = 10;
+            $type = param('type', 0);
+            $extra += array('page' => '{page}', 'type' => $type);
             $cond = $type ? array('type' => $type) : array();
-            $cond['price'] = $free ? array('>' => 0) : 0;
+
+            $srchtype = param('srchtype', 'name');
+            $keyword = trim(xn_urldecode(param('keyword')));
+            $keyword AND $cond['name'] = array('LIKE' => $keyword);
+            $keyword AND $cond['author'] = array('author' => $keyword);
 
             // plugin category
             $plugin_cates = array(0 => lang('plugin_cate_0'), 1 => lang('plugin_cate_1'), 2 => lang('plugin_cate_2'), 3 => lang('plugin_cate_3'), 4 => lang('plugin_cate_4'));
@@ -77,24 +122,23 @@ switch ($action) {
             $total = plugin_official_total($cond);
             $pluginlist = plugin_official_list($cond, array('storeid' => -1), $page, $pagesize);
 
-            $pagination = pagination(url("plugin-$action-$type-{page}", $extra), $total, $page, $pagesize);
+            $pagination = pagination(url('plugin-' . $action, $extra, TRUE), $total, $page, $pagesize);
 
             $data_verify = plugin_data_verify();
-            $server = filter_var(gethostbyname(_SERVER('HTTP_HOST')), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
-
             $safe_token = well_token_set($uid);
 
             $header['title'] = lang('official_store');
             $header['mobile_title'] = lang('official_store');
+            $active = 'store';
 
-            include _include(ADMIN_PATH . "view/htm/plugin_list.htm");
+            include _include(ADMIN_PATH . "view/htm/plugin_store.htm");
 
         } elseif ('POST' == $method) {
 
             $safe_token = param('safe_token');
             FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-            plugin_official_storehouse(1);
+            plugin_official_store(1);
 
             message(0, lang('operator_complete'));
         }
@@ -102,7 +146,10 @@ switch ($action) {
     case 'read':
         if ('GET' == $method) {
 
-            $dir = param_word(2);
+            $safe_token = well_token_set($uid);
+
+            $dir = param_word('dir');
+            $extra = array('dir' => $dir, 'safe_token' => $safe_token); // 插件预留
 
             $plugin = plugin_read_by_dir($dir);
             empty($plugin) AND message(-1, lang('plugin_not_exists'));
@@ -115,8 +162,6 @@ switch ($action) {
             $payment_tips = '';
             $server = filter_var(gethostbyname(_SERVER('HTTP_HOST')), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
             // 线上模式可登录 升级 购买
-            $url = $server ? '' : FALSE;
-
             if (!empty($plugin['official']['storeid']) && $server) {
                 /*
                  * 1.判断是否购买过，传token到官方核对
@@ -142,7 +187,7 @@ switch ($action) {
                         $return = plugin_query($plugin['official']['storeid']);
                         if (FALSE !== $return) {
                             if (0 == $return['code']) {
-                                $download_url = url('plugin-download-' . $dir);
+                                $download_url = url('plugin-download', $extra, TRUE);
                             } elseif (1 == $return['code']) {
                                 if (1 == $return['pay_type']) {
                                     $payment_tips = 'RMB: ' . $return['price'];
@@ -161,8 +206,6 @@ switch ($action) {
             // 本地是否有该插件
             $islocal = plugin_is_local($dir);
             $tab = empty($islocal) ? ($plugin['price'] > 0 ? 'official_fee' : 'official_free') : 'local';
-
-            $safe_token = well_token_set($uid);
 
             $header['title'] = lang('plugin_detail') . '-' . $plugin['name'];
             $header['mobile_title'] = lang('plugin_detail') . '-' . $plugin['name'];
@@ -186,7 +229,7 @@ switch ($action) {
             $r = xn_json_decode($json);
             // -1用户不存在 -2用户被锁 0正常 1用户名错误 2密码错误
             if (0 == $r['code']) {
-                setting_set('plugin_data', $r['data']);
+                isset($r['data']) AND setting_set('plugin_data', $r['data']);
                 message(0, lang('login_successfully'));
             }
             1 == $r['code'] AND message(-1, lang('password_incorrect'));
@@ -203,7 +246,7 @@ switch ($action) {
 
         if ('GET' == $method) {
 
-            $dir = param_word(2);
+            $dir = param_word('dir');
 
             $plugin = plugin_read_by_dir($dir);
             empty($plugin) AND message(-1, lang('plugin_not_exists'));
@@ -280,7 +323,7 @@ switch ($action) {
         break;
     case 'is_bought':
         // 定时查询是否支付成功
-        $dir = param_word(2);
+        $dir = param_word('dir');
         plugin_check_exists($dir, FALSE);
         $plugin = plugin_read_by_dir($dir);
 
@@ -289,10 +332,10 @@ switch ($action) {
         TRUE === plugin_bought($plugin['official']['storeid']) ? message(0, lang('plugin_is_bought')) : message($errno, $errstr);
         break;
     case 'download':
-        $dir = param_word(2);
+        $dir = param_word('dir');
         plugin_check_exists($dir, FALSE);
 
-        FALSE === plugin_verify_token() AND message(-1, jump(lang('plugin_token_error'), url("plugin-read-$dir"), 1));
+        FALSE === plugin_verify_token() AND message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 1));
 
         // 下载官方插件 区分插件和主题 / download official plugin
         plugin_lock_start();
@@ -308,7 +351,7 @@ switch ($action) {
 
         plugin_lock_end();
 
-        message(0, jump(lang('plugin_download_sucessfully', array('dir' => $dir)), url('plugin-read-' . $dir), 3));
+        message(0, jump(lang('plugin_download_sucessfully', array('dir' => $dir)), url('plugin-read', array('dir' => $dir), TRUE), 3));
         break;
     case 'install':
         $safe_token = param('safe_token');
@@ -316,7 +359,7 @@ switch ($action) {
 
         plugin_lock_start();
 
-        $dir = param_word(2);
+        $dir = param_word('dir');
         plugin_check_exists($dir);
         $name = $plugins[$dir]['name'];
 
@@ -326,7 +369,7 @@ switch ($action) {
         // 安装插件 / install plugin
         plugin_install($dir);
 
-        $installfile = APP_PATH . "plugin/$dir/install.php";
+        $installfile = APP_PATH . 'plugin/' . $dir . '/install.php';
         is_file($installfile) AND include _include($installfile);
 
         plugin_lock_end();
@@ -348,18 +391,18 @@ switch ($action) {
         }
 
         $msg = lang('plugin_install_successfully', array('name' => $name));
-        message(0, jump($msg, url('plugin-list'), 2));
+        message(0, jump($msg, url('plugin-list', array('type' => 1), TRUE), 2));
         break;
     case 'uninstall':
 
         if ('POST' != $method) message(1, lang('method_error'));
-        
+
         $safe_token = param('safe_token');
         FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
         plugin_lock_start();
 
-        $dir = param_word(2);
+        $dir = param_word('dir');
         plugin_check_exists($dir);
         $name = $plugins[$dir]['name'];
 
@@ -369,16 +412,16 @@ switch ($action) {
         // 卸载插件
         plugin_uninstall($dir);
 
-        $uninstallfile = APP_PATH . "plugin/$dir/uninstall.php";
+        $uninstallfile = APP_PATH . 'plugin/' . $dir . '/uninstall.php';
         is_file($uninstallfile) AND include _include($uninstallfile);
 
         // 删除插件
-        //!DEBUG && rmdir_recusive("../plugin/$dir");
+        //!DEBUG && rmdir_recusive(APP_PATH . "plugin/$dir");
 
         plugin_lock_end();
 
         $msg = lang('plugin_uninstall_successfully', array('name' => $name, 'dir' => "plugin/$dir"));
-        message(0, jump($msg, url('plugin-list'), 3));
+        message(0, jump($msg, url('plugin-list', array('type' => 2), TRUE), 3));
         break;
     case 'enable':
         $safe_token = param('safe_token');
@@ -386,7 +429,7 @@ switch ($action) {
 
         plugin_lock_start();
 
-        $dir = param_word(2);
+        $dir = param_word('dir');
         plugin_check_exists($dir);
         $name = $plugins[$dir]['name'];
 
@@ -399,7 +442,7 @@ switch ($action) {
         plugin_lock_end();
 
         $msg = lang('plugin_enable_successfully', array('name' => $name));
-        message(0, jump($msg, url('plugin-read-' . $dir), 1));
+        message(0, jump($msg, url('plugin-read', array('dir' => $dir), TRUE), 1));
         break;
     case 'disable':
         $safe_token = param('safe_token');
@@ -407,7 +450,7 @@ switch ($action) {
 
         plugin_lock_start();
 
-        $dir = param_word(2);
+        $dir = param_word('dir');
         plugin_check_exists($dir);
         $name = $plugins[$dir]['name'];
 
@@ -420,12 +463,12 @@ switch ($action) {
         plugin_lock_end();
 
         $msg = lang('plugin_disable_successfully', array('name' => $name));
-        message(0, jump($msg, url('plugin-read-' . $dir), 3));
+        message(0, jump($msg, url('plugin-read', array('dir' => $dir), TRUE), 3));
         break;
     case 'upgrade':
         plugin_lock_start();
 
-        $dir = param_word(2);
+        $dir = param_word('dir');
         plugin_check_exists($dir, FALSE);
         $name = $plugins[$dir]['name'];
 
@@ -445,13 +488,14 @@ switch ($action) {
         plugin_download_unzip($dir, $official['storeid']);
 
         if (empty($official['type'])) {
-            // 安装插件
             plugin_install($dir);
-            $upgradefile = APP_PATH . "plugin/$dir/upgrade.php";
-            is_file($upgradefile) AND include _include($upgradefile);
+            $upgradefile = APP_PATH . 'plugin/' . $dir . '/upgrade.php';
         } else {
             theme_install($dir);
+            $upgradefile = APP_PATH . 'view/template/' . $dir . '/upgrade.php';
         }
+
+        is_file($upgradefile) AND include _include($upgradefile);
 
         plugin_lock_end();
 
@@ -459,7 +503,7 @@ switch ($action) {
         message(0, jump($msg, http_referer(), 3));
         break;
     case 'setting':
-        $dir = param_word(2);
+        $dir = param_word('dir');
         plugin_check_exists($dir);
         $name = $plugins[$dir]['name'];
 
@@ -495,7 +539,7 @@ function plugin_dependency_arr_to_links($arr)
     $s = '';
     foreach ($arr as $dir => $version) {
         $name = isset($plugins[$dir]['name']) ? $plugins[$dir]['name'] : $dir;
-        $url = url("plugin-read-$dir");
+        $url = url('plugin-read', array('dir' => $dir), TRUE);
         $s .= " <a href=\"$url\">【{$name}】</a> ";
     }
     return $s;
@@ -540,7 +584,7 @@ function plugin_download_unzip($dir, $storeid)
     global $conf;
 
     $data = plugin_data_verify();
-    empty($data) AND message(-1, jump(lang('plugin_token_error'), url("plugin-read-$dir")));
+    empty($data) AND message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE)));
 
     $app_url = xn_urlencode(http_url_path());
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
@@ -557,9 +601,9 @@ function plugin_download_unzip($dir, $storeid)
 
         empty($res) AND message(-1, $url . lang('plugin_return_data_error') . $s);
 
-        -2 == $res['code'] AND message($res['code'], jump(lang('plugin_is_not_free'), url('plugin-read-' . $dir), 3));
+        -2 == $res['code'] AND message($res['code'], jump(lang('plugin_is_not_free'), url('plugin-read', array('dir' => $dir), TRUE), 3));
 
-        -1 == $res['code'] AND message($res['code'], jump(lang('plugin_token_error'), url('plugin-read-' . $dir), 3));
+        -1 == $res['code'] AND message($res['code'], jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 3));
 
         message($res['code'], $res['message']);
     }
@@ -570,16 +614,16 @@ function plugin_download_unzip($dir, $storeid)
     $official = plugin_official_read($dir);
     // 0插件 1主题
     if (empty($official['type'])) {
-        // 清理原来的钩子，防止叠加。
-        rmdir_recusive(APP_PATH . "plugin/$dir/hook/", 1);
-        rmdir_recusive(APP_PATH . "plugin/$dir/overwrite/", 1);
+        // 清理原来的钩子，防止叠加
+        rmdir_recusive(APP_PATH . 'plugin/' . $dir . '/hook/', 1);
+        rmdir_recusive(APP_PATH . 'plugin/' . $dir . '/overwrite/', 1);
         $destpath = APP_PATH . 'plugin/';
     } elseif (1 == $official['type']) {
-        //rmdir_recusive(APP_PATH . "view/template/$dir/", 1);
+        // 直接覆盖，如需删除执行 upgrade.php 文件
         $destpath = APP_PATH . 'view/template/';
     }
 
-    // 直接覆盖原来的 plugin 目录下的插件目录
+    // 直接覆盖原来应用目录
     xn_unzip($zipfile, $destpath);
 
     // 检查配置文件
@@ -708,7 +752,7 @@ function plugin_cate_active($action, $arr, $type, $page)
 {
     $s = '';
     foreach ($arr as $_type => $name) {
-        $url = url("plugin-$action-$_type-$page");
+        $url = url('plugin-' . $action, array('type' => $_type, 'page' => $page), TRUE);
         $s .= '<a role="button" class="btn btn btn-secondary' . ($type == $_type ? ' active' : '') . '" href="' . $url . '">' . $name . '</a>';
     }
     return $s;
@@ -726,13 +770,13 @@ function plugin_lock_end()
     xn_lock_end($route . '_' . $action);
 }
 
-// 传入主题名，英文或数字，不允许空格 特殊字符
 function theme_install($dir)
 {
     global $conf, $config;
 
     $dir = trim($dir);
     !empty($config['theme']) AND $config['theme'] != $dir AND theme_uninstall($config['theme']);
+
     $path = APP_PATH . 'view/template/' . $dir;
 
     $conffile = $path . '/conf.json';
@@ -747,6 +791,9 @@ function theme_install($dir)
 
     $config['theme'] = $dir;
     setting_set('conf', $config);
+
+    $installfile = $path . '/install.php';
+    is_file($installfile) AND include _include($installfile);
 
     rmdir_recusive($conf['tmp_path'], 1);
 
@@ -771,6 +818,9 @@ function theme_uninstall($dir)
 
     $config['theme'] = '';
     setting_set('conf', $config);
+
+    $uninstallfile = $path . '/uninstall.php';
+    is_file($uninstallfile) AND include _include($uninstallfile);
 
     rmdir_recusive($conf['tmp_path'], 1);
 

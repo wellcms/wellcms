@@ -1,12 +1,12 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_user_create_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
 	<div class="col-lg-8 mx-auto">
 		<div class="card">
 			<div class="card-body">
-				<form action="<?php echo url('user-create');?>" method="post" id="form">
+				<form action="<?php echo url('user-create', '', TRUE);?>" method="post" id="form">
 					<?php echo $input['safe_token'];?>
 					<div class="form-group row">
 						<label class="col-sm-2 form-control-label"><?php echo lang('email');?>：</label>

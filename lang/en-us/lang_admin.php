@@ -4,8 +4,6 @@ return array(
 	'user'=>'User',
 	'forum'=>'Forum',
 	'plugin'=>'Plugin',
-	'other'=>'Other',
-	
 	'user_admin'=>'User Admin',
 	'group_admin'=>'Group Admin',
 	'forum_admin'=>'Forum Admin',
@@ -13,7 +11,6 @@ return array(
 	'thread_admin'=>'Thread Admin',
 	'plugin_admin'=>'Plugin Admin',
 	'other_admin'=>'Other Admin',
-	
 	'admin_index_page'=>'Management',
 	'front_index_page'=>'Foreground ',
 	'admin_site_setting'=>'Site Setting',
@@ -23,7 +20,6 @@ return array(
 	'admin_clear_tmp'=>'Clean up temporary directory',
 	'admin_clear_cache'=>'Cleanup cache',
 	'admin_clear_successfully'=>'Cleanup success',
-		
 	'admin_user_list'=>'User List',
 	'admin_thread_batch'=>'Thread Batch Operation',
 	'admin_user_group'=>'User Group',
@@ -32,23 +28,18 @@ return array(
 	'admin_plugin_official_list'=>'Official Plugin',
 	'admin_plugin_official_free_list'=>'Free Plugin',
 	'admin_plugin_official_fee_list'=>'Charge Plugin',
-	
 	'admin_token_error'=>'Admin token error, That may be your network environment is not stable, can try to unbind IP, modify file: conf.php, set admin_bind_ip = 0',
 	'admin_token_expiry'=>'Admin token expiry, please re login',
 	'user_edit'=>'Edit User',
 	'edit_successfully'=>'Edit Sucessfully',
-	'item_not_exists'=>'{item} Not Exists',
 	'item_not_moderator'=>'{item} not moderator',
 	'group_not_exists'=>'User group doest not exists',
-	
-	'admin_login'=>'Admin Login',
 	'save_conf_failed'=>'Save data to config file {file} failed, please check the file write permission',
 	'user_already_exists'=>'User already exists',
 	'email_already_exists'=>'Email already exists',
 	'uid_not_exists'=>'Specified  UID does not exists',
 	'data_not_changed'=>'Data not changed',
 	'admin_cant_be_deleted'=>'Can not directly delete the Administrator, please first edit for the general user group',
-	
 	// index
 	'admin_index'=>'Admin Index',
 	'site_stat_info'=>'Site statistics',
@@ -63,10 +54,7 @@ return array(
 	'memory_limit'=>'Memroy limit',
 	'client_ip'=>'Client IP',
 	'server_ip'=>'Sever IP',
-	'dev_team_info'=>'Dev Team',
-	
 	'for_safe_input_password_again'=>'Please input password again for security',
-	
 	// setting
 	'sitename'=>'Site Name',
 	'sitebrief'=>'Site Brief',
@@ -81,7 +69,6 @@ return array(
 	'port'=>'Port',
 	'account'=>'Account',
 	'smtp_host'=>'SMTP Host',
-	
 	// forum
 	'forum_list'=>'Forum List',
 	'forum_id'=>'Forum ID',
@@ -106,11 +93,8 @@ return array(
 	'forum_delete_thread_before_delete_forum'=>'Please delete thread before delete forum.',
 	'forum_please_delete_sub_forum'=>'Please delete sub forum.',
 	'forum_delete_successfully'=>'Deleted successfully',
-	
 	'thread_queue_not_exists'=>'Queue does not exist',
 	'search_condition'=>'Search Condition',
-	'start_date'=>'Start Time',
-	'end_date'=>'End Time',
 	'searching'=>'Searching.',
 	'search_complete'=>'Search Complated',
 	'operating'=>'Operating',
@@ -118,15 +102,12 @@ return array(
 	'click_to_view'=>'Click to view',
 	'thread_userip'=>'Post IP',
 	'thread_search_result'=>'Results: {n} ',
-	
 	// user
 	'please_check_delete_user'=>'Please check your want to delete user',
 	'user_delete_confirm'=>'Sure to delete user?',
 	'user_admin_cant_be_deleted'=>'Administrator users are not allowed to delete, if you do want to delete, please adjust the user group!',
 	'search_type'=>'Search Type',
 	'user_privileges'=>'User Privileges',
-	'author'=>'Author',
-	
 	// user group
 	'group_list'=>'Group List',
 	'group_edit'=>'Edit Group',
@@ -136,15 +117,12 @@ return array(
 	'group_credits_to'=>'Credits To',
 	'group_edit_tips'=>'Please carefully edit the user group, once identified, do not easily change, or may lead to user related errors, generally do not change in the formal operation.',
 	'admin_privilege'=>'Admin Privilege',
-	'top'=>'Top',
 	'ban_user'=>'Ban User',
-	'delete_user'=>'Delete User',
 	'view_user_info'=>'View user info',
-	
 	// Plugin
+    'plugin_token_error' => 'Token error',
 	'plugin_dir'=>'Plugin Directory',
 	'plugin_version'=>'Require WellCMS version',
-	'price'=>'Price',
 	'installs'=>'Installs',
 	'plugin_user_stars_fmt'=>'User given stars',
 	'plugin_sells'=>'Sells',
@@ -229,7 +207,6 @@ return array(
 	'plugin_get_data_failed' => 'Failed to get plugin data from official',
 	'plugin_get_data_fmt_failed' => 'Error from official data format',
 	// hook lang_en_us_admin.php
-	
 );
 
 ?>

@@ -1,96 +1,97 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_content_start.htm}-->
-<div class="container-fluid px-0">
-<div class="row">
-	<div class="col-lg-12">
-		<!--{hook admin_content_breadcrumb_before.htm}-->
-		<?php if(empty($hide_breadcrumb)) { ?>
-		<ol class="breadcrumb text-muted">
-            <li class="breadcrumb-item"><a href="<?php echo url($route.'-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
-            <li class="breadcrumb-item"><?php echo lang($route);?></li>
-            <?php if ($fid) { ?>
-            <li class="breadcrumb-item"><a href="<?php echo url('content-list-'.$fid);?>"><?php echo $forum['name'];?></a></li>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <!--{hook admin_content_breadcrumb_before.htm}-->
+            <?php if(empty($hide_breadcrumb)) { ?>
+            <ol class="breadcrumb text-muted">
+                <li class="breadcrumb-item"><a href="<?php echo url($route.'-list','', TRUE);?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+                <li class="breadcrumb-item"><?php echo lang($route);?></li>
+                <?php if ($fid) { ?>
+                <li class="breadcrumb-item"><a href="<?php echo url('content-list', array('fid'=>$fid), TRUE);?>"><?php echo $forum['name'];?></a></li>
+                <?php } ?>
+                <li class="breadcrumb-item"><?php echo lang('list');?></li>
+                <!--{hook admin_content_breadcrumb.htm}-->
+            </ol>
             <?php } ?>
-            <li class="breadcrumb-item"><?php echo lang('list');?></li>
-            <!--{hook admin_content_breadcrumb.htm}-->
-		</ol>
-		<?php } ?>
-		<!--{hook admin_content_breadcrumb_after.htm}-->
-		<div class="card card-threadlist">
-			<div class="card-body">
-                <div class="row d-flex justify-content-between mx-0 mb-3">
-                    <!--{hook admin_content_menu_start.htm}-->
-                    <div>
-                        <select class="custom-select mr-1 w-auto" name="fid">
-                            <!--{hook admin_content_select_strat.htm}-->
-                            <option value="0"><?php echo 'sticky'==$route?lang('top_3'):lang('select'); ?></option>
-                            <!--{hook admin_content_select_before.htm}-->
-                            <?php foreach ($columnlist as $v) { ?>
-                            <option value="<?php echo $v['fid']; ?>"><?php echo $v['name']; ?></option>
+            <!--{hook admin_content_breadcrumb_after.htm}-->
+            <div class="card card-threadlist">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <!--{hook admin_content_menu_start.htm}-->
+                        <div>
+                            <select class="custom-select mr-1 w-auto" name="fid">
+                                <!--{hook admin_content_select_strat.htm}-->
+                                <option value="0"><?php echo 'sticky'==$route?lang('top_3'):lang('select'); ?></option>
+                                <!--{hook admin_content_select_before.htm}-->
+                                <?php foreach ($columnlist as $v) { ?>
+                                <option value="<?php echo $v['fid']; ?>"><?php echo $v['name']; ?></option>
+                                <?php } ?>
+                                <!--{hook admin_content_select_end.htm}-->
+                            </select>
+                        </div>
+                        <!--{hook admin_content_rank_before.htm}-->
+                        <!--<?php if (!empty($forum['thread_rank'])) { ?>
+                        <div>
+                            <?php echo form_radio('thread_rank', array(lang('desc'), lang('rank')), $orderby);?>
+                        </div>
+                        <?php } ?>-->
+                        <!--{hook admin_content_rank_after.htm}-->
+                        <div>
+                            <?php if (empty($columnlist)) { ?>
+                            <a class="btn btn-info btn-sm" href="<?php echo url('column-list','',TRUE);?>"><?php echo lang('create').lang('column'); ?></a>
+                            <?php } else { ?>
+                            <a class="btn btn-info btn-sm" href="<?php echo url('content-create', array('fid'=>$fid), TRUE);?>"><?php echo lang('increase').lang('content'); ?></a>
                             <?php } ?>
-                            <!--{hook admin_content_select_end.htm}-->
-                        </select>
+                        </div>
+                        <!--{hook admin_content_menu_end.htm}-->
                     </div>
-                    <!--{hook admin_content_rank_before.htm}-->
-                    <!--<?php if (!empty($forum['thread_rank'])) { ?>
-                    <div>
-                        <?php echo form_radio('thread_rank', array(lang('desc'), lang('rank')), $orderby);?>
-                    </div>
-                    <?php } ?>-->
-                    <!--{hook admin_content_rank_after.htm}-->
-                    <div>
-                        <?php if (empty($columnlist)) { ?>
-                        <a class="btn btn-info btn-sm" href="<?php echo url('column-list');?>"><?php echo lang('create').lang('column'); ?></a>
-                        <?php } else { ?>
-                        <a class="btn btn-info btn-sm" href="<?php echo url('content-create-'.$fid);?>"><?php echo lang('increase').lang('content'); ?></a>
-                        <?php } ?>
-                    </div>
-                    <!--{hook admin_content_menu_end.htm}-->
+                    <ul class="list-unstyled threadlist mb-0">
+                        <!--{hook admin_content_threadlist_before.htm}-->
+                        <?php include _include(ADMIN_PATH.'view/htm/thread_list.inc.htm');?>
+                        <!--{hook admin_content_threadlist_after.htm}-->
+                    </ul>
                 </div>
-				<ul class="list-unstyled threadlist mb-0">
-					<!--{hook admin_content_threadlist_before.htm}-->
-					<?php include _include(ADMIN_PATH.'view/htm/thread_list.inc.htm');?>
-					<!--{hook admin_content_threadlist_after.htm}-->
-				</ul>
-			</div>
-		</div>
+            </div>
 
-        <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+            <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
 
-		<!--{hook admin_content_page_before.htm}-->
-        <?php if ($pagination) { ?>
-        <nav class="my-1"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
-        <?php } ?>
-		<!--{hook admin_content_page_after.htm}-->
-	</div>
-</div>
+            <!--{hook admin_content_page_before.htm}-->
+            <?php if ($pagination) { ?>
+            <nav class="my-1"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
+            <?php } ?>
+            <!--{hook admin_content_page_after.htm}-->
+        </div>
+    </div>
 </div>
 <!--{hook admin_content_end.htm}-->
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    /*$('ul.threadlist').base_href('<?php echo url_path();?>');*/
-    var threadlist = $("ul.threadlist a");
-    var path = "<?php echo url_path();?>";
-    threadlist.attr('target','_blank');
+    var threadlist = $('ul.threadlist');
     threadlist.each(function(){
-        var href = $(this).attr('href');
-        if (url_rewrite_on <= 1) {
-            var href = href.replace(href, path + href);
-        } else {
-            var href = href.replace('/admin', '');
+        var jthis = $(this);
+        var url = jthis.find('a');
+        var href = url.attr('href');
+        url.attr('target','_blank');
+        if (url_rewrite_on < 2) {
+            href = '../' + href;
+            url.attr('href', href);
+            var avatar = url.find('.avatar-1');
+            var src = avatar.attr('src');
+            var len = xn.strpos(src, 'view/');
+            var s = xn.substr(src, len, src.length);
+            src = '../' + s;
+            avatar.attr('src', src);
         }
-        $(this).attr('href', href);
-        $(this).attr('target','_blank');
     });
 
-    $(".mod-button button").each(function () {
+    $('.mod-button button').each(function () {
         var modal_url = $(this).attr('data-modal-url');
-        if (url_rewrite_on <= 1) {
-            $(this).attr('data-modal-url', path + modal_url);
-        }
+        if (url_rewrite_on < 2) $(this).attr('data-modal-url', '../' + modal_url);
     });
 
     $('.update-thread').on('click', function () {
@@ -100,45 +101,14 @@
         }
     });
 
-    /* 对主题排序 */
-    /*$('button.rank').on('click', function () {
-        var rankarr = new Array();
-        $('input[name="rank"]').each(function(){
-            var tid = xn.intval($(this).attr('id'));
-            var oldrank = xn.intval($(this).attr('rank'));
-            var v = xn.intval($(this).val());
-            rankarr.push({tid:tid,oldrank:oldrank,rank:v}); /!*添加至数组*!/
-        });
-        var safe_token = '<?php echo $safe_token;?>';
-        $.xpost(xn.url('content-list'), {safe_token: safe_token,data:rankarr}, function (code, message) {
-            if (code == 0) {
-                $.alert(message);
-                setTimeout(function() {
-                    window.location.reload();
-                }, 1000);
-            } else {
-                $.alert(message);
-            }
-        });
-    });
-
-    /!* 主题排序切换 *!/
-    $('input[name="thread_rank"]').click(function () {
-        if ($(this).checked() == 1) {
-            window.location = xn.url('content-list-' + fid + '-1-1');
-        } else {
-            window.location = xn.url('content-list-' + fid);
-        }
-    });*/
-
     var select = $('select[name="fid"]');
     select.val(<?php echo $fid;?>);
     select.change(function () {
         var fid = $(this).val();
         <?php if ('content' == $route) { ?>
-        window.location = xn.url('content-list-' + fid);
+            window.location = xn.url('content-list', {fid:fid});
         <?php } elseif ('sticky' == $route) { ?>
-            window.location = xn.url('sticky-list-' + fid);
+            window.location = xn.url('sticky-list', {fid:fid});
         <?php } ?>
         <!--{hook admin_content_jump_by_fid.htm}-->
     });

@@ -15,7 +15,7 @@ if (DEBUG < 3) {
     // 管理组检查 / check admin group
     if (FALSE === group_access($gid, 'intoadmin')) {
         setcookie($conf['cookie_pre'] . 'sid', '', $time - 86400);
-        http_location(url('../user-login'));
+        http_location(url('user-login', '', 2));
     }
 
     // hook admin_index_inc_check_before.php
@@ -81,12 +81,6 @@ switch ($route) {
         // hook admin_index_route_case_default.php
         include _include(ADMIN_PATH . 'route/index.php');
         break;
-    /*
-    !is_word($route) AND http_404();
-    $routefile = _include(ADMIN_PATH."route/$route.php");
-    !is_file($routefile) AND  http_404();
-    include $routefile;
-    */
 }
 
 // hook admin_index_inc_end.php

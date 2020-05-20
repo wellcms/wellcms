@@ -1,13 +1,13 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_flag_list_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
 	<div class="col-lg-12">
 		<!--{hook admin_flag_list_breadcrumb_before.htm}-->
 		<?php if(empty($hide_breadcrumb)) { ?>
 		<ol class="breadcrumb d-none d-md-flex text-muted">
-            <li class="breadcrumb-item"><a href="<?php echo url('flag-list');?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><a href="<?php echo url('flag-list', '', TRUE);?>"><i class="icon-home" aria-hidden="true"></i></a></li>
             <?php if ($fid) { ?>
             <li class="breadcrumb-item"><?php echo $forum['name'];?></li>
             <?php } else { ?>
@@ -20,7 +20,7 @@
 		<!--{hook admin_flag_list_breadcrumb_after.htm}-->
 		<div class="card card-threadlist">
 			<div class="card-body">
-                <div class="row d-flex justify-content-between mx-0 mb-3">
+                <div class="d-flex justify-content-between mb-3">
                     <!--{hook admin_flag_list_menu_start.htm}-->
                     <div>
                         <select class="custom-select mr-1 w-auto" name="fid">
@@ -41,7 +41,7 @@
                     <!--{hook admin_flag_list_rank_after.htm}-->
 
                     <div>
-                        <a class="btn btn-info btn-sm" href="<?php echo url('flag-create-' . $fid);?>"><?php echo lang('increase').lang('flag'); ?></a>
+                        <a class="btn btn-info btn-sm" href="<?php echo url('flag-create', array('fid'=>$fid), TRUE);?>"><?php echo lang('increase').lang('flag'); ?></a>
                     </div>
                     <!--{hook admin_flag_list_menu_end.htm}-->
                 </div>
@@ -59,7 +59,7 @@
 						<td><?php echo lang('operation');?></td>
 					</tr>
 					<?php if(!empty($arrlist)){ foreach($arrlist as $k => &$val) {?>
-					<tr class="tap" data-href="<?php echo url('flag-read-' . $val['flagid']); ?>">
+					<tr class="tap" data-href="<?php echo url('flag-read', array('flagid'=>$val['flagid']), TRUE); ?>">
 						<td class="break-all">
 							<?php echo $val['flagid'];?>
 						</td>
@@ -67,7 +67,7 @@
 							<input type="text" placeholder="<?php echo lang('rank');?>" name="rank" value="<?php echo $val['rank']; ?>" rank="<?php echo $val['rank'];?>" id="<?php echo $val['flagid'];?>" style="width: 35px;">
 						</td>
 						<td class="break-all">
-                            <a href="<?php echo url('flag-read-' . $val['flagid']); ?>" rel="nofollow"><?php echo $val['name'];?></a>
+                            <a href="<?php echo url('flag-read', array('flagid'=>$val['flagid']), TRUE); ?>" rel="nofollow"><?php echo $val['name'];?></a>
 						</td>
 						<td class="hidden-sm hidden-md break-all">
 							<?php echo $val['forum_name'];?>
@@ -85,8 +85,8 @@
 							<?php echo $val['create_date_text'];?>
 						</td>
 						<td class="small">
-                            <a href="<?php echo url('flag-update-' . $val['fid'] . '-' . $val['flagid']); ?>" rel="nofollow" class="text-grey mr-2 update"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
-                            <a data-href="<?php echo url('flag-list-' . $val['fid'] . '-' . $val['flagid']);?>" n="<?php echo $val['count'];?>" href="javascript:void(0);" class="text-grey delete"><i class="icon-remove"></i>&nbsp;<?php echo lang('delete');?></a>
+                            <a href="<?php echo url('flag-update', array('fid'=>$val['fid'], 'flagid'=>$val['flagid']), TRUE); ?>" rel="nofollow" class="text-grey mr-2 update"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
+                            <a data-href="<?php echo url('flag-list', array('fid'=>$val['fid']), TRUE);?>" n="<?php echo $val['count'];?>" href="javascript:void(0);" class="text-grey delete"><i class="icon-remove"></i>&nbsp;<?php echo lang('delete');?></a>
 						</td>
 					</tr>
 					<?php }} ?>
@@ -160,14 +160,15 @@
     select.val(<?php echo $fid;?>);
     select.change(function () {
         var fid = $(this).val();
-        window.location = xn.url('flag-list-' + fid);
+        window.location = xn.url('flag-list',{fid:fid});
     });
 
     $('input[name="flag_rank"]').click(function () {
+        var fid = '<?php echo $fid;?>';
         if ($(this).checked() == 1) {
-            window.location = xn.url('flag-list-<?php echo $fid;?>-1-1');
+            window.location = xn.url('flag-list',{fid:fid,orderby:1});
         } else {
-            window.location = xn.url('flag-list-<?php echo $fid;?>');
+            window.location = xn.url('flag-list',{fid:fid});
         }
     });
 

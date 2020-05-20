@@ -158,6 +158,7 @@ function data_message_replace_url($tid, $message)
 
     if (0 == $conf['attach_on']) {
         $message = FALSE !== strpos($message, '="../upload/') ? str_replace('="../upload/', '="upload/', $message) : $message;
+        $message = FALSE !== strpos($message, '="/upload/') ? str_replace('="/upload/', '="upload/', $message) : $message;
     } elseif (1 == $conf['attach_on']) {
         // 使用云储存
         $message = str_replace('="' . $conf['cloud_url'] . 'upload/', '="upload/', $message);
@@ -234,13 +235,13 @@ function data_file_list_html($filelist, $include_delete = FALSE, $access = FALSE
     $s .= '<legend>' . lang('uploaded_attach') . '：</legend>' . "\r\n";
     $s .= '<ul class="list-unstyled attachlist nowrap">' . "\r\n";
     foreach ($filelist as &$attach) {
-        $s .= '<li aid="' . $attach['aid'] . '" class="p-1">' . "\r\n";
-        $s .= '		<div class="w-75"><a href="' . (FALSE != $access ? $path . $attach['url'] : url('attach-download-' . $attach['aid'])) . '" target="_blank" class="d-block ellipsis">' . "\r\n";
+        $s .= '<li aid="' . $attach['aid'] . '" class="d-flex justify-content-between p-1">' . "\r\n";
+        $s .= '		<a href="' . (FALSE != $access ? $path . $attach['url'] : url('attach-download-' . $attach['aid'])) . '" target="_blank" class="d-block ellipsis">' . "\r\n";
         $s .= '			<i class="icon filetype ' . $attach['filetype'] . '"></i>' . "\r\n";
         $s .= '			' . $attach['orgfilename'] . "\r\n";
-        $s .= '		</a></div>' . "\r\n";
+        $s .= '		</a>' . "\r\n";
         // hook model_post_file_list_html_delete_before.php
-        $include_delete AND $s .= '		<a href="javascript:void(0)" class="w-25 position-absolute text-center delete" style="margin-top:-21px;right:0px;"><i class="icon-remove"></i> ' . lang('delete') . '</a>' . "\r\n";
+        $include_delete AND $s .= '		<span class="btn px-1 py-0 delete"><i class="icon-remove"></i></span>' . "\r\n";
         // hook model_post_file_list_html_delete_after.php
         $s .= '</li>' . "\r\n";
     };

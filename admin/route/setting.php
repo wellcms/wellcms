@@ -10,186 +10,190 @@ include _include(APP_PATH . 'model/smtp.func.php');
 $smtplist = smtp_init(APP_PATH . 'conf/smtp.conf.php');
 // hook admin_setting_start.php
 
-if ('base' == $action) {
+switch ($action) {
+    // hook admin_setting_case_start.php
+    case 'base':
+        // hook admin_setting_base_get_post.php
 
-    // hook admin_setting_base_get_post.php
+        if ('GET' == $method) {
 
-    if ('GET' == $method) {
+            // hook admin_setting_base_get_start.php
 
-        // hook admin_setting_base_get_start.php
+            $input = array();
+            $input['sitename'] = form_text('sitename', $conf['sitename']);
+            $input['sitebrief'] = form_textarea('sitebrief', $conf['sitebrief'], '', '100%', 100);
+            $input['runlevel'] = form_radio('runlevel', array(0 => lang('runlevel_0'), 1 => lang('runlevel_1'), 2 => lang('runlevel_2'), 3 => lang('runlevel_3'), 4 => lang('runlevel_4'), 5 => lang('runlevel_5')), $conf['runlevel']);
+            $input['user_create_on'] = form_radio_yes_no('user_create_on', $conf['user_create_on']);
+            $input['user_create_email_on'] = form_radio_yes_no('user_create_email_on', $conf['user_create_email_on']);
+            $input['user_resetpw_on'] = form_radio_yes_no('user_resetpw_on', $conf['user_resetpw_on']);
+            $input['lang'] = form_select('lang', array('zh-cn' => lang('lang_zh_cn'), 'zh-tw' => lang('lang_zh_tw'), 'en-us' => lang('lang_en_us')), $conf['lang']);
+            $safe_token = well_token_set($uid);
+            $input['safe_token'] = form_hidden('safe_token', $safe_token);
 
-        $input = array();
-        $input['sitename'] = form_text('sitename', $conf['sitename']);
-        $input['sitebrief'] = form_textarea('sitebrief', $conf['sitebrief'], '', '100%', 100);
-        $input['runlevel'] = form_radio('runlevel', array(0 => lang('runlevel_0'), 1 => lang('runlevel_1'), 2 => lang('runlevel_2'), 3 => lang('runlevel_3'), 4 => lang('runlevel_4'), 5 => lang('runlevel_5')), $conf['runlevel']);
-        $input['user_create_on'] = form_radio_yes_no('user_create_on', $conf['user_create_on']);
-        $input['user_create_email_on'] = form_radio_yes_no('user_create_email_on', $conf['user_create_email_on']);
-        $input['user_resetpw_on'] = form_radio_yes_no('user_resetpw_on', $conf['user_resetpw_on']);
-        $input['lang'] = form_select('lang', array('zh-cn' => lang('lang_zh_cn'), 'zh-tw' => lang('lang_zh_tw'), 'en-us' => lang('lang_en_us')), $conf['lang']);
-        $safe_token = well_token_set($uid);
-        $input['safe_token'] = form_hidden('safe_token', $safe_token);
+            $header['title'] = lang('admin_setting_base');
+            $header['mobile_title'] = lang('admin_setting_base');
 
-        $header['title'] = lang('admin_setting_base');
-        $header['mobile_title'] = lang('admin_setting_base');
+            // hook admin_setting_base_get_end.php
 
-        // hook admin_setting_base_get_end.php
+            include _include(ADMIN_PATH . 'view/htm/setting_base.htm');
 
-        include _include(ADMIN_PATH . 'view/htm/setting_base.htm');
+        } elseif ('POST' == $method) {
 
-    } elseif ('POST' == $method) {
+            $safe_token = param('safe_token');
+            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-        $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
 
-        FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
+            $sitebrief = param('sitebrief', '', FALSE);
+            $sitename = param('sitename', '', FALSE);
+            $sitename = trim($sitename);
+            $runlevel = param('runlevel', 0);
+            $user_create_on = param('user_create_on', 0);
+            $user_create_email_on = param('user_create_email_on', 0);
+            $user_resetpw_on = param('user_resetpw_on', 0);
 
-        $sitebrief = param('sitebrief', '', FALSE);
-        $sitename = param('sitename', '', FALSE);
-        $sitename = trim($sitename);
-        $runlevel = param('runlevel', 0);
-        $user_create_on = param('user_create_on', 0);
-        $user_create_email_on = param('user_create_email_on', 0);
-        $user_resetpw_on = param('user_resetpw_on', 0);
+            $_lang = param('lang');
 
-        $_lang = param('lang');
+            // hook admin_setting_base_post_start.php
 
-        // hook admin_setting_base_post_start.php
+            $replace = array();
+            $replace['sitename'] = xn_html_safe(filter_all_html($sitename));
+            $replace['sitebrief'] = xn_html_safe($sitebrief);
+            $replace['runlevel'] = $runlevel;
+            $replace['user_create_on'] = $user_create_on;
+            $replace['user_create_email_on'] = $user_create_email_on;
+            $replace['user_resetpw_on'] = $user_resetpw_on;
+            $replace['lang'] = $_lang;
 
-        $replace = array();
-        $replace['sitename'] = xn_html_safe(filter_all_html($sitename));
-        $replace['sitebrief'] = xn_html_safe($sitebrief);
-        $replace['runlevel'] = $runlevel;
-        $replace['user_create_on'] = $user_create_on;
-        $replace['user_create_email_on'] = $user_create_email_on;
-        $replace['user_resetpw_on'] = $user_resetpw_on;
-        $replace['lang'] = $_lang;
+            file_replace_var(APP_PATH . 'conf/conf.php', $replace);
 
-        file_replace_var(APP_PATH . 'conf/conf.php', $replace);
+            // hook admin_setting_base_post_end.php
 
-        // hook admin_setting_base_post_end.php
-
-        message(0, lang('modify_successfully'));
-    }
-
-} elseif ('smtp' == $action) {
-
-    // hook admin_setting_smtp_get_post.php
-
-    if ('GET' == $method) {
-
-        // hook admin_setting_smtp_get_start.php
-
-        $header['title'] = lang('admin_setting_smtp');
-        $header['mobile_title'] = lang('admin_setting_smtp');
-
-        $smtplist = smtp_find();
-        $maxid = smtp_maxid();
-        $safe_token = well_token_set($uid);
-
-        // hook admin_setting_smtp_get_end.php
-
-        include _include(ADMIN_PATH . "view/htm/setting_smtp.htm");
-
-    } elseif ('POST' == $method) {
-
-        $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
-
-        FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
-
-        // hook admin_setting_smtp_post_start.php
-
-        $email = param('email', array(''));
-        $host = param('host', array(''));
-        $port = param('port', array(0));
-        $user = param('user', array(''));
-        $pass = param('pass', array(''));
-
-        $smtplist = array();
-        foreach ($email as $k => $v) {
-            $smtplist[$k] = array(
-                'email' => $email[$k],
-                'host' => $host[$k],
-                'port' => $port[$k],
-                'user' => $user[$k],
-                'pass' => $pass[$k],
-            );
+            message(0, lang('modify_successfully'));
         }
-        $r = file_put_contents_try(APP_PATH . 'conf/smtp.conf.php', "<?php\r\nreturn " . var_export($smtplist, true) . ";\r\n?>");
-        !$r AND message(-1, lang('conf/smtp.conf.php', array('file' => 'conf/smtp.conf.php')));
+        break;
+    case 'smtp':
+        // hook admin_setting_smtp_get_post.php
 
-        // hook admin_setting_smtp_post_end.php
+        if ('GET' == $method) {
 
-        message(0, lang('save_successfully'));
-    }
-} elseif ('website' == $action) {
+            // hook admin_setting_smtp_get_start.php
 
-    // hook admin_setting_website_start.php
+            $header['title'] = lang('admin_setting_smtp');
+            $header['mobile_title'] = lang('admin_setting_smtp');
 
-    $setting = array_value($config, 'setting');
+            $smtplist = smtp_find();
+            $maxid = smtp_maxid();
+            $safe_token = well_token_set($uid);
 
-    if ('GET' == $method) {
+            // hook admin_setting_smtp_get_end.php
 
-        $header['title'] = lang('admin_site_setting');
-        $header['mobile_title'] = lang('admin_site_setting');
-        $header['mobile_link'] = url('system-setting');
+            include _include(ADMIN_PATH . "view/htm/setting_smtp.htm");
 
-        // hook admin_setting_website_get_start.php
+        } elseif ('POST' == $method) {
 
-        $input = array();
-        $website_modearr = array('0' => lang('custom'), '1' => lang('portal'), '2' => lang('flat'));
-        // hook admin_setting_website_get_before.php
-        $input['website_mode'] = form_radio('website_mode', $website_modearr, array_value($setting, 'website_mode', 0));
+            $safe_token = param('safe_token');
+            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-        $tpl_modearr = array('0' => lang('mode_0'), '1' => lang('mode_1'), '2' => lang('mode_2'));
-        // hook admin_setting_website_get_center.php
-        $input['tpl_mode'] = form_radio('tpl_mode', $tpl_modearr, array_value($setting, 'tpl_mode', 0));
-        $input['thumbnail_on'] = form_radio_yes_no('thumbnail_on', array_value($setting, 'thumbnail_on', 0));
-        $input['save_image_on'] = form_radio_yes_no('save_image_on', array_value($setting, 'save_image_on', 0));
-        $safe_token = well_token_set($uid);
-        $input['safe_token'] = form_hidden('safe_token', $safe_token);
-        // hook admin_setting_website_get_end.php
+            FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
 
-        include _include(ADMIN_PATH . 'view/htm/setting_website.htm');
+            // hook admin_setting_smtp_post_start.php
 
-    } elseif ('POST' == $method) {
+            $email = param('email', array(''));
+            $host = param('host', array(''));
+            $port = param('port', array(0));
+            $user = param('user', array(''));
+            $pass = param('pass', array(''));
 
-        $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            $smtplist = array();
+            foreach ($email as $k => $v) {
+                $smtplist[$k] = array(
+                    'email' => $email[$k],
+                    'host' => $host[$k],
+                    'port' => $port[$k],
+                    'user' => $user[$k],
+                    'pass' => $pass[$k],
+                );
+            }
+            $r = file_put_contents_try(APP_PATH . 'conf/smtp.conf.php', "<?php\r\nreturn " . var_export($smtplist, true) . ";\r\n?>");
+            !$r AND message(-1, lang('conf/smtp.conf.php', array('file' => 'conf/smtp.conf.php')));
 
-        FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
+            // hook admin_setting_smtp_post_end.php
 
-        // hook admin_setting_website_post_start.php
+            message(0, lang('save_successfully'));
+        }
+        break;
+    case 'website':
+        // hook admin_setting_website_start.php
 
-        $website_mode = param('website_mode', 0);
-        $tpl_mode = param('tpl_mode', 0);
-        $thumbnail_on = param('thumbnail_on', 0);
-        $save_image_on = param('save_image_on', 0);
+        $setting = array_value($config, 'setting');
 
-        // hook admin_setting_website_post_before.php
-        $setting['website_mode'] = $website_mode;
-        $setting['tpl_mode'] = $tpl_mode;
-        $setting['thumbnail_on'] = $thumbnail_on;
-        $setting['save_image_on'] = $save_image_on;
+        if ('GET' == $method) {
 
-        // hook admin_setting_website_post_center.php
+            $header['title'] = lang('admin_site_setting');
+            $header['mobile_title'] = lang('admin_site_setting');
+            $header['mobile_link'] = url('system-setting', '', TRUE);
 
-        // 模式更改删除缓存
-        array_value($setting, 'website_mode', 0) != $website_mode AND cache_delete('portal_index_thread');
+            // hook admin_setting_website_get_start.php
 
-        // hook admin_setting_website_post_middle.php
+            $input = array();
+            $website_modearr = array('0' => lang('custom'), '1' => lang('portal'), '2' => lang('flat'));
+            // hook admin_setting_website_get_before.php
+            $input['website_mode'] = form_radio('website_mode', $website_modearr, array_value($setting, 'website_mode', 0));
 
-        $config['setting'] = $setting;
+            $tpl_modearr = array('0' => lang('mode_0'), '1' => lang('mode_1'), '2' => lang('mode_2'));
+            // hook admin_setting_website_get_center.php
+            $input['tpl_mode'] = form_radio('tpl_mode', $tpl_modearr, array_value($setting, 'tpl_mode', 0));
+            $input['thumbnail_on'] = form_radio_yes_no('thumbnail_on', array_value($setting, 'thumbnail_on', 0));
+            $input['save_image_on'] = form_radio_yes_no('save_image_on', array_value($setting, 'save_image_on', 0));
+            $safe_token = well_token_set($uid);
+            $input['safe_token'] = form_hidden('safe_token', $safe_token);
+            // hook admin_setting_website_get_end.php
 
-        // hook admin_setting_website_post_after.php
+            include _include(ADMIN_PATH . 'view/htm/setting_website.htm');
 
-        setting_set('conf', $config);
+        } elseif ('POST' == $method) {
 
-        // hook admin_setting_website_post_end.php
+            $safe_token = param('safe_token');
+            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-        message(0, lang('modify_successfully'));
-    }
+            FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
 
+            // hook admin_setting_website_post_start.php
+
+            $website_mode = param('website_mode', 0);
+            $tpl_mode = param('tpl_mode', 0);
+            $thumbnail_on = param('thumbnail_on', 0);
+            $save_image_on = param('save_image_on', 0);
+
+            // hook admin_setting_website_post_before.php
+            $setting['website_mode'] = $website_mode;
+            $setting['tpl_mode'] = $tpl_mode;
+            $setting['thumbnail_on'] = $thumbnail_on;
+            $setting['save_image_on'] = $save_image_on;
+
+            // hook admin_setting_website_post_center.php
+
+            // 模式更改删除缓存
+            array_value($setting, 'website_mode', 0) != $website_mode AND cache_delete('portal_index_thread');
+
+            // hook admin_setting_website_post_middle.php
+
+            $config['setting'] = $setting;
+
+            // hook admin_setting_website_post_after.php
+
+            setting_set('conf', $config);
+
+            // hook admin_setting_website_post_end.php
+
+            message(0, lang('modify_successfully'));
+        }
+        break;
+    // hook admin_setting_case_end.php
+    default:
+        message(-1, lang('data_malformation'));
+        break;
 }
 
 // hook admin_setting_end.php

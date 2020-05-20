@@ -4,8 +4,6 @@ return array(
     'user' => '用户',
     'forum' => '版块',
     'plugin' => '插件',
-    'other' => '其他',
-
     'user_admin' => '用户管理',
     'group_admin' => '用户组管理',
     'forum_admin' => '版块管理',
@@ -13,7 +11,6 @@ return array(
     'thread_admin' => '主题管理',
     'plugin_admin' => '插件管理',
     'other_admin' => '其他管理',
-
     'admin_index_page' => '后台',
     'front_index_page' => '前台',
     'admin_site_setting' => '站点设置',
@@ -23,7 +20,6 @@ return array(
     'admin_clear_tmp' => '清理临时目录',
     'admin_clear_cache' => '清理缓存',
     'admin_clear_successfully' => '清理成功',
-
     'admin_user_list' => '用户列表',
     'admin_thread_batch' => '主题批量管理',
     'admin_user_group' => '用户组',
@@ -32,23 +28,18 @@ return array(
     'admin_plugin_official_list' => '官方插件',
     'admin_plugin_official_free_list' => '免费插件',
     'admin_plugin_official_fee_list' => '收费插件',
-
     'admin_token_error' => '管理令牌错误，可能因为您的网络环境不稳定，可以尝试取消后台绑定 IP，配置 conf.php，admin_bind_ip => 0 ',
     'admin_token_expiry' => '管理登录令牌失效，请重新登录',
     'user_edit' => '用户编辑',
     'edit_successfully' => '编辑成功',
-    'item_not_exists' => '{item} 不存在',
     'item_not_moderator' => '{item} 不是版主',
     'group_not_exists' => '用户组不存在',
-
-    'admin_login' => '管理登录',
     'save_conf_failed' => '保存数据到配置文件 {file} 失败，请检查文件的可写权限',
     'user_already_exists' => '用户已经存在',
     'email_already_exists' => '邮箱已经存在',
     'uid_not_exists' => '指定的 UID 不存在',
     'data_not_changed' => '没有数据变动',
     'admin_cant_be_deleted' => '不能直接删除管理员，请先编辑为普通用户组',
-
     // 首页
     'admin_index' => '后台首页',
     'site_stat_info' => '站点统计信息',
@@ -63,10 +54,7 @@ return array(
     'memory_limit' => '内存上限',
     'client_ip' => '客户端 IP',
     'server_ip' => '服务端 IP',
-    'dev_team_info' => '开发团队信息',
-
     'for_safe_input_password_again' => '为了您的安全，请再次输入账户密码',
-
     // 设置
     'sitename' => '站点名称',
     'sitebrief' => '站点介绍',
@@ -81,7 +69,6 @@ return array(
     'port' => '端口',
     'account' => '账号',
     'smtp_host' => 'SMTP 主机',
-
     // 版块
     'forum_list' => '版块列表',
     'forum_id' => '版块 ID',
@@ -106,12 +93,9 @@ return array(
     'forum_delete_thread_before_delete_forum' => '请先通过批量主题管理删除版块主题。',
     'forum_please_delete_sub_forum' => '请删除子版块。',
     'forum_delete_successfully' => '删除成功。',
-
     // 主题
     'thread_queue_not_exists' => '队列不存在',
     'search_condition' => '搜索条件',
-    'start_date' => '开始时间',
-    'end_date' => '结束时间',
     'searching' => '正在搜索',
     'search_complete' => '搜索完成',
     'operating' => '正在操作',
@@ -119,15 +103,12 @@ return array(
     'click_to_view' => '点击查看',
     'thread_userip' => '发帖 IP',
     'thread_search_result' => '结果：{n} 条',
-
     // 用户
     'please_check_delete_user' => '请勾选您要删除的用户',
     'user_delete_confirm' => '确定删除用户？',
     'user_admin_cant_be_deleted' => '不允许删除管理员用户，如果确实要删除，请先调整用户组!',
     'search_type' => '搜索类型',
     'user_privileges' => '用户权限',
-    'author' => '作者',
-
     // 用户组
     'group_list' => '用户组列表',
     'group_edit' => '用户组编辑',
@@ -137,16 +118,12 @@ return array(
     'group_credits_to' => '结束积分',
     'group_edit_tips' => '请谨慎编辑用户组，一旦确定后不要轻易变动，否则可能会导致用户关联错误，一般在正式运营时就不要再变动。',
     'admin_privilege' => '前台权限',
-    'top' => '置顶',
     'ban_user' => '禁止用户',
-    'delete_user' => '删除用户',
     'view_user_info' => '查看用户信息',
-
     // 插件
     'plugin_token_error' => '令牌错误',
     'plugin_dir' => '插件目录名',
     'plugin_version' => '要求 WellCMS 最低版本',
-    'price' => '价格',
     'installs' => '安装次数',
     'plugin_user_stars_fmt' => '用户评级',
     'plugin_sells' => '销售次数',
@@ -231,7 +208,6 @@ return array(
     'plugin_get_data_failed' => '从官方获取插件数据失败',
     'plugin_get_data_fmt_failed' => '从官方获取数据格式错误',
     // hook lang_zh_cn_admin.php
-
 );
 
 ?>

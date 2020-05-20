@@ -52,7 +52,7 @@
 ?>
 
 <!--{hook admin_column_post_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
 	<div class="col-12">
         <ol class="breadcrumb d-none d-md-flex text-muted">
@@ -385,7 +385,7 @@
         var category = $('input[name="category"]').checked();
         if (category == 0) {
             var fup = '<?php echo $fup;?>';
-            window.location = xn.url('column-create-'+fup,{category:0,next:1});
+            window.location = xn.url('column-create',{fup:fup,category:0,next:1});
         } else if (category == 1) {
             window.location = xn.url('column-create',{category:1,next:1});
         } else if (category == 2) {

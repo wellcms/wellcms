@@ -112,14 +112,14 @@ function well_thread_create($arr)
     // hook model__thread_create_thread_after.php
 
     $upload_thumbnail = well_attach_assoc_type('thumbnail'); // 缩略图主图
-    $upload_file = well_attach_assoc_type('post'); // 内容附件
+    $upload_file = (well_attach_assoc_type('post') AND preg_match_all('#<img[^>]+src=".*?(.+\.(jpg|jpeg|gif|bmp|bnp|png))"#i', strtolower($message))); // 内容中上传的图片
 
     // hook model__thread_create_center.php
 
     if (empty($delete_pic)) {
         if (!empty($upload_thumbnail)) {
             $thread['icon'] = $time;
-        } elseif ($thumbnail && (!empty($upload_file) || FALSE !== stripos($message, 'src="http'))) {
+        } elseif ($thumbnail && ($upload_file || preg_match_all('#<img[^>]+src="(http.*?)"#i', strtolower($message)))) {
             $thread['icon'] = $time;
         }
     }
@@ -134,10 +134,10 @@ function well_thread_create($arr)
     // hook model__thread_create_after.php
 
     // 关联主图 assoc:thumbnail
-    $create_thumbnail = 0;
+    $create_thumbnail = FALSE;
     if (empty($delete_pic)) {
         // 没上传主图 内容中有上传图片附件
-        if (empty($upload_thumbnail) && !empty($upload_file)) {
+        if (empty($upload_thumbnail) && $upload_file) {
             // 获取内容第一张图为主图
             $arr = array('tid' => $tid, 'uid' => $uid, 'fid' => $fid);
             // hook model__thread_create_thumbnail_before.php
@@ -151,7 +151,7 @@ function well_thread_create($arr)
             unset($arr);
         } elseif ($thumbnail) {
             // 获取内容中图片，远程图片下载创建缩略图
-            $create_thumbnail = 1;
+            $create_thumbnail = TRUE;
         }
     }
 
@@ -852,7 +852,7 @@ function well_thread_format(&$thread)
     $thread['allowupdate'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
     $thread['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
     $thread['allowtop'] = forum_access_mod($thread['fid'], $gid, 'allowtop');
-    
+
     // hook model__thread_format_end.php
     $thread = well_thread_safe_info($thread);
 }

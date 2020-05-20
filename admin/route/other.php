@@ -29,7 +29,7 @@ switch ($action) {
 
             $header['title'] = lang('admin_clear_cache');
             $header['mobile_title'] = lang('admin_clear_cache');
-            $header['mobile_link'] = url('other-cache');
+            $header['mobile_link'] = url('other-cache', '', TRUE);
 
             include _include(ADMIN_PATH . 'view/htm/other_cache.htm');
 
@@ -59,341 +59,14 @@ switch ($action) {
             message(0, lang('admin_clear_successfully'));
         }
         break;
-    case 'map':
-        // hook admin_other_map_start.php
-
-        $setting = array_value($config, 'setting');
-
-        if ('GET' == $method) {
-
-            $header['title'] = lang('map');
-            $header['mobile_title'] = lang('map');
-            $header['mobile_link'] = url('other-map');
-
-            // hook admin_other_map_get_start.php
-
-            // 1生成地图
-            $type = param('type', 0);
-
-            $http_url = str_replace($conf['url_rewrite_on'] < 2 ? '/admin/' : 'admin/', '', http_url_path());
-
-            if (1 == $type) {
-
-                // hook admin_other_map_xml_start.php
-
-                !file_exists(array_value($setting, 'map', 'sitemap')) AND xn_mkdir(APP_PATH . array_value($setting, 'map', 'sitemap'), 0777);
-
-                $page = param('page', 0); // 当前页数
-                $n = param('n', 0); // 总页数
-                $pagesize = 40000;
-                $fids = param('fids');
-                $fid = param('fid', 0);
-
-                $forum_xml = $xml = '';
-                $lastmod = date('Y-m-d');
-
-                // hook admin_other_map_xml_before.php
-
-                $dir = array_value($setting, 'map', 'sitemap') . '/';
-
-                // hook admin_other_map_xml_middle.php
-
-                //$forumlist_show = category_list($forumlist);
-
-                // hook admin_other_map_xml_after.php
-
-                if (!empty($forumlist_show) && !$fids) {
-                    // 生成栏目索引
-
-                    $fids = '';
-                    foreach ($forumlist_show as $_forum) {
-
-                        if (0 == $_forum['threads']) continue;
-                        if (in_array($_forum['category'], array(1, 2)) || 0 == $_forum['type']) continue;
-
-                        $fids .= $_forum['fid'] . '|';
-
-                        $n = ceil($_forum['threads'] / $pagesize);
-
-                        if ($conf['url_rewrite_on'] > 1) {
-                            $strlen = xn_strlen($_forum['url']);
-                            $_forum['url'] = str_replace('/', '-', xn_substr($_forum['url'], 1, $strlen));
-                        }
-
-                        //--------------生成栏目索引---------------
-
-                        for ($i = 0; $i < $n; ++$i) {
-                            $forum_xml .= "\r\n<sitemap>
-    <loc>" . $http_url . $dir . str_replace('.html', '-' . $i, $_forum['url']) . '.xml</loc>
-</sitemap>';
-                        }
-
-                        if ($forum_xml) {
-                            $forum_xml = trim($forum_xml, "\r\n");
-                            $forum_map = <<<EOT
-<?xml version="1.0" encoding="utf-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{$forum_xml}  
-</sitemapindex>
-EOT;
-
-                            file_put_contents_try(APP_PATH . $setting['map'] . '/index.xml', $forum_map);
-                        }
-                    }
-
-                    $thread = rtrim($fids, '|');
-
-                    message(0, jump('Create a section index', url('other-map', array('type' => 1, 'fids' => rtrim($fids, '|'))), 1));
-
-                } else {
-
-                    $fidarr = explode('|', $fids);
-                    empty($fid) AND $fid = $fidarr[0];
-
-                    // 按照栏目生成内容索引
-                    $forum = $forumlist_show[$fid];
-                    empty($n) AND $n = ceil($forum['threads'] / $pagesize);
-
-                    $arrlist = thread_tid_find_by_fid($fid, $page, $pagesize);
-                    $tidarr = arrlist_values($arrlist, 'tid');
-                    $threadlist = well_thread_find($tidarr, $pagesize, FALSE);
-
-                    foreach ($threadlist as $_thread) {
-                        /*
-                        百度在标准Sitemap协议基础上增加了<mobile:mobile/>标签，四种取值：
-                        <mobile:mobile/> ：移动网页
-                        <mobile:mobile type="mobile"/> 移动网页
-                        <mobile:mobile type="pc,mobile"/> 自适应网页
-                        <mobile:mobile type="htmladapt"/> 代码适配
-                        如需兼容百度的标签，</loc>后换行追加即可
-                        */
-                        $xml .= '    <url>
-        <loc>' . $http_url . str_replace('/admin/', '', $_thread['url']) . '</loc>
-        <lastmod>' . $lastmod . '</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-    </url>' . "\r\n";
-                    }
-
-                    if ($xml) {
-
-                        if ($conf['url_rewrite_on'] > 1) {
-                            $strlen = xn_strlen($forum['url']);
-                            $forum['url'] = str_replace('/', '-', xn_substr($forum['url'], 1, $strlen));
-                        }
-
-                        $xml = trim($xml, "\r\n");
-                        $map = <<<EOT
-<?xml version="1.0" encoding="utf-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{$xml}
-</urlset>
-EOT;
-                        file_put_contents_try(APP_PATH . $setting['map'] . '/' . str_replace('.html', '-' . $page, $forum['url']) . '.xml', $map);
-                    }
-
-                    $page += 1;
-                    if ($page == $n) {
-                        $page = 0;
-                        $fid = array_value($fidarr, 1, 0);
-                        $n = 0;
-                        unset($fidarr[0]);
-
-                        $fidarr = array_filter($fidarr);
-                        empty($fidarr) AND message(0, jump('Complete', url('other-map'), 2));
-                    }
-                    $fids = implode('|', $fidarr);
-
-                    message(0, jump('Forum : ' . $forum['name'] . ' Number : ' . ($page + 1), url('other-map', array('type' => 1, 'fid' => $fid, 'fids' => $fids, 'n' => $n, 'page' => $page)), 1));
-
-                }
-
-                // hook admin_other_map_xml_end.php
-
-            } else {
-
-                $input = array();
-                $input['map'] = form_text('map', array_value($setting, 'map', 'sitemap'), FALSE, lang('setting_map_tips'));
-                $safe_token = well_token_set($uid);
-                $input['safe_token'] = form_hidden('safe_token', $safe_token);
-
-                // hook admin_other_map_get_before.php
-
-                $arr = array();
-                if (array_value($setting, 'map')) {
-                    $start = xn_strlen(APP_PATH);
-                    foreach (glob(APP_PATH . array_value($setting, 'map') . '/' . '*.*') as $file) {
-                        $end = xn_strlen($file);
-                        $arr[] = $http_url . xn_substr($file, $start, $end);
-                    }
-                }
-            }
-
-            // hook admin_other_map_get_end.php
-
-            include _include(ADMIN_PATH . 'view/htm/other_map.htm');
-
-        } elseif ('POST' == $method) {
-
-            $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
-
-            // hook admin_other_map_post_start.php
-
-            $map = param('map');
-            // 英文 数字 下划线及三种组合 不支持其他字符
-            !preg_match('#^[\w]*$#i', $map) AND message(1, lang('english_number_tips'));
-
-            // hook admin_other_map_post_before.php
-
-            $setting['map'] = $map;
-
-            // hook admin_other_map_post_middle.php
-
-            $config['setting'] = $setting;
-
-            // hook admin_other_map_post_after.php
-
-            setting_set('conf', $config);
-
-            // hook admin_other_map_post_end.php
-
-            message(0, lang('save_successfully'));
-        }
-        break;
-    case 'increase':
-        $installed = array_value($config, 'installed');
-
-        $type = param('type', 0);
-
-        if ('GET' == $method) {
-
-            $page = param('page', 0);
-            $page += 1;
-            $n = param('n', 0);
-            $fid = param('fid', 0);
-            $tid = param('tid', 0);
-
-            if (1 == $n) {
-                $count = 250;
-            } elseif (2 == $n) {
-                $count = 500;
-            } elseif (3 == $n) {
-                $count = 2500;
-            } elseif (4 == $n) {
-                $count = 5000;
-            } else {
-                $count = 50;
-            }
-
-            if (1 == $type && $page <= $count) {
-
-                empty($fid) AND message(0, jump('No section', url('other-increase'), 1));
-
-                // 投入正常运营的站点不能灌水
-                $runtime['articles'] AND 0 == $installed AND message(0, lang('create_failed'));
-
-                if (empty($tid)) {
-                    $tid = well_thread_maxid();
-                    $tid += 1;
-                }
-
-                $number = $tid + 20000;
-                $subject = 'WellCMS 性能测试';
-                $message = 'WellCMS 性能测试';
-                $thread = $thread_tid = $data = '';
-                for ($tid; $tid < $number; ++$tid) {
-                    $thread .= '(' . $tid . ',' . $fid . ',"' . $subject . '",' . $uid . ',' . $time . '),';
-                    $thread_tid .= '(' . $tid . ',' . $fid . ',' . $uid . '),';
-                    $data .= '(' . $tid . ',"' . $message . '"),';
-                }
-
-                $thread = rtrim($thread, ',');
-                $r = db_exec("REPLACE INTO `{$db->tablepre}website_thread` (`tid`,`fid`,`subject`,`uid`,`create_date`) VALUES $thread");
-                FALSE === $r AND message(-1, 'Create thread error');
-
-                $thread_tid = rtrim($thread_tid, ',');
-                FALSE === db_exec("REPLACE INTO `{$db->tablepre}website_thread_tid` (`tid`,`fid`,`uid`) VALUES $thread_tid") AND message(-1, 'Create thread tid error');
-
-                $data = rtrim($data, ',');
-                FALSE === db_exec("REPLACE INTO `{$db->tablepre}website_data` (`tid`,`message`) VALUES $data") AND message(-1, 'Create data error');
-
-                forum_update($fid, array('threads+' => 20000));
-                user_update($uid, array('articles+' => 20000));
-
-                // 灌水标识
-                if (0 == $installed) {
-                    $config['installed'] = 1;
-                    setting_set('conf', $config);
-                }
-
-                message(0, jump('Number : ' . $page . '<br><br>threads : ' . ($page * 20000), url('other-increase', array('type' => 1, 'fid' => $fid, 'n' => $n, 'tid' => $tid, 'page' => $page)), 1));
-
-            } else {
-                $columnlist = category_list($forumlist);
-            }
-
-            $header['title'] = lang('increase_thread');
-            $header['mobile_title'] = lang('increase_thread');
-            $header['mobile_link'] = url('other-increase');
-
-            include _include(ADMIN_PATH . 'view/htm/other_increase.htm');
-
-        } elseif ('POST' == $method) {
-
-            if (1 == $type) {
-
-                db_exec("TRUNCATE  `{$db->tablepre}website_attach`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_comment`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_comment_pid`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_data`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_flag`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_flag_thread`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_link`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_operate`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_page`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_tag`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_tag_thread`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_thread`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_thread_sticky`");
-                db_exec("TRUNCATE  `{$db->tablepre}website_thread_tid`");
-
-                cache_truncate();
-                kv_cache_delete('website');
-
-                $n = user_count();
-                $arrlist = user_find(array(), array(), 1, $n);
-                $uids = array();
-                foreach ($arrlist as $val) {
-                    $uids[] = $val['uid'];
-                }
-                user__update($uids, array('articles' => 0, 'comments' => 0));
-                unset($arrlist);
-
-                $fids = array();
-                foreach ($forumlist as $val) {
-                    $fids[] = $val['fid'];
-                }
-
-                forum_update($fids, array('threads' => 0, 'flagstr' => '', 'flags' => 0));
-
-                // 灌水标识
-                if (1 == $installed) {
-                    $config['installed'] = 0;
-                    setting_set('conf', $config);
-                }
-            }
-
-            message(0, lang('delete_successfully'));
-        }
-        break;
     case 'link':
         if ('GET' == $method) {
 
             // hook admin_other_link_get_start.php
 
-            $page = param(2, 1);
+            $page = param('page', 1);
             $pagesize = 20;
+            $extra = array('page' => '{page}');
 
             $input = array();
             $input['name'] = form_text('name', '', $width = FALSE, lang('site_name'));
@@ -408,11 +81,11 @@ EOT;
 
             // hook admin_other_link_get_after.php
 
-            $pagination = pagination(url('other-link-{page}'), $n, $page, $pagesize);
+            $pagination = pagination(url('other-link', $extra, TRUE), $n, $page, $pagesize);
 
             $header['title'] = lang('friends_link');
             $header['mobile_title'] = lang('friends_link');
-            $header['mobile_link'] = url('other-link');
+            $header['mobile_link'] = url('other-link', '', TRUE);
 
             // hook admin_other_link_get_end.php
 
@@ -450,7 +123,7 @@ EOT;
 
             } else {
 
-                $id = param('2', 0);
+                $id = param('id', 0);
                 FALSE === link_delete($id) AND message(-1, lang('delete_failed'));
 
                 message(0, lang('delete_successfully'));
@@ -461,50 +134,54 @@ EOT;
         // 获取更新文件 打包 下载
         if ('GET' == $method) {
 
-            $type = param(2, 0);
+            $type = param('type', 0);
             $upgrade = 0;
             $official = array();
 
             if (0 == $type) {
-                $json = https_request('http://www.wellcms.cn/version.html?type=2', '', '', 500, 1);
-                if ($json && !in_array($json, array('1', '2', 'failed'))) {
+                $json = https_request('http://www.wellcms.cn/version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 500, 1);
+                // 每天限更新一次
+                if ($config['last_version'] > $time && isset($json) && !in_array($json, array('1', '2', 'fail'))) {
                     $official = xn_json_decode($json);
-                    if (isset($official['version']) && -1 == version_compare($config['official_version'], $official['version'])) {
-                        $upgrade = 1; // 可以更新
-                        $config['official_version'] = $official['version'];
-                        $config['upgrade'] = 1; // 有更新
+                    if (isset($official['version'], $official['version_date'])) {
+                        if (-1 == version_compare($config['official_version'], $official['version']) || array_value($config, 'version_date', 0) < $official['version_date']) {
+                            $upgrade = 1; // 可更新
+                            $config['official_version'] = $official['version'];
+                            $config['upgrade'] = 1; // 有更新
+                        }
+
+                        isset($official['message']) AND kv_set('official-message', $official['message']);
+                        $config['last_version'] = clock_twenty_four();
                     }
+                } else {
+                    $message = kv_get('official-message');
+                    $official = array('message' => $message);
                 }
 
-                $config['last_version'] = clock_twenty_four();
                 setting_set('conf', $config);
 
             } elseif (1 == $type) {
 
-                if ($config['version'] == $config['official_version'] && 0 == $config['upgrade']) message(0, jump(lang('no_upgrade_required'), url('other-upgrade'), 2));
+                if (0 == version_compare($config['version'], $config['official_version']) && 0 == $config['upgrade']) message(0, jump(lang('no_upgrade_required'), url('other-upgrade', '', TRUE), 2));
 
                 // 获取更新包
-                $url = 'http://www.wellcms.cn/version-upgrade.html?domain=' . xn_urlencode(_SERVER('HTTP_HOST')) . '&siteid=' . plugin_siteid() . '&version=' . $config['version'];
+                $url = 'http://www.wellcms.cn/version-upgrade.html?domain=' . xn_urlencode(_SERVER('HTTP_HOST')) . '&siteid=' . plugin_siteid() . '&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0);
                 $json = https_request($url, '', '', 500, 1);
 
-                if (empty($json) || 'failed' == $json) {
-                    // 更新失败
-                    message(0, jump(lang('upgrade_failed'), url('other-upgrade'), 2));
+                if (empty($json) || 'fail' == $json) {
+                    message(0, jump(lang('upgrade_failed'), url('other-upgrade', '', TRUE), 2));
                 } elseif (1 == $json) {
-                    // 更新失败 No upgrade package
-                    message(0, jump('No upgrade package', url('other-upgrade'), 2));
+                    message(0, jump('No upgrade package', url('other-upgrade', '', TRUE), 2));
                 } elseif (2 == $json) {
-                    // 更新失败 Updates available, no downloads available
-                    message(0, jump('Updates available, no downloads available', url('other-upgrade'), 2));
+                    message(0, jump('Updates available, no downloads available', url('other-upgrade', '', TRUE), 2));
                 } else {
-
                     $res = xn_json_decode($json);
                     // 服务端开始下载升级包
                     set_time_limit(0);
-                    $s = https_request($res['url'], '', '', 60);
-                    empty($s) AND message(-1, jump(lang('plugin_return_data_error') . lang('server_response_empty'), url('other-upgrade'), 2));
+                    $s = https_request($res['url'], '', '', 90);
+                    empty($s) AND message(-1, jump(lang('plugin_return_data_error') . lang('server_response_empty'), url('other-upgrade', '', TRUE), 2));
 
-                    if (substr($s, 0, 2) != 'PK') message(-1, jump(lang('plugin_return_data_error') . $s, url('other-upgrade'), 2));
+                    if (substr($s, 0, 2) != 'PK') message(-1, jump(lang('plugin_return_data_error') . $s, url('other-upgrade', '', TRUE), 2));
 
                     $zipfile = $conf['tmp_path'] . 'upgrade_' . date('Y.m.d_H.i.s', $res['version_date']) . '.zip';
                     file_put_contents($zipfile, $s);
@@ -515,25 +192,25 @@ EOT;
 
                     // 升级mysql
                     $upgradefile = APP_PATH . 'tmp/upgrade.php';
-                    if ($res['upgrade_db'] && is_file($upgradefile)) include _include($upgradefile);
+                    if (!empty($res['upgrade_db']) && is_file($upgradefile)) include _include($upgradefile);
 
                     https_request('http://www.wellcms.cn/version-upgrade.html?upgrade=1&id=' . $res['id'], '', '', 500, 1);
 
                     rmdir_recusive($conf['tmp_path'], 1);
 
-                    http_location(url('other-upgrade-2'));
+                    http_location(url('other-upgrade', array('type' => 2), TRUE));
                 }
 
             } elseif (2 == $type) {
                 // 更新完成
                 $config['version'] = $config['official_version'];
-                $config['upgrade'] = 0; // 已更新
+                $config['upgrade'] = 0;
                 setting_set('conf', $config);
             }
 
             $header['title'] = lang('online_upgrade');
             $header['mobile_title'] = lang('online_upgrade');
-            $header['mobile_link'] = url('other-upgrade');
+            $header['mobile_link'] = url('other-upgrade', '', TRUE);
 
             include _include(ADMIN_PATH . 'view/htm/upgrade.htm');
         }

@@ -1,12 +1,12 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_index_login_start.htm}-->
-<div class="container px-0">
+<div class="container">
 	<div class="col-lg-5 col-md-6 col-12 mx-auto">
 		<div class="card">
 			<div class="card-body">
 				<h4><?php echo lang('admin_login');?></h4>
-				<form method="post" id="form">
+				<form action="<?php echo url('index-login', '', TRUE);?>" method="post" id="form">
 					<div class="form-group"><?php echo lang('for_safe_input_password_again');?>：</div>
 					<div class="form-group input-group">
 						<div class="input-group-prepend">

@@ -43,7 +43,7 @@
 	
 	<!--{hook admin_footer_js_before.htm}-->
 
-	<script src="<?php echo url_path();?>lang/<?php echo $conf['lang'];?>/lang.js<?php echo $static_version;?>"></script>
+	<script src="../lang/<?php echo $conf['lang'];?>/lang.js<?php echo $static_version;?>"></script>
 	<script src="<?php echo admin_view_path();?>js/jquery-3.4.1.min.js<?php echo $static_version;?>"></script>
 	<script src="<?php echo admin_view_path();?>js/popper.min.js<?php echo $static_version;?>"></script>
 	<script src="<?php echo admin_view_path();?>js/bootstrap.min.js<?php echo $static_version;?>"></script>
@@ -53,9 +53,10 @@
 	<script src="<?php echo admin_view_path();?>js/form.js<?php echo $static_version;?>"></script>
 	<script>
 	var debug = DEBUG = <?php echo DEBUG; ?>;
+    var fid = <?php echo $fid;?>;
 	var url_rewrite_on = <?php echo $conf['url_rewrite_on'];?>;
-	var admin_access = 1;
-	var fid = <?php echo $fid;?>;
+	var url_access = true;
+    var url_path = '<?php echo $conf['path'];?>';
 	</script>
 	<script src="<?php echo admin_view_path();?>js/wellcms.js<?php echo $static_version;?>"></script>
 	
@@ -65,23 +66,38 @@
 </html>
 <script>
     $(function () {
-        var my_url = $('a.my-url');
-        var my_href = my_url.attr('href');
-        if (url_rewrite_on > 1) {
-            my_href = my_href.replace('/admin', '');
-        } else {
-            my_href = my_href.replace(my_href, '../' + my_href);
+        if (url_rewrite_on < 2) {
+            var avatar = $('a.my-url .avatar-1');
+            var src = avatar.attr('src');
+            var len = xn.strpos(src, 'view/');
+            var s = xn.substr(src, len, src.length);
+            src = '../' + s;
+            avatar.attr('src', src);
         }
-        my_url.attr('href', my_href);
-
+        
         <?php if ('login' != $action) { ?>
         $(document).ready(function () {
             window_width_auto();
         });
         <?php } ?>
+        
         $(window).resize(function () {
+            var width = $(document.body).width();
+            if (width > 991) {
+                var nav_width = $('nav#nav').width();
+                $('[role="main"]').css('margin-left', nav_width);
+            } else {
+                $('[role="main"]').removeAttr("style");
+            }
             window_width_auto();
         });
+        var width = $(document.body).width();
+        if (width > 991) {
+            var nav_width = $('nav#nav').width();
+            $('[role="main"]').css('margin-left', nav_width);
+        } else {
+            $('[role="main"]').removeAttr('style');
+        }
         function window_width_auto() {
             window_width = $(window).width();
             if (window_width < 769) {

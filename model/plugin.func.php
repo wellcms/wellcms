@@ -431,19 +431,28 @@ function plugin_official_read($dir)
     return $plugin;
 }
 
-// -------------------> 本地插件列表缓存到本地。
+// -------------------> 本地插件列表缓存到本地
+// TRUE:插件 FALSE:主题风格
+function plugin_list($cond = array(), $orderby = array(), $page = 1, $pagesize = 20, $type = TRUE)
+{
+    global $plugins, $themes;
+    $arrlist = TRUE === $type ? $plugins : $themes;
+    $offlist = arrlist_cond_orderby($arrlist, $cond, $orderby, $page, $pagesize);
+    return $offlist;
+}
+
 // 安装，卸载，禁用，更新
 function plugin_read_by_dir($dir, $local_first = TRUE)
 {
     global $plugins, $themes;
 
     $type = 0;
-    $icon = url_path() . "plugin/$dir/icon.png";
+    $icon = is_file(APP_PATH . 'plugin/' . $dir . '/icon.png') ? url_path() . 'plugin/' . $dir . '/icon.png' : '';
     $local = array_value($plugins, $dir, array());
     if (empty($local)) {
         if (isset($themes[$dir]) && $local = $themes[$dir]) {
             $type = 1;
-            $icon = url_path() . 'view/template/' . $dir . '/icon.png';
+            $icon = is_file(APP_PATH . 'view/template/' . $dir . '/icon.png') ? url_path() . 'view/template/' . $dir . '/icon.png' : '';
         }
     }
 
@@ -455,7 +464,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($local['name']) && $local['name'] = '';
     !isset($local['price']) && $local['price'] = 0;
     !isset($local['brief']) && $local['brief'] = '';
-    !isset($local['version']) && $local['version'] = '1.0';
+    !isset($local['version']) && $local['version'] = '1.0.0';
     !isset($local['software_version']) && $local['software_version'] = '2.0';
     !isset($local['installed']) && $local['installed'] = 0;
     !isset($local['enable']) && $local['enable'] = 0;
@@ -475,11 +484,11 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['price']) && $official['price'] = 0;
     !isset($official['brief']) && $official['brief'] = '';
     !isset($official['software_version']) && $official['software_version'] = '2.0';
-    !isset($official['version']) && $official['version'] = '1.0';
-    //!isset($official['cateid']) && $official['cateid'] = 0;
+    !isset($official['version']) && $official['version'] = '1.0.0';
     // 0 所有插件 1主题风格 2功能增强 3大型插件 4接口整合 99未分类
     !isset($official['type']) && $official['type'] = 0;
     !isset($official['last_update']) && $official['last_update'] = 0;
+    !isset($official['last_update_fmt']) && $official['last_update_fmt'] = lang('none');
     !isset($official['stars']) && $official['stars'] = 0;
     !isset($official['user_stars']) && $official['user_stars'] = 0;
     !isset($official['installs']) && $official['installs'] = 0;
@@ -491,6 +500,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['brief_url']) && $official['brief_url'] = '';
     !isset($official['qq']) && $official['qq'] = '';
     !isset($official['author']) && $official['author'] = '';
+    !isset($official['uid']) && $official['uid'] = '';
     !isset($official['domain']) && $official['domain'] = '';
 
     $local['official'] = $official;
@@ -502,14 +512,15 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     }
 
     // 额外的判断
-    $plugin['icon_url'] = $plugin['storeid'] ? PLUGIN_OFFICIAL_URL . "upload/plugin/$plugin[storeid]/icon.png" : $icon;
-    $plugin['setting_url'] = $plugin['installed'] && is_file("../plugin/$dir/setting.php") ? "plugin-setting-$dir.html" : "";
+    $plugin['icon_url'] = $official['storeid'] ? PLUGIN_OFFICIAL_URL . "upload/plugin/$plugin[storeid]/icon.png" : $icon;
+    $plugin['setting_url'] = $plugin['installed'] && is_file(APP_PATH . "plugin/$dir/setting.php") ? "plugin-setting-$dir.html" : "";
     $plugin['downloaded'] = isset($plugins[$dir]);
-    $plugin['stars_fmt'] = $plugin['storeid'] ? str_repeat('<span class="icon star"></span>', $plugin['stars']) : '';
-    $plugin['user_stars_fmt'] = $plugin['storeid'] ? str_repeat('<span class="icon star"></span>', $plugin['user_stars']) : '';
-    $plugin['is_cert_fmt'] = empty($plugin['is_cert']) ? '<span class="text-danger">' . lang('no') . '</span>' : '<span class="text-success">' . lang('yes') . '</span>';
+    // 10赞一星 100赞二星 1k赞三星 10k赞四星 100k+五星
+    $plugin['stars_fmt'] = $official['storeid'] ? str_repeat('<span class="icon-star"></span>', $official['stars']) : '';
+    $plugin['user_stars_fmt'] = $official['storeid'] ? str_repeat('<span class="icon-star"></span>', $official['user_stars']) : '';
+    $plugin['is_cert_fmt'] = empty($official['is_cert']) ? '<span class="text-danger">' . lang('no') . '</span>' : '<span class="text-success">' . lang('yes') . '</span>';
     $plugin['have_upgrade'] = $plugin['installed'] && version_compare($official['version'], $local['version']) > 0 ? TRUE : FALSE;
-    $plugin['official_version'] = $official['version']; // 官方版本
+    $plugin['official_version'] = $official['version'];
 
     return $plugin;
 }

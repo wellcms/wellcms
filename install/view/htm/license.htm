@@ -1,18 +1,25 @@
 <?php include INSTALL_PATH.'view/htm/header.inc.htm';?>
 
-<div class="card">
-	<div class="card-body">
-		<h3 class="card-title mt-3"><?php echo lang('license_title');?></h3>
-		<hr />
-		<pre style="white-space: pre-wrap; word-wrap: break-word;">
-<?php echo lang('license_content');?>
-<br><br>
-警告：按照我国法律，在未取得相关资源（影片、动画、图书、音乐等）授权的情况下，请不要传播任何形式的相关资源（资源数据文件、种子文件、网盘文件、FTP 文件等）！否则后果自负。
-<br><br><?php echo lang('license_date');?>
-		</pre>
-	
-		<div class="text-center m-3"><button class="btn btn-primary" onClick="window.location='index.php?action=env'"><?php echo lang('agree_license_to_continue');?></button></div>
+<div class="container">
+	<div class="row my-3">
+		<div class="col-lg-10 offset-lg-1">
+			<div class="card">
+				<div class="card-body">
+                    <div class="mb-3 text-center">
+                        <a target="_blank" href="http://www.wellcms.cn/"><img src="../view/img/logo.png" class="logo-2"></a>
+                    </div>
+					<h3 class="card-title mt-3"><?php echo lang('license_title');?></h3>
+					<hr />
+
+			<?php echo lang('license_content');?>
+			<br><br>
+			警告：按照我国法律，在未取得相关资源（影片、动画、图书、音乐等）授权的情况下，请不要传播任何形式的相关资源（资源数据文件、种子文件、网盘文件、FTP 文件等）！否则后果自负。
+			<br><br><?php echo lang('license_date');?>
+
+					<div class="text-center m-3"><button class="btn btn-primary" onClick="window.location='index.php?action=env'"><?php echo lang('agree_license_to_continue');?></button></div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-
 <?php include INSTALL_PATH.'view/htm/footer.inc.htm';?>

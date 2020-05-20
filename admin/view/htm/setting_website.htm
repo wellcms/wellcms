@@ -1,14 +1,14 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_setting_website_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 <div class="row">
 	<div class="col-lg-12">
 		<!--{hook admin_setting_website_middle.htm}-->
 		<div class="card card-threadlist">
 			<div class="card-body">
                 <!--{hook admin_setting_website_form_start.htm}-->
-                <form action="<?php echo url('setting-website'); ?>" method="post" id="form">
+                <form action="<?php echo url('setting-website', '', TRUE); ?>" method="post" id="form">
                     <?php echo $input['safe_token'];?>
                     <!--{hook admin_setting_website_form_before.htm}-->
                     <div class="form-group row">

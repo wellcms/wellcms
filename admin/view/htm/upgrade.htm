@@ -1,7 +1,6 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
-<!--{hook admin_content_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
@@ -15,9 +14,9 @@
                             <p class="text-center">
                                 <?php echo lang('official_version').' : '.$config['official_version'];?>
                             </p>
-
-                            <?php echo '<hr>',array_value($official, 'message', 'Nothing message'),'<hr>'; ?>
-
+                            <hr>
+                            <?php echo array_value($official, 'message', 'Nothing message'); ?>
+                            <hr>
                             <p class="text-center font-weight-bold">
                                 <?php if (0 == $type) { ?>
                                 <?php if ($upgrade) { ?>
@@ -42,13 +41,10 @@
         </div>
     </div>
 </div>
-<!--{hook admin_content_end.htm}-->
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    $('#upgrade').on('click', function () {window.location = xn.url('other-upgrade-1');});
+    $('#upgrade').on('click', function () {window.location = xn.url('other-upgrade',{type:1});});
     $('#nav li.upgrade').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
 </script>
-
-<!--{hook admin_content_js.htm}-->

@@ -1,6 +1,6 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 <!--{hook admin_index_start.htm}-->
-<div class="container-fluid px-0">
+<div class="container-fluid">
 		<!--{hook admin_index_site_stat_before.htm}-->
         <div class="d-flex justify-content-between pb-2 mb-3 border-bottom">
             <h3><?php echo lang('admin_index');?></h3>
@@ -24,7 +24,7 @@
         <?php if (1 == $gid) { ?>
 		<div class="card">
 			<div class="card-body">
-				<h5><?php echo lang('server_info');?> <a href="<?php echo url('index-phpinfo');?>"><small>[PHPINFO]</small></a></h5>
+				<h5><?php echo lang('server_info');?> <a href="<?php echo url('index-phpinfo', '', TRUE);?>"><small>[PHPINFO]</small></a></h5>
 				<div class="row">
 					<div class="col-md-6"><span class="text-muted"><?php echo lang('os');?>：</span><?php echo PHP_OS; ?></div>
 					<div class="col-md-6"><span class="text-muted">Web Server：</span><?php echo $info['SERVER_SOFTWARE']; ?></div>

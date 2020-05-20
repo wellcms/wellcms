@@ -60,7 +60,7 @@
 					<?php foreach($_thread['tag_text'] as $key => $_tag) {?>
 					<span class="mr-2">
                         <strong class="mb-0">
-                            <a class="text-secondary" href="<?php echo url('tag-'.$key);?>">
+                            <a class="text-secondary" href="<?php echo url('tag-'.$key, '', 2);?>">
                                 <?php echo $_tag;?>
                             </a>
                         </strong>
@@ -73,7 +73,7 @@
 
 				<div class="col-lg-12 text-grey mt-2">
 					<!--{hook admin_thread_list_inc_avatar_before.htm}-->
-					<a href="<?php echo url('user-' . $_thread['uid']);?>" tabindex="-1" class="mr-2">
+					<a href="<?php echo url('user-' . $_thread['uid'], '', 2);?>" tabindex="-1" class="mr-2">
 						<img class="avatar-1" src="<?php echo $_thread['user_avatar_url'];?>">
 					</a>
 					<!--{hook admin_thread_list_inc_avatar_after.htm}-->
@@ -95,7 +95,7 @@
 					<div class="float-right text-muted small">
 						<!--{hook admin_thread_list_inc_update_before.htm}-->
 						<?php if( $_thread['allowupdate']) { ?>
-						<span data-href="<?php echo url('content-update-' . $_thread['tid'] . '-' . $page, $extra); ?>" class="text-grey update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></span>
+						<span data-href="<?php echo url('content-update', array('tid' => $_thread['tid']), TRUE); ?>" class="text-grey update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></span>
 						<?php } ?>
                         <!--{hook admin_thread_list_inc_update_after.htm}-->
 					</div>

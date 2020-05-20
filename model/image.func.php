@@ -20,35 +20,47 @@ function well_image_clip_thumb($sourcefile, $destfile, $forcedwidth = 170, $forc
     // 资源比
     $src_scale = $src_width / $src_height;
     // 裁切比
-    $des_scale = $src_width / $src_height;
-    // 以高度为标准 裁切宽
-    $clip_width = $src_height / $forcedheight * $forcedwidth;
-    // 以宽度为标准 裁切高
-    $clip_height = $src_width / $forcedwidth * $forcedheight;
+    $des_scale = $forcedwidth / $forcedheight;
+
+    // 以资源宽度为标准
+    $w_scale = $src_width / $forcedwidth;
+    // 裁切高度
+    $w_clip_height = $w_scale * $forcedheight;
+
+    // 以资源高度为标准
+    $h_scale = $src_height / $forcedheight;
+    // 裁切宽度
+    $w_clip_width = $h_scale * $forcedwidth;
+
+    $clipx = 0;
+    $clipy = 0;
+    $des_width = $src_width; // 原始宽
+    $des_height = $src_height ; // 原始高
 
     /*资源比>裁切比 原图为横着的矩形图*/
     if ($src_scale > $des_scale) {
-
         // 小于缩略高度 放弃
         if ($src_height < $forcedheight) return 0;
-
-        $des_width = $src_width; // 原始宽
-        $des_height = $clip_height ; // 裁切高度
-        /*计算宽度居中裁切 原始宽 - 裁切宽 / 2 */
-        $clipx = ($src_width - $clip_width) / 2;
-        $clipy = 0;
-
     } else {
         /*原始宽<裁切宽 竖着的矩形图*/
-
         // 小于缩略高度 放弃
         if ($src_width < $forcedwidth) return 0;
+    }
 
-        $des_width = $src_width; // 原始宽度
-        $des_height = $clip_height; // 裁切高度
-        $clipx = 0;
-        /*计算高度居中裁切 原始高 - 裁切高 / 2 */
-        $clipy = ($src_height - $clip_height) / 2;
+    // 以资源宽度为标准 裁切高<=资源高
+    if ($w_clip_height <= $src_height) {
+        if ($src_height > $w_clip_height) {
+            /*计算高度居中裁切 原始高 - 裁切高 / 2 */
+            $clipy = ($src_height - $w_clip_height) / 2;
+            $des_height = $w_clip_height; // 裁切宽
+        }
+    } else {
+        // 以资源高度为标准
+        if ($src_width > $w_clip_width) {
+            /*计算宽度居中裁切 原始宽 - 裁切宽 / 2 */
+            $clipx = ($src_width - $w_clip_width) / 2;
+            $des_width = $w_clip_width; // 裁切宽
+        }
     }
 
     /*按照输入比宽度裁切*/
@@ -132,10 +144,10 @@ function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheig
     $tmpfile = $tmppath . md5($destfile) . '.tmp';
     switch ($destext) {
         case 'jpg':
-            imagejpeg($img_dst, $tmpfile, 80);
+            imagejpeg($img_dst, $tmpfile, 75);
             break;
         case 'jpeg':
-            imagejpeg($img_dst, $tmpfile, 80);
+            imagejpeg($img_dst, $tmpfile, 75);
             break;
         case 'gif':
             imagegif($img_dst, $tmpfile);

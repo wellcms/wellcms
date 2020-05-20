@@ -8,99 +8,103 @@ $action = param(1);
 
 // hook tag_start.php
 
-if ('list' == $action) {
+switch ($action) {
+    // hook tag_case_start.php
+    case 'list':
+        // hook tag_list_start.php
 
-    // hook tag_list_start.php
+        $page = param(2, 1);
+        $pagesize = $conf['tagsize'];
+        $extra = array(); // 插件预留
 
-    $page = param(2, 1);
-    $pagesize = $conf['tagsize'];
-    $extra = array(); // 插件预留
+        // hook tag_list_before.php
 
-    // hook tag_list_before.php
+        $count = well_tag_count();
 
-    $count = well_tag_count();
+        $taglist = $count ? well_tag_find($page, $pagesize) : NULL;
 
-    $taglist = $count ? well_tag_find($page, $pagesize) : NULL;
+        // hook tag_list_middle.php
 
-    // hook tag_list_middle.php
+        $page_url = url('tag-list-{page}', $extra);
+        $num = $count > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $count;
 
-    $page_url = url('tag-list-{page}', $extra);
-    $num = $count > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $count;
+        // hook tag_list_after.php
 
-    // hook tag_list_after.php
+        $pagination = pagination($page_url, $num, $page, $pagesize);
 
-    $pagination = pagination($page_url, $num, $page, $pagesize);
+        // hook tag_list_after.php
 
-    // hook tag_list_after.php
+        $header['title'] = lang('well_tag') . '-' . $conf['sitename'];
+        $header['mobile_title'] = '';
+        $header['mobile_link'] = url('tag-list', $extra);
+        $header['keywords'] = lang('well_tag') . ',' . $conf['sitename'];
+        $header['description'] = lang('well_tag') . ',' . $conf['sitename'];
+        $_SESSION['fid'] = 0;
 
-    $header['title'] = lang('well_tag') . '-' . $conf['sitename'];
-    $header['mobile_title'] = '';
-    $header['mobile_link'] = url('tag-list', $extra);
-    $header['keywords'] = lang('well_tag') . ',' . $conf['sitename'];
-    $header['description'] = lang('well_tag') . ',' . $conf['sitename'];
-    $_SESSION['fid'] = 0;
+        // hook tag_list_end.php
 
-    // hook tag_list_end.php
+        if ($ajax) {
+            $conf['api_on'] ? message(0, $taglist) : message(0, lang('closed'));
+        } else {
+            include _include(theme_load(4));
+        }
+        break;
+    // hook tag_case_end.php
+    default:
+        // tag-tagid-page.htm
+        $tagid = param(1, 0);
+        empty($tagid) AND message(-1, lang('data_malformation'));
 
-    if ($ajax) {
-        $conf['api_on'] ? message(0, $taglist) : message(0, lang('closed'));
-    } else {
-        include _include(theme_load(4));
-    }
+        $page = param(2, 1);
+        $page = param(2, 1);
+        $pagesize = $conf['pagesize'];
+        $extra = array(); // 插件预留
 
-} else {
+        // hook tag_before.php
 
-    // tag-tagid-page.htm
-    $tagid = param(1, 0);
-    empty($tagid) AND message(-1, lang('data_malformation'));
+        $read = well_tag_read_by_tagid_cache($tagid);
+        // hook tag_cache_after.php
+        empty($read) AND message(-1, lang('well_tag_not_existed'));
 
-    $page = param(2, 1);
-    $page = param(2, 1);
-    $pagesize = $conf['pagesize'];
-    $extra = array(); // 插件预留
+        // hook tag_center.php
 
-    // hook tag_before.php
+        $arr = well_tag_thread_find($tagid, $page, $pagesize);
+        if (empty($arr)) {
+            $threadlist = NULL;
+        } else {
+            $tidarr = arrlist_values($arr, 'tid');
+            $threadlist = well_thread_find($tidarr, $pagesize);
+        }
 
-    $read = well_tag_read_by_tagid_cache($tagid);
-    // hook tag_cache_after.php
-    empty($read) AND message(-1, lang('well_tag_not_existed'));
+        // hook tag_middle.php
 
-    // hook tag_center.php
+        $count = well_tag_count();
+        $page_url = url('tag-' . $tagid . '-{page}', $extra);
+        $num = $read['count'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $read['count'];
 
-    $arr = well_tag_thread_find($tagid, $page, $pagesize);
-    if (empty($arr)) {
-        $threadlist = NULL;
-    } else {
-        $tidarr = arrlist_values($arr, 'tid');
-        $threadlist = well_thread_find($tidarr, $pagesize);
-    }
+        // hook tag_pagination_before.php
 
-    // hook tag_middle.php
+        $pagination = pagination($page_url, $num, $page, $pagesize);
 
-    $count = well_tag_count();
-    $page_url = url('tag-' . $tagid . '-{page}', $extra);
-    $num = $read['count'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $read['count'];
+        // hook tag_after.php
 
-    // hook tag_pagination_before.php
-    
-    $pagination = pagination($page_url, $num, $page, $pagesize);
+        $header['title'] = empty($read['title']) ? $read['name'] : $read['title'];
+        $header['mobile_title'] = '';
+        $header['mobile_link'] = url('tag-' . $tagid, $extra);
+        $header['keywords'] = empty($read['keywords']) ? $read['name'] : $read['keywords'];
+        $header['description'] = empty($read['description']) ? $read['name'] : $read['description'];
+        $_SESSION['fid'] = 0;
 
-    // hook tag_after.php
+        // hook tag_end.php
 
-    $header['title'] = empty($read['title']) ? $read['name'] : $read['title'];
-    $header['mobile_title'] = '';
-    $header['mobile_link'] = url('tag-' . $tagid, $extra);
-    $header['keywords'] = empty($read['keywords']) ? $read['name'] : $read['keywords'];
-    $header['description'] = empty($read['description']) ? $read['name'] : $read['description'];
-    $_SESSION['fid'] = 0;
-
-    // hook tag_end.php
-
-    if ($ajax) {
-        $conf['api_on'] ? message(0, array('tag' => $read, 'threadlist' => $threadlist)) : message(0, lang('closed'));
-    } else {
-        include _include(theme_load(5, $tagid));
-    }
+        if ($ajax) {
+            $conf['api_on'] ? message(0, array('tag' => $read, 'threadlist' => $threadlist)) : message(0, lang('closed'));
+        } else {
+            include _include(theme_load(5, $tagid));
+        }
+        break;
 }
+
+// hook tag_end.php
 
 ?>

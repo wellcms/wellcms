@@ -65,7 +65,6 @@ switch ($action) {
             $breadcrumb = lang('increase') . lang('column');
             $extra = array();
 
-            //$next = _GET('next');
             $next = param('next', 0);
 
             // hook admin_column_create_get_before.php
@@ -89,7 +88,8 @@ switch ($action) {
             $category = param('category', 0); // 0列表 1频道
             $catearr = array(lang('first_level_forum'), lang('channel'), lang('single_page'), lang('outer_chain'));
             // hook admin_column_create_get_catearr_after.php
-            $fup = param(2, 0);
+            $fup = param('fup', 0);
+            $extra['fup'] = $fup;
             $model = 0;
             $nav_display = 1;
             $comment = 1;
@@ -98,22 +98,17 @@ switch ($action) {
             $channel_new = 10;
             $pagesize = 20;
             $accesson = 0;
-
             $width = 170;
             $height = 113;
-
-            //$type = 1; // 入库时直接写入
             $son = 0;
             $threads = 0;
-
             $checked_fup = 0;
             $disabled_category = FALSE;
             $disabled_fup = FALSE;
             $disabled_model = FALSE;
 
             $extra['category'] = $category;
-
-            $form_action = url('column-create', $extra);
+            $form_action = url('column-create', $extra, TRUE);
 
             $safe_token = well_token_set($uid);
 
@@ -228,7 +223,7 @@ switch ($action) {
         }
         break;
     case 'update':
-        $_fid = param(2, 0);
+        $_fid = param('fid', 0);
         $_forum = forum_read($_fid);
         empty($_forum) AND message(-1, lang('forum_not_exists'));
 
@@ -236,9 +231,7 @@ switch ($action) {
 
         if ('GET' == $method) {
 
-            $header['title'] = lang('edit') . lang('column');
-            $header['mobile_title'] = lang('edit') . lang('column');
-            $breadcrumb = lang('edit') . lang('column');
+            $extra = array('fid' => $_fid);
 
             // hook admin_column_update_get_start.php
 
@@ -263,7 +256,7 @@ switch ($action) {
             // hook admin_column_update_get_center.php
 
             $next = 1;
-            $form_action = url('column-update-' . $_fid);
+            $form_action = url('column-update', $extra, TRUE);
             $fid = $_forum['fid'];
             $name = $_forum['name'];
             $seo_title = $_forum['seo_title'];
@@ -307,6 +300,10 @@ switch ($action) {
 
             $safe_token = well_token_set($uid);
 
+            $header['title'] = lang('edit') . lang('column');
+            $header['mobile_title'] = lang('edit') . lang('column');
+            $breadcrumb = lang('edit') . lang('column');
+
             // hook admin_column_update_get_end.php
 
             include _include(ADMIN_PATH . 'view/htm/column_post.htm');
@@ -339,7 +336,7 @@ switch ($action) {
             $seo_keywords = param('seo_keywords');
 
             // 有主题 有子版块 单页 外链 都不修改该值
-            $category = ($_forum['threads'] || $_forum['son'] || in_array($_forum['category'], array(2,3))) ? $_forum['category'] : param('category', 0);
+            $category = ($_forum['threads'] || $_forum['son'] || in_array($_forum['category'], array(2, 3))) ? $_forum['category'] : param('category', 0);
 
             $fup = param('fup', 0);
             $pagesize = param('pagesize', 20);
@@ -347,7 +344,7 @@ switch ($action) {
             // hook admin_column_update_post_before.php
 
             // 频道 单页 外链不显示
-            if (in_array($category, array(1,2,3))) {
+            if (in_array($category, array(1, 2, 3))) {
                 $comment = 0;
                 $display = 0;
                 //$thread_rank = 0;

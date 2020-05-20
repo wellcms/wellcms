@@ -10,7 +10,7 @@
 
         </div>
         <?php } else {?>
-        <form action="<?php echo url('plugin-buy');?>" method="post" id="form">
+        <form action="<?php echo url('plugin-buy', '', TRUE);?>" method="post" id="form">
             <div class="form-group">
                 <?php echo lang('for_safe_input_official_login_password');?>
             </div>
@@ -76,11 +76,16 @@
     }
 
     if(1 == pay_api || 2 == pay_api) {
+        var times = 0;
         var t = setInterval(function() {
-            $.xget(xn.url('plugin-is_bought-'+dir), function(code, message) {
+            if (++times > 60) {
                 clearInterval(t);
+                return false;
+            }
+            $.xget(xn.url('plugin-is_bought',{dir:dir}), function(code, message) {
+                clearInterval(t); // 有返回则清除
                 if(code == 0) {
-                    window.location = xn.url('plugin-download-'+dir);
+                    window.location = xn.url('plugin-download',{dir:dir});
                 } else {
                     $.alert(message);
                 }

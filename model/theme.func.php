@@ -129,7 +129,7 @@ function theme_load($type = '', $id = 0, $dir = '')
     }
 
     if ($config['theme']) {
-        $conffile = 'view/template/' . $config['theme'] . '/conf.json';
+        $conffile = APP_PATH . 'view/template/' . $config['theme'] . '/conf.json';
         $json = is_file($conffile) ? xn_json_decode(file_get_contents($conffile)) : array();
     }
 

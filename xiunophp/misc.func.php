@@ -324,12 +324,12 @@ function pagination_tpl($url, $text, $active = '')
 // bootstrap 翻页，命名与 bootstrap 保持一致
 function pagination($url, $totalnum, $page, $pagesize = 20)
 {
+    $url = trim(xn_urldecode($url));
     $totalpage = ceil($totalnum / $pagesize);
-    //$totalpage = $totalpage > 100 ? 100 : $totalpage; // 只显示100页
     if ($totalpage < 2) return '';
 
     $page = min($totalpage, $page);
-    $shownum = 3;    // 显示多少个页 * 2
+    $shownum = 3; // 显示多少个页 * 2
 
     $start = max(1, $page - $shownum);
     $end = min($totalpage, $page + $shownum);
@@ -354,6 +354,7 @@ function pagination($url, $totalnum, $page, $pagesize = 20)
 // 简单的上一页，下一页，比较省资源，不用count(), 推荐使用，命名与 bootstrap 保持一致
 function pager($url, $totalnum, $page, $pagesize = 20)
 {
+    $url = trim(xn_urldecode($url));
     $totalpage = ceil($totalnum / $pagesize);
     if ($totalpage < 2) return '';
     $page = min($totalpage, $page);
@@ -544,12 +545,6 @@ function get__browser()
         $browser['device'] = 'pad';
         $browser['name'] = '';
         $browser['version'] = '';
-        /*
-        } elseif(FALSE !== strpos($agent, 'miui')) {
-            $browser['device'] = 'mobile';
-            $browser['name'] = 'xiaomi';
-            $browser['version'] = '';
-        */
     } else {
         $robots = array('bot', 'spider', 'slurp');
         foreach ($robots as $robot) {
@@ -908,8 +903,9 @@ function http_url_path()
     $host = _SERVER('HTTP_HOST');
     $https = strtolower(_SERVER('HTTPS', 'off'));
     $proto = strtolower(_SERVER('HTTP_X_FORWARDED_PROTO'));
-    $n = strrpos($_SERVER['PHP_SELF'], '/');
-    $path = $n > 1 ? substr($_SERVER['PHP_SELF'], 0, $n) : '';
+    $len = strrpos($_SERVER['PHP_SELF'], '//');
+    FALSE === $len AND $len = strrpos($_SERVER['PHP_SELF'], '/');
+    $path = substr($_SERVER['PHP_SELF'], 0, $len);
     $http = ((443 == $port) || 'https' == $proto || ($https && 'off' != $https)) ? 'https' : 'http';
     return "$http://$host$path/";
 }
@@ -928,6 +924,8 @@ function http_url_path()
  */
 function xn_url_parse($request_url)
 {
+    $conf = _SERVER('conf');
+
     // 处理: /demo/?user-login.htm?a=b&c=d
     // 结果：/demo/user-login.htm?a=b&c=d
     $request_url = str_replace('/?', '/', $request_url);
@@ -973,7 +971,6 @@ function xn_url_parse($request_url)
     $_SERVER['REQUEST_URI_NO_PATH'] = substr($_SERVER['REQUEST_URI'], strrpos($_SERVER['REQUEST_URI'], '/') + 1);
 
     // 是否开启 /user/login 这种格式的 URL
-    $conf = _SERVER('conf');
     if (!empty($conf['url_rewrite_on']) && in_array($conf['url_rewrite_on'], array(2, 3))) $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']) + $r;
 
     isset($r[0]) AND 'index.php' == $r[0] AND $r[0] = 'index';
@@ -1185,10 +1182,6 @@ function xn_is_writable($file)
     }
 }
 
-function xn_shutdown_handle()
-{
-}
-
 function xn_debug_info()
 {
     $db = $_SERVER['db'];
@@ -1262,11 +1255,11 @@ function http_referer()
     empty($referer) AND $referer = _SERVER('HTTP_REFERER');
     $referer2 = substr($referer, $len);
     if (FALSE !== strpos($referer, url('user-login')) || FALSE !== strpos($referer, url('user-logout')) || FALSE !== strpos($referer, url('user-create'))) {
-        $referer = './';
+        $referer = http_url_path();
     }
     // 安全过滤，只支持站内跳转，不允许跳到外部，否则可能会被 XSS
     // $referer = str_replace('\'', '', $referer);
-    if (!preg_match('#^\\??[\w\-/]+\.htm$#', $referer2) && !preg_match('#^[\w\/]*$#', $referer2)) {
+    if (!preg_match('#^\\??[\w\-/]+\.html$#', $referer2) && !preg_match('#^[\w\/]*$#', $referer2)) {
         $referer = './';
     }
     return $referer;
