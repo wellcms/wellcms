@@ -30,10 +30,8 @@ switch ($action) {
         } elseif ('POST' == $method) {
 
             // 验证token
-            if (array_value($conf, 'message_token', 0)) {
-                $safe_token = param('safe_token');
-                FALSE === well_token_verify($uid, $safe_token, 60) AND message(1, lang('illegal_operation'));
-            }
+            $safe_token = param('safe_token');
+            FALSE === well_token_verify($uid, $safe_token, 60) AND message(1, lang('illegal_operation'));
 
             // hook my_avatar_post_start.php
 
