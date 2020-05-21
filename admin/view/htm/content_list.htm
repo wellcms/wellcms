@@ -71,21 +71,13 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    var threadlist = $('ul.threadlist');
+    var threadlist = $('ul.threadlist a');
     threadlist.each(function(){
         var jthis = $(this);
-        var url = jthis.find('a');
-        var href = url.attr('href');
-        url.attr('target','_blank');
+        jthis.attr('target','_blank');
         if (url_rewrite_on < 2) {
-            href = '../' + href;
-            url.attr('href', href);
-            var avatar = url.find('.avatar-1');
-            var src = avatar.attr('src');
-            var len = xn.strpos(src, 'view/');
-            var s = xn.substr(src, len, src.length);
-            src = '../' + s;
-            avatar.attr('src', src);
+            var url = jthis.attr('href');
+            jthis.attr('href', '../' + url);
         }
     });
 

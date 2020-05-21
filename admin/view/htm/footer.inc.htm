@@ -69,9 +69,9 @@
         if (url_rewrite_on < 2) {
             var avatar = $('a.my-url .avatar-1');
             var src = avatar.attr('src');
-            var len = xn.strpos(src, 'view/');
+            var len = xn.strpos(src, '/');
             var s = xn.substr(src, len, src.length);
-            src = '../' + s;
+            src = '..' + s;
             avatar.attr('src', src);
         }
         

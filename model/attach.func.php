@@ -555,6 +555,9 @@ function well_save_remote_image($arr)
         'https://' . $_SERVER['SERVER_NAME'] . '/',
     );
 
+    //$save_image_quality = array_value($conf, 'save_image_quality', 0);
+    $save_image_quality = 0;
+
     preg_match_all('#<img[^>]+src="(http.*?)"#i', $message, $match);
 
     if (!empty($match[1])) {
@@ -587,28 +590,36 @@ function well_save_remote_image($arr)
             }
 
             $desturl = $attach_url . $filename;
-
             $_message = str_replace($url, $desturl, $message);
+
             if ($message != $_message) {
-                switch ($imagesize[2]) {
-                    case 1: // GIF
-                        $imgdata = imagecreatefromgif($url);
-                        break;
-                    case 2: // JPG
-                        $imgdata = imagecreatefromjpeg($url);
-                        break;
-                    case 3: // PNG
-                        $imgdata = imagecreatefrompng($url);
-                        break;
-                    case 15: // WBMP
-                        $imgdata = imagecreatefromwbmp($url);
-                        break;
-                    case 18: // WEBP
-                        $imgdata = imagecreatefromwebp($url);
-                        break;
+
+                if (0 == $save_image_quality) {
+                    $imgdata = https_request($url);
+                    $destpath = $attach_dir . $filename;
+                    file_put_contents_try($destpath, $imgdata);
+                } else {
+                    // 图片压缩 GD 库效率低下 ImageMagick 需要额外安装扩展
+                    switch ($imagesize[2]) {
+                        case 1: // GIF
+                            $imgdata = imagecreatefromgif($url);
+                            break;
+                        case 2: // JPG
+                            $imgdata = imagecreatefromjpeg($url);
+                            break;
+                        case 3: // PNG
+                            $imgdata = imagecreatefrompng($url);
+                            break;
+                        case 15: // WBMP
+                            $imgdata = imagecreatefromwbmp($url);
+                            break;
+                        case 18: // WEBP
+                            $imgdata = imagecreatefromwebp($url);
+                            break;
+                    }
+                    imagejpeg($imgdata, $destpath, $save_image_quality);
+                    imagedestroy($imgdata);
                 }
-                imagejpeg($imgdata, $destpath, array_value($conf, 'save_image_quality', 75));
-                imagedestroy($imgdata);
 
                 $filesize = filesize($destpath);
 

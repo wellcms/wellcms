@@ -96,8 +96,8 @@ switch ($action) {
             // 验证token
             if (1 == array_value($conf, 'login_token', 0)) {
                 $safe_token = param('safe_token');
-                FALSE === well_token_verify(0, $safe_token) AND message(1, lang('illegal_operation'));
                 well_token_set(0);
+                FALSE === well_token_verify(0, $safe_token) AND message(1, lang('illegal_operation'));
             }
 
             // hook user_login_post_start.php

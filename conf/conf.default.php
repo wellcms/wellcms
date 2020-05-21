@@ -97,7 +97,6 @@ return array(
     'online_update_span' => 120, // 在线更新频度，大站设置的长一些
     'online_hold_time' => 3600,  // 在线的时间
     'session_delay_update' => 0, // 开启 session 延迟更新，减轻压力，会导致不重要的数据(useragent,url)显示有些延迟，单位为秒。
-    'save_image_quality' => 75,  // 本地化图片压缩范围从 0（最差质量，文件更小）到 100（最佳质量，文件最大）
     'upload_image_width' => 927,    // 上传图片自动缩略的最大宽度
     'upload_resize' => 'clip',      // 上传图片clip裁切 thumb缩略
     'order_default' => 'lastpid',   // 作为BBS时帖子排序

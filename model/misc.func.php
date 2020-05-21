@@ -378,14 +378,15 @@ function well_token_set($uid = 0)
         $pwd = md5($useragent);
     }
     $token = well_token_gen($uid, $pwd);
-    setcookie('well_safe_token', $token, $time + 36800, '/', $conf['cookie_domain'], '', TRUE);
+    $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
+    setcookie($key, $token, $time + 36800, '/', $conf['cookie_domain'], '', TRUE);
     return $token;
 }
 
 // 验证token 返回 FALSE 验证失败 $life token 生命期
 function well_token_verify($uid, $token, $life = 1800)
 {
-    global $useragent;
+    global $conf, $useragent;
     if (empty($token)) return FALSE;
     if ($uid) {
         $user = user_read_cache($uid);
@@ -394,7 +395,8 @@ function well_token_verify($uid, $token, $life = 1800)
     } else {
         $pwd = md5($useragent);
     }
-    $_token = param('well_safe_token');
+    $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
+    $_token = _COOKIE($key);
     if (empty($_token) || $_token != $token) return FALSE;
     $r = well_token_decrypt($token, $uid, $pwd, $life);
     return $r;

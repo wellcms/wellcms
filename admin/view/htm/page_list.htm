@@ -96,12 +96,13 @@
 
 <script>
     var threadlist = $('ul.threadlist a');
-    threadlist.attr('target','_blank');
     threadlist.each(function(){
-        var href = $(this).attr('href');
-        if (url_rewrite_on < 2) href = '../' + href;
-        $(this).attr('href', href);
-        $(this).attr('target','_blank');
+        var jthis = $(this);
+        jthis.attr('target','_blank');
+        if (url_rewrite_on < 2) {
+            var url = jthis.attr('href');
+            jthis.attr('href', '../' + url);
+        }
     });
 
     var select = $('select[name="fid"]');

@@ -141,7 +141,7 @@ switch ($action) {
             if (0 == $type) {
                 $json = https_request('http://www.wellcms.cn/version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 500, 1);
                 // 每天限更新一次
-                if ($config['last_version'] > $time && isset($json) && !in_array($json, array('1', '2', 'fail'))) {
+                if (!$config['last_version'] || ($config['last_version'] > $time && isset($json) && !in_array($json, array('1', '2', 'fail')))) {
                     $official = xn_json_decode($json);
                     if (isset($official['version'], $official['version_date'])) {
                         if (-1 == version_compare($config['official_version'], $official['version']) || array_value($config, 'version_date', 0) < $official['version_date']) {
@@ -150,14 +150,14 @@ switch ($action) {
                             $config['upgrade'] = 1; // 有更新
                         }
 
-                        isset($official['message']) AND kv_set('official-message', $official['message']);
+                        isset($official['message']) AND cache_set('official-message', $official['message'], 7200);
                         $config['last_version'] = clock_twenty_four();
                     }
                 } else {
-                    $message = kv_get('official-message');
+                    $message = cache_get('official-message');
                     $official = array('message' => $message);
                 }
-
+                
                 setting_set('conf', $config);
 
             } elseif (1 == $type) {

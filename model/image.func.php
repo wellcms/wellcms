@@ -214,7 +214,7 @@ function well_image_clip($sourcefile, $destfile, $clipx, $clipy, $clipwidth, $cl
     '/' == $tmppath AND $tmppath = './tmp/';
 
     $tmpfile = $tmppath . md5($destfile) . '.tmp';
-    imagejpeg($img_dst, $tmpfile, 100);
+    imagejpeg($img_dst, $tmpfile, 75);
     $n = filesize($tmpfile);
     copy($tmpfile, $destfile);
     is_file($tmpfile) && unlink($tmpfile);
@@ -224,4 +224,5 @@ function well_image_clip($sourcefile, $destfile, $clipx, $clipy, $clipwidth, $cl
 function well_image_ext($filename) {
     return strtolower(substr(strrchr($filename, '.'), 1));
 }
+
 ?>
