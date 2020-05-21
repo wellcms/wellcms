@@ -56,7 +56,9 @@ if ('create' == $action) {
 
         $message = param('message', '', FALSE);
         empty($message) AND message('message', lang('please_input_message'));
-        $message = filter_all_html($message); // 过滤html标签
+        $message = stripslashes(trim($message));
+        $message = strip_tags($message);
+        
         xn_strlen($message) > 524288 AND message('message', lang('message_too_long'));
 
         $doctype = param('doctype', 0);

@@ -78,6 +78,14 @@
         if (url_rewrite_on < 2) {
             var url = jthis.attr('href');
             jthis.attr('href', '../' + url);
+            var avatar = jthis.find('img.avatar-1');
+            var src = avatar.attr('src');
+            if (src) {
+                var len = xn.strpos(src, '/');
+                var s = xn.substr(src, len, src.length);
+                src = '..' + s;
+                avatar.attr('src', src);
+            }
         }
     });
 
