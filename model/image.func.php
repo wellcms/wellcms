@@ -2,10 +2,10 @@
 
 // 先裁切后缩略，因为确定了，width, height, 不需要返回宽高。
 // well_image_clip_thumb(绝对路径, 存取的绝对路径, 宽度, 高度);
-function well_image_clip_thumb($sourcefile, $destfile, $forcedwidth = 170, $forcedheight = 113)
+function well_image_clip_thumb($sourcefile, $destfile, $forcedwidth = 170, $forcedheight = 113, $getimgsize = '')
 {
     // 获取原图片宽高
-    $getimgsize = getimagesize($sourcefile);
+    empty($getimgsize) AND $getimgsize = getimagesize($sourcefile);
 
     if (empty($getimgsize)) {
         return 0;
@@ -64,14 +64,14 @@ function well_image_clip_thumb($sourcefile, $destfile, $forcedwidth = 170, $forc
     }
 
     /*按照输入比宽度裁切*/
-    $n = well_image_clip($sourcefile, $destfile, $clipx, $clipy, $des_width, $des_height);
+    $n = well_image_clip($sourcefile, $destfile, $clipx, $clipy, $des_width, $des_height, $getimgsize);
 
     if ($n <= 0) return 0;
     $r = well_image_thumb($destfile, $destfile, $forcedwidth, $forcedheight);
     return $r['filesize'];
 }
 
-function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheight = 80)
+function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheight = 80, $getimgsize = '')
 {
     global $conf;
     $return = array('filesize' => 0, 'width' => 0, 'height' => 0);
@@ -80,9 +80,9 @@ function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheig
         return $return;
     }
 
-    $imginfo = getimagesize($sourcefile);
-    $src_width = $imginfo[0];
-    $src_height = $imginfo[1];
+    empty($getimgsize) AND $getimgsize = getimagesize($sourcefile);
+    $src_width = $getimgsize[0];
+    $src_height = $getimgsize[1];
     if (0 == $src_width || 0 == $src_height) {
         return $return;
     }
@@ -113,7 +113,7 @@ function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheig
     $des_width = ceil($des_width);
     $des_height = ceil($des_height);
 
-    switch ($imginfo['mime']) {
+    switch ($getimgsize['mime']) {
         case 'image/jpeg':
             $img_src = imagecreatefromjpeg($sourcefile);
             !$img_src && $img_src = imagecreatefromgif($sourcefile);
@@ -174,10 +174,10 @@ function well_image_thumb($sourcefile, $destfile, $forcedwidth = 80, $forcedheig
  * @param int $clipheight 被裁区域的高度
  * image_clip('xxx/x.jpg', 'xxx/newx.jpg', 10, 40, 150, 150)
  */
-function well_image_clip($sourcefile, $destfile, $clipx, $clipy, $clipwidth, $clipheight)
+function well_image_clip($sourcefile, $destfile, $clipx, $clipy, $clipwidth, $clipheight, $getimgsize = '')
 {
     global $conf;
-    $getimgsize = getimagesize($sourcefile);
+    empty($getimgsize) AND $getimgsize = getimagesize($sourcefile);
     if (empty($getimgsize)) {
         return 0;
     } else {

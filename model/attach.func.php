@@ -569,14 +569,14 @@ function well_save_remote_image($arr)
                 if ($localurl == substr($url, 0, strlen($localurl))) continue 2;
             }
 
-            $imagesize = getimagesize($url);
-            if (FALSE === $imagesize) continue; // 非图片跳出
+            $getimgsize = getimagesize($url);
+            if (FALSE === $getimgsize) continue; // 非图片跳出
 
             $filename = $uid . '_' . xn_rand(16);
-            if (1 == $imagesize[2]) {
+            if (1 == $getimgsize[2]) {
                 $filename .= '.gif';
                 $destpath = $attach_dir . $filename;
-            } elseif (in_array($imagesize[2], array(2, 3, 15, 18))) {
+            } elseif (in_array($getimgsize[2], array(2, 3, 15, 18))) {
                 $filename .= '.jpeg';
                 $destpath = $attach_dir . $filename;
             } else {
@@ -600,7 +600,7 @@ function well_save_remote_image($arr)
                     file_put_contents_try($destpath, $imgdata);
                 } else {
                     // 图片压缩 GD 库效率低下 ImageMagick 需要额外安装扩展
-                    switch ($imagesize[2]) {
+                    switch ($getimgsize[2]) {
                         case 1: // GIF
                             $imgdata = imagecreatefromgif($url);
                             break;
@@ -621,12 +621,10 @@ function well_save_remote_image($arr)
                     imagedestroy($imgdata);
                 }
 
-                $filesize = filesize($destpath);
-
                 if ($thumbnail) {
                     if (1 == ++$i) {
                         // 裁切保存到缩略图目录
-                        'clip' == array_value($conf, 'upload_resize', 'clip') ? well_image_clip_thumb($destpath, $tmp_file, $pic_width, $pic_height) : well_image_thumb($destpath, $tmp_file, $pic_width, $pic_height);
+                        'clip' == array_value($conf, 'upload_resize', 'clip') ? well_image_clip_thumb($destpath, $tmp_file, $pic_width, $pic_height, $getimgsize) : well_image_thumb($destpath, $tmp_file, $pic_width, $pic_height, $getimgsize);
                         well_thread_update($tid, array('icon' => $time));
                     }
                     if (empty($save_image)) {
@@ -635,7 +633,8 @@ function well_save_remote_image($arr)
                     }
                 }
 
-                $attach = array('tid' => $tid, 'uid' => $uid, 'filesize' => $filesize, 'width' => $imagesize[0], 'height' => $imagesize[1], 'filename' => "$day/$filename", 'orgfilename' => $filename, 'filetype' => 'image', 'create_date' => $time, 'comment' => '', 'downloads' => 0, 'isimage' => 1);
+                $filesize = strlen($imgdata);
+                $attach = array('tid' => $tid, 'uid' => $uid, 'filesize' => $filesize, 'width' => $getimgsize[0], 'height' => $getimgsize[1], 'filename' => "$day/$filename", 'orgfilename' => $filename, 'filetype' => 'image', 'create_date' => $time, 'comment' => '', 'downloads' => 0, 'isimage' => 1);
                 $aid = well_attach_create($attach);
                 $n++;
             }

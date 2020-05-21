@@ -959,12 +959,6 @@ function save_image($img)
     return $output;
 }
 
-// 绝对路径 获取图片信息:数组返回[0]宽度 [1]高度 [2]类型 返回数字，其中1 = GIF，2 = JPG，3 = PNG，4 = SWF，5 = PSD，6 = BMP，7 = TIFF(intel byte order)，8 = TIFF(motorola byte order)，9 = JPC，10 = JP2，11 = JPX，12 = JB2，13 = SWC，14 = IFF，15 = WBMP，16 = XBM，18 = WEBP
-function image_size($image_url)
-{
-    return getimagesize($image_url);
-}
-
 // 计算字串宽度:剧中对齐(字体大小/字串内容/字体链接/背景宽度/倍数)
 function calculate_str_width($size, $str, $font, $width, $multiple = 2)
 {
