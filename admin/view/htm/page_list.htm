@@ -95,22 +95,13 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    var threadlist = $('ul.threadlist a');
+    var threadlist = $('ul.threadlist');
+    if (url_rewrite_on < 2) {
+        threadlist.base_href('../');
+    }
     threadlist.each(function(){
         var jthis = $(this);
-        jthis.attr('target','_blank');
-        if (url_rewrite_on < 2) {
-            var url = jthis.attr('href');
-            jthis.attr('href', '../' + url);
-            var avatar = jthis.find('img.avatar-1');
-            var src = avatar.attr('src');
-            if (src) {
-                var len = xn.strpos(src, '/');
-                var s = xn.substr(src, len, src.length);
-                src = '..' + s;
-                avatar.attr('src', src);
-            }
-        }
+        jthis.find('a').attr('target','_blank');
     });
 
     var select = $('select[name="fid"]');
