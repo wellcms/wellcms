@@ -504,6 +504,7 @@ switch ($action) {
         break;
     case 'setting':
         $dir = param_word('dir');
+        empty($dir) AND $dir = param_word(2); // 兼容旧插件
         plugin_check_exists($dir);
         $name = $plugins[$dir]['name'];
 
