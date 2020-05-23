@@ -910,6 +910,17 @@ function http_url_path()
     return "$http://$host$path/";
 }
 
+// 将参数添加到 URL
+function xn_url_add_arg($url, $k, $v)
+{
+    $pos = strpos($url, '.html');
+    if (FALSE === $pos) {
+        return FALSE === strpos($url, '?') ? $url . '&' . $k . '=' . $v : $url . '?' . $k . '=' . $v;
+    } else {
+        return substr($url, 0, $pos) . '-' . $v . substr($url, $pos);
+    }
+}
+
 /**
  * URL format: http://www.domain.com/demo/?user-login.htm?a=b&c=d
  * URL format: http://www.domain.com/demo/?user-login.htm&a=b&c=d
@@ -925,68 +936,56 @@ function http_url_path()
 function xn_url_parse($request_url)
 {
     $conf = _SERVER('conf');
+    !isset($conf['url_rewrite_on']) AND $conf['url_rewrite_on'] = 0;
 
-    // 处理: /demo/?user-login.htm?a=b&c=d
-    // 结果：/demo/user-login.htm?a=b&c=d
-    $request_url = str_replace('/?', '/', $request_url);
-    $arr = parse_url($request_url);
+    if ($conf['url_rewrite_on'] < 2) {
 
-    $q = array_value($arr, 'path');
-    $pos = strrpos($q, '/');
-    FALSE === $pos && $pos = -1;
-    $q = substr($q, $pos + 1); // 截取最后一个 / 后面的内容
-    // 查找第一个 ? & 进行分割
-    $sep = FALSE === strpos($q, '?') ? strpos($q, '&') : FALSE;
-    if (FALSE !== $sep) {
-        // 对后半部分截取，并且分析
-        $front = substr($q, 0, $sep);
-        $behind = substr($q, $sep + 1);
+        0 == $conf['url_rewrite_on'] AND $request_url = str_replace('/?', '/', $request_url);
+
+        $arr = parse_url($request_url);
+        $q = array_value($arr, 'path');
+        $pos = strrpos($q, '/');
+        FALSE === $pos && $pos = -1;
+        $q = substr($q, $pos + 1); // 截取最后一个 / 后面的内容
+        // 查找第一个 ? & 进行分割
+        $sep = FALSE === strpos($q, '?') ? strpos($q, '&') : FALSE;
+        if (FALSE !== $sep) {
+            // 对后半部分截取，并且分析
+            $front = substr($q, 0, $sep);
+            $behind = substr($q, $sep + 1);
+        } else {
+            $front = $q;
+            $behind = '';
+        }
+
+        if ('.html' == substr($front, -5)) $front = substr($front, 0, -5);
+        $r = $front ? explode('-', $front) : array();
+
+        // 将后半部分合并
+        $arr1 = $arr2 = $arr3 = array();
+        $behind AND parse_str($behind, $arr1);
+
+        // 将 xxx.htm?a=b&c=d 放到后面，并且修正 $_GET
+        if (!empty($arr['query'])) {
+            parse_str($arr['query'], $arr2);
+        } else {
+            !empty($_GET) AND $_GET = array();
+        }
+        $arr3 = $arr1 + $arr2;
+        if ($arr3) {
+            //array_diff_key($arr3, $_GET) || array_diff_key($_GET, $arr3);
+            count($arr3) != count($_GET) AND $_GET = $arr3;
+        } else {
+            !empty($_GET) AND $_GET = array();
+        }
+        $r += $arr3;
     } else {
-        $front = $q;
-        $behind = '';
+        $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']);
     }
-
-    if ('.html' == substr($front, -5)) $front = substr($front, 0, -5);
-    $r = $front ? (array)explode('-', $front) : array();
-
-    // 将后半部分合并
-    $arr1 = $arr2 = $arr3 = array();
-    $behind AND parse_str($behind, $arr1);
-
-    // 将 xxx.htm?a=b&c=d 放到后面，并且修正 $_GET
-    if (!empty($arr['query'])) {
-        parse_str($arr['query'], $arr2);
-    } else {
-        !empty($_GET) AND $_GET = array();
-    }
-    $arr3 = $arr1 + $arr2;
-    if ($arr3) {
-        //array_diff_key($arr3, $_GET) || array_diff_key($_GET, $arr3);
-        count($arr3) != count($_GET) AND $_GET = $arr3;
-    } else {
-        !empty($_GET) AND $_GET = array();
-    }
-    $r += $arr3;
-
-    $_SERVER['REQUEST_URI_NO_PATH'] = substr($_SERVER['REQUEST_URI'], strrpos($_SERVER['REQUEST_URI'], '/') + 1);
-
-    // 是否开启 /user/login 这种格式的 URL
-    if (!empty($conf['url_rewrite_on']) && in_array($conf['url_rewrite_on'], array(2, 3))) $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']) + $r;
 
     isset($r[0]) AND 'index.php' == $r[0] AND $r[0] = 'index';
 
     return $r;
-}
-
-// 将参数添加到 URL
-function xn_url_add_arg($url, $k, $v)
-{
-    $pos = strpos($url, '.html');
-    if (FALSE === $pos) {
-        return FALSE === strpos($url, '?') ? $url . '&' . $k . '=' . $v : $url . '?' . $k . '=' . $v;
-    } else {
-        return substr($url, 0, $pos) . '-' . $v . substr($url, $pos);
-    }
 }
 
 /**
@@ -1000,16 +999,12 @@ function xn_url_add_arg($url, $k, $v)
  */
 function xn_url_parse_path_format($s)
 {
-    $s = str_replace('.html', '', $s);
-    '/' == substr($s, 0, 1) AND $s = substr($s, 1);
-    $arr = explode('/', $s);
-    $get = $arr;
-    $last = array_pop($arr);
-    if (FALSE !== strpos($last, '?')) {
-        $get = $arr;
-        $arr1 = explode('?', $last);
-        parse_str($arr1[1], $arr2);
-        $get[] = $arr1[0];
+    $request_url = explode('?', $s);
+    $url = str_replace('.html', '', $request_url[0]);
+    $url = trim($url, '/');
+    $get = explode('/', $url);
+    if (!empty($request_url[1])) {
+        parse_str($request_url[1], $arr2);
         $get = array_merge($get, $arr2);
     }
     return $get;
