@@ -992,7 +992,7 @@ function search_directory($path)
 // 一维数组转字符串 $sign待签名字符串 $url为urlencode转码GET参数字符串
 function array_to_string($arr, &$sign = '', &$url = '')
 {
-    if (count($arr) == count($arr, 1)) throw new Exception('Does not support multi-dimensional array to string');
+    if (count($arr) != count($arr, 1)) throw new Exception('Does not support multi-dimensional array to string');
 
     // 注销签名
     unset($arr['sign']);
