@@ -75,6 +75,9 @@ switch ($action) {
         // hook user_comment_end.php
         break;
     case 'login':
+
+        $uid AND http_location($conf['path']);
+
         // hook user_login_get_post.php
 
         if ('GET' == $method) {
@@ -135,6 +138,9 @@ switch ($action) {
         }
         break;
     case 'create':
+
+        $uid AND http_location($conf['path']);
+        
         // hook user_create_get_post.php
 
         empty($conf['user_create_on']) AND message(-1, lang('user_create_not_on'));
