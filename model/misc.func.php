@@ -37,7 +37,6 @@ function url($url, $extra = array(), $url_access = FALSE)
 
     // hook model_url_before.php
 
-    2 == $url_access AND in_array($conf['url_rewrite_on'], array(0, 1)) AND $path = $path . '../';
     if (0 == $conf['url_rewrite_on']) {
         $r = $path . '?' . $query . '.html';
     } elseif (1 == $conf['url_rewrite_on']) {
