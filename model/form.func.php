@@ -48,8 +48,8 @@ function form_select($name, $arr, $checked = 0, $id = TRUE, $disabled = FALSE, $
     $idadd = TRUE == $id ? "id=\"$name\"" : ($id ? "id=\"$id\"" : '');
     $add = FALSE !== $disabled ? ' disabled="disabled"' : '';
     $multiple = FALSE != $multiple ? ' multiple' : '';
-    $auto = FALSE == $multiple ? ' auto' : '';
-    $s = "<select name=\"$name\" class=\"custom-select $auto\" $multiple $idadd $add> \r\n";
+    $auto = FALSE == $multiple ? ' w-auto' : '';
+    $s = "<select name=\"$name\" class=\"custom-select$auto\" $multiple$idadd$add> \r\n";
     $s .= form_options($arr, $checked);
     $s .= "</select> \r\n";
     return $s;
