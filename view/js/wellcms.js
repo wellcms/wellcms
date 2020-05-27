@@ -218,7 +218,7 @@ $('a.confirm').on('click', function () {
                 if (code == 0) {
                     window.location.reload();
                 } else {
-                    alert(message);
+                    $.alert(message);
                 }
             });
         } else {
