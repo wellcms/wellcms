@@ -199,7 +199,7 @@
     var safe_token = '<?php echo $safe_token;?>';
     <?php if ('store' == $action) { ?>
         $('a.sync').on('click', function () {
-            $.xpost(xn.url('plugin-store'), {safe_token: safe_token}, function (code, message) {
+            $.xpost(xn.url('plugin-store', '', true), {safe_token: safe_token}, function (code, message) {
                 if (code == 0) {
                     $.alert(message).delay(1000).location();
                 } else {
@@ -241,7 +241,7 @@
     jsearch.on('click', function(){
         var srchtype = jsrchtype.val();
         var keyword = $("#keyword").val();
-        window.location = xn.url('plugin-store', {srchtype:srchtype,keyword:xn.urlencode(keyword)});
+        window.location = xn.url('plugin-store', {srchtype:srchtype,keyword:xn.urlencode(keyword)}, true);
     });
     jkeyword.on('keydown', function(e) {
         if(e.keyCode == 13) jsearch.trigger('click');

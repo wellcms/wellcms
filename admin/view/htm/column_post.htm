@@ -353,7 +353,7 @@
         $.xpost(jform.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 $.alert(message);
-                jsubmit.text(message).delay(1000).location(xn.url('column-list'));
+                jsubmit.text(message).delay(1000).location(xn.url('column-list', '', true));
             } else {
                 $.alert(message);
                 jsubmit.button('reset');
@@ -385,13 +385,13 @@
         var category = $('input[name="category"]').checked();
         if (category == 0) {
             var fup = '<?php echo $fup;?>';
-            window.location = xn.url('column-create',{fup:fup,category:0,next:1});
+            window.location = xn.url('column-create', {fup:fup,category:0,next:1}, true);
         } else if (category == 1) {
-            window.location = xn.url('column-create',{category:1,next:1});
+            window.location = xn.url('column-create', {category:1,next:1}, true);
         } else if (category == 2) {
-            window.location = xn.url('column-create',{category:2,next:1});
+            window.location = xn.url('column-create', {category:2,next:1}, true);
         } else if (category == 3) {
-            window.location = xn.url('column-create',{category:3,next:1});
+            window.location = xn.url('column-create', {category:3,next:1}, true);
         }
         return false;
     });

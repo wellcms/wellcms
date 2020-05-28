@@ -77,7 +77,7 @@ jarrlist.on('click', 'a.row_edit', function() {
 	var jthis = $(this);
 	var jtr = jthis.parents('tr');
 	var rowid = jtr.attr('rowid');
-	window.location = xn.url('group-update',{gid:rowid});
+	window.location = xn.url('group-update', {gid:rowid}, true);
 });
 
 /*删除*/

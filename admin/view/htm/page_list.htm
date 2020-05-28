@@ -108,7 +108,7 @@
     select.val(<?php echo $fid;?>);
     select.change(function () {
         var fid = $(this).val();
-        window.location = xn.url('page-list',{fid:fid});
+        window.location = xn.url('page-list', {fid:fid}, true);
     });
 
     $('.update-thread').on('click', function () {
@@ -141,7 +141,7 @@
             var rank = xn.intval($(this).val());
             rankarr.push({tid:tid,oldrank:oldrank,rank:rank});
         });
-        $.xpost(xn.url('page-list'), {data:rankarr}, function (code, message) {
+        $.xpost(xn.url('page-list', '', true), {data:rankarr}, function (code, message) {
             if (code == 0) {
                 $.alert(message);
                 setTimeout(function() {

@@ -117,7 +117,7 @@
         $.xpost(jform.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 $.alert(message);
-                jsubmit.button(message).delay(1000).location(xn.url('flag-list',{fid:post_fid}));
+                jsubmit.button(message).delay(1000).location(xn.url('flag-list', {fid:post_fid}, true));
             } else if(xn.is_number(code)) {
                 $.alert(message);
                 jsubmit.button('reset');

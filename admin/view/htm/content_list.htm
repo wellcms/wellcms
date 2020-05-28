@@ -17,7 +17,7 @@
             </ol>
             <?php } ?>
             <!--{hook admin_content_breadcrumb_after.htm}-->
-            <div class="card card-threadlist">
+            <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-3">
                         <!--{hook admin_content_menu_start.htm}-->
@@ -97,9 +97,9 @@
     select.change(function () {
         var fid = $(this).val();
         <?php if ('content' == $route) { ?>
-            window.location = xn.url('content-list', {fid:fid});
+            window.location = xn.url('content-list', {fid:fid}, true);
         <?php } elseif ('sticky' == $route) { ?>
-            window.location = xn.url('sticky-list', {fid:fid});
+            window.location = xn.url('sticky-list', {fid:fid}, true);
         <?php } ?>
         <!--{hook admin_content_jump_by_fid.htm}-->
     });

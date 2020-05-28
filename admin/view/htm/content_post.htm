@@ -64,10 +64,10 @@
         /* 如果不是文章模型 则跳转重新加载添加内容界面 */
         if (forum.model != model) {
             if (action == 'create') {
-                window.location = xn.url('content-' + action,{fid:fid});
+                window.location = xn.url('content-' + action, {fid:fid}, true);
             } else {
                 var tid = '<?php echo GLOBALS('tid');?>';
-                window.location = xn.url('content-' + action,{tid:tid});
+                window.location = xn.url('content-' + action, {tid:tid}, true);
             }
             return false;
         }
@@ -141,7 +141,7 @@
         $.xpost(jform.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 $.alert(message);
-                jsubmit.button(message).delay(1000).location(xn.url('content-list',{page:page,fid:fid}));
+                jsubmit.button(message).delay(1000).location(xn.url('content-list', {page:page,fid:fid}, true));
             } else if(xn.is_number(code)) {
                 $.alert(message);
                 jsubmit.button('reset');

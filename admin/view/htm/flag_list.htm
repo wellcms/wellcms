@@ -144,7 +144,7 @@
             var v = xn.intval($(this).val());
             rankarr.push({flagid:flagid,oldrank:oldrank,rank:v}); /*添加至数组*/
         });
-        $.xpost(xn.url('flag-list'), {type:1,data:rankarr,safe_token: safe_token}, function (code, message) {
+        $.xpost(xn.url('flag-list', '', true), {type:1,data:rankarr,safe_token: safe_token}, function (code, message) {
             if (code == 0) {
                 $.alert(message);
                 setTimeout(function() {
@@ -160,15 +160,15 @@
     select.val(<?php echo $fid;?>);
     select.change(function () {
         var fid = $(this).val();
-        window.location = xn.url('flag-list',{fid:fid});
+        window.location = xn.url('flag-list', {fid:fid}, true);
     });
 
     $('input[name="flag_rank"]').click(function () {
         var fid = '<?php echo $fid;?>';
         if ($(this).checked() == 1) {
-            window.location = xn.url('flag-list',{fid:fid,orderby:1});
+            window.location = xn.url('flag-list', {fid:fid,orderby:1}, true);
         } else {
-            window.location = xn.url('flag-list',{fid:fid});
+            window.location = xn.url('flag-list', {fid:fid}, true);
         }
     });
 

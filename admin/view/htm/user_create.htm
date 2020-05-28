@@ -59,7 +59,7 @@ jform.on('submit', function() {
 	$.xpost(jform.attr('action'), postdata, function(code, message) {
 		if(code == 0) {
 			$.alert(message);
-			jsubmit.text(message).delay(1000).location(xn.url('user-list'));
+			jsubmit.text(message).delay(1000).location(xn.url('user-list', '', true));
 		} else if(xn.is_number(code)) {
 			alert(message);
 			jsubmit.button('reset');

@@ -82,7 +82,7 @@ jsearch.on('click', function(){
 	var srchtype = jsrchtype.val();
 	srchtype = srchtype ? srchtype : 'uid';
 	var keyword = $("#keyword").val();
-	window.location = xn.url('user-list', {srchtype:srchtype,keyword:xn.urlencode(keyword)});
+	window.location = xn.url('user-list', {srchtype:srchtype,keyword:xn.urlencode(keyword)}, true);
 });
 jkeyword.on('keydown', function(e) {
 	if(e.keyCode == 13) jsearch.trigger('click');
@@ -98,7 +98,7 @@ jconfirm.on('click', function(){
         var jtr = $(this).parents('tr');
 		var uid = jtr.attr('uid');
 		if(uid == 1) return alert('<?php echo lang('user_admin_cant_be_deleted');?>');
-        $.xpost(xn.url('user-delete'), {uid: uid, safe_token: safe_token}, function (code, message) {
+        $.xpost(xn.url('user-delete', '', true), {uid: uid, safe_token: safe_token}, function (code, message) {
             if (code == 0) {
                 jtr.remove();
             } else {

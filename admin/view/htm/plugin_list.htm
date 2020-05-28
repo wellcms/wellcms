@@ -120,7 +120,7 @@
     var safe_token = '<?php echo $safe_token;?>';
     <?php if ('store' == $action) { ?>
         $('a.sync').on('click', function () {
-            $.xpost(xn.url('plugin-store'), {safe_token: safe_token}, function (code, message) {
+            $.xpost(xn.url('plugin-store', '', true), {safe_token: safe_token}, function (code, message) {
                 if (code == 0) {
                     $.alert(message).delay(1000).location();
                 } else {

@@ -80,7 +80,7 @@
     body.on('click', 'button.create', function() {
         var name = $('input[name="name"]').val();
         var url = $('input[name="url"]').val();
-        $.xpost(xn.url('other-link'), {safe_token: safe_token,name:name,url:url,type:1}, function(code, message) {
+        $.xpost(xn.url('other-link', '', true), {safe_token: safe_token,name:name,url:url,type:1}, function(code, message) {
             if(code == 0) {
                 window.location.reload();
             } else {

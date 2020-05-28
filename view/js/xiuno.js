@@ -591,7 +591,7 @@ xn.url = function (u, extra, url_access) {
         var arr = xn.explode('-', u);
         var url_filter = window.url_filter || ['operate', 'attach', 'read', 'category', 'list', 'my', 'forum', 'thread'];
 
-        if ((true == url_access && false == xn.in_array(arr[0], url_filter)) || 3 == url_access) {
+        if ((true === url_access && false == xn.in_array(arr[0], url_filter)) || 3 === url_access) {
             var str = '';
             $.each(arr, function (k, v) {
                 str += '&' + k + '=' + v;
@@ -604,7 +604,7 @@ xn.url = function (u, extra, url_access) {
         }
     }
 
-    if(2 == url_access && 2 > on) r = '../' + r;
+    if(2 === url_access && 2 > on) r = '../' + r;
 
     if (extra) {
         var args = '';
