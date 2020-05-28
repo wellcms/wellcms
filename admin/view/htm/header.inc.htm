@@ -103,9 +103,7 @@ $static_version = $conf['static_version'];
                         <li class="nav-item upgrade">
                             <a class="nav-link" href="<?php echo url('other-upgrade', '', TRUE);?>">
                                 <div class="menu-icon">
-                                    <div class="menu-icon">
-                                        <i class="icon-cloud-upload <?php if(array_value($config, 'upgrade', 0)){echo 'text-danger';}?>"></i>
-                                    </div>
+                                    <i class="icon-cloud-upload <?php if(array_value($config, 'upgrade', 0)){echo 'text-danger';}?>"></i>
                                 </div>
                                 &nbsp;<?php echo lang('online_upgrade');?></a>
                         </li>
@@ -114,9 +112,7 @@ $static_version = $conf['static_version'];
                         <li class="nav-item nav-item-<?php echo $k;?>">
                             <a class="nav-link" data-toggle="collapse" data-target="#<?php echo $k;?>" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
                                 <div class="menu-icon">
-                                    <div class="menu-icon">
-                                        <i class="<?php echo $v['icon'];?>"></i>
-                                    </div>
+                                    <i class="<?php echo $v['icon'];?>"></i>
                                 </div>
                                 &nbsp;<?php echo $v['text'];?></a>
                             <div id="<?php echo $k;?>" class="collapse bg-dark" aria-labelledby="heading" data-parent="#wellcms-nav">
