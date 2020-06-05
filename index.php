@@ -16,7 +16,6 @@ $conf = (@include APP_PATH . 'conf/conf.php') OR exit('<script>window.location="
 substr($conf['log_path'], 0, 2) == './' AND $conf['log_path'] = APP_PATH . $conf['log_path'];
 substr($conf['tmp_path'], 0, 2) == './' AND $conf['tmp_path'] = APP_PATH . $conf['tmp_path'];
 substr($conf['upload_path'], 0, 2) == './' AND $conf['upload_path'] = APP_PATH . $conf['upload_path'];
-$conf['version'] = '2.0.0';
 $_SERVER['conf'] = $conf;
 
 if (DEBUG > 1) {

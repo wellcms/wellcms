@@ -216,11 +216,11 @@ function sticky_thread_find_cache()
     // hook model_sticky_thread_find_cache_before.php
 
     if ('mysql' == $conf['cache']['type']) {
-        $arr = sticky_thread__find(array(), array('tid' => -1), 1, 5000);
+        $arr = sticky_thread__find(array(), array('tid' => -1), 1, 2000);
     } else {
         $arr = cache_get($key);
         if (NULL === $arr) {
-            $arr = sticky_thread__find(array(), array('tid' => -1), 1, 5000);
+            $arr = sticky_thread__find(array(), array('tid' => -1), 1, 2000);
             $arr AND cache_set($key, $arr, 1800);
         }
     }

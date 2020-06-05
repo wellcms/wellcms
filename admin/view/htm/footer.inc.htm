@@ -67,12 +67,14 @@
 <script>
     $(function () {
         if (url_rewrite_on < 2) {
-            var avatar = $('a.my-url .avatar-1');
-            var src = avatar.attr('src');
-            var len = xn.strpos(src, '/');
-            var s = xn.substr(src, len, src.length);
-            src = '..' + s;
-            avatar.attr('src', src);
+            $('body .avatar-1, body .avatar-2, body .avatar-3').each(function(){
+                var jthis = $(this);
+                var src = jthis.attr('src');
+                var n = xn.strpos(src, 'view/');
+                if (-1 === n) n = xn.strpos(src, 'upload/');
+                var s = xn.substr(src, n, src.length);
+                jthis.attr('src', '../' + s);
+            });
         }
         
         <?php if ('login' != $action) { ?>

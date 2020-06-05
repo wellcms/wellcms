@@ -4,6 +4,8 @@
  */
 !defined('DEBUG') AND exit('Access Denied.');
 
+FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
+
 $action = param(1);
 
 include _include(APP_PATH . 'model/smtp.func.php');

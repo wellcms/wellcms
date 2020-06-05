@@ -18,7 +18,7 @@ CREATE TABLE `wellcms_user` (
   `comments` int(11) NOT NULL DEFAULT '0' COMMENT '评论数', #
   `credits` int(11) NOT NULL DEFAULT '0' COMMENT '积分',		# 预留，供二次开发扩展
   `golds` int(11) NOT NULL DEFAULT '0' COMMENT '金币',		# 预留，虚拟币
-  `rmbs` int(11) NOT NULL DEFAULT '0' COMMENT '人民币',		# 预留，人民币
+  `rmbs` decimal(11,2) NOT NULL DEFAULT '0.00' COMMENT '人民币',		# 预留，人民币
   `create_ip` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时IP',
   `create_date` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `login_ip` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '登录时IP',
@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.0","official_version":"2.0.0","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.01","official_version":"2.0.01","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;

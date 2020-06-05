@@ -10,7 +10,6 @@ return array(
 	'adminuser_is_empty' => '管理员用户名不能为空',
 	'adminpass_is_empty' => '管理员密码不能为空',
 	'conguralation_installed' => '恭喜，安装成功！为了安全请删除 install 目录。',
-	
 	'step_1_title' => '安装环境检测',
 	'runtime_env_check' => '网站运行环境检测',
 	'required' => '需要',
@@ -26,7 +25,6 @@ return array(
 	'os' => '操作系统',
 	'unix_like' => '类 UNIX',
 	'php_version' => 'PHP 版本',
-	
 	'step_2_title' => '数据库设置',
 	'db_type' => '数据库类型',
 	'db_engine' => '数据库引擎',
@@ -41,20 +39,21 @@ return array(
 	'admin_pw' => '管理员密码',
 	'installing_about_moment' => '正在安装，大概需要一分钟左右',
 	'license_title' => 'WellCMS 2.0 中文版授权协议',
-	'license_content' => '感谢您选择 WellCMS X 2.0.0，它是一款倾向移动端的内容管理产品，您可以在移动端进行前后台各种操作。WellCMS 具有安全、高效、稳定、速度快、负载超强的特点，尤其在大数据量下，它的优秀才更显卓越。基于XiunoPHP开发，作者对部分核心函数进行了修改增强，其目的是榨干硬件的全部运算性能。
-
-WellCMS X 版本中的 X 取自“Extreme”，意为轻便到了极点；意为追求极致；意为自由飞翔，需要轻盈的体态；意为将程序的性能发挥到极限。
-
-WellCMS X 2.0.0 只有 22 个表，源代码压缩后 1M 左右，运行速度非常快，处理单次请求在 0.01 秒级别，支持各种NoSQL操作。分布式服务器设计，每张表都可创建单独的DB服务器群和CACHE服务器(群)，单表可承载亿级以上数据，方便部署和维护，是一个二次开发非常好的基石。
-
+	'license_content' => '感谢您选择 WellCMS 2.0，它是一款倾向移动端的内容管理产品，前后台支持移动端各种操作。WellCMS 具有安全、高效、稳定、速度快、负载超强的特点，尤其在大数据量下，它的优秀才更显卓越。
+<br><br>
+WellCMS 2.0 自适应手机、平板、PC，也可设置单独加载各端模板，并且URL保持不变，有着非常方便的插件和模板开发机制。前台部分页面配备API，可通过JSON返回AJAX请求的数据，方便 APP 开发。
+<br><br>
+WellCMS 2.0 只有 22 张表，源代码压缩后 1M 左右，运行速度非常快，处理单次请求在 0.01 秒级别。前后端代码分离，支持各种 NoSQL 操作、支持整站附件分离，支持一主多从读写分离。分布式服务器设计，每张表都可创建单独的 DB 服务器群和 CACHE 服务器群，单表可承载亿级以上数据，方便部署和维护，是一个二次开发非常好的基石。
+<br><br>
 采用 Bootstrap 4 + JQuery 3 作为前端类库，全面支持移动端浏览器；后端基于 PHP7 MySQL，支持XCache/Yac/Redis/Memcached等 NoSQL 的方式操作各种数据库。
-
-WellCMS X 2.0.0 采用 MIT 协议发布，您可以自由修改、派生版本、商用而不用担心任何法律风险（修改后应保留原来的版权信息）。',
+<br><br>
+WellCMS 2.0 采用 MIT 协议发布，您可以自由修改、派生版本、商用而不用担心任何法律风险（修改后应保留原来的版权信息）。
+<br><br>
+警告：按照我国法律，在未取得相关资源（影片、动画、图书、音乐等）授权的情况下，请不要传播任何形式的相关资源（资源数据文件、种子文件、网盘文件、FTP 文件等）！否则后果自负。',
 	'license_date' => '发布时间：2020年1月6日',
 	'agree_license_to_continue' => '同意协议继续安装',
-	'install_title' => 'WellCMS X 2.0.0 安装向导',
+	'install_title' => 'WellCMS 2.0 安装向导',
 	'install_guide' => '安装向导',
-	
 	'function_check' => '函数依赖检查',
 	'supported' => '支持',
 	'not_supported' => '不支持',

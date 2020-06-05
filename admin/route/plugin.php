@@ -3,8 +3,6 @@
 
 FALSE === group_access($gid, 'manageplugin') AND message(1, lang('user_group_insufficient_privilege'));
 
-include XIUNOPHP_PATH . 'xn_zip.func.php';
-
 $action = param(1, 'list');
 
 // 初始化插件变量 / init plugin var
@@ -160,51 +158,43 @@ switch ($action) {
             $errno = '';
             $errmsg = '';
             $payment_tips = '';
-            $server = filter_var(gethostbyname(_SERVER('HTTP_HOST')), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+            $server = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+
+            // 本地是否有该插件
+            $islocal = plugin_is_local($dir);
+
             // 线上模式可登录 升级 购买
-            if (!empty($plugin['official']['storeid']) && $server) {
+            if (!$islocal && !empty($plugin['storeid']) && $server) {
                 /*
-                 * 1.判断是否购买过，传token到官方核对
-                 * 2.之前免费，后来收费，则判断是否已经支付，传token到官方核对
-                 * 3.如果收费，判断是否购买过，传token到官方核对
-                 * 4.未购买登录官方账号，获取支付二维码
-                 * 5.付款后给出下载地址，下载时传token到官方核对
+                 查询应用和用户权限
+                 0免费或已购买，显示下载地址或升级
+                 1付费显示有权限购买
+                 2已关闭或已下架
+                 3系统错误
+                 -1无人认领担保，不能购买应用
+                 -2权限不足，已被限制权限
+                 -3业务逻辑错误
+                 -4数据错误
                  */
-                if ($plugin['official']['price'] > 0) {
-                    $verify_token = plugin_data_verify(); // return FALSE re-login
-                    if (TRUE === $verify_token) {
-                        /*
-                        查询应用和用户权限
-                        0免费或已购买，显示下载地址或升级
-                        1付费显示有权限购买
-                        2已关闭或已下架
-                        3系统错误
-                        -1无人认领担保，不能购买应用
-                        -2权限不足，已被限制权限
-                        -3业务逻辑错误
-                        -4数据错误
-                        */
-                        $return = plugin_query($plugin['official']['storeid']);
-                        if (FALSE !== $return) {
-                            if (0 == $return['code']) {
-                                $download_url = url('plugin-download', $extra, TRUE);
-                            } elseif (1 == $return['code']) {
-                                if (1 == $return['pay_type']) {
-                                    $payment_tips = 'RMB: ' . $return['price'];
-                                } elseif (2 == $return['pay_type']) {
-                                    $payment_tips = lang('credits') . ':' . $return['price'];
-                                } elseif (3 == $return['pay_type']) {
-                                    $payment_tips = lang('golds') . ':' . $return['price'];
-                                }
+                $verify_token = plugin_data_verify(); // return FALSE re-login
+                if ($verify_token) {
+                    $return = plugin_query($plugin['storeid']);
+                    if (FALSE !== $return) {
+                        if (0 == $return['code']) {
+                            $download_url = url('plugin-download', $extra, TRUE);
+                        } elseif (1 == $return['code']) {
+                            if (1 == $return['pay_type']) {
+                                $payment_tips = 'RMB: ' . $return['price'];
+                            } elseif (2 == $return['pay_type']) {
+                                $payment_tips = lang('credits') . ':' . $return['price'];
+                            } elseif (3 == $return['pay_type']) {
+                                $payment_tips = lang('golds') . ':' . $return['price'];
                             }
                         }
-
                     }
                 }
             }
 
-            // 本地是否有该插件
-            $islocal = plugin_is_local($dir);
             $tab = empty($islocal) ? ($plugin['price'] > 0 ? 'official_fee' : 'official_free') : 'local';
 
             $header['title'] = lang('plugin_detail') . '-' . $plugin['name'];
@@ -222,9 +212,9 @@ switch ($action) {
 
             $siteip = ip2long(_SERVER('SERVER_ADDR'));
             $siteip < 0 AND $siteip = sprintf("%u", $siteip);
-            $post = array('email' => $email, 'password' => md5($password), 'auth_key' => $conf['auth_key'], 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ua' => md5($useragent), 'siteip' => $siteip, 'longip' => $longip);
+            $post = array('email' => $email, 'password' => md5($password), 'auth_key' => xn_key(), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ua' => md5($useragent), 'siteip' => $siteip, 'longip' => $longip);
             $url = PLUGIN_OFFICIAL_URL . 'plugin-login.html';
-            $json = https_request($url, $post, '', 500, 1);
+            $json = https_request($url, $post, '', 800, 1);
             empty($json) AND message(-1, lang('server_response_empty'));
             $r = xn_json_decode($json);
             // -1用户不存在 -2用户被锁 0正常 1用户名错误 2密码错误
@@ -232,14 +222,28 @@ switch ($action) {
                 isset($r['data']) AND setting_set('plugin_data', $r['data']);
                 message(0, lang('login_successfully'));
             }
-            1 == $r['code'] AND message(-1, lang('password_incorrect'));
-            2 == $r['code'] AND message(-1, lang('username_not_exists'));
-            -1 == $r['code'] AND message(-1, lang('user_not_exists'));
-            -2 == $r['code'] AND message(-1, lang('user_locked'));
+
+            switch ($r['code']) {
+                case 1:
+                    message(-1, lang('password_incorrect'));
+                    break;
+                case 2:
+                    message(-1, lang('username_not_exists'));
+                    break;
+                case -1:
+                    message(-1, lang('user_not_exists'));
+                    break;
+                case -2:
+                    message(-1, lang('user_locked'));
+                    break;
+                default:
+                    message(-1, array_value($r, 'message', lang('data_malformation')));
+                    break;
+            }
         }
         break;
     case 'buy':
-        FALSE === filter_var(gethostbyname(_SERVER('HTTP_HOST')), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) AND message(1, lang('plugin_read_tips'));
+        FALSE === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) AND message(1, lang('plugin_read_tips'));
 
         $data = plugin_data_verify();
         FALSE === $data AND message(1, lang('please_login'));
@@ -256,10 +260,10 @@ switch ($action) {
             $return = plugin_query($plugin['official']['storeid'], TRUE);
 
             if (FALSE === $return) {
-                if (-1 == $errno && in_array($return['pay_api'], array(3, 4, 5))) {
-                    message(1, lang('insufficient_balance') . ',' . $return['message']);
+                if (-1 == $errno) {
+                    message(-1, lang('insufficient_balance') . ',' . $return['message']);
                 } else {
-                    message(-1, $errmsg);
+                    message($errno, $errmsg);
                 }
             }
 
@@ -305,12 +309,13 @@ switch ($action) {
             $url = PLUGIN_OFFICIAL_URL . 'plugin-payment.html';
             $siteip = ip2long(_SERVER('SERVER_ADDR'));
             $siteip < 0 AND $siteip = sprintf("%u", $siteip);
-            $post = array('siteid' => plugin_siteid(), 'app_url' => xn_urlencode(http_url_path()), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $data[4], 'storeid' => $storeid, 'uid' => $data[0], 'ua' => md5($useragent), 'password' => md5($password), 'siteip' => $siteip, 'longip' => $longip);
+            $post = array('siteid' => plugin_siteid(), 'app_url' => xn_urlencode(http_url_path()), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $data[4], 'storeid' => $storeid, 'uid' => $data[0], 'ua' => md5($useragent), 'password' => $password, 'siteip' => $siteip, 'longip' => $longip);
 
-            $json = https_request($url, $post, '', 500, 1);
+            $json = https_request($url, $post, '', 800, 1);
             empty($json) AND message(-1, lang('server_response_empty'));
             $arr = xn_json_decode($json);
 
+            cache_delete('store-' . $storeid);
             if (0 == $arr['code']) {
                 message($arr['code'], lang('payment_successful'));
             } elseif (1 == $arr['code']) {
@@ -335,7 +340,7 @@ switch ($action) {
         $dir = param_word('dir');
         plugin_check_exists($dir, FALSE);
 
-        FALSE === plugin_verify_token() AND message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 1));
+        'fail' == plugin_verify_token() AND message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 1));
 
         // 下载官方插件 区分插件和主题 / download official plugin
         plugin_lock_start();
@@ -351,7 +356,7 @@ switch ($action) {
 
         plugin_lock_end();
 
-        message(0, jump(lang('plugin_download_sucessfully', array('dir' => $dir)), url('plugin-read', array('dir' => $dir), TRUE), 3));
+        message(0, jump(lang('plugin_download_successfully', array('dir' => $dir)), url('plugin-read', array('dir' => $dir), TRUE), 3));
         break;
     case 'install':
         $safe_token = param('safe_token');
@@ -470,14 +475,13 @@ switch ($action) {
 
         $dir = param_word('dir');
         plugin_check_exists($dir, FALSE);
-        $name = $plugins[$dir]['name'];
 
-        // 判断插件版本
-        $plugin = plugin_read_by_dir($dir);
+        $local = plugin_read_by_dir($dir);
 
         // 插件依赖检查
         plugin_check_dependency($dir, 'install');
         $official = plugin_read_by_dir($dir, FALSE);
+        if (empty($official['storeid'])) message(1, jump(lang('data_malformation'), url('plugin-read', array('dir' => $dir), TRUE), 3));
 
         // 检查版本  / check version match
         if (-1 == version_compare($conf['version'], $official['software_version'])) {
@@ -485,9 +489,9 @@ switch ($action) {
         }
 
         // 下载，解压 / download and zip
-        plugin_download_unzip($dir, $official['storeid']);
+        plugin_download_unzip($dir, $official['storeid'], 1);
 
-        if (empty($official['type'])) {
+        if (empty($local['type'])) {
             plugin_install($dir);
             $upgradefile = APP_PATH . 'plugin/' . $dir . '/upgrade.php';
         } else {
@@ -499,8 +503,8 @@ switch ($action) {
 
         plugin_lock_end();
 
-        $msg = lang('plugin_upgrade_sucessfully', array('name' => $name));
-        message(0, jump($msg, http_referer(), 3));
+        $msg = lang('plugin_upgrade_successfully', array('name' => $local['name']));
+        message(0, jump($msg, url('plugin-read', array('dir' => $dir), TRUE), 3));
         break;
     case 'setting':
         $dir = param_word('dir');
@@ -548,6 +552,7 @@ function plugin_dependency_arr_to_links($arr)
 
 function plugin_verify_token()
 {
+    global $longip;
     $arr = plugin_data_verify();
     if (FALSE === $arr) {
         setting_delete('plugin_data');
@@ -555,19 +560,19 @@ function plugin_verify_token()
     }
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
     $url = PLUGIN_OFFICIAL_URL . 'plugin-verify.html';
-    $post = array('siteid' => plugin_siteid(), 'domain' => $domain, 'token' => $arr[4], 'uid' => $arr[0]);
-    // return TRUE or FALSE
-    return https_request($url, $post, '', 500, 1);
+    $siteip = ip2long(_SERVER('SERVER_ADDR'));
+    $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+    $post = array('siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'domain' => $domain, 'token' => $arr[4], 'uid' => $arr[0]);
+    // return 'success' or 'fail'
+    return https_request($url, $post, '', 800, 1);
 }
 
 function plugin_data_verify()
 {
-    global $conf, $time;
-
     $data = setting_get('plugin_data');
     if (empty($data)) return FALSE;
 
-    $key = md5($conf['auth_key']);
+    $key = md5(xn_key());
     $s = xn_decrypt($data, $key);
     if (empty($s)) return FALSE;
 
@@ -575,14 +580,14 @@ function plugin_data_verify()
     if (5 != count($arr)) return FALSE;
 
     $domain = _SERVER('HTTP_HOST');
-    if (plugin_siteid() != $arr[1] || $time - $arr[3] > 2592000 || FALSE === strpos($domain, $arr[2])) return FALSE;
+    if (plugin_siteid() != $arr[1] || FALSE === strpos($domain, $arr[2])) return FALSE;
 
     return $arr;
 }
 
-function plugin_download_unzip($dir, $storeid)
+function plugin_download_unzip($dir, $storeid, $upgrade = 0)
 {
-    global $conf;
+    global $conf, $longip;
 
     $data = plugin_data_verify();
     empty($data) AND message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE)));
@@ -590,12 +595,13 @@ function plugin_download_unzip($dir, $storeid)
     $app_url = xn_urlencode(http_url_path());
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
     $url = PLUGIN_OFFICIAL_URL . 'plugin-download.html';
-
-    $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
+    $siteip = ip2long(_SERVER('SERVER_ADDR'));
+    $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+    $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'upgrade' => $upgrade, 'domain' => $domain, 'auth_key' => xn_key(), 'token' => $data[4], 'uid' => $data[0]);
 
     set_time_limit(0);
     // 服务端获取下载地址开始下载
-    $s = https_request($url, $post, '', 60);
+    $s = https_request($url, $post, '', 120);
     empty($s) AND message(-1, $url . lang('plugin_return_data_error') . lang('server_response_empty'));
     if ('PK' != substr($s, 0, 2)) {
         $res = xn_json_decode($s);
@@ -607,6 +613,8 @@ function plugin_download_unzip($dir, $storeid)
         -1 == $res['code'] AND message($res['code'], jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 3));
 
         message($res['code'], $res['message']);
+    } else {
+        $arr = explode('zip_' . $storeid, $s);
     }
 
     $zipfile = $conf['tmp_path'] . 'plugin_' . $dir . '.zip';
@@ -624,8 +632,18 @@ function plugin_download_unzip($dir, $storeid)
         $destpath = APP_PATH . 'view/template/';
     }
 
+    include XIUNOPHP_PATH . 'xn_zip.func.php';
     // 直接覆盖原来应用目录
     xn_unzip($zipfile, $destpath);
+    if (is_file($zipfile)) unlink($zipfile);
+
+    // 检查解压是否成功 / check the zip if success
+    if (is_dir($destpath . $dir)) {
+        $post += array('res' => $arr[1]);
+        https_request(PLUGIN_OFFICIAL_URL . 'plugin-notice.html', $post, '', 800, 1);
+    } else {
+        message(-1, lang('plugin_maybe_download_failed'));
+    }
 
     // 检查配置文件
     $conffile = $destpath . $dir . '/conf.json';
@@ -633,27 +651,23 @@ function plugin_download_unzip($dir, $storeid)
     $arr = xn_json_decode(file_get_contents($conffile));
     empty($arr['name']) AND message(-1, 'conf.json ' . lang('format_maybe_error'));
 
-    // 检查解压是否成功 / check the zip if success
-    if (!is_dir($destpath . $dir)) {
-        $post['state'] = 'fail';
-        $url = PLUGIN_OFFICIAL_URL . 'plugin-notice.html';
-        https_request($url, $post, '', 500, 1);
-        message(-1, lang('plugin_maybe_download_failed'));
-    }
-
     return TRUE;
 }
 
 function plugin_bought($storeid)
 {
+    global $longip;
+    if (!$storeid) return xn_error(-1, lang('data_malformation'));
     $data = plugin_data_verify();
     if (empty($data)) return xn_error(-1, lang('plugin_token_error'));
 
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
     $app_url = xn_urlencode(http_url_path());
     $url = PLUGIN_OFFICIAL_URL . 'plugin-bought.html';
-    $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
-    $s = https_request($url, $post, '', 500, 1);
+    $siteip = ip2long(_SERVER('SERVER_ADDR'));
+    $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+    $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
+    $s = https_request($url, $post, '', 800, 1);
     $arr = xn_json_decode($s);
     empty($arr) AND message(-1, $url . lang('plugin_return_data_error') . $s);
     if (0 == $arr['code']) {
@@ -665,16 +679,23 @@ function plugin_bought($storeid)
 
 function plugin_query($storeid, $paying = FALSE)
 {
+    global $longip;
+    if (!$storeid) xn_error(-1, lang('data_malformation'));
     $data = plugin_data_verify();
-    if (empty($data)) return xn_error(-1, lang('plugin_token_error'));
+    if (empty($data)) {
+        xn_error(-4, lang('plugin_token_error'));
+        return FALSE;
+    }
 
     $arr = cache_get('store-' . $storeid);
     if (empty($arr) || FALSE !== $paying) {
         $domain = xn_urlencode(_SERVER('HTTP_HOST'));
         $siteid = plugin_siteid();
+        $siteip = ip2long(_SERVER('SERVER_ADDR'));
+        $siteip < 0 AND $siteip = sprintf("%u", $siteip);
         $app_url = xn_urlencode(http_url_path());
         $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html';
-        $post = array('storeid' => $storeid, 'siteid' => $siteid, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
+        $post = array('storeid' => $storeid, 'siteid' => $siteid, 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
         FALSE !== $paying AND $post['paying'] = 1;
         $s = https_request($url, $post, '', 1);
         if (empty($s)) {
@@ -695,37 +716,12 @@ function plugin_query($storeid, $paying = FALSE)
         xn_error($arr['code'], $arr['message']);
         return FALSE;
     }
-    // code:0下载 1付费 -1余额不足 -2错误
+    // code:0下载 1付费 -1余额不足 -2支付错误 -3数据错误
     // pay_type:0免费 1现金 2积分 3金币
     // pay_api:1支付宝 2微信 3钱包 4积分 5支金币
     // url:qrcode
     // array('code' => 1, 'message' => 'string', 'pay_type' => 0, 'pay_api' => 0, 'url' => 0, 'price' => 1)
     return $arr;
-}
-
-function plugin_order_buy_qrcode($storeid)
-{
-    $data = plugin_data_verify();
-    if (empty($data)) return xn_error(-1, lang('plugin_token_error'));
-
-    $domain = xn_urlencode(_SERVER('HTTP_HOST'));
-    $siteid = plugin_siteid();
-    $app_url = xn_urlencode(http_url_path());
-    $url = PLUGIN_OFFICIAL_URL . 'plugin-qrcode.html';
-    $post = array('storeid' => $storeid, 'siteid' => $siteid, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
-    $s = https_request($url, $post, '', 1);
-    if (empty($s)) return xn_error(-1, lang('server_response_empty'));
-    $arr = xn_json_decode($s);
-
-    if (empty($arr) || !isset($arr['code'])) return xn_error($arr['code'], $url . lang('plugin_return_data_error') . $s);
-
-    if (0 == $arr['code']) {
-        return $arr['message']; // 支付成功
-    } elseif (-1 == $arr['code']) {
-        return xn_error(-1, lang('plugin_token_error'));
-    } else {
-        return xn_error($arr['code'], $url . lang('plugin_return_data_error') . $arr['message']);
-    }
 }
 
 function plugin_is_local($dir)

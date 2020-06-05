@@ -31,7 +31,7 @@ return array(
 	'admin_token_error'=>'Admin token error, That may be your network environment is not stable, can try to unbind IP, modify file: conf.php, set admin_bind_ip = 0',
 	'admin_token_expiry'=>'Admin token expiry, please re login',
 	'user_edit'=>'Edit User',
-	'edit_successfully'=>'Edit Sucessfully',
+	'edit_successfully'=>'Edit Successfully',
 	'item_not_moderator'=>'{item} not moderator',
 	'group_not_exists'=>'User group doest not exists',
 	'save_conf_failed'=>'Save data to config file {file} failed, please check the file write permission',

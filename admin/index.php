@@ -2,9 +2,10 @@
 /*
  * Copyright (C) www.wellcms.cn
  */
+define('SKIP_ROUTE', TRUE);
 define('ADMIN_PATH', dirname(__FILE__) . '/'); // __DIR__
 define('MESSAGE_HTM_PATH', ADMIN_PATH . 'view/htm/message.htm');
-define('SKIP_ROUTE', TRUE);
+define('OFFICIAL_URL', 'http://www.wellcms.cn/');
 
 $url_access = TRUE;
 include '../index.php';

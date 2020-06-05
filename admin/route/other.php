@@ -139,8 +139,8 @@ switch ($action) {
             $official = array();
 
             if (0 == $type) {
-                $json = https_request('http://www.wellcms.cn/version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 500, 1);
-                // 每天限更新一次
+                $json = https_request(OFFICIAL_URL . 'version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 500, 1);
+
                 if (!$config['last_version'] || ($config['last_version'] > $time && isset($json) && !in_array($json, array('1', '2', 'fail')))) {
                     $official = xn_json_decode($json);
                     if (isset($official['version'], $official['version_date'])) {
@@ -151,13 +151,14 @@ switch ($action) {
                         }
 
                         isset($official['message']) AND cache_set('official-message', $official['message'], 7200);
-                        $config['last_version'] = clock_twenty_four();
+                        //$config['last_version'] = clock_twenty_four();
+                        $config['last_version'] = $time + 7200;
                     }
                 } else {
                     $message = cache_get('official-message');
                     $official = array('message' => $message);
                 }
-                
+
                 setting_set('conf', $config);
 
             } elseif (1 == $type) {
@@ -165,8 +166,9 @@ switch ($action) {
                 if (0 == version_compare($config['version'], $config['official_version']) && 0 == $config['upgrade']) message(0, jump(lang('no_upgrade_required'), url('other-upgrade', '', TRUE), 2));
 
                 // 获取更新包
-                $url = 'http://www.wellcms.cn/version-upgrade.html?domain=' . xn_urlencode(_SERVER('HTTP_HOST')) . '&siteid=' . plugin_siteid() . '&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0);
-                $json = https_request($url, '', '', 500, 1);
+                $post = array('sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'users' => $runtime['users'], 'articles' => $runtime['articles'], 'comments' => $runtime['comments'], 'threads' => array_value($runtime, 'threads'), 'posts' => array_value($runtime, 'posts'), 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
+                $url = OFFICIAL_URL . 'version-upgrade.html';
+                $json = https_request($url, $post, '', 500, 1);
 
                 if (empty($json) || 'fail' == $json) {
                     message(0, jump(lang('upgrade_failed'), url('other-upgrade', '', TRUE), 2));
@@ -189,26 +191,28 @@ switch ($action) {
                     include XIUNOPHP_PATH . 'xn_zip.func.php';
                     // 覆盖 win主机转换\
                     xn_unzip($zipfile, str_replace('\\', '/', APP_PATH));
-
+                    if (is_file($zipfile)) unlink($zipfile);
                     // 升级mysql
                     $upgradefile = APP_PATH . 'tmp/upgrade.php';
                     if (!empty($res['upgrade_db']) && is_file($upgradefile)) include _include($upgradefile);
 
-                    https_request('http://www.wellcms.cn/version-upgrade.html?upgrade=1&id=' . $res['id'], '', '', 500, 1);
+                    https_request(OFFICIAL_URL . 'version-upgrade.html?upgrade=1&id=' . $res['id'], '', '', 500, 1);
+
+                    // 更新完成
+                    $config['version'] = $config['official_version'];
+                    $config['version_date'] = $res['version_date'];
+                    $config['upgrade'] = 0;
+                    setting_set('conf', $config);
 
                     rmdir_recusive($conf['tmp_path'], 1);
 
                     http_location(url('other-upgrade', array('type' => 2), TRUE));
                 }
-
             } elseif (2 == $type) {
-                // 更新完成
-                $config['version'] = $config['official_version'];
-                $config['upgrade'] = 0;
-                setting_set('conf', $config);
+                $official = array('message' => lang('upgrade_successfully'));
             }
 
-            $header['title'] = lang('online_upgrade');
+                $header['title'] = lang('online_upgrade');
             $header['mobile_title'] = lang('online_upgrade');
             $header['mobile_link'] = url('other-upgrade', '', TRUE);
 

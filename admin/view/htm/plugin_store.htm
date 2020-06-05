@@ -98,7 +98,7 @@
             <div class="d-flex thread">
                 <div class="d-flex align-items-center mx-3">
                     <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
-                        <img src="../<?php echo $plugin['icon_url']; ?>" width="54" height="54" />
+                        <img src="<?php echo $plugin['icon_url']; ?>" width="54" height="54" />
                     </a>
                 </div>
                 <div class="col p-0 m-0">
@@ -145,7 +145,7 @@
                         </div>
 
                         <div class="small text-muted">
-                            <?php echo format_number($plugin['installs']); ?><span class="ml-1"><?php echo lang('installs');?></span>
+                            <?php echo $plugin['downloads']; ?><span class="ml-1"><?php echo lang('installs');?></span>
                         </div>
                     </div>
 

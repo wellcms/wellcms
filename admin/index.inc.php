@@ -1,5 +1,52 @@
 <?php
 !defined('DEBUG') AND exit('Access Denied.');
+if (FALSE === group_access($gid, 'managecontent')) {
+    unset($menu['content']);
+} else {
+    // hook admin_index_inc_menu_content_start.php
+    if (FALSE === group_access($gid, 'managesticky')) unset($menu['content']['tab']['sticky']);
+    if (FALSE === group_access($gid, 'managecomment')) unset($menu['content']['tab']['comment']);
+    if (FALSE === group_access($gid, 'managepage')) unset($menu['content']['tab']['page']);
+    // hook admin_index_inc_menu_content_end.php
+}
+if (FALSE === group_access($gid, 'manageforum')) {
+    unset($menu['forum']);
+} else {
+    // hook admin_index_inc_menu_column_start.php
+    // hook admin_index_inc_menu_column_end.php
+}
+if (FALSE === group_access($gid, 'managecategory')) {
+    unset($menu['category']);
+} else {
+    // hook admin_index_inc_menu_flag_start.php
+    // hook admin_index_inc_menu_flag_end.php
+}
+if (FALSE === group_access($gid, 'manageuser')) {
+    unset($menu['user']);
+} else {
+    // hook admin_index_inc_menu_user_start.php
+    if (FALSE === group_access($gid, 'managegroup')) unset($menu['user']['tab']['group']);
+    if (FALSE === group_access($gid, 'managecreateuser')) unset($menu['user']['tab']['create']);
+    // hook admin_index_inc_menu_user_end.php
+}
+if (FALSE === group_access($gid, 'manageplugin')) {
+    unset($menu['plugin']);
+} else {
+    // hook admin_index_inc_menu_plugin_start.php
+    // hook admin_index_inc_menu_plugin_end.php
+}
+if (FALSE === group_access($gid, 'manageother')) {
+    unset($menu['other']);
+} else {
+    // hook admin_index_inc_menu_other_start.php
+    // hook admin_index_inc_menu_other_end.php
+}
+if (FALSE === group_access($gid, 'managesetting')) {
+    unset($menu['setting']);
+} else {
+    // hook admin_index_inc_menu_setting_start.php
+    // hook admin_index_inc_menu_setting_end.php
+}
 
 // hook admin_index_inc_start.php
 

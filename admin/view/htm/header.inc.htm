@@ -68,7 +68,7 @@ $static_version = $conf['static_version'];
         <ul class="navbar-nav ml-auto">
             <!--{hook admin_header_user_start.htm}-->
             <li class="nav-item">
-                <a class="nav-link my-url" href="<?php echo url_path(),url('my', '', 2);?>">
+                <a class="nav-link" href="<?php echo url_path(),url('my', '', 2);?>">
                     <img class="avatar-1 mr-1" src="<?php echo $user['avatar_url'];?>">&nbsp;<?php echo isset($user['username']) ? $user['username'] : '';?>
                 </a>
             </li>
@@ -100,6 +100,7 @@ $static_version = $conf['static_version'];
                                 </div>
                                 &nbsp;<?php echo lang('admin_index_page');?></a>
                         </li>
+                        <?php if (1 == $gid){ ?>
                         <li class="nav-item upgrade">
                             <a class="nav-link" href="<?php echo url('other-upgrade', '', TRUE);?>">
                                 <div class="menu-icon">
@@ -107,6 +108,7 @@ $static_version = $conf['static_version'];
                                 </div>
                                 &nbsp;<?php echo lang('online_upgrade');?></a>
                         </li>
+                        <?php } ?>
                         <!--{hook admin_header_nav_before.htm}-->
                         <?php foreach ($menu as $k=>$v) { ?>
                         <li class="nav-item nav-item-<?php echo $k;?>">
@@ -132,7 +134,7 @@ $static_version = $conf['static_version'];
                         <!--{hook admin_header_nav_after.htm}-->
                         <!--以下代码无需改动-->
                         <li class="nav-item d-flex justify-content-between d-md-none">
-                            <a class="nav-link my-url" href="<?php echo url_path(),url('my', '', 2);?>">
+                            <a class="nav-link" href="<?php echo url_path(),url('my', '', 2);?>">
                                 <img class="avatar-1 mr-1" src="<?php echo $user['avatar_url'];?>">&nbsp;<?php echo isset($user['username']) ? $user['username'] : '';?>
                             </a>
                             <a class="nav-link" href="<?php echo url('index-logout', '', TRUE);?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a>

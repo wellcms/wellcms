@@ -10,7 +10,7 @@
 
         </div>
         <?php } else {?>
-        <form action="<?php echo url('plugin-buy', '', TRUE);?>" method="post" id="form">
+        <form action="<?php echo url('plugin-buy', array('storeid' => $plugin['official']['storeid']), TRUE);?>" method="post" id="form">
             <div class="form-group">
                 <?php echo lang('for_safe_input_official_login_password');?>
             </div>
@@ -32,8 +32,8 @@
 <script src="<?php echo admin_view_path();?>js/md5.js"></script>
 <script src="<?php echo admin_view_path();?>js/jquery.qrcode.min.js"></script>
 <script ajax-eval="true">
-    var pay_api = '<?php echo $return['pay_api'];?>';
-    var qrcode = '<?php echo $return['url'];?>';
+    var pay_api = '<?php echo array_value($return, 'pay_api');?>';
+    var qrcode = '<?php echo array_value($return, 'url');?>';
     var dir = '<?php echo $dir;?>';
 
     if(1 == pay_api) {
@@ -63,7 +63,6 @@
                 if(code == 0) {
                     jsubmit.button(message);
                     setTimeout(function() {
-                        if(jmodal) jmodal.modal('dispose');
                         window.location.reload();
                     }, 1000);
                 } else {

@@ -11,15 +11,24 @@
 			<div class="card-body">
 				<div class="media">
 					<div>
-						<img src="../<?php echo $plugin['icon_url']; ?>" width="54" height="54" class="mr-3" />
+						<img src="<?php echo FALSE !== strpos($plugin['icon_url'], 'http') ? $plugin['icon_url'] : '../'.$plugin['icon_url']; ?>" width="54" height="54" class="mr-3" />
 					</div>
 					<div class="media-body">
 						<h4>
-                            <?php echo $plugin['name']; ?> v<?php echo $plugin['version']; ?>
+                            <?php echo $plugin['name']; ?><span class="mx-1">v<?php echo $plugin['version']; ?></span>
+							<?php if($plugin['have_upgrade']) { ?>
+							<span class="text-danger">v<?php echo $plugin['official_version']; ?></span>
+							<?php } ?>
                         </h4>
 						<p>
                             <?php echo $plugin['brief']; ?>
                         </p>
+						<?php if(!empty($plugin['storeid'])) { ?>
+                        <p>
+                            <span class="text-muted"><?php echo lang('brief');?></span>：
+                            <span><a href="<?php echo $plugin['brief_url']; ?>" target="_blank"><?php echo $plugin['brief_url']; ?></a></span>
+                        </p>
+                        <?php } ?>
 					</div>
 				</div>
 				<hr />
@@ -38,32 +47,12 @@
 					<div class="col-md-6">
 						<span class="text-muted"><?php echo lang('price');?></span>：
 						<i class="icon-rmb"></i>
-						<?php echo $plugin['official']['price']; ?>元
+						<?php echo isset($return['price'])?$return['price']:$plugin['official']['price']; ?>
 					</div>
 
 					<div class="col-md-6">
 						<span class="text-muted"><?php echo lang('installs');?></span>：
 						<span><?php echo $plugin['installs']; ?></span>
-					</div>
-
-					<div class="col-md-6">
-						<span class="text-muted"><?php echo lang('plugin_sells');?></span>：
-						<span><?php echo $plugin['sells']; ?></span>
-					</div>
-
-					<div class="col-md-6">
-						<span class="text-muted"><?php echo lang('plugin_is_cert');?></span>：
-						<span><?php echo $plugin['is_cert_fmt']; ?></span>
-					</div>
-
-					<div class="col-md-6">
-						<span class="text-muted"><?php echo lang('plugin_brief_url');?></span>：
-						<span><a href="<?php echo $plugin['brief_url']; ?>" target="_blank"><?php echo $plugin['brief_url']; ?></a></span>
-					</div>
-
-					<div class="col-md-6">
-						<span class="text-muted">客服QQ</span>：
-						<span class="font-weight-bold text-danger"><?php echo $plugin['qq']; ?></span>
 					</div>
 
 					<?php  } ?>

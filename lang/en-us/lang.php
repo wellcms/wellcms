@@ -73,13 +73,13 @@ return array(
 	'delete_failed'=>'Delete Failed',
 	'create_failed'=>'Create Failed',
 	
-	'update_successfully'=>'Update Sucessfully',
-	'delete_successfully'=>'Delete Sucessfully',
-	'create_successfully'=>'Create Sucessfully',
-	'save_successfully'=>'Save Sucessfully',
+	'update_successfully'=>'Update Successfully',
+	'delete_successfully'=>'Delete Successfully',
+	'create_successfully'=>'Create Successfully',
+	'save_successfully'=>'Save Successfully',
 	
-	'login_successfully'=>'Login Sucessfully',
-	'logout_successfully'=>'Logout Sucessfully',
+	'login_successfully'=>'Login Successfully',
+	'logout_successfully'=>'Logout Successfully',
 	
 	'orderby'=>'Order By',
 	'thread_create_date'=>'Thread Date',
@@ -107,7 +107,7 @@ return array(
 	'password_new_repeat'=>'Repeat Password',
 	'update_password'=>'Update Password',
 
-	'user_send_successfully'=>'Send Sucessfully',
+	'user_send_successfully'=>'Send Successfully',
 	'user_create'=>'Create User',
 	'user_create_successfully'=>'Create user successfully',
 	'user_login'=>'User Login',
@@ -144,7 +144,7 @@ return array(
 	'resetpw_email_template'=>'Reset password verify code:{rand} - 【{sitename}】',
 	'send_successfully'=>'Send Successfully',
 	'data_empty_to_last_step'=>'The data is empty, please return the last step to fill in',
-	'modify_successfully'=>'Modify Sucessfully',
+	'modify_successfully'=>'Modify Successfully',
 	'unauthorized_access'=>'Unauthorized access',
 	'authorized_get_failed'=>'Unauthorized failed, please restart request',
 	'request_synlogin_again'=>'Please re launch synchronous login request',

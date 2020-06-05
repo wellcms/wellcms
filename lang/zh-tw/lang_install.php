@@ -10,7 +10,6 @@ return array(
 	'adminuser_is_empty' => '管理員用戶名不能為空',
 	'adminpass_is_empty' => '管理員密碼不能為空',
 	'conguralation_installed' => '恭喜，安裝成功！為了安全請刪除 install 目錄。',
-	
 	'step_1_title' => '安裝環境檢測',
 	'runtime_env_check' => '網站運行環境檢測',
 	'required' => '需要',
@@ -26,7 +25,6 @@ return array(
 	'os' => '操作系統',
 	'unix_like' => '類 UNIX',
 	'php_version' => 'PHP 版本',
-	
 	'step_2_title' => '數據庫設置',
 	'db_type' => '數據庫類型',
 	'db_engine' => '數據庫引擎',
@@ -40,22 +38,22 @@ return array(
 	'admin_username' => '管理員用戶名',
 	'admin_pw' => '管理員密碼',
 	'installing_about_moment' => '正在安裝，大概需要壹分鐘左右',
-	'license_title' => '感謝您選擇WellCMS X 2.0.0，它是一款傾向移動端的內容管理產品，您可以在移動端進行前後臺各種操作。WellCMS 具有安全、高效、穩定、速度快、負載超強的特點，尤其在大數據量下，它的優秀才更顯卓越。基於XiunoPHP開發，作者對部分核心函數進行了修改增強，其目的是榨乾硬件的全部運算性能。
-
-WellCMS X 版本中的 X 取自“Extreme”，意為輕便到了極點；意為追求極致；意為自由飛翔，需要輕盈的體態；意為將程序的性能發揮到極限。
-
-它只有 22 個表，源代碼壓縮後 1M 左右，運行速度非常快，處理單次請求在0.01 秒級別，在有APC、Yac、XCache 的環境下可以跑到0.00x 秒，對第三方類庫依賴極少，僅僅前端依賴jquery.js。分佈式服務器設計，每張表都可創建單獨的DB服務器群和CACHE服務器(群)，單表可承受高達億級數據，方便部署和維護，是一個非常好的二次開發的基石。
-
-WellCMS X 2.0.0 只有 22 個表，源代碼壓縮後 1M 左右，運行速度非常快，處理單次請求在 0.01 秒級別，支持各種NoSQL操作。分佈式服務器設計，每張表都可創建單獨的DB服務器群和CACHE服務器(群)，單錶可承載億級以上數據，方便部署和維護，是一個二次開發非常好的基石。
-
+    'license_title' => 'WellCMS 2.0 版授權協議',
+	'license_content' => '感謝您選擇 WellCMS 2.0，它是一款傾向移動端的內容管理產品，前後台支持移動端各種操作。 WellCMS 具有安全、高效、穩定、速度快、負載超強的特點，尤其在大數據量下，它的優秀才更顯卓越。
+<br><br>
+WellCMS 2.0 自適應手機、平板、PC，也可設置單獨加載各端模板，並且URL保持不變，有著非常方便的插件和模板開發機制。前台部分頁面配備API，可通過JSON返回AJAX請求的數據，方便 APP 開發。
+<br><br>
+WellCMS 2.0 只有 22 張表，源代碼壓縮後 1M 左右，運行速度非常快，處理單次請求在 0.01 秒級別。前後端代碼分離，支持各種 NoSQL 操作、支持整站附件分離，支持一主多從讀寫分離。分佈式服務器設計，每張表都可創建單獨的 DB 服務器群和 CACHE 服務器群，單表可承載億級以上數據，方便部署和維護，是一個二次開發非常好的基石。
+<br><br>
 採用 Bootstrap 4 + JQuery 3 作為前端類庫，全面支持移動端瀏覽器；後端基於 PHP7 MySQL，支持XCache/Yac/Redis/Memcached等 NoSQL 的方式操作各種數據庫。
-
-WellCMS X 2.0.0 採用 MIT 協議發布，您可以自由修改、派生版本、商用而不用擔心任何法律風險（修改後應保留原來的版權信息）。',
+<br><br>
+WellCMS 2.0 採用 MIT 協議發布，您可以自由修改、派生版本、商用而不用擔心任何法律風險（修改後應保留原來的版權信息）。
+<br><br>
+警告：在未取得相關資源（影片、動畫、圖書、音樂等）授權的情況下，請不要傳播任何形式的相關資源（資源數據文件、種子文件、網盤文件、FTP 文件等） ！否則後果自負。',
 	'license_date' => '發布時間：2020年1月6日',
 	'agree_license_to_continue' => '同意協議繼續安裝',
-	'install_title' => 'WellCMS X 2.0.0 安装向导',
+	'install_title' => 'WellCMS 2.0 安装向导',
 	'install_guide' => '安裝向導',
-
 	'function_check' => '函數依賴檢查',
 	'supported' => '支持',
 	'not_supported' => '不支持',

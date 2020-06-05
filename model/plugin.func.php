@@ -73,7 +73,7 @@ function plugin_init()
 {
     global $plugin_paths, $themes, $plugins, $official_plugins, $conf;
 
-    $official_plugins = cache_get('plugin_official_list');
+    $official_plugins = kv_cache_get('plugin_official_list');
     empty($official_plugins) AND $official_plugins = array();
 
     $plugin_paths = glob(APP_PATH . 'plugin/*', GLOB_ONLYDIR);
@@ -110,7 +110,7 @@ function plugin_init()
             $arr = xn_json_decode(file_get_contents($conffile));
             if (empty($arr)) continue;
             $themes[$dir] = $arr;
-            $themes[$dir]['icon'] = url_path() . 'view/template/' . $dir . '/icon.png';
+            $themes[$dir]['icon'] = '../view/template/' . $dir . '/icon.png';
         }
     }
 }
@@ -389,13 +389,13 @@ function plugin_official_list($cond = array(), $orderby = array('storeid' => -1)
  */
 function plugin_official_store($type = 0)
 {
-    global $conf;
+    global $conf, $ip;
 
-    if (!filter_var(gethostbyname(_SERVER('HTTP_HOST')), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return NULL;
+    if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return NULL;
 
     if ($type) {
         $r = param($conf['cookie_pre'] . 'plugin_official_list');
-        if ($r) return cache_get('plugin_official_list');
+        if ($r) return kv_cache_get('plugin_official_list');
     }
 
     $s = 3 == DEBUG ? NULL : cache_get('plugin_official_list');
@@ -416,8 +416,8 @@ function plugin_official_store($type = 0)
         $s = xn_json_decode($s);
         if (empty($s)) return xn_error(-1, lang('plugin_get_data_fmt_failed'));
 
-        cache_set('plugin_official_list', $s);
-        cookie_set('plugin_official_list', 1, 300);
+        kv_cache_set('plugin_official_list', $s);
+        cookie_set('plugin_official_list', 1, 600);
     }
 
     return $s;
@@ -482,6 +482,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['storeid']) && $official['storeid'] = 0;
     !isset($official['name']) && $official['name'] = '';
     !isset($official['price']) && $official['price'] = 0;
+    !isset($official['original_price']) && $official['original_price'] = 0;
     !isset($official['brief']) && $official['brief'] = '';
     !isset($official['software_version']) && $official['software_version'] = '2.0';
     !isset($official['version']) && $official['version'] = '1.0.0';
@@ -491,12 +492,12 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['last_update_fmt']) && $official['last_update_fmt'] = lang('none');
     !isset($official['stars']) && $official['stars'] = 0;
     !isset($official['user_stars']) && $official['user_stars'] = 0;
-    !isset($official['installs']) && $official['installs'] = 0;
+    !isset($official['downloads']) && $official['downloads'] = 0;
     !isset($official['sells']) && $official['sells'] = 0;
     !isset($official['file_md5']) && $official['file_md5'] = '';
     !isset($official['filename']) && $official['filename'] = '';
     !isset($official['is_cert']) && $official['is_cert'] = 0;
-    //!isset($official['is_show']) && $official['is_show'] = 0;
+    !isset($official['is_show']) && $official['is_show'] = 0;
     !isset($official['brief_url']) && $official['brief_url'] = '';
     !isset($official['qq']) && $official['qq'] = '';
     !isset($official['author']) && $official['author'] = '';
@@ -518,7 +519,6 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     // 10赞一星 100赞二星 1k赞三星 10k赞四星 100k+五星
     $plugin['stars_fmt'] = $official['storeid'] ? str_repeat('<span class="icon-star"></span>', $official['stars']) : '';
     $plugin['user_stars_fmt'] = $official['storeid'] ? str_repeat('<span class="icon-star"></span>', $official['user_stars']) : '';
-    $plugin['is_cert_fmt'] = empty($official['is_cert']) ? '<span class="text-danger">' . lang('no') . '</span>' : '<span class="text-success">' . lang('yes') . '</span>';
     $plugin['have_upgrade'] = $plugin['installed'] && version_compare($official['version'], $local['version']) > 0 ? TRUE : FALSE;
     $plugin['official_version'] = $official['version'];
 

@@ -9,7 +9,7 @@
                         <?php foreach($pluginlist as $dir=>$theme) {?>
                         <div class="col-lg-2 col-md-3 col-6">
                             <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
-                                <img src="../<?php echo $theme['icon'];?>" class="img-thumbnail mx-auto d-block" alt="<?php echo $theme['name'];?>">
+                                <img src="<?php echo $theme['icon'];?>" class="img-thumbnail mx-auto d-block" alt="<?php echo $theme['name'];?>">
                                 <div class="text-center py-1">
                                     <?php echo $theme['name'];?>
                                 </div>

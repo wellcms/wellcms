@@ -123,24 +123,12 @@ if (empty($action)) {
         $conf['cache']['yac']['cachepre'] = $pre;
         $conf['cache']['apc']['cachepre'] = $pre;
         $conf['cache']['mysql']['cachepre'] = $pre;
-
-        // 初始化
-        copy(APP_PATH . 'conf/conf.default.php', APP_PATH . 'conf/conf.php');
-
-        $replace = array();
-        $replace['db'] = $conf['db'];
-        $replace['cache'] = $conf['cache'];
-        $replace['cookie_pre'] = $tablepre;
-        $replace['auth_key'] = xn_rand(64);
-        $replace['installed'] = 1;
-        $replace['lang'] = $_lang;
-        file_replace_var(APP_PATH . 'conf/conf.php', $replace);
-
         $_SERVER['db'] = $db = db_new($conf['db']);
+
         // 此处可能报错
         $r = db_connect($db);
-        if ($r === FALSE) {
-            if ($errno == 1049 || $errno == 1045) {
+        if (FALSE === $r) {
+            if (1049 == $errno || 1045 == $errno) {
                 if ($type == 'mysql') {
                     mysql_query("CREATE DATABASE $name");
                     $r = db_connect($db);
@@ -167,10 +155,22 @@ if (empty($action)) {
                     }
                 }
             }
-            if ($r === FALSE) {
+            if (FALSE === $r) {
                 message(-1, "$errstr (errno: $errno)");
             }
         }
+
+        // 初始化
+        copy(APP_PATH . 'conf/conf.default.php', APP_PATH . 'conf/conf.php');
+
+        $replace = array();
+        $replace['db'] = $conf['db'];
+        $replace['cache'] = $conf['cache'];
+        $replace['cookie_pre'] = $tablepre;
+        $replace['auth_key'] = xn_rand(64);
+        $replace['installed'] = 1;
+        $replace['lang'] = $_lang;
+        file_replace_var(APP_PATH . 'conf/conf.php', $replace);
 
         $conf['cache']['mysql']['db'] = $db; // 这里直接传 $db，复用 $db；如果传配置文件，会产生新链接。
         $_SERVER['cache'] = $cache = !empty($conf['cache']) ? cache_new($conf['cache']) : NULL;
