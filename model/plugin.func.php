@@ -447,12 +447,12 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     global $plugins, $themes;
 
     $type = 0;
-    $icon = is_file(APP_PATH . 'plugin/' . $dir . '/icon.png') ? url_path() . 'plugin/' . $dir . '/icon.png' : '';
+    $icon = is_file(APP_PATH . 'plugin/' . $dir . '/icon.png') ? '../plugin/' . $dir . '/icon.png' : '';
     $local = array_value($plugins, $dir, array());
     if (empty($local)) {
         if (isset($themes[$dir]) && $local = $themes[$dir]) {
             $type = 1;
-            $icon = is_file(APP_PATH . 'view/template/' . $dir . '/icon.png') ? url_path() . 'view/template/' . $dir . '/icon.png' : '';
+            $icon = is_file(APP_PATH . 'view/template/' . $dir . '/icon.png') ? '../view/template/' . $dir . '/icon.png' : '';
         }
     }
 
@@ -513,7 +513,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     }
 
     // 额外的判断
-    $plugin['icon_url'] = $official['storeid'] ? PLUGIN_OFFICIAL_URL . "upload/plugin/$plugin[storeid]/icon.png" : $icon;
+    $plugin['icon_url'] = $icon ? $icon : ($official['storeid'] ? PLUGIN_OFFICIAL_URL . "upload/plugin/$plugin[storeid]/icon.png" : '');
     $plugin['setting_url'] = $plugin['installed'] && is_file(APP_PATH . "plugin/$dir/setting.php") ? "plugin-setting-$dir.html" : "";
     $plugin['downloaded'] = isset($plugins[$dir]);
     // 10赞一星 100赞二星 1k赞三星 10k赞四星 100k+五星
