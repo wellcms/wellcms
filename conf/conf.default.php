@@ -117,7 +117,7 @@ return array(
     'url_rewrite_on' => 0,
     // 禁止插件
     'disabled_plugin' => 0,
-    'version' => '2.0',
+    'version' => '2.0.0',
     'static_version' => '?2.0.05',
     'installed' => 0,
     'compress' => 1, // 代码压缩 0关闭 1仅压缩php、html代码(不压缩js代码) 2压缩全部代码 如果启用压缩出现错误，请关闭，删除html中的所有注释，并且js代码按照英文分号结束的地方加上分号;
