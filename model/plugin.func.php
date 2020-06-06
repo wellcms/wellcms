@@ -503,6 +503,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     !isset($official['author']) && $official['author'] = '';
     !isset($official['uid']) && $official['uid'] = '';
     !isset($official['domain']) && $official['domain'] = '';
+    !isset($official['upgrade']) && $official['upgrade'] = 0;
 
     $local['official'] = $official;
 
@@ -521,6 +522,8 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     $plugin['user_stars_fmt'] = $official['storeid'] ? str_repeat('<span class="icon-star"></span>', $official['user_stars']) : '';
     $plugin['have_upgrade'] = $plugin['installed'] && version_compare($official['version'], $local['version']) > 0 ? TRUE : FALSE;
     $plugin['official_version'] = $official['version'];
+    $plugin['upgrade'] = $official['upgrade'];
+    $plugin['downloads'] = $official['downloads'];
 
     return $plugin;
 }

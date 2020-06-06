@@ -621,16 +621,20 @@ function plugin_download_unzip($dir, $storeid, $upgrade = 0)
     file_put_contents($zipfile, $s);
 
     $official = plugin_official_read($dir);
-    // 0插件 1主题
-    if (empty($official['type'])) {
-        // 清理原来的钩子，防止叠加
-        rmdir_recusive(APP_PATH . 'plugin/' . $dir . '/hook/', 1);
-        rmdir_recusive(APP_PATH . 'plugin/' . $dir . '/overwrite/', 1);
-        $destpath = APP_PATH . 'plugin/';
-    } elseif (1 == $official['type']) {
+    // 1模板主题 其他插件
+    if (1 == $official['type']) {
         // 直接覆盖，如需删除执行 upgrade.php 文件
         $destpath = APP_PATH . 'view/template/';
+    } else {
+        if (empty($official['upgrade'])) {
+            // 完整包 清理原来的钩子，防止叠加
+            rmdir_recusive(APP_PATH . 'plugin/' . $dir . '/hook/', 1);
+            rmdir_recusive(APP_PATH . 'plugin/' . $dir . '/overwrite/', 1);
+        }
+        $destpath = APP_PATH . 'plugin/';
     }
+
+    is_dir($destpath) || mkdir($destpath, 0777, TRUE);
 
     include XIUNOPHP_PATH . 'xn_zip.func.php';
     // 直接覆盖原来应用目录
