@@ -328,7 +328,7 @@ switch ($action) {
             $modnames = param('modnames', '', FALSE);
             $moduids = user_names_to_ids($modnames);
             $nav_display = param('nav_display', 0);
-            $model = $_forum['threads'] ? $_forum['model'] : param('model', 0);
+            $model = ($_forum['threads'] OR $_forum['son']) ? $_forum['model'] : param('model', 0);
             $width = param('width', 170);
             $height = param('height', 113);
             $thumbnail = json_encode(array('width' => $width, 'height' => $height));
