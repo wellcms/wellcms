@@ -281,6 +281,8 @@ function comment_delete($pid)
     if (FALSE === $r) return FALSE;
     // 删除小表
     $r = comment_pid_delete($pid);
+    // 删除附件
+    well_attach_delete_by_pid($pid);
     // hook model_comment_delete_end.php
     return $r;
 }
