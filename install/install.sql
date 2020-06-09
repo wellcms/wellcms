@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.02","official_version":"2.0.02","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.03","official_version":"2.0.03","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;
@@ -198,6 +198,7 @@ DROP TABLE IF EXISTS `wellcms_website_attach`;
 CREATE TABLE `wellcms_website_attach` (
   `aid` int(11) unsigned NOT NULL AUTO_INCREMENT, # 附件ID
   `tid` int(11) unsigned NOT NULL DEFAULT '0',  # 主题ID
+  `pid` int(11) unsigned NOT NULL DEFAULT '0',  # 评论ID
   `uid` int(11) unsigned NOT NULL DEFAULT '0',  # 用户ID
   `filesize` int(8) unsigned NOT NULL DEFAULT '0',  # 文件尺寸 单位字节
   `width` mediumint(8) unsigned NOT NULL DEFAULT '0', # width > 0 则为图片
@@ -209,13 +210,14 @@ CREATE TABLE `wellcms_website_attach` (
   `isimage` tinyint(1) NOT NULL DEFAULT '0',  # 是否为图片
   `attach_on` tinyint(1) NOT NULL DEFAULT '0',  # 0本地储存 1云储存 2图床 记录使用了哪种储存方式
   `create_date` int(11) unsigned NOT NULL DEFAULT '0',  # 文件上传时间 UNIX 时间戳
-  `filename` varchar(80) NOT NULL DEFAULT '', # 文件名称，会过滤，并且截断，保存后的文件名，不包含URL前缀 upload_url
+  `filename` varchar(60) NOT NULL DEFAULT '', # 文件名称，会过滤，并且截断，保存后的文件名，不包含URL前缀 upload_url
   `orgfilename` varchar(80) NOT NULL DEFAULT '',  # 上传的原文件名
   `image_url` varchar(120) NOT NULL DEFAULT '', # 使用图床完整链接
-  `filetype` varchar(7) NOT NULL DEFAULT '',  # 文件类型: image/txt/zip 小图标显示 <i class="icon filetype image"></i>
+  `filetype` char(7) NOT NULL DEFAULT '',  # 文件类型: image/txt/zip 小图标显示 <i class="icon filetype image"></i>
   `comment` varchar(100) NOT NULL DEFAULT '', # 文件注释 方便于搜索
   PRIMARY KEY (`aid`),
   KEY `tid` (`tid`),  # 主题附件
+  KEY `pid` (`pid`),  # 评论附件
   KEY `uid` (`uid`)   # 用户附件
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -283,6 +285,8 @@ CREATE TABLE `wellcms_website_comment` (
   `userip` int(11) unsigned NOT NULL DEFAULT '0',
   `doctype` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `quotepid` int(11) unsigned NOT NULL DEFAULT '0',
+  `images` tinyint(2) NOT NULL DEFAULT '0', # 附件中包含的图片数
+  `files` tinyint(2) NOT NULL DEFAULT '0',  # 附件中包含的文件数
   `message` longtext NOT NULL,
   PRIMARY KEY (`pid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

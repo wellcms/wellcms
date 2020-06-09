@@ -165,6 +165,50 @@ function well_attach_delete_by_tid($tid)
     return count($attachlist);
 }
 
+// 获取 $filelist $imagelist
+function well_attach_find_by_pid($pid)
+{
+    $imagelist = array();
+    $filelist = array();
+
+    // hook model__attach_find_by_pid_start.php
+
+    $attachlist = well_attach__find(array('pid' => $pid), array(), 1, 1000);
+    if (empty($attachlist)) return array($attachlist, $imagelist, $filelist);
+
+    // hook model__attach_find_by_pid_before.php
+
+    foreach ($attachlist as $attach) {
+        well_attach_format($attach);
+        $attach['isimage'] ? $imagelist[] = $attach : $filelist[] = $attach;
+    }
+
+    // hook model__attach_find_by_pid_end.php
+
+    return array($attachlist, $imagelist, $filelist);
+}
+
+function well_attach_delete_by_pid($pid)
+{
+    global $conf;
+    // hook model__attach_delete_by_pid_start.php
+
+    list($attachlist, $imagelist, $filelist) = well_attach_find_by_pid($pid);
+
+    // hook model__attach_delete_by_pid_before.php
+    if (empty($attachlist)) return FALSE;
+
+    foreach ($attachlist as $attach) {
+        $path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
+        is_file($path) AND unlink($path);
+        well_attach__delete($attach['aid']);
+    }
+
+    // hook model__attach_delete_by_pid_end.php
+
+    return count($attachlist);
+}
+
 function well_attach_delete_by_uid($uid)
 {
     global $conf;
@@ -323,11 +367,13 @@ function well_attach_assoc_file($arr = array())
 
     // hook model_attach_assoc_file_start.php
 
-    $uid = array_value($arr, 'uid');
-    $tid = array_value($arr, 'tid');
-    //$message = array_value($arr, 'message');
-    $images = array_value($arr, 'images');
-    $files = array_value($arr, 'files');
+    $uid = array_value($arr, 'uid', 0);
+    $tid = array_value($arr, 'tid', 0);
+    $pid = array_value($arr, 'pid', 0);
+    $images = array_value($arr, 'images', 0);
+    $files = array_value($arr, 'files', 0);
+
+    if (!$tid && !$pid) return $arr['message'];
 
     // hook model_attach_assoc_file_before.php
 
@@ -360,7 +406,7 @@ function well_attach_assoc_file($arr = array())
             // 相对路径
             $desturl = $url . '/' . $filename;
 
-            xn_copy($file['path'], $destfile) || xn_log("xn_copy($file[path]), $destfile) failed, tid:$tid", 'php_error');
+            xn_copy($file['path'], $destfile) || xn_log("xn_copy($file[path]), $destfile) failed, tid:$tid, pid:$pid", 'php_error');
 
             // hook model_attach_assoc_file_copy_after.php
 
@@ -372,6 +418,7 @@ function well_attach_assoc_file($arr = array())
 
             $attach = array(
                 'tid' => $tid,
+                'pid' => $pid,
                 'uid' => $uid,
                 'filesize' => $file['filesize'],
                 'width' => $file['width'],
@@ -405,12 +452,13 @@ function well_attach_assoc_file($arr = array())
     // hook model_attach_assoc_file_filter_start.php
 
     // 更新附件数
-    $thread = array();
+    $update = array();
 
     // 处理不在 message 中的图片，删除掉没有插入的图片附件
     if ($arr['message']) {
 
-        list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($tid);
+        // 只有评论会传pid
+        list($attachlist, $imagelist, $filelist) = $pid ? well_attach_find_by_pid($pid) : well_attach_find_by_tid($tid);
 
         // hook model_attach_assoc_file_filter_before.php
 
@@ -438,19 +486,24 @@ function well_attach_assoc_file($arr = array())
         }
 
         $_images = count($imagelist);
-        $images != $_images AND $thread['images'] = $_images;
+        $images != $_images AND $update['images'] = $_images;
 
         $_files = count($filelist);
-        $files != $_files AND $thread['files'] = $_files;
+        $files != $_files AND $update['files'] = $_files;
 
         // hook model_attach_assoc_file_filter_end.php
     }
 
     // hook model_attach_assoc_file_filter_end.php
 
-    if (empty($thread)) return $arr['message'];
+    if (empty($update)) return $arr['message'];
 
-    well_thread_update($tid, $thread);
+    if ($pid) {
+        $update['message'] = $arr['message'];
+        comment__update($pid, $update);
+    } else {
+        well_thread_update($tid, $update);
+    }
 
     // hook model_attach_assoc_file_end.php
 

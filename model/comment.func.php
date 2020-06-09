@@ -73,6 +73,11 @@ function comment_create($post)
     $pid = comment__create($post);
     if (FALSE === $pid) return FALSE;
 
+    // 关联附件
+    $attach = array('tid' => $post['tid'], 'pid' => $pid, 'uid' => $uid, 'assoc' => 'post', 'images' => 0, 'files' => 0, 'message' => $post['message']);
+    well_attach_assoc_post($attach);
+    unset($attach);
+
     // hook model_comment_create_center.php
 
     $forum_update = array('todayposts+' => 1);
@@ -113,7 +118,7 @@ function comment_create($post)
     return $pid;
 }
 
-// 主键更新 $update = array('gid' => $gid, 'userip' => $longip, 'message' => $message, 'doctype' => $doctype);
+// 更新时关联附件在route中完成，此处只做已变更内容更新 $update = array('gid' => $gid, 'images' => $images, 'files' => $files, 'userip' => $longip, 'message' => $message, 'doctype' => $doctype);
 function comment_update($pid, $update)
 {
     global $gid;
