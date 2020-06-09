@@ -989,6 +989,42 @@ function search_directory($path)
     }
 }
 
+/*
+function search_dir($path)
+{
+    $path = rtrim($path, '/*');
+    if (is_readable($path)) {
+        $opendir = opendir($path);
+        while (($file = readdir($opendir)) !== FALSE) {
+            if (substr($file, 0, 1) === '.') continue;
+            $rfile = $path . '/' . $file;
+            if (is_dir($rfile)) {
+                $sub = search_dir($rfile);
+                while ($sub->valid()) {
+                    yield $sub->current();
+                    $sub->next();
+                }
+            } else {
+                yield $rfile;
+            }
+        }
+        closedir($opendir);
+    }
+}
+
+$globs = search_dir($path);
+// 用于查看总共文件数量
+$count = 0;
+while ($globs->valid()) {
+    $filename = $globs->current();
+    echo $filename;
+    echo '<br />';
+    $count++;
+    // 指向下一个
+    $globs->next();
+}
+echo $count;*/
+
 // 一维数组转字符串 $sign待签名字符串 $url为urlencode转码GET参数字符串
 function array_to_string($arr, &$sign = '', &$url = '')
 {
