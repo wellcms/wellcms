@@ -124,12 +124,9 @@ switch ($action) {
     case 'create':
         // hook admin_page_create_start.php
 
-        $fid = param('fid', 0);
-
-        // hook admin_page_create_before.php
-
         if ('GET' == $method) {
 
+            $fid = param('fid', 0);
             $extra = array('fid' => $fid); // 插件预留
 
             // hook admin_page_create_get_start.php
