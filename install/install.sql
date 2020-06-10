@@ -18,7 +18,7 @@ CREATE TABLE `wellcms_user` (
   `comments` int(11) NOT NULL DEFAULT '0' COMMENT '评论数', #
   `credits` int(11) NOT NULL DEFAULT '0' COMMENT '积分',		# 预留，供二次开发扩展
   `golds` int(11) NOT NULL DEFAULT '0' COMMENT '金币',		# 预留，虚拟币
-  `rmbs` decimal(11,2) NOT NULL DEFAULT '0.00' COMMENT '人民币',		# 预留，人民币
+  `money` decimal(11,2) NOT NULL DEFAULT '0.00' COMMENT '钱包',		# 预留，账户资金
   `create_ip` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时IP',
   `create_date` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `login_ip` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '登录时IP',
@@ -206,7 +206,7 @@ CREATE TABLE `wellcms_website_attach` (
   `downloads` int(11) NOT NULL DEFAULT '0', # 下载次数 预留
   `credits` int(11) NOT NULL DEFAULT '0', # 下载需要积分 预留
   `golds` int(11) NOT NULL DEFAULT '0', # 下载需要金币 预留
-  `rmbs` int(11) NOT NULL DEFAULT '0',  # 下载需要人民币 预留
+  `money` int(11) NOT NULL DEFAULT '0', # 下载需要资金 预留
   `isimage` tinyint(1) NOT NULL DEFAULT '0',  # 是否为图片
   `attach_on` tinyint(1) NOT NULL DEFAULT '0',  # 0本地储存 1云储存 2图床 记录使用了哪种储存方式
   `create_date` int(11) unsigned NOT NULL DEFAULT '0',  # 文件上传时间 UNIX 时间戳

@@ -897,8 +897,7 @@ function well_thread_safe_info($thread)
     unset($thread['user']['posts']);
     unset($thread['user']['credits']);
     unset($thread['user']['golds']);
-    unset($thread['user']['rmbs']);
-    unset($thread['user']['golds']);
+    unset($thread['user']['money']);
 
     empty($thread['user']) || $thread['user'] = user_safe_info($thread['user']);
 

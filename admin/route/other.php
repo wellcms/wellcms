@@ -135,13 +135,15 @@ switch ($action) {
         if ('GET' == $method) {
 
             $type = param('type', 0);
-            $upgrade = 0;
+            $upgrade = array_value($config, 'upgrade', 0);
+            $last_version = array_value($config, 'last_version', 0);
             $official = array();
 
-            if (0 == $type) {
+            if (0 == $type && $last_version < $time) {
+
                 $json = https_request(OFFICIAL_URL . 'version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 500, 1);
 
-                if (!$config['last_version'] || ($config['last_version'] > $time && isset($json) && !in_array($json, array('1', '2', 'fail')))) {
+                if (isset($json) && !in_array($json, array('1', '2', 'fail'))) {
                     $official = xn_json_decode($json);
                     if (isset($official['version'], $official['version_date'])) {
                         if (-1 == version_compare($config['official_version'], $official['version']) || array_value($config, 'version_date', 0) < $official['version_date']) {
@@ -153,13 +155,12 @@ switch ($action) {
                         isset($official['message']) AND cache_set('official-message', $official['message'], 7200);
                         //$config['last_version'] = clock_twenty_four();
                         $config['last_version'] = $time + 7200;
+                        setting_set('conf', $config);
                     }
                 } else {
                     $message = cache_get('official-message');
                     $official = array('message' => $message);
                 }
-
-                setting_set('conf', $config);
 
             } elseif (1 == $type) {
 
@@ -210,9 +211,12 @@ switch ($action) {
                 }
             } elseif (2 == $type) {
                 $official = array('message' => lang('upgrade_successfully'));
+            } else {
+                $message = cache_get('official-message');
+                $official = array('message' => $message);
             }
 
-                $header['title'] = lang('online_upgrade');
+            $header['title'] = lang('online_upgrade');
             $header['mobile_title'] = lang('online_upgrade');
             $header['mobile_link'] = url('other-upgrade', '', TRUE);
 
