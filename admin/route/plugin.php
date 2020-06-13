@@ -156,7 +156,7 @@ switch ($action) {
             $verify_token = TRUE;
             $download_url = '';
             $errno = '';
-            $errmsg = '';
+            $errstr = '';
             $payment_tips = '';
             $server = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
 
@@ -256,14 +256,14 @@ switch ($action) {
             empty($plugin) AND message(-1, lang('plugin_not_exists'));
 
             $errno = '';
-            $errmsg = '';
+            $errstr = '';
             $return = plugin_query($plugin['official']['storeid'], TRUE);
 
             if (FALSE === $return) {
                 if (-1 == $errno) {
                     message(-1, lang('insufficient_balance') . ',' . $return['message']);
                 } else {
-                    message($errno, $errmsg);
+                    message($errno, $errstr);
                 }
             }
 

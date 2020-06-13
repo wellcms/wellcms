@@ -192,19 +192,28 @@ function forum_format(&$forum)
 
         // hook model_forum_format_center.php
 
-        switch ($forum['category']) {
-            case 1:
+        // 可根据 model 区分 URL
+        switch ($forum['model']) {
+            /*case 1:
                 $forum['url'] = url('category-' . $forum['fid'], '', FALSE);
-                break;
-            case 2:
-                $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief']), '', FALSE) : url('list-' . $forum['fid'], '', FALSE);
-                break;
-            case 3:
-                $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
-                break;
-            // hook model_forum_format_url_case.php   
+                break;*/
+            // hook model_forum_format_url_case.php
             default:
-                $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
+                switch ($forum['category']) {
+                    case 1:
+                        $forum['url'] = url('category-' . $forum['fid'], '', FALSE);
+                        break;
+                    case 2:
+                        $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief']), '', FALSE) : url('list-' . $forum['fid'], '', FALSE);
+                        break;
+                    case 3:
+                        $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
+                        break;
+                    // hook model_forum_format_default_url_case.php
+                    default:
+                        $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
+                        break;
+                }
                 break;
         }
 
