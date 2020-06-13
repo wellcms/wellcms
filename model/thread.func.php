@@ -94,20 +94,27 @@ function well_thread_create($arr)
 
     // hook model__thread_create_start.php
 
+    // 防止扩展出错
     $fid = array_value($arr, 'fid', 0);
     $forum = array_value($forumlist, $fid);
+    $subject = array_value($arr, 'subject');
+    $type = array_value($arr, 'type', 0);
+    $closed = array_value($arr, 'closed', 0);
+    $keyword = array_value($arr, 'keyword');
+    $brief = array_value($arr, 'brief');
+    $description = array_value($arr, 'description');
+    $flags = array_value($arr, 'flags');
     $message = array_value($arr, 'message');
     $thumbnail = array_value($arr, 'thumbnail', 0); // 内容主图
     $delete_pic = array_value($arr, 'delete_pic', 0); // 删除主图
     $save_image = array_value($arr, 'save_image', 0); // 图片本地化
     $doctype = array_value($arr, 'doctype', 0);
-    $type = array_value($arr, 'type', 0);
     $status = array_value($arr, 'status', 0);
 
     // hook model__thread_create_before.php
 
     // 创建主题
-    $thread = array('fid' => $fid, 'subject' => $arr['subject'], 'type' => $type, 'brief' => $arr['brief'], 'uid' => $uid, 'create_date' => $time, 'closed' => $arr['closed'], 'keyword' => $arr['keyword'], 'description' => $arr['description'], 'last_date' => $time, 'userip' => $longip, 'attach_on' => $conf['attach_on'], 'flags' => $arr['flags'], 'status' => $status);
+    $thread = array('fid' => $fid, 'subject' => $subject, 'type' => $type, 'brief' => $brief, 'uid' => $uid, 'create_date' => $time, 'closed' => $closed, 'keyword' => $keyword, 'description' => $description, 'last_date' => $time, 'userip' => $longip, 'attach_on' => $conf['attach_on'], 'flags' => $flags, 'status' => $status);
 
     // hook model__thread_create_thread_after.php
 
@@ -186,38 +193,63 @@ function well_thread_create($arr)
 
     // hook model__thread_create_verify_before.php
 
+    $user_update = array();
+
+    // hook model__thread_create_verify_center.php
+
     // 我的主题 审核成功写入该表 website_thread_tid表
     if (!group_access($gid, 'publishverify') || group_access($gid, 'managecreatethread')) {
 
         // hook model__thread_create_tid_start.php
-        if (0 == array_value($forum, 'model')) {
-            // hook model__thread_create_tid_before.php
-            thread_tid_create(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid));
-            // hook model__thread_create_tid_center.php
-            $user_update = array('articles+' => 1);
-            // hook model__thread_create_tid_after.php
+        // 会对模块进行区分，如果需要全站扁平，在首页都能出现，可以复制default的代码，写入thread_tid，其他模块原有代码不变，单独写入各小表
+        switch (array_value($forum, 'model')) {
+            // hook model__thread_create_case_start.php
+            /*case 0:
+                break;*/
+            // hook model__thread_create_case_end.php
+            default:
+                // hook model__thread_create_tid_before.php
+                thread_tid_create(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid));
+                // hook model__thread_create_tid_center.php
+                $user_update += array('articles+' => 1);
+                // hook model__thread_create_tid_after.php
+                break;
         }
+
         // hook model__thread_create_tid_end.php
-
-        // 更新统计数据
-        !empty($user_update) AND user_update($uid, $user_update);
-
-        // hook model__thread_create_verify_middle.php
+        
     } else {
         // 待审核 / Waiting for verification
         // hook model__thread_create_tid_verify_start.php
-        if (0 == array_value($forum, 'model')) {
-            // hook model__thread_create_tid_verify_before.php
+        switch (array_value($forum, 'model')) {
+            // hook model__thread_create_verify_case_start.php
+            /*case 0:
+                break;*/
+            // hook model__thread_create_verify_case_end.php
+            default:
+                // hook model__thread_create_tid_verify_before.php
+                break;
         }
         // hook model__thread_create_tid_verify_end.php
     }
 
     // hook model__thread_create_verify_after.php
+    
+    // 更新统计数据
+    !empty($user_update) AND user_update($uid, $user_update);
+
+    // hook model__thread_create_user_update_after.php
 
     // 全站内容数
-    if (0 == array_value($forum, 'model')) {
-        runtime_set('articles+', 1);
-        runtime_set('todayarticles+', 1);
+    switch (array_value($forum, 'model')) {
+        // hook model__thread_create_runtime_set_case_start.php
+        /*case 0:
+            break;*/
+        // hook model__thread_create_runtime_set_case_end.php
+        default:
+            runtime_set('articles+', 1);
+            runtime_set('todayarticles+', 1);
+            break;
     }
 
     // hook model__thread_create_articles_after.php

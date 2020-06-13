@@ -17,10 +17,10 @@
  * @param bool $url_access FALSE前台链接 TRUE后台链接 2后台调用前台链接 3不受限后台链接(不受过滤限制)
  * @return string 返回解析的链接
  */
-function url($url, $extra = array(), $url_access = FALSE)
+function url($url, $extra = array(), $url_access = NULL)
 {
     $conf = _SERVER('conf');
-    FALSE === $url_access AND $url_access = GLOBALS('url_access');
+    NULL === $url_access AND $url_access = GLOBALS('url_access');
 
     !isset($conf['url_rewrite_on']) AND $conf['url_rewrite_on'] = 0;
 

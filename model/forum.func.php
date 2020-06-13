@@ -193,17 +193,15 @@ function forum_format(&$forum)
         // hook model_forum_format_center.php
 
         if (0 == $forum['category']) {
-            $forum['url'] = url('list-' . $forum['fid']);
+            $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
         } elseif (1 == $forum['category']) {
-            $forum['url'] = url('category-' . $forum['fid']);
+            $forum['url'] = url('category-' . $forum['fid'], '', FALSE);
         } elseif (2 == $forum['category']) {
-            $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief'])) : url('list-' . $forum['fid']);
+            $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief']), '', FALSE) : url('list-' . $forum['fid'], '', FALSE);
         } elseif (3 == $forum['category']) {
-            $forum['url'] = url('list-' . $forum['fid']);
+            $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
         }
 
-        $conf['url_rewrite_on'] > 1 AND $forum['url'] = str_replace('/admin', '', $forum['url']);
-        
         // hook model_forum_format_middle.php
     }
 
@@ -393,17 +391,17 @@ function forum_format_url($forum)
     if (0 == $forum['category']) {
         // 列表URL
         // hook model_forum_format_url_list_before.php
-        $url = url('list-' . $forum['fid']);
+        $url = url('list-' . $forum['fid'], '', FALSE);
         // hook model_forum_format_url_list_after.php
     } elseif (1 == $forum['category']) {
         // 频道
         // hook model_forum_format_url_category_before.php
-        $url = url('category-' . $forum['fid']);
+        $url = url('category-' . $forum['fid'], '', FALSE);
         // hook model_forum_format_url_category_after.php
     } elseif (2 == $forum['category']) {
         // 单页
         // hook model_forum_format_url_read_before.php
-        $url = url('read-' . trim($forum['brief']));
+        $url = url('read-' . trim($forum['brief']), '', FALSE);
         // hook model_forum_format_url_read_after.php
     }
     // hook model_forum_format_url_end.php

@@ -4,7 +4,7 @@
  */
 !defined('DEBUG') AND exit('Access Denied.');
 
-FALSE === group_access($gid, 'manageuser') AND message(1, lang('user_group_insufficient_privilege'));
+3 != DEBUG && FALSE === group_access($gid, 'manageuser') AND message(1, lang('user_group_insufficient_privilege'));
 
 $action = param(1, 'list');
 
@@ -147,7 +147,7 @@ switch ($action) {
 
         } elseif ('POST' == $method) {
 
-            FALSE === group_access($gid, 'manageupdateuser') AND message(1, lang('user_group_insufficient_privilege'));
+            3 != DEBUG && FALSE === group_access($gid, 'manageupdateuser') AND message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
             FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));

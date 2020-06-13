@@ -21,7 +21,7 @@ if (FALSE === group_access($gid, 'managecategory')) {
     // hook admin_index_inc_menu_flag_start.php
     // hook admin_index_inc_menu_flag_end.php
 }
-if (FALSE === group_access($gid, 'manageuser')) {
+if (3 != DEBUG && FALSE === group_access($gid, 'manageuser')) {
     unset($menu['user']);
 } else {
     // hook admin_index_inc_menu_user_start.php

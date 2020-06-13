@@ -189,7 +189,7 @@ function flag_format(&$val)
 
     $val['forum_name'] = $forum ? $forum['name'] : lang('index_page');
     $val['display_text'] = $val['display'] ? lang('yes') : lang('no');
-    $val['forum_url'] = $forum ? forum_format_url($forum) : $conf['path'];
+    $val['forum_url'] = $forum ? $forum['url'] : $conf['path'];
     $val['url'] = url('flag-' . $val['flagid']);
     $val['create_date_text'] = date('Y-m-d', $val['create_date']);
     // 主图只支持本地和云储存，不支持图床
