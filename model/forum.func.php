@@ -192,14 +192,20 @@ function forum_format(&$forum)
 
         // hook model_forum_format_center.php
 
-        if (0 == $forum['category']) {
-            $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
-        } elseif (1 == $forum['category']) {
-            $forum['url'] = url('category-' . $forum['fid'], '', FALSE);
-        } elseif (2 == $forum['category']) {
-            $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief']), '', FALSE) : url('list-' . $forum['fid'], '', FALSE);
-        } elseif (3 == $forum['category']) {
-            $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
+        switch ($forum['category']) {
+            case 1:
+                $forum['url'] = url('category-' . $forum['fid'], '', FALSE);
+                break;
+            case 2:
+                $forum['url'] = $forum['threads'] ? url('read-' . trim($forum['brief']), '', FALSE) : url('list-' . $forum['fid'], '', FALSE);
+                break;
+            case 3:
+                $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
+                break;
+            // hook model_forum_format_url_case.php   
+            default:
+                $forum['url'] = url('list-' . $forum['fid'], '', FALSE);
+                break;
         }
 
         // hook model_forum_format_middle.php
