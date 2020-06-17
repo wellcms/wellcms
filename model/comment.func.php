@@ -174,7 +174,7 @@ function comment_find_by_tid($tid, $page = 1, $pagesize = 20)
 
     $pidarr = arrlist_values($arr, 'pid');
 
-    $postlist = comment__find(array('pid' => $pidarr), array(), 1, $pagesize);
+    $postlist = comment__find(array('pid' => $pidarr), array('pid' => -1), 1, $pagesize);
     if (empty($postlist)) return NULL;
 
     // hook model_comment_find_by_tid_center.php
@@ -249,7 +249,7 @@ function comment_find_all($page = 1, $pagesize = 20)
     // hook model_comment_find_all_before.php
 
     // 遍历主题和回复
-    $postlist = comment__find(array('pid' => $pidarr), array(), 1, $pagesize);
+    $postlist = comment__find(array('pid' => $pidarr), array('pid' => -1), 1, $pagesize);
     if (empty($postlist)) return NULL;
 
     // hook model_comment_find_all_after.php
