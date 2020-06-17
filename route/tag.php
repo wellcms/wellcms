@@ -46,7 +46,7 @@ switch ($action) {
         if ($ajax) {
             $conf['api_on'] ? message(0, $taglist) : message(0, lang('closed'));
         } else {
-            include _include(theme_load(4));
+            include _include(theme_load('tag_list'));
         }
         break;
     // hook tag_case_end.php
@@ -100,7 +100,7 @@ switch ($action) {
         if ($ajax) {
             $conf['api_on'] ? message(0, array('tag' => $read, 'threadlist' => $threadlist)) : message(0, lang('closed'));
         } else {
-            include _include(theme_load(5, $tagid));
+            include _include(theme_load('tag', $tagid));
         }
         break;
 }

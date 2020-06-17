@@ -54,7 +54,7 @@ $flag_link = '';
 if ($ajax) {
     $conf['api_on'] ? message(0, array('flag' => $read, 'threadlist' => $threadlist)) : message(0, lang('closed'));
 } else {
-    include _include(theme_load(6, $flagid));
+    include _include(theme_load('flag', $flagid));
 }
 
 ?>

@@ -251,6 +251,30 @@ $('input.checkall').on('click', function () {
  });*/
 
 /*引用 / Quote*/
+body.on('click', '.well_reply', function () {
+    var jthis = $(this);
+    var tid = jthis.data('tid');
+    var pid = jthis.data('pid');
+    var jmessage = $('#message');
+    var jli = jthis.closest('.post');
+    var jpostlist = jli.closest('.postlist');
+    var jadvanced_reply = $('#advanced_reply');
+    var jform = $('#quick_reply_form');
+    if (jli.hasClass('quote')) {
+        jli.removeClass('quote');
+        jform.find('input[name="quotepid"]').val(0);
+        jadvanced_reply.attr('href', xn.url('comment-create-' + tid));
+    } else {
+        jpostlist.find('.post').removeClass('quote');
+        jli.addClass('quote');
+        jform.find('input[name="quotepid"]').val(pid);
+        jadvanced_reply.attr('href', xn.url('comment-create-' + tid + '-' + pid));
+    }
+    jmessage.focus();
+    return false;
+});
+
+/*引用 / Quote*/
 body.on('click', '.post_reply', function () {
     var jthis = $(this);
     var tid = jthis.data('tid');
@@ -267,7 +291,6 @@ body.on('click', '.post_reply', function () {
     } else {
         jpostlist.find('.post').removeClass('quote');
         jli.addClass('quote');
-        var s = jmessage.val();
         jform.find('input[name="quotepid"]').val(pid);
         jadvanced_reply.attr('href', xn.url('post-create-' + tid + '-0-' + pid));
     }

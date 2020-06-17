@@ -129,12 +129,13 @@ function well_attach_find_by_tid($tid)
 
     // hook model__attach_find_by_tid_start.php
 
-    $attachlist = well_attach__find(array('tid' => $tid), array(), 1, 1000);
+    $attachlist = well_attach__find(array('tid' => $tid), array(), 1, 100);
     if (empty($attachlist)) return array($attachlist, $imagelist, $filelist);
 
     // hook model__attach_find_by_tid_before.php
 
-    foreach ($attachlist as $attach) {
+    foreach ($attachlist as $key => $attach) {
+        if ($attach['pid']) continue;
         well_attach_format($attach);
         $attach['isimage'] ? $imagelist[] = $attach : $filelist[] = $attach;
     }
@@ -173,7 +174,7 @@ function well_attach_find_by_pid($pid)
 
     // hook model__attach_find_by_pid_start.php
 
-    $attachlist = well_attach__find(array('pid' => $pid), array(), 1, 1000);
+    $attachlist = well_attach__find(array('pid' => $pid), array(), 1, 100);
     if (empty($attachlist)) return array($attachlist, $imagelist, $filelist);
 
     // hook model__attach_find_by_pid_before.php
@@ -283,17 +284,23 @@ function well_attach_assoc_post($arr = array())
     // hook model__attach_assoc_post_before.php
     $arr['sess_tmp_files'] = well_attach_assoc_type($assoc);
     // hook model__attach_assoc_post_center.php
-    if ('thumbnail' == $assoc) {
-        // 主图缩略图
-        // hook model__attach_assoc_post_thumbnail_start.php
-        if (empty($arr['sess_tmp_files'])) return FALSE;
-        // hook model__attach_assoc_post_thumbnail_before.php
-        well_attach_assoc_thumbnail($arr);
-        // hook model__attach_assoc_post_thumbnail_end.php
-    } elseif ('post' == $assoc) {
-        // hook model__attach_assoc_post_file_start.php
-        $message = well_attach_assoc_file($arr);
-        // hook model__attach_assoc_post_file_end.php
+    switch ($assoc) {
+        case 'thumbnail': // 主图缩略图
+            // hook model__attach_assoc_post_thumbnail_start.php
+            if (empty($arr['sess_tmp_files'])) return FALSE;
+            // hook model__attach_assoc_post_thumbnail_before.php
+            well_attach_assoc_thumbnail($arr);
+            // hook model__attach_assoc_post_thumbnail_end.php
+            break;
+        case 'post': // 内容附件和图片
+            // hook model__attach_assoc_post_file_start.php
+            $message = well_attach_assoc_file($arr);
+            // hook model__attach_assoc_post_file_end.php
+            break;
+        // hook model__attach_assoc_post_case.php
+        default:
+            message(-1, lang('data_malformation'));
+            break;
     }
     // hook model__attach_assoc_post_end.php
     return $message;
@@ -369,6 +376,7 @@ function well_attach_assoc_file($arr = array())
 
     $uid = array_value($arr, 'uid', 0);
     $tid = array_value($arr, 'tid', 0);
+    $post_create = array_value($arr, 'post_create', 0); // 创建回复
     $pid = array_value($arr, 'pid', 0);
     $images = array_value($arr, 'images', 0);
     $files = array_value($arr, 'files', 0);
@@ -388,7 +396,7 @@ function well_attach_assoc_file($arr = array())
             // hook model_attach_assoc_file_foreach_start.php
 
             // 后台提交的内容需要替换掉../
-            $file['url'] = $file['backstage'] && FALSE !== strpos($file['url'], '../upload/') ? str_replace('../upload/', 'upload/', $file['url']) : $file['url'];
+            $file['url'] = $file['backstage'] ? str_replace('../upload/', 'upload/', $file['url']) : str_replace('/upload/', 'upload/', $file['url']);
 
             // hook model_attach_assoc_file_foreach_before.php
 
@@ -454,6 +462,8 @@ function well_attach_assoc_file($arr = array())
     // 更新附件数
     $update = array();
 
+    $_images = 0;
+    $_files = 0;
     // 处理不在 message 中的图片，删除掉没有插入的图片附件
     if ($arr['message']) {
 
@@ -499,8 +509,13 @@ function well_attach_assoc_file($arr = array())
     if (empty($update)) return $arr['message'];
 
     if ($pid) {
-        $update['message'] = $arr['message'];
-        comment__update($pid, $update);
+        if ($post_create) {
+            $update['message'] = $arr['message'];
+            comment__update($pid, $update);
+        } else {
+            // 编辑回复返回的数据
+            return array($arr['message'], $_images, $_files);
+        }
     } else {
         well_thread_update($tid, $update);
     }

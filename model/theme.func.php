@@ -36,87 +36,91 @@ function theme_load($type = '', $id = 0, $dir = '')
     }
 
     switch ($type) {
-        case '0':
+        case 'index':
             // 首页
             $pre .= $default_pre .= theme_mode_pre();
             break;
-        case '1':
+        case 'list':
             // 列表
             $pre .= $default_pre .= 'list.htm';
             break;
-        case '2':
+        case 'category':
             // 频道
             $pre .= $default_pre .= theme_mode_pre(2);
             break;
-        case '3':
+        case 'read':
             // 详情
             $pre .= $default_pre .= 'read.htm';
             break;
-        case '4':
+        case 'tag_list':
             // tag 分类列表
             $pre .= $default_pre .= 'tag_list.htm';
             break;
-        case '5':
+        case 'tag':
             // tag 主题列表
             $pre .= $default_pre .= 'tag.htm';
             break;
-        case '6':
+        case 'flag':
             // flag 主题列表
             $pre .= $default_pre .= 'flag.htm';
             break;
-        case '7':
+        case 'my':
             // my 个人中心
             $pre .= $default_pre .= 'my.htm';
             break;
-        case '8':
+        case 'my_password':
             // password 修改密码
             $pre .= $default_pre .= 'my_password.htm';
             break;
-        case '9':
+        case 'my_avatar':
+            // 我的头像
+            $pre .= $default_pre .= 'my_avatar.htm';
+            break;
+        case 'user':
             // user 用户中心
             $pre .= $default_pre .= 'user.htm';
             break;
-        case '10':
+        case 'user_login':
             // 登录
             $pre .= $default_pre .= 'user_login.htm';
             break;
-        case '11':
+        case 'user_create':
             // 注册
             $pre .= $default_pre .= 'user_create.htm';
             break;
-        case '12':
+        case 'user_resetpw':
             // 密码找回
             $pre .= $default_pre .= 'user_resetpw.htm';
             break;
-        case '13':
+        case 'user_resetpw_complete':
             // 重置密码
-            $pre .= $default_pre .= 'user_resetpw_complete';
+            $pre .= $default_pre .= 'user_resetpw_complete.htm';
             break;
-        case '14':
+        case 'user_comment':
+            // 我的首页评论
+            $pre .= $default_pre .= 'user_comment.htm';
+            break;
+        case 'home':
             // 我的首页
             $pre .= $default_pre .= 'home.htm';
+            break;
+        case 'home_comment':
+            // 我的首页评论
+            $pre .= $default_pre .= 'home_comment.htm';
             break;
         case '15':
             // 单页
             $pre .= $default_pre .= 'single_page.htm';
             break;
-        case '16':
-            // 我的首页评论
-            $pre .= $default_pre .= 'home_comment.htm';
-            break;
-        case '17':
-            // 我的首页评论
-            $pre .= $default_pre .= 'user_comment.htm';
-            break;
-        case '18':
+        case 'search':
             // 搜索
             $pre .= $default_pre .= 'search.htm';
             break;
-        case '19':
-            // 我的头像
-            $pre .= $default_pre .= 'my_avatar.htm';
+        case 'comment':
+            // 高级评论
+            $pre .= $default_pre .= 'comment.htm';
             break;
-        case '20':
+        case 'comment_list.inc':
             // 评论列表公用文件
             $pre .= $default_pre .= 'comment_list.inc.htm';
             break;

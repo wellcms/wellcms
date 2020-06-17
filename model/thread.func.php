@@ -204,20 +204,18 @@ function well_thread_create($arr)
         // 会对模块进行区分，如果需要全站扁平，在首页都能出现，可以复制default的代码，写入thread_tid，其他模块原有代码不变，单独写入各小表
         switch (array_value($forum, 'model')) {
             // hook model__thread_create_case_start.php
-            /*case 0:
-                break;*/
-            // hook model__thread_create_case_end.php
-            default:
+            case '0':
                 // hook model__thread_create_tid_before.php
                 thread_tid_create(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid));
                 // hook model__thread_create_tid_center.php
                 $user_update += array('articles+' => 1);
                 // hook model__thread_create_tid_after.php
                 break;
+            // hook model__thread_create_case_end.php
         }
 
         // hook model__thread_create_tid_end.php
-        
+
     } else {
         // 待审核 / Waiting for verification
         // hook model__thread_create_tid_verify_start.php
@@ -226,15 +224,12 @@ function well_thread_create($arr)
             /*case 0:
                 break;*/
             // hook model__thread_create_verify_case_end.php
-            default:
-                // hook model__thread_create_tid_verify_before.php
-                break;
         }
         // hook model__thread_create_tid_verify_end.php
     }
 
     // hook model__thread_create_verify_after.php
-    
+
     // 更新统计数据
     !empty($user_update) AND user_update($uid, $user_update);
 
@@ -243,13 +238,11 @@ function well_thread_create($arr)
     // 全站内容数
     switch (array_value($forum, 'model')) {
         // hook model__thread_create_runtime_set_case_start.php
-        /*case 0:
-            break;*/
-        // hook model__thread_create_runtime_set_case_end.php
-        default:
+        case '0':
             runtime_set('articles+', 1);
             runtime_set('todayarticles+', 1);
             break;
+        // hook model__thread_create_runtime_set_case_end.php
     }
 
     // hook model__thread_create_articles_after.php
@@ -606,13 +599,14 @@ function well_thread_delete_all($tid)
     if (FALSE === $r) return FALSE;
 
     $user_update = array();
-    // 新闻模型
-    if (0 == array_value($forum, 'model')) {
-        $r = thread_tid_delete($tid);
-        if (FALSE === $r) return FALSE;
-
-        // 内容数-1
-        $user_update = array('articles-' => 1);
+    switch (array_value($forum, 'model')) {
+        case '0': // 新闻模型
+            $r = thread_tid_delete($tid);
+            if (FALSE === $r) return FALSE;
+            // 内容数-1
+            $user_update = array('articles-' => 1);
+            break;
+        // hook model_thread_delete_all_user_update_case.php
     }
 
     // hook model_thread_delete_all_user_update_before.php

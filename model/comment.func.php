@@ -74,7 +74,7 @@ function comment_create($post)
     if (FALSE === $pid) return FALSE;
 
     // 关联附件
-    $attach = array('tid' => $post['tid'], 'pid' => $pid, 'uid' => $uid, 'assoc' => 'post', 'images' => 0, 'files' => 0, 'message' => $post['message']);
+    $attach = array('tid' => $post['tid'], 'pid' => $pid, 'uid' => $uid, 'assoc' => 'post', 'post_create' => 1, 'images' => 0, 'files' => 0, 'message' => $post['message']);
     well_attach_assoc_post($attach);
     unset($attach);
 
@@ -174,15 +174,20 @@ function comment_find_by_tid($tid, $page = 1, $pagesize = 20)
 
     $pidarr = arrlist_values($arr, 'pid');
 
-    $postlist = comment_find($pidarr, $pagesize, FALSE);
-    if ($postlist) {
-        $i = 0;
-        $floor = ($page - 1) * $pagesize + 2;
-        foreach ($postlist as &$post) {
-            ++$i;
-            $post['i'] = $i;
-            $post['floor'] = $floor++;
-        }
+    $postlist = comment__find(array('pid' => $pidarr), array(), 1, $pagesize);
+    if (empty($postlist)) return NULL;
+
+    // hook model_comment_find_by_tid_center.php
+
+    $i = 0;
+    $floor = ($page - 1) * $pagesize + 2;
+    foreach ($postlist as &$post) {
+        ++$i;
+        $post['i'] = $i;
+        $post['floor'] = $floor++;
+        comment_format($post);
+        comment_format_message($post); // 云储存
+        // hook model_comment_find_by_tid_after.php
     }
 
     // hook model_comment_find_by_tid_end.php
@@ -207,6 +212,7 @@ function comment_find($pidarr, $pagesize = 20, $desc = TRUE)
         ++$i;
         $post['i'] = $i;
         comment_format($post);
+        comment_format_message($post); // 云储存
     }
 
     // hook model_comment_find_end.php
@@ -243,8 +249,7 @@ function comment_find_all($page = 1, $pagesize = 20)
     // hook model_comment_find_all_before.php
 
     // 遍历主题和回复
-    $postlist = comment_find($pidarr, $pagesize);
-
+    $postlist = comment__find(array('pid' => $pidarr), array(), 1, $pagesize);
     if (empty($postlist)) return NULL;
 
     // hook model_comment_find_all_after.php
@@ -255,6 +260,8 @@ function comment_find_all($page = 1, $pagesize = 20)
         ++$i;
         $post['i'] = $i;
         $post['floor'] = $floor++;
+        comment_format($post);
+        comment_format_message($post); // 云储存
         // hook model_comment_find_all_foreach.php
     }
 
@@ -267,7 +274,10 @@ function comment_read($pid)
 {
     // hook model_comment_read_start.php
     $r = comment__read(array('pid' => $pid));
-    $r AND comment_format($r);
+    if ($r) {
+        comment_format($r);
+        comment_format_message($r); // 云储存
+    }
     // hook model_comment_read_end.php
     return $r;
 }
@@ -287,7 +297,7 @@ function comment_delete($pid)
     return $r;
 }
 
-// 通过删除主题 删除回复 同时更新用户评论数 此处也需要删除待验证和回收站回复数据
+// 删除主题和回复 同时更新用户评论数 此处也需要删除待验证和回收站回复数据
 function comment_delete_by_tid($tid)
 {
     $thread = well_thread_read_cache($tid);
@@ -335,6 +345,56 @@ function comment_delete_by_tid($tid)
     return $posts;
 }
 
+function comment_format_by_tid(&$post)
+{
+    global $conf, $uid, $gid;
+    // hook model_comment_format_start.php
+
+    if (empty($post)) return;
+
+    // hook model_comment_format_before.php
+
+    $post['create_date_fmt'] = humandate($post['create_date']);
+    //$post['message'] = stripslashes(htmlspecialchars_decode($post['message']));
+
+    // hook model_comment_format_center.php
+
+    $user = user_read_cache($post['uid']);
+
+    $post['username'] = array_value($user, 'username');
+    $post['user_avatar_url'] = array_value($user, 'avatar_url');
+    $post['user'] = $user ? $user : user_guest();
+    isset($post['floor']) || $post['floor'] = 0;
+
+    // hook model_comment_format_after.php
+
+    // 权限判断
+    $post['allowupdate'] = ($uid == $post['uid']) || forum_access_mod($post['fid'], $gid, 'allowupdate');
+    $post['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $post['uid']) || forum_access_mod($post['fid'], $gid, 'allowdelete');
+
+    $post['user_url'] = url('user-' . $post['uid'] . ($post['uid'] ? '' : '-' . $post['pid']));
+
+    if($post['files'] > 0) {
+        list($attachlist, $imagelist, $post['filelist']) = well_attach_find_by_pid($post['pid']);
+
+        // 使用图床 评论使用图床，mysql会过多，写死链接到内容是减轻mysql的过多的方法
+        if (2 == $conf['attach_on']) {
+            foreach ($imagelist as $key => $attach) {
+                $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
+                // 替换成图床
+                $post['message'] = FALSE !== strpos($post['message'], $url) && $attach['image_url'] ? str_replace($url, $attach['image_url'], $post['message']) : $post['message'];
+            }
+        }
+
+    } else {
+        $post['filelist'] = array();
+    }
+
+    $post['classname'] = 'post';
+
+    // hook model_comment_format_end.php
+}
+
 function comment_format(&$post)
 {
     global $conf, $uid, $gid;
@@ -369,9 +429,71 @@ function comment_format(&$post)
 
     $post['user_url'] = url('user-' . $post['uid'] . ($post['uid'] ? '' : '-' . $post['pid']));
 
+    if($post['files'] > 0) {
+        list($attachlist, $imagelist, $filelist) = well_attach_find_by_pid($post['pid']);
+
+        // 使用图床 评论使用图床，mysql会过多，写死链接到内容是减轻mysql的过多的方法
+        if (2 == $conf['attach_on']) {
+            foreach ($imagelist as $key => $attach) {
+                $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
+                // 替换成图床
+                $post['message'] = FALSE !== strpos($post['message'], $url) && $attach['image_url'] ? str_replace($url, $attach['image_url'], $post['message']) : $post['message'];
+            }
+        }
+
+        $post['filelist'] = $filelist;
+    } else {
+        $post['filelist'] = array();
+    }
+
     $post['classname'] = 'post';
 
     // hook model_comment_format_end.php
+}
+
+function comment_format_message(&$val)
+{
+    global $conf;
+    // hook model_comment_format_message_start.php
+
+    if (empty($val)) return;
+
+    // 使用云储存
+    1 == $conf['attach_on'] || 0 == $conf['attach_on'] AND $val['message'] = str_replace('="upload/', '="' . file_path(), $val['message']);
+
+    //$val['message'] = stripslashes(htmlspecialchars_decode($val['message']));
+
+    // hook model_comment_format_message_end.php
+}
+
+// 把内容中使用了云储存的附件链接替换掉
+function comment_message_replace_url($pid, $message)
+{
+    global $conf;
+
+    // hook model_comment_message_replace_url_start.php
+
+    if (0 == $conf['attach_on']) {
+        $message = FALSE !== strpos($message, '="../upload/') ? str_replace('="../upload/', '="upload/', $message) : $message;
+        $message = FALSE !== strpos($message, '="/upload/') ? str_replace('="/upload/', '="upload/', $message) : $message;
+    } elseif (1 == $conf['attach_on']) {
+        // 使用云储存
+        $message = str_replace('="' . $conf['cloud_url'] . 'upload/', '="upload/', $message);
+    } elseif (2 == $conf['attach_on']) {
+
+        // 使用图床 评论使用图床，mysql会过多，写死链接到内容是减轻mysql的过多的方法
+        list($attachlist, $imagelist, $filelist) = well_attach_find_by_pid($pid);
+
+        foreach ($imagelist as $key => $attach) {
+            $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
+            // 替换回相对链接
+            $message = $attach['image_url'] && FALSE !== strpos($message, $attach['image_url']) ? str_replace($attach['image_url'], $url, $message) : $message;
+        }
+    }
+
+    // hook model_comment_message_replace_url_end.php
+
+    return $message;
 }
 
 function comment_filter(&$val)

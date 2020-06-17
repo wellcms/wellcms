@@ -37,7 +37,6 @@
                     </span>
                     <?php } ?>
                     <!--{hook thread__list_inc_closed_after.htm}-->
-
                     <h2 class="break-all font-weight-bold d-inline">
                         <!--{hook thread__list_inc_subject_before.htm}-->
                         <a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
@@ -46,6 +45,9 @@
                         <!--{hook thread__list_inc_subject_after.htm}-->
                     </h2>
                     <!--{hook thread__list_inc_subject__after.htm}-->
+                    <?php if($_thread['files'] > 0) { ?>
+                    &nbsp;<i class="icon small filetype other"></i>&nbsp;
+                    <?php } ?>
                 </div>
 
                 <!--{hook thread__list_inc_subject_end.htm}-->

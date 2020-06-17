@@ -227,7 +227,7 @@ $active = 'default';
 if ($ajax) {
     $conf['api_on'] ? message(0, $arrlist) : message(0, lang('closed'));
 } else {
-    include _include(theme_load(0));
+    include _include(theme_load('index'));
 }
 
 ?>

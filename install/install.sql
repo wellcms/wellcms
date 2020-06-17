@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.04","official_version":"2.0.04","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.05","official_version":"2.0.05","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;

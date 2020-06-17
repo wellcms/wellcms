@@ -69,7 +69,7 @@ switch ($action) {
             $header['title'] = $_user['username'] . ' - ' . lang('comment');
             $header['mobile_title'] = '';
 
-            include _include(theme_load(17));
+            include _include(theme_load('user_comment'));
         }
 
         // hook user_comment_end.php
@@ -92,7 +92,7 @@ switch ($action) {
 
             // hook user_login_get_end.php
 
-            include _include(theme_load(10));
+            include _include(theme_load('user_login'));
 
         } else if ('POST' == $method) {
 
@@ -154,7 +154,7 @@ switch ($action) {
 
             // hook user_create_get_end.php
 
-            include _include(theme_load(11));
+            include _include(theme_load('user_create'));
 
         } else if ('POST' == $method) {
 
@@ -253,7 +253,7 @@ switch ($action) {
 
             // hook user_resetpw_get_end.php
 
-            include _include(theme_load(12));
+            include _include(theme_load('user_resetpw'));
 
         } else if ('POST' == $method) {
 
@@ -305,7 +305,7 @@ switch ($action) {
 
             // hook user_resetpw_get_end.php
 
-            include _include(theme_load(13));
+            include _include(theme_load('user_resetpw_complete'));
 
         } else if ('POST' == $method) {
 
@@ -472,7 +472,7 @@ switch ($action) {
 
         // hook user_index_end.php
 
-        include _include(theme_load(9));
+        include _include(theme_load('user'));
         break;
 }
 

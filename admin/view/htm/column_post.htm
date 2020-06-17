@@ -27,7 +27,7 @@
         /*栏目是否显示在导航*/
         $input['nav_display'] = form_radio_yes_no('nav_display', $nav_display);
         /*开启评论*/
-        $input['comment'] = form_radio_yes_no('comment', $comment);
+        $input['comment'] = form_radio('comment', array(lang('close'), lang('reply'), lang('advanced_reply')), $comment);
 
         /*首页是否显示内容 1显示*/
         $input['display'] = form_radio_yes_no('display', $display);

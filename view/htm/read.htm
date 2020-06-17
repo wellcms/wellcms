@@ -26,7 +26,7 @@
 			<!--{hook read_main_breadcrumb_middle.htm}-->
 		</ol>
 		<!--{hook read_main_breadcrumb_end.htm}-->
-		
+
 		<div class="card card-thread shadow border-white">
 			<div class="card-body">
 				<div class="media">
@@ -92,17 +92,12 @@
                     <!--<div class="clearfix float-left mx-2">
                         <img src="<?php echo $thread['icon_text'];?>" alt="<?php echo $thread['subject'];?>" />
                     </div>-->
-
 					<!--{hook read_message_before.htm}-->
 					<?php echo $data['message'];?>
 					<!--{hook read_message_after.htm}-->
-					
 					<?php echo data_file_list_html($thread['filelist']);?>
-
 					<!--{hook read_filelist_after.htm}-->
-
 				<?php } else { ?>
-				
 					<!--{hook read_message_more_before.htm}-->
 					<p>
                         <a href="<?php echo url('read-' . $tid); ?>">
@@ -110,16 +105,13 @@
                         </a>
                     </p>
 					<!--{hook read_message_more_after.htm}-->
-					
 				<?php } ?>
 				</div>
-
 				<!--{hook read_plugin_before.htm}-->
 				<div class="plugin d-flex justify-content-center mt-3">
 					<!--{hook read_plugin_body.htm}-->
 				</div>
 				<!--{hook read_plugin_after.htm}-->
-
 				<?php if (1 == $page) { ?>
 				<?php if ($thread['tag']) { ?>
 				<hr>
@@ -198,12 +190,17 @@
                                     <textarea class="form-control" placeholder="<?php echo lang('message');?>" name="message" id="message"></textarea>
                                 </div>
                                 <!--{hook read_comment_form_after.htm}-->
-                                <div class="text-muted mt-2 small text-center">
+                                <div class="d-flex justify-content-around text-muted mt-2 small">
                                     <!--{hook read_quick_comment_submit_before.htm}-->
                                     <button type="submit" class="btn btn-sm btn-secondary" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
-                                        <?php echo lang('post_create');?>
+                                        <?php echo lang('reply');?>
                                     </button>
                                     <!--{hook read_quick_comment_submit_after.htm}-->
+                                    <?php if(2 == array_value($forum, 'comment', 0)) { ?>
+                                    <?php if($allowupdate || $_post['allowupdate']) { ?>
+                                    <a class="icon-mail-forward text-muted" href="<?php echo url('comment-create-'.$tid);?>" id="advanced_reply"><?php echo lang('advanced_reply');?></a>
+                                    <?php } ?>
+                                    <?php } ?>
                                 </div>
                             </form>
                             <!--{hook read_comment_form_end.htm}-->

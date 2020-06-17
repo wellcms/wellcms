@@ -212,9 +212,8 @@ switch ($action) {
 
             // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
             switch ($model) {
-                case '0':
-                    include _include(ADMIN_PATH . 'view/htm/content_post.htm');
-                    break;
+                /*case '0':
+                    break;*/
                 // hook admin_content_create_get_case_end.php
                 default:
                     include _include(ADMIN_PATH . 'view/htm/content_post.htm');
@@ -240,8 +239,7 @@ switch ($action) {
             // hook admin_content_create_post_forum_after.php
 
             // 普通用户权限判断
-            $r = forum_access_user($fid, $gid, 'allowthread');
-            empty($r) AND message(1, lang('user_group_insufficient_privilege'));
+            !forum_access_user($fid, $gid, 'allowthread') AND message(1, lang('user_group_insufficient_privilege'));
 
             // hook admin_content_create_post_access_after.php
 
@@ -361,16 +359,16 @@ switch ($action) {
                     $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
                 }
             }
-            $tag_json AND FALSE === well_thread_update($tid, array('tag' => $tag_json)) AND message(-1, lang('update_thread_failed'));
+            $tag_json && FALSE === well_thread_update($tid, array('tag' => $tag_json)) AND message(-1, lang('update_thread_failed'));
 
             // 首页flag
-            !empty($flag_index_arr) AND FALSE === flag_create_thread(0, 1, $tid, $flag_index_arr) AND message(-1, lang('create_failed'));
+            !empty($flag_index_arr) && FALSE === flag_create_thread(0, 1, $tid, $flag_index_arr) AND message(-1, lang('create_failed'));
 
             // 频道flag
-            $forum['fup'] AND !empty($flag_cate_arr) AND FALSE === flag_create_thread($forum['fup'], 2, $tid, $flag_cate_arr) AND message(-1, lang('create_failed'));
+            $forum['fup'] && !empty($flag_cate_arr) && FALSE === flag_create_thread($forum['fup'], 2, $tid, $flag_cate_arr) AND message(-1, lang('create_failed'));
 
             // 栏目flag
-            !empty($flag_forum_arr) AND FALSE === flag_create_thread($fid, 3, $tid, $flag_forum_arr) AND message(-1, lang('create_failed'));
+            !empty($flag_forum_arr) && FALSE === flag_create_thread($fid, 3, $tid, $flag_forum_arr) AND message(-1, lang('create_failed'));
 
             // hook admin_content_create_post_end.php
 
@@ -442,7 +440,7 @@ switch ($action) {
             $imagelist = array();
             $input = array();
             $filelist = array();
-            $thread['files'] AND list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($tid);
+            $thread['files'] AND list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($tid, $thread['files']);
 
             $tagstr = $thread['tag_text'] ? implode(',', $thread['tag_text']) . ',' : '';
 
@@ -482,9 +480,8 @@ switch ($action) {
 
             // 可以根据自己设计的添加内容界面绑定栏目，绑定模型，显示不同的界面
             switch ($model) {
-                case '0':
-                    include _include(ADMIN_PATH . 'view/htm/content_post.htm');
-                    break;
+                /*case '0':
+                    break;*/
                 // hook admin_content_update_get_case_end.php
                 default:
                     include _include(ADMIN_PATH . 'view/htm/content_post.htm');
@@ -514,7 +511,6 @@ switch ($action) {
 
             if ($subject != $thread['subject']) {
                 $arr['subject'] = $subject;
-
                 $thread['sticky'] > 0 AND cache_delete('sticky_thread_list');
             }
 
@@ -549,9 +545,6 @@ switch ($action) {
                 // 过滤内容 关键词
 
                 // hook admin_content_update_post_message_center.php
-
-                // 如果开启云储存或使用图床，需要把内容中的附件链接替换掉
-                $message = data_message_replace_url($tid, $message);
             }
 
             // hook admin_content_update_post_message_after.php
@@ -739,6 +732,9 @@ switch ($action) {
             if (0 == $link) {
                 $tmp_file = well_attach_assoc_type('post');
                 if (md5($message) != md5($thread_data['message']) || !empty($tmp_file)) {
+                    // 如果开启云储存或使用图床，需要把内容中的附件链接替换掉
+                    $message = data_message_replace_url($tid, $message);
+
                     $save_image = param('save_image', 0);
                     $save_image AND $message = well_save_remote_image(array('tid' => $tid, 'fid' => $fid, 'uid' => $thread['uid'], 'message' => $message));
 
@@ -757,18 +753,18 @@ switch ($action) {
             // hook admin_content_update_post_center.php
 
             // 首页flag
-            !empty($new_index_flagids) AND FALSE === flag_create_thread(0, 1, $tid, $new_index_flagids) AND message(-1, lang('create_failed'));
+            !empty($new_index_flagids) && FALSE === flag_create_thread(0, 1, $tid, $new_index_flagids) AND message(-1, lang('create_failed'));
 
             // 返回首页被取消的flagid
             !empty($old_index_flagids) AND flag_thread_delete_by_ids($old_index_flagids, $flagarr);
 
             // 频道flag
-            $forum['fup'] AND !empty($new_cate_flagids) AND FALSE === flag_create_thread($forum['fup'], 2, $tid, $new_cate_flagids) AND message(-1, lang('create_failed'));
+            $forum['fup'] && !empty($new_cate_flagids) && FALSE === flag_create_thread($forum['fup'], 2, $tid, $new_cate_flagids) AND message(-1, lang('create_failed'));
             // 返回频道被取消的flagid
             !empty($old_cate_flagids) AND flag_thread_delete_by_ids($old_cate_flagids, $flagarr);
 
             // 栏目flag
-            !empty($new_forum_flagids) AND FALSE === flag_create_thread($fid, 3, $tid, $new_forum_flagids) AND message(-1, lang('create_failed'));
+            !empty($new_forum_flagids) && FALSE === flag_create_thread($fid, 3, $tid, $new_forum_flagids) AND message(-1, lang('create_failed'));
             // 返回被取消的flagid
             !empty($old_forum_flagids) AND flag_thread_delete_by_ids($old_forum_flagids, $flagarr);
 

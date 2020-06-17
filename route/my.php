@@ -25,7 +25,7 @@ switch ($action) {
             // hook my_avatar_get_start.php
             $safe_token = well_token_set($uid);
 
-            include _include(theme_load(19));
+            include _include(theme_load('my_avatar'));
 
         } elseif ('POST' == $method) {
 
@@ -71,7 +71,7 @@ switch ($action) {
 
             // hook my_password_get_start.php
 
-            include _include(theme_load(8));
+            include _include(theme_load('my_password'));
 
         } elseif ('POST' == $method) {
 
@@ -94,7 +94,7 @@ switch ($action) {
     // hook my_case_end.php
     default:
         $header['title'] = lang('my_home');
-        include _include(theme_load(7));
+        include _include(theme_load('my'));
         break;
 }
 

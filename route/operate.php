@@ -43,7 +43,7 @@ switch ($action) {
 
         } elseif ('POST' == $method) {
 
-            $backstage AND FALSE === group_access($gid, 'managesticky') AND message(1, lang('user_group_insufficient_privilege'));
+            $backstage && FALSE === group_access($gid, 'managesticky') AND message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
             FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
@@ -66,21 +66,21 @@ switch ($action) {
             $arr = array();
             $index_stickys = 0;
             foreach ($threadlist as &$thread) {
-                //$fid = $thread['fid'];
-                //$tid = $thread['tid'];
+                $fid = $thread['fid'];
+                $tid = $thread['tid'];
 
                 // hook operate_sticky_log_create_start.php
 
-                if (2 == $sticky && empty($forumlist[$thread['fid']]['fup'])) continue;
+                if (2 == $sticky && empty($forumlist[$fid]['fup'])) continue;
 
                 if (3 == $sticky && (1 != $gid && 2 != $gid)) continue;
 
                 if ($sticky == $thread['sticky']) continue;
 
-                if (FALSE === forum_access_mod($thread['fid'], $gid, 'allowtop')) continue;
+                if (FALSE === forum_access_mod($fid, $gid, 'allowtop')) continue;
                 // hook operate_sticky_log_create_before.php
 
-                $arr[$thread['fid']] = isset($arr[$thread['fid']]) ? $arr[$thread['fid']] : 0;
+                $arr[$fid] = isset($arr[$fid]) ? $arr[$thread['fid']] : 0;
 
                 if ($sticky > 0) {
 
@@ -89,23 +89,22 @@ switch ($action) {
                     3 == $thread['sticky'] AND $sticky < 3 AND $index_stickys -= 1;
 
                     if (!$thread['sticky']) {
-                        $arr_create[$thread['tid']] = $thread['fid'];
-
-                        $arr[$thread['fid']] += 1;
+                        $arr_create[$fid] = $fid;
+                        $arr[$fid] += 1;
                     }
 
                     // 创建或更新置顶
-                    sticky_thread_change($thread['tid'], $sticky, $thread);
+                    sticky_thread_change($tid, $sticky, $thread);
 
                 } else {
                     // 清理置顶
-                    sticky_thread_delete($thread['tid']);
+                    sticky_thread_delete($tid);
 
-                    $arr_delete[$thread['tid']] = $thread['fid'];
+                    $arr_delete[$tid] = $fid;
 
                     3 == $thread['sticky'] AND $index_stickys -= 1;
 
-                    $thread['sticky'] AND $arr[$thread['fid']] -= 1;
+                    $thread['sticky'] AND $arr[$fid] -= 1;
                 }
 
                 // hook operate_sticky_log_create_center.php
@@ -113,7 +112,7 @@ switch ($action) {
                 $operate = array(
                     'type' => ($sticky ? 3 : 4),
                     'uid' => $uid,
-                    'tid' => $thread['tid'],
+                    'tid' => $tid,
                     'subject' => $thread['subject'],
                     'comment' => '',
                     'create_date' => $time
@@ -152,7 +151,7 @@ switch ($action) {
 
         } elseif ('POST' == $method) {
 
-            $backstage AND FALSE === group_access($gid, 'manageupdatethread') AND message(1, lang('user_group_insufficient_privilege'));
+            $backstage && FALSE === group_access($gid, 'manageupdatethread') AND message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
             FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
@@ -176,16 +175,18 @@ switch ($action) {
             }
 
             foreach ($threadlist as &$thread) {
-
+                $tid = $thread['tid'];
+                $fid = $thread['fid'];
+                
                 $thread['sticky'] AND $thread['closed'] != $close AND cache_delete('sticky_thread_list');
 
-                if (forum_access_mod($thread['fid'], $gid, 'allowtop')) {
+                if (forum_access_mod($fid, $gid, 'allowtop')) {
 
                     $tids[] = $thread['tid'];
 
                     // hook operate_close_log_create_before.php
 
-                    $arr = array('type' => $type, 'uid' => $uid, 'tid' => $thread['tid'], 'subject' => $thread['subject'], 'comment' => '', 'create_date' => $time);
+                    $arr = array('type' => $type, 'uid' => $uid, 'tid' => $tid, 'subject' => $thread['subject'], 'comment' => '', 'create_date' => $time);
 
                     // hook operate_close_log_create_after.php
 
@@ -248,28 +249,29 @@ switch ($action) {
 
                 // hook operate_delete_middle.php
 
-                foreach ($threadlist as &$_thread) {
-
+                foreach ($threadlist as &$thread) {
+                    $tid = $thread['tid'];
+                    $fid = $thread['fid'];
                     // hook operate_delete_thread_start.php
 
-                    $forum = array_value($forumlist, $_thread['fid']);
+                    $forum = array_value($forumlist, $fid);
                     //if (empty($forum)) continue;
 
                     // hook operate_delete_thread_before.php
 
-                    if (forum_access_mod($_thread['fid'], $gid, 'allowdelete')) {
+                    if (forum_access_mod($fid, $gid, 'allowdelete')) {
                         // hook operate_delete_thread_center.php
 
                         switch ($forum['model']) {
                             case '0': // 删除文章
-                                well_thread_delete_all($_thread['tid']);
+                                well_thread_delete_all($tid);
                                 break;
                             // hook operate_delete_foreach_case.php
                         }
 
                         // hook operate_delete_thread_middle.php
 
-                        $arr = array('type' => 1, 'uid' => $uid, 'tid' => $_thread['tid'], 'subject' => $_thread['subject'], 'comment' => '', 'create_date' => $time);
+                        $arr = array('type' => 1, 'uid' => $uid, 'tid' => $tid, 'subject' => $thread['subject'], 'comment' => '', 'create_date' => $time);
 
                         // hook operate_delete_operate_before.php
 
@@ -311,7 +313,7 @@ switch ($action) {
 
         } elseif ('POST' == $method) {
 
-            $backstage AND (FALSE === group_access($gid, 'manageupdatethread') || FALSE === group_access($gid, 'allowmove')) AND message(1, lang('user_group_insufficient_privilege'));
+            $backstage && (FALSE === group_access($gid, 'manageupdatethread') || FALSE === group_access($gid, 'allowmove')) AND message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
             FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
@@ -331,17 +333,18 @@ switch ($action) {
             $thread_tid = 0;
             // hook operate_move_before.php
             foreach ($threadlist as &$thread) {
-
+                $tid = $thread['tid'];
+                $fid = $thread['fid'];
                 // hook operate_move_foreach_start.php
 
-                $forum = array_value($forumlist, $thread['fid']);
+                $forum = array_value($forumlist, $fid);
                 //if (empty($forum)) continue;
 
                 // hook operate_move_foreach_before.php
 
-                if (forum_access_mod($thread['fid'], $gid, 'allowmove')) {
+                if (forum_access_mod($fid, $gid, 'allowmove')) {
 
-                    if ($thread['fid'] == $newfid) continue;
+                    if ($fid == $newfid) continue;
 
                     switch ($forum['model']) {
                         case '0': // 移动文章
@@ -350,13 +353,12 @@ switch ($action) {
                         // hook operate_move_foreach_case.php
                     }
 
-                    $tids[] = $thread['tid'];
-
-                    $fids[$thread['tid']] = $thread['fid'];
+                    $tids[] = $tid;
+                    $fids[$tid] = $fid;
 
                     // hook operate_move_foreach_center.php
 
-                    $arr = array('type' => 2, 'uid' => $uid, 'tid' => $thread['tid'], 'subject' => $thread['subject'], 'create_date' => $time);
+                    $arr = array('type' => 2, 'uid' => $uid, 'tid' => $tid, 'subject' => $thread['subject'], 'create_date' => $time);
 
                     // hook operate_move_foreach_end.php
 
@@ -452,7 +454,7 @@ switch ($action) {
             }
         } else {
             //include _include(APP_PATH . 'view/htm/search.htm');
-            include _include(theme_load(18));
+            include _include(theme_load('search'));
         }
         break;
     // hook operate_case_end.php

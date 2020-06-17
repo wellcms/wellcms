@@ -39,7 +39,7 @@ switch ($action) {
 
         // hook home_index_end.php
 
-        include _include(theme_load(14));
+        include _include(theme_load('home'));
         break;
     case 'comment':
         // hook home_comment_start.php
@@ -93,7 +93,7 @@ switch ($action) {
 
             // hook home_comment_after.php
 
-            include _include(theme_load(16));
+            include _include(theme_load('home_comment'));
         }
 
         // hook home_comment_end.php

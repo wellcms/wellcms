@@ -25,7 +25,7 @@
                             <div class="text-right text-grey">
                                 <!--{hook comment_list_inc_quote_before.htm}-->
                                 <?php if($allowpost) { ?>
-                                <a href="javascript:void(0)" data-tid="<?php echo $_post['tid'];?>" data-pid="<?php echo $_post['pid'];?>" class="text-grey post_reply mr-2">
+                                <a href="javascript:void(0)" data-tid="<?php echo $_post['tid'];?>" data-pid="<?php echo $_post['pid'];?>" class="text-grey well_reply mr-2">
                                     <i class="icon-reply" title="<?php echo lang('quote');?>"></i>
                                     <span class="d-none">
                                         <?php echo lang('quote');?>
@@ -50,6 +50,11 @@
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="true" aria-expanded="false"><?php echo lang('manage');?></a>
                                     <span class="dropdown-menu dropdown-menu-right size0 py-0">
 
+                                        <?php if(2 == array_value($forum, 'comment', 0)) { ?>
+                                        <?php if($allowupdate || $_post['allowupdate']) { ?>
+                                        <a href="<?php echo url('comment-update-'.$_post['pid']);?>" class="dropdown-item"><?php echo lang('edit');?></a>
+                                        <?php } ?>
+                                        <?php } ?>
                                         <!--{hook comment_list_inc_delete_before.htm}-->
                                         <?php if($allowdelete || $_post['allowdelete']) { ?>
                                         <a data-href="<?php echo url('comment-delete-'.$_post['pid']);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" href="javascript:void(0);" class="dropdown-item post_delete _confirm">
@@ -78,6 +83,9 @@
                             <!--{hook comment_list_inc_message_before.htm}-->
                             <?php echo $_post['message'];?>
                             <!--{hook comment_list_inc_message_after.htm}-->
+                            <!--{hook comment_list_inc_filelist_before.htm}-->
+                            <?php echo data_file_list_html($_post['filelist']);?>
+                            <!--{hook comment_list_inc_filelist_after.htm}-->
                         </div>
 					</li>
 				<?php }} ?>
