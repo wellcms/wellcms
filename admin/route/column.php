@@ -425,7 +425,7 @@ switch ($action) {
         $safe_token = param('safe_token');
         FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
-        $_fid = param(2, 0);
+        $_fid = param('fid', 0);
         $_forum = forum_read($_fid);
         empty($_forum) AND message(-1, lang('forum_not_exists'));
 
