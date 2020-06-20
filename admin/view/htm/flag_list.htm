@@ -86,7 +86,7 @@
 						</td>
 						<td class="small">
                             <a href="<?php echo url('flag-update', array('fid'=>$val['fid'], 'flagid'=>$val['flagid']), TRUE); ?>" rel="nofollow" class="text-grey mr-2 update"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
-                            <a data-href="<?php echo url('flag-list', array('fid'=>$val['fid']), TRUE);?>" n="<?php echo $val['count'];?>" href="javascript:void(0);" class="text-grey delete"><i class="icon-remove"></i>&nbsp;<?php echo lang('delete');?></a>
+                            <a data-href="<?php echo url('flag-list', array('fid'=>$val['fid'], 'flagid'=>$val['flagid']), TRUE);?>" n="<?php echo $val['count'];?>" href="javascript:void(0);" class="text-grey delete"><i class="icon-remove"></i>&nbsp;<?php echo lang('delete');?></a>
 						</td>
 					</tr>
 					<?php }} ?>

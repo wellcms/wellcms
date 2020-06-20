@@ -86,8 +86,8 @@ switch ($action) {
             } else {
 
                 // 删除
-                $fid = param(2, 0);
-                $flagid = param(3, 0);
+                $fid = param('fid', 0);
+                $flagid = param('flagid', 0);
                 empty($flagid) AND message(1, lang('data_malformation'));
 
                 // hook admin_flag_list_post_before.php
@@ -408,7 +408,7 @@ switch ($action) {
 
             // hook admin_flag_read_get_before.php
 
-            if ($read['count']) {
+            if ($read['count'] > 0) {
 
                 $arrlist = flag_thread_find_by_flagid($flagid, $page, $pagesize);
 
@@ -452,7 +452,8 @@ switch ($action) {
                 $id = param('id', array());
                 empty($id) AND message(1, lang('data_malformation'));
 
-                $n = count($id);
+                // 删除的同一个flag下的主题
+                flag_update($flagid, array('count-' => count($id)));
 
                 $arrlist = flag_thread_find_by_id($id, 1, count($id));
                 //$tidarr = array();
@@ -460,25 +461,22 @@ switch ($action) {
                     //$tidarr[] = $val['tid'];
                     well_thread_update($val['tid'], array('flags-' => 1));
                 }
+
+                // hook admin_flag_read_post_before.php
+
             } else {
                 $id = param('id', 0);
                 empty($id) AND message(1, lang('data_malformation'));
-
-                $n = 1;
 
                 $thread = flag_thread__read($id);
                 well_thread_update($thread['tid'], array('flags-' => 1));
                 flag_thread_delete_by_tid($thread['tid']);
             }
 
-            // hook admin_flag_read_post_before.php
-
-            // 删除的同一个flag下的主题
-            flag_update($flagid, array('count-' => $n));
-
             // hook admin_flag_read_post_after.php
 
             FALSE === flag_thread_delete($id) AND message(-1, lang('delete_failed'));
+            
             // hook admin_flag_read_post_end.php
 
             message(0, lang('delete_successfully'));
