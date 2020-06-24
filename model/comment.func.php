@@ -408,6 +408,7 @@ function comment_format(&$post)
     //$post['fid'] = $thread['fid'];
     $post['closed'] = $thread['closed'];
     $post['subject'] = $thread['subject'];
+    $post['url'] = $thread['url'];
 
     $post['create_date_fmt'] = humandate($post['create_date']);
     //$post['message'] = stripslashes(htmlspecialchars_decode($post['message']));

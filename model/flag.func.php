@@ -190,7 +190,7 @@ function flag_format(&$val)
     $val['forum_name'] = isset($forum['name']) ? $forum['name'] : lang('index_page');
     $val['display_text'] = $val['display'] ? lang('yes') : lang('no');
     $val['forum_url'] = isset($forum['url']) ? $forum['url'] : $conf['path'];
-    $val['url'] = url('flag-' . $val['flagid']);
+    $val['url'] = url('flag-' . $val['flagid'], '', FALSE);
     $val['create_date_text'] = date('Y-m-d', $val['create_date']);
     // 主图只支持本地和云储存，不支持图床
     $val['icon_text'] = $val['icon'] ? file_path() . 'flag/' . $val['flagid'] . '.png?' . $val['icon'] : '';

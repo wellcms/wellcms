@@ -89,7 +89,7 @@ if (1 == $forum['type']) {
             $seo_title = $forum['seo_title'] ? $forum['seo_title'] : $forum['name'] . '-' . $conf['sitename'];
             $header['title'] = strip_tags($seo_title);
             $header['mobile_title'] = '';
-            $header['mobile_link'] = url('list-' . $fid);
+            $header['mobile_link'] = $forum['url'];
             $seo_keywords = $forum['seo_keywords'] ? $forum['seo_keywords'] : $forum['name'];
             $header['keywords'] = strip_tags($seo_keywords);
             $header['description'] = strip_tags($forum['brief']);
@@ -121,10 +121,10 @@ if (1 == $forum['type']) {
             }
             break;
         case '1':
-            http_location(url('category-' . $forum['fid']));
+            http_location($forum['url']);
             break;
         case '2':
-            $forum['threads'] ? http_location(url('read-' . trim($forum['brief']))) : message(1, lang('none'));
+            $forum['threads'] ? http_location($forum['url']) : message(1, lang('none'));
             break;
         case '3':
             // hook list_link_before.php

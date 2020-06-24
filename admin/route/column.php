@@ -385,7 +385,7 @@ switch ($action) {
                 'announcement' => $announcement,
             );
 
-            // hook admin_column_update_post_before.php
+            // hook admin_column_update_post_after.php
 
             forum_update($_fid, $arr);
 

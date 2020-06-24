@@ -64,14 +64,14 @@ switch ($action) {
 
                 // hook home_comment_center.php
 
-                $threadlist = well_thread__find(array('tid' => $tids));
+                $threadlist = well_thread_find($tids);
 
                 $commentlist = comment_find_by_pid($pids, $pagesize);
 
                 foreach ($commentlist as &$val) {
                     comment_filter($val);
                     $val['subject'] = $threadlist[$val['tid']]['subject'];
-                    $val['url'] = url('read-' . $val['tid']);
+					$val['url'] = $threadlist[$val['tid']]['url'];
                     $val['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
                 }
             }

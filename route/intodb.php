@@ -86,11 +86,17 @@ if ('GET' == $method) {
     $tags = xn_html_safe(filter_all_html($tags));
 
     // 首页flag
-    $flag_index_arr = array_filter(param('index', array()));
+    $flag_index = param('index');
+    $flag_index_arr = explode(',', $flag_index);
+    $flag_index_arr = array_filter($flag_index_arr);
     // 频道flag
-    $flag_cate_arr = array_filter(param('category', array()));
+    $flag_cate = param('category');
+    $flag_cate_arr = explode(',', $flag_cate);
+    $flag_cate_arr = array_filter($flag_cate_arr);
     // 栏目flag
-    $flag_forum_arr = array_filter(param('forum', array()));
+    $flag_forum = param('forum');
+    $flag_forum_arr = explode(',', $flag_forum);
+    $flag_forum_arr = array_filter($flag_forum_arr);
     // 统计主题绑定flag数量
     $flags = count($flag_index_arr) + count($flag_cate_arr) + count($flag_forum_arr);
 

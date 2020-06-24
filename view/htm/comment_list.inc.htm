@@ -73,7 +73,7 @@
                             <!--{hook comment_list_inc_subject_before.htm}-->
                             <?php if('read' != $route && !empty($_post['subject'])) { ?>
                             <h6 class="post-subject">
-                                <a href="<?php echo url('read-' . $_post['tid']);?>" target="_blank">
+                                <a href="<?php echo $_post['url']);?>" target="_blank">
                                     <?php echo $_post['subject'];?>
                                 </a>
                             </h6>

@@ -19,7 +19,7 @@
             </li>
             <!--{hook read_main_breadcrumb_after.htm}-->
 			<li class="breadcrumb-item active">
-                <a href="<?php echo url('read-' . $tid); ?>" title="<?php echo lang('index_page');?>返回主题第一页">
+                <a href="<?php echo $thread['url']; ?>" title="<?php echo lang('index_page');?>返回主题第一页">
                     <?php echo $thread['subject'];?>
                 </a>
             </li>
@@ -100,7 +100,7 @@
 				<?php } else { ?>
 					<!--{hook read_message_more_before.htm}-->
 					<p>
-                        <a href="<?php echo url('read-' . $tid); ?>">
+                        <a href="<?php echo $thread['url']; ?>">
                             <?php echo lang('view_thread_message');?>
                         </a>
                     </p>

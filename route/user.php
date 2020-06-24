@@ -38,7 +38,7 @@ switch ($action) {
 
                 // hook user_comment_center.php
 
-                $threadlist = well_thread__find(array('tid' => $tids));
+                $threadlist = well_thread_find($tids);
                 // 过滤没有权限访问的主题 / filter no permission thread
                 well_thread_list_access_filter($threadlist, $gid);
 
@@ -48,7 +48,7 @@ switch ($action) {
                     if (empty($threadlist[$val['tid']])) unset($arrlist[$key]);
                     comment_filter($val);
                     $val['subject'] = $threadlist[$val['tid']]['subject'];
-                    $val['url'] = url('read-' . $val['tid']);
+                    $val['url'] = $threadlist[$val['tid']]['url'];
                     $val['allowdelete'] = forum_access_mod($val['fid'], $gid, 'allowdelete');
                 }
             }

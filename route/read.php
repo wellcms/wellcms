@@ -116,7 +116,7 @@ switch ($thread['type']) {
 
         $header['title'] = $thread['subject'];
         $header['mobile_title'] = '';
-        $header['mobile_link'] = url('read-' . $tid, $extra);
+        $header['mobile_link'] = $thread['url'];
         $header['keywords'] = $thread['keyword'] ? $thread['keyword'] : $thread['subject'];
         $header['description'] = $thread['description'] ? $thread['description'] : $thread['brief'];
         $_SESSION['fid'] = $fid;
@@ -170,7 +170,7 @@ switch ($thread['type']) {
         $allowupdate = forum_access_mod($fid, $gid, 'allowupdate');
         $allowdelete = forum_access_mod($fid, $gid, 'allowdelete');
 
-        $tidlist = $forum['threads'] ? page_find_by_fid($fid, $page, $pagesize) : NULL;
+        $tidlist = $forum['threads'] ? page_find_by_fid($fid, $page, $pagesize, FALSE) : NULL;
 
         // hook read_single_page_threadlist_before.php
 
@@ -187,7 +187,7 @@ switch ($thread['type']) {
 
         $header['title'] = $thread['subject'];
         $header['mobile_title'] = '';
-        $header['mobile_link'] = url('read-' . $tid, $extra);
+        $header['mobile_link'] = $thread['url'];
         $header['keywords'] = $thread['keyword'] ? $thread['keyword'] : $thread['subject'];
         $header['description'] = $thread['description'] ? $thread['description'] : $thread['brief'];
         $_SESSION['fid'] = $fid;

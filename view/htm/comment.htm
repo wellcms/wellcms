@@ -8,7 +8,7 @@
 		$form_message = $comment['message'];
 		$form_doctype = $comment['doctype'];
 		$quotepid = $comment['quotepid'];
-		$location = $referer ? $referer : url('read-' . $tid);
+		$location = $referer ? $referer : $thread['url'];
 	} elseif($route == 'comment' && $action == 'create') {
 		$form_title = lang('reply');
 		$form_action = url("comment-create-$tid");
@@ -16,7 +16,7 @@
 		$form_subject = '';
 		$form_message = '';
 		$form_doctype = 1;
-		$location = $referer ? $referer : url('read-' . $tid);
+		$location = $referer ? $referer : $thread['url'];
 		$filelist = array();
 	}
 	

@@ -126,8 +126,9 @@ switch ($action) {
 
         if ('GET' == $method) {
 
+            $extra = array(); // 插件预留
             $fid = param('fid', 0);
-            $extra = array('fid' => $fid); // 插件预留
+            $fid AND $extra += array('fid' => $fid);
 
             // hook admin_page_create_get_start.php
 
