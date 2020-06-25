@@ -1,52 +1,5 @@
 <?php
 !defined('DEBUG') AND exit('Access Denied.');
-if (FALSE === group_access($gid, 'managecontent')) {
-    unset($menu['content']);
-} else {
-    // hook admin_index_inc_menu_content_start.php
-    if (FALSE === group_access($gid, 'managesticky')) unset($menu['content']['tab']['sticky']);
-    if (FALSE === group_access($gid, 'managecomment')) unset($menu['content']['tab']['comment']);
-    if (FALSE === group_access($gid, 'managepage')) unset($menu['content']['tab']['page']);
-    // hook admin_index_inc_menu_content_end.php
-}
-if (FALSE === group_access($gid, 'manageforum')) {
-    unset($menu['forum']);
-} else {
-    // hook admin_index_inc_menu_column_start.php
-    // hook admin_index_inc_menu_column_end.php
-}
-if (FALSE === group_access($gid, 'managecategory')) {
-    unset($menu['category']);
-} else {
-    // hook admin_index_inc_menu_flag_start.php
-    // hook admin_index_inc_menu_flag_end.php
-}
-if (3 != DEBUG && FALSE === group_access($gid, 'manageuser')) {
-    unset($menu['user']);
-} else {
-    // hook admin_index_inc_menu_user_start.php
-    if (FALSE === group_access($gid, 'managegroup')) unset($menu['user']['tab']['group']);
-    if (FALSE === group_access($gid, 'managecreateuser')) unset($menu['user']['tab']['create']);
-    // hook admin_index_inc_menu_user_end.php
-}
-if (FALSE === group_access($gid, 'manageplugin')) {
-    unset($menu['plugin']);
-} else {
-    // hook admin_index_inc_menu_plugin_start.php
-    // hook admin_index_inc_menu_plugin_end.php
-}
-if (FALSE === group_access($gid, 'manageother')) {
-    unset($menu['other']);
-} else {
-    // hook admin_index_inc_menu_other_start.php
-    // hook admin_index_inc_menu_other_end.php
-}
-if (FALSE === group_access($gid, 'managesetting')) {
-    unset($menu['setting']);
-} else {
-    // hook admin_index_inc_menu_setting_start.php
-    // hook admin_index_inc_menu_setting_end.php
-}
 
 // hook admin_index_inc_start.php
 
@@ -72,6 +25,35 @@ if (DEBUG < 3) {
 
     // hook admin_index_inc_check_after.php
 }
+
+$access_menu = array(
+    'content' => array(
+        'sticky' => 'managesticky',
+        'comment' => 'managecomment',
+        'page' => 'managepage'
+    ),
+    'forum' => array(),
+    'category' => array(),
+    'user' => array(
+        'group' => 'managegroup',
+        'create' => 'managecreateuser'
+    ),
+    'plugin' => array(),
+    'other' => array(),
+    'setting' => array()
+);
+// hook admin_index_inc_access_after.php
+foreach ($access_menu as $key => $val) {
+    if (FALSE === group_access($gid, 'manage' . $key)) {
+        unset($menu[$key]);
+    } else {
+        if (empty($val)) continue;
+        foreach ($val as $_key => $_menu) {
+            if (FALSE === group_access($gid, $_menu)) unset($menu[$key]['tab'][$_key]);
+        }
+    }
+}
+unset($access_menu);
 
 // hook admin_index_inc_center.php
 
