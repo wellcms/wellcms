@@ -489,6 +489,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     // 0 所有插件 1主题风格 2功能增强 3大型插件 4接口整合 99未分类
     !isset($official['type']) && $official['type'] = 0;
     !isset($official['last_update']) && $official['last_update'] = 0;
+    !isset($official['create_date']) && $official['create_date'] = 0;
     !isset($official['last_update_fmt']) && $official['last_update_fmt'] = lang('none');
     !isset($official['stars']) && $official['stars'] = 0;
     !isset($official['user_stars']) && $official['user_stars'] = 0;
@@ -514,7 +515,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     }
 
     // 额外的判断
-    $plugin['icon_url'] = $icon ? $icon : ($official['storeid'] ? PLUGIN_OFFICIAL_URL . "upload/plugin/$plugin[storeid]/icon.png" : '');
+    $plugin['icon_url'] = $icon ? $icon : ($official['storeid'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/'.date('Ym', $plugin['create_date']).'/'.$plugin['storeid'].'/icon.png' : '');
     $plugin['setting_url'] = $plugin['installed'] && is_file(APP_PATH . "plugin/$dir/setting.php") ? "plugin-setting-$dir.html" : "";
     $plugin['downloaded'] = isset($plugins[$dir]);
     // 10赞一星 100赞二星 1k赞三星 10k赞四星 100k+五星
