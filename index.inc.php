@@ -9,6 +9,8 @@ $sid = sess_start();
 // 语言 / Language
 $_SERVER['lang'] = $lang = include _include(APP_PATH . 'lang/' . $conf['lang'] . '/lang.php');
 
+// hook index_inc_lang_after.php
+
 // 用户组 / Group
 $grouplist = group_list_cache();
 

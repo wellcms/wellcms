@@ -30,7 +30,7 @@ switch ($action) {
         }
 
         user_login_check();
-        empty($group['allowattach']) AND $gid != 1 AND message(-1, lang('user_group_insufficient_privilege'));
+        empty($group['allowattach']) && $gid != 1 AND message(-1, lang('user_group_insufficient_privilege'));
 
         // hook attach_create_start.php
 
@@ -42,6 +42,25 @@ switch ($action) {
         $data = param_base64('data');
         $mode = param('mode'); // 上传类型 0内容图片和附件 1主图
         $n = param('n', 0); // 对应主图赋值
+
+        switch ($mode) {
+            case '1':
+                $key = 'tmp_thumbnail';
+                break;
+            // hook attach_assoc_case_after.php
+            default:
+                if (empty($t)) {
+                    $key = 'tmp_website_files';
+                }
+                // hook attach_create_after.php
+                break;
+        }
+
+        // 超过30则删除之前上传的所有附件
+        if (count(_SESSION($key)) > 30) {
+            foreach (_SESSION($key) as $_file) is_file($_file['path']) AND unlink($_file['path']);
+            $_SESSION[$key] = array();
+        }
 
         // hook attach_create_before.php
 
@@ -79,19 +98,6 @@ switch ($action) {
 
         sess_restart();
 
-        switch ($mode) {
-            case '1':
-                $key = 'tmp_thumbnail';
-                break;
-            // hook attach_assoc_case_after.php
-            default:
-                if (empty($t)) {
-                    $key = 'tmp_website_files';
-                }
-                // hook attach_create_after.php
-                break;
-        }
-
         empty($_SESSION[$key]) AND $_SESSION[$key] = array();
 
         // $mode = 0内容图片和附件按照SESSION数组附件数量统计，1主图按照传入的n数值
@@ -116,7 +122,6 @@ switch ($action) {
         if (empty($mode)) {
             // 内容图和附件
             // hook attach_create_website_files_beofre.php
-            count(_SESSION($key)) > 30 AND well_attach_delete_tmp(_SESSION($key));
             $_SESSION[$key][$n] = $attach;
             // hook attach_create_website_files_after.php
         } elseif (1 == $mode) {
@@ -172,7 +177,7 @@ switch ($action) {
             empty($thread) AND message(-1, lang('thread_not_exists'));
             // hook attach_delete_thread_after.php
             $allowdelete = forum_access_mod($thread['fid'], $gid, 'allowdelete');
-            $attach['uid'] != $uid AND !$allowdelete AND message(0, lang('insufficient_privilege'));
+            $attach['uid'] != $uid && !$allowdelete AND message(0, lang('insufficient_privilege'));
             if (empty($t)) {
                 FALSE === well_attach_delete($aid) AND message(-1, lang('delete_failed'));
                 well_thread_update($thread['tid'], array('files-' => 1));
