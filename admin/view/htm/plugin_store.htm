@@ -116,12 +116,12 @@
                         </div>
 
                         <div class="mx-2">
-                            <?php if('official_fee' == $action && !$plugin['downloaded']) { ?>
-                            <a role="button" class="btn btn-success btn-sm buy mx-1" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>"><?php echo lang('buy');?></a>
+                            <?php if($plugin['official']['price'] > 0 && !$plugin['downloaded']) { ?>
+                            <a role="button" class="btn btn-danger btn-sm buy mx-1" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>"><?php echo lang('buy');?></a>
                             <?php } ?>
 
-                            <?php if('official_free' == $action && !$plugin['downloaded']) { ?>
-                            <a role="button" class="btn btn-success btn-sm download mx-1" href="<?php echo url('plugin-download', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('download');?></a>
+                            <?php if(0 == $plugin['official']['price'] && !$plugin['downloaded']) { ?>
+                            <a role="button" class="btn btn-primary btn-sm download mx-1" href="<?php echo url('plugin-download', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('download');?></a>
                             <?php } ?>
 
                             <?php if(!$plugin['installed'] && $plugin['downloaded']) { ?>
