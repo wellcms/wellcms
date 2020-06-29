@@ -17,6 +17,10 @@ $thread = well_thread_read_cache($tid);
 // hook read_cache_after.php
 empty($thread) AND message(-1, lang('thread_not_exists'));
 
+// hook read_status_before.php
+
+0 != $thread['status'] && $uid != $thread['uid'] && !group_access($gid, 'allowuserdelete') AND http_location($conf['path']);
+
 // hook read_before.php
 
 $fid = $thread['fid'];
