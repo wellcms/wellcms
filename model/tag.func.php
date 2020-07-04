@@ -108,11 +108,12 @@ function well_tag_update($tagid, $update)
     return $r;
 }
 
-// 升序排序
-function well_tag_find($page, $pagesize)
+function well_tag_find($page, $pagesize, $desc = TRUE)
 {
     // hook model__tag_find_start.php
-    $arrlist = well_tag__find(array(), array('tagid' => 1), $page, $pagesize);
+    $orderby = TRUE == $desc ? -1 : 1;
+    // hook model__tag_find_before.php
+    $arrlist = well_tag__find(array(), array('tagid' => $orderby), $page, $pagesize);
     if (empty($arrlist)) return NULL;
     $i = 0;
     foreach ($arrlist as &$val) {
@@ -144,7 +145,7 @@ function well_tag_find_by_tagids($tagids, $page, $pagesize)
 function well_tag_count()
 {
     // hook model__tag_count_start.php
-    $n = well_tag__count(array('count' => array('>' => 0)));
+    $n = well_tag__count();
     // hook model__tag_count_end.php
     return $n;
 }

@@ -175,6 +175,69 @@ function db_delete($table, $cond, $d = NULL)
     return db_exec("DELETE FROM {$d->tablepre}$table $condadd", $d);
 }
 
+/*
+ * 批量创建数据格式
+ * $arr = array(
+    array('uid' => '1', 'create_date' => $time),
+    array('uid' => '2', 'create_date' => $time),
+    array('uid' => '3', 'create_date' => $time),
+);*/
+function db_big_insert($table, $arr, $d = NULL)
+{
+    $db = $_SERVER['db'];
+    $d = $d ? $d : $db;
+    if (!$d) return FALSE;
+
+    $sqladd = db_big_array_to_insert_sqladd($arr);
+    if (!$sqladd) return FALSE;
+    return db_exec("INSERT INTO {$d->tablepre}$table $sqladd", $d);
+}
+
+function db_big_replace($table, $arr, $d = NULL)
+{
+    $db = $_SERVER['db'];
+    $d = $d ? $d : $db;
+    if (!$d) return FALSE;
+
+    $sqladd = db_big_array_to_insert_sqladd($arr);
+    if (!$sqladd) return FALSE;
+    return db_exec("REPLACE INTO {$d->tablepre}$table $sqladd", $d);
+}
+
+// 大数据量一次更新拼接sql字串 建议一次5000-10000再大需要调整php配置
+/*
+ * 格式
+$cond = array('uid' => array(1, 2, 3, 4));
+$update = array('更新条件uid值' => array('k' => 1, 'k1+' => 1, '更新字段+' => '更新的数据'))
+$update = array(
+    // 更新条件 仅限主键
+    '更新条件' => array(
+        'k' => 1, // 更新键值
+        'k1+' => 1, // 更新键值+或-
+    ),
+    '2' => array(
+        'k' => 2, // 更新键值
+        'k2+' => 2, // 更新键值+或-
+    ),
+    '3' => array(
+        'k' => 3, // 更新键值
+    ),
+    '5' => array(
+        'k' => 4, // 更新键值
+        'k4' => 4, // 更新键值+或-
+    )
+);*/
+function db_big_update($table, $cond, $update, $d = NULL)
+{
+    $db = $_SERVER['db'];
+    $d = $d ? $d : $db;
+    if (!$d || empty($cond) || empty($update)) return FALSE;
+
+    $sqladd = db_big_array_update_to_sqladd($cond, $update);
+    if (!$sqladd) return FALSE;
+    return db_exec("UPDATE {$d->tablepre}$table SET $sqladd", $d);
+}
+
 function db_truncate($table, $d = NULL)
 {
     $db = $_SERVER['db'];
@@ -245,7 +308,6 @@ function db_errstr_safe($errno, $errstr)
     return $errstr;
 }
 
-
 //----------------------------------->  表结构和索引相关 end
 /*
 $cond = array('id'=>123, 'groupid'=>array('>'=>100, 'LIKE'=>'\'jack'));
@@ -315,7 +377,6 @@ function db_orderby_to_sqladd($orderby)
     return $s;
 }
 
-
 /*
 	$arr = array(
 		'name'=>'abc',
@@ -351,7 +412,6 @@ function db_array_to_update_sqladd($arr)
 */
 function db_array_to_insert_sqladd($arr)
 {
-    $s = '';
     $keys = array();
     $values = array();
     foreach ($arr as $k => $v) {
@@ -365,6 +425,88 @@ function db_array_to_insert_sqladd($arr)
     $valstr = implode(',', $values);
     $sqladd = "($keystr) VALUES ($valstr)";
     return $sqladd;
+}
+
+function db_big_array_to_insert_sqladd($arr)
+{
+    $keys = array();
+    $valstr = '';
+    $i = 0;
+    foreach ($arr as $key => $v) {
+        $values = array();
+        $n = count($v);
+        foreach ($v as $k => $v1) {
+            $i++;
+            $k = addslashes($k);
+            $v1 = addslashes($v1);
+            $i <= $n AND $keys[] = '`' . $k . '`';
+            $v1 = (is_int($v1) || is_float($v1)) ? $v1 : "'$v1'";
+            $values[] = $v1;
+        }
+
+        // 把数组变成逗号连接字符串
+        $valstr .= '(' . implode(',', $values) . '),';
+    }
+
+    $keystr = implode(',', $keys);
+
+    $sqladd = '(' . $keystr . ') VALUES ' . rtrim($valstr, ',');
+
+    return $sqladd;
+}
+
+function db_big_array_update_to_sqladd($cond, $update)
+{
+    // 格式化
+    $arr = db_big_update_array_to_str($update);
+
+    $sqlstr = '';
+    foreach ($arr as $key => $value) {
+
+        $sqlstr .= db_big_update_cond_to_str($key, $cond);
+
+        $str = '';
+        foreach ($value as $k => $v) {
+            $str .= $v;
+        }
+
+        $sqlstr .= rtrim($str, ' ') . ' END,';
+    }
+
+    return rtrim($sqlstr, ',') . db_cond_to_sqladd($cond);
+}
+
+// 格式化拼接字串
+function db_big_update_array_to_str($update)
+{
+    $arr = array();
+    foreach ($update as $key => $val) {
+        foreach ($val as $k => $v) {
+            $v = (is_int($v) || is_float($v)) ? $v : "'$v'";
+            $arr[$k][$key] = "WHEN $key THEN $v ";
+        }
+    }
+
+    return $arr;
+}
+
+// 拼接key
+function db_big_update_cond_to_str($key, $cond)
+{
+    $sqlstr = '';
+    $op = substr($key, -1);
+    if ($op == '+' || $op == '-') {
+        $key = substr($key, 0, -1);
+        foreach ($cond as $cond_key => $cond_val) {
+            $sqlstr .= "$key = $key$op CASE $cond_key ";
+        }
+    } else {
+        foreach ($cond as $cond_key => $cond_val) {
+            $sqlstr .= "$key = CASE $cond_key ";
+        }
+    }
+
+    return $sqlstr;
 }
 
 ?>

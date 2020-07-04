@@ -53,9 +53,9 @@ switch ($action) {
     default:
         // tag-tagid-page.htm
         $tagid = param(1, 0);
+        // hook tag_tagid_after.php
         empty($tagid) AND message(-1, lang('data_malformation'));
 
-        $page = param(2, 1);
         $page = param(2, 1);
         $pagesize = $conf['pagesize'];
         $extra = array(); // 插件预留
