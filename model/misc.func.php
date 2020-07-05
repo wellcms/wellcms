@@ -665,7 +665,7 @@ function filter_all_html($text)
     $text = trim($text);
     $text = stripslashes($text);
     $text = strip_tags($text);
-    $text = str_replace(array("\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
+    $text = str_replace(array('/', "\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
     //$text = htmlspecialchars($text, ENT_QUOTES); // 入库前保留干净，入库时转码 输出时无需htmlspecialchars_decode()
     return $text;
 }
