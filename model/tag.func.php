@@ -67,6 +67,7 @@ function well_tag_read_name($name)
 {
     // hook model__tag_read_name_start.php
     $r = well_tag__read(array('name' => $name));
+    $r AND well_tag_format($r);
     // hook model__tag_read_name_end.php
     return $r;
 }
