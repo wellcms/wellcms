@@ -5,9 +5,6 @@
 !defined('DEBUG') AND exit('Access Denied.');
 
 $tid = param(1, 0);
-// hook read_tid_after.php
-empty($tid) AND message(-1, lang('data_malformation'));
-
 $page = param(2, 1);
 $pagesize = $conf['comment_pagesize'];
 $extra = array(); // 插件预留
