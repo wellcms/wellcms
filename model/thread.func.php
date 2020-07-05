@@ -23,10 +23,10 @@ function well_thread__update($tid, $update, $d = NULL)
     return $r;
 }
 
-function well_thread__read($tid, $orderby = array(), $col = array(), $d = NULL)
+function well_thread__read($cond = array(), $orderby = array(), $col = array(), $d = NULL)
 {
     // hook model__thread__read_start.php
-    $thread = db_find_one('website_thread', array('tid' => $tid), $orderby, $col, $d);
+    $thread = db_find_one('website_thread', $cond, $orderby, $col, $d);
     // hook model__thread__read_end.php
     return $thread;
 }
@@ -494,7 +494,7 @@ function well_thread_read($tid)
     static $cache = array();
     if (isset($cache[$tid])) return $cache[$tid];
     // hook model__thread_read_start.php
-    $cache[$tid] = well_thread__read($tid);
+    $cache[$tid] = well_thread__read(array('tid' => $tid));
     $cache[$tid] AND well_thread_format($cache[$tid]);
     // hook model__thread_read_end.php
     return $cache[$tid];

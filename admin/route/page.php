@@ -390,7 +390,7 @@ switch ($action) {
             // hook admin_page_delete_start.php
 
             $tid = param('tid', 0);
-            $thread = well_thread__read($tid);
+            $thread = well_thread__read(array('tid' => $tid));
             empty($thread) AND message(-1, lang('thread_not_exists'));
 
             // hook admin_page_delete_before.php

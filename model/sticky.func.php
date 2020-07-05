@@ -73,7 +73,7 @@ function sticky_thread_delete($tid)
 {
     global $config;
     // hook model_sticky_delete_start.php
-    $thread = well_thread__read($tid);
+    $thread = well_thread__read(array('tid' => $tid));
     if (empty($thread)) return FALSE;
     if (3 == $thread['sticky']) {
         $config['index_stickys'] -= 1;
