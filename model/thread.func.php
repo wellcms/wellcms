@@ -826,7 +826,7 @@ function well_thread_format(&$thread)
         unset($lastuser);
     }
 
-    $thread['url'] = url('read-' . $thread['tid']);
+    $thread['url'] = url('read-' . $thread['tid'], '', FALSE);
     // hook model__thread_format_center.php
     $thread['user_url'] = url('user-' . $thread['uid']);
 
