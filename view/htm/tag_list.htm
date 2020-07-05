@@ -23,13 +23,13 @@
 
 			<ul class="row list-unstyled mb-0">
 				<?php if($taglist){foreach ($taglist as &$_tag){ ?>
-				<li class="col-md-3 tap" data-href="<?php echo url('tag-' . $_tag['tagid']);?>">
+				<li class="col-md-3 tap" data-href="<?php echo $_tag['url'];?>">
 					<div class="card">
 						<div class="card-body">
 							<ul class="list-unstyled d-flex justify-content-between">
 								<li>
                                     <h2 class="mb-0 size1">
-                                        <a href="<?php echo url('tag-' . $_tag['tagid']);?>">
+                                        <a href="<?php echo $_tag['url'];?>">
                                             <strong>
                                                 <?php echo $_tag['name'];?>
                                             </strong>
