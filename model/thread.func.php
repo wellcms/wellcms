@@ -811,7 +811,7 @@ function well_thread_format(&$thread)
     $thread['user_avatar_url'] = $user['avatar_url'];
     $thread['user'] = user_safe_info($user);
     unset($user);
-
+    // hook model__thread_format_before.php
     $forum = isset($forumlist[$thread['fid']]) ? $forumlist[$thread['fid']] : array('name' => '');
     $thread['forum_name'] = $forum['name'];
     $thread['forum_url'] = $forum['url'];
@@ -827,7 +827,7 @@ function well_thread_format(&$thread)
     }
 
     $thread['url'] = url('read-' . $thread['tid']);
-
+    // hook model__thread_format_center.php
     $thread['user_url'] = url('user-' . $thread['uid']);
 
     $thread['sticky_class'] = '';
@@ -868,12 +868,12 @@ function well_thread_format(&$thread)
     } else {
         $thread['icon_text'] = $nopic;
     }
-
+    // hook model__thread_format_middle.php
     // 回复页面
     $thread['pages'] = ceil($thread['posts'] / $conf['comment_pagesize']);
 
     $thread['tag_text'] = $thread['tag'] ? xn_json_decode($thread['tag']) : '';
-
+    // hook model__thread_format_after.php
     // 权限判断
     $thread['allowupdate'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
     $thread['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
