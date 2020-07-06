@@ -76,7 +76,7 @@ return array(
     'logo_mobile_url' => 'img/logo.png',        // 手机 LOGO URL
     'logo_pc_url' => 'img/logo.png',            // PC  LOGO URL
     'logo_water_url' => 'img/water-small.png',    // 水印 LOGO URL
-    'sitename' => 'WellCMS',
+    'sitename' => 'Website',
     'sitebrief' => 'Site Brief',
     'timezone' => 'Asia/Shanghai',  // 时区，默认中国
     'lang' => 'zh-cn',

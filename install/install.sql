@@ -396,4 +396,3 @@ CREATE TABLE `wellcms_website_link` (
   PRIMARY KEY (`id`),
   KEY `rank` (`rank`) # 排序
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_website_link` (`id`, `rank`, `name`, `url`, `create_date`) VALUES (1, 0, 'WellCMS', 'http://www.wellcms.cn/', 1579584311);
