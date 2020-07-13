@@ -228,7 +228,7 @@ function well_tag_read_by_name_cache($name)
         $r = cache_get($key);
         if (NULL === $r) {
             $r = well_tag_read_name($name);
-            $r AND ache_set($key, $r, 1800);
+            $r AND cache_set($key, $r, 1800);
         }
     }
     $cache[$key] = $r ? $r : NULL;
