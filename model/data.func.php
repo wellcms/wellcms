@@ -45,6 +45,21 @@ function data__delete($tid, $d = NULL)
     return $r;
 }
 
+function data_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_data_big_insert_start.php
+    $r = db_big_insert('website_data', $arr, $d);
+    // hook model_data_big_insert_end.php
+    return $r;
+}
+
+function data_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_data_big_update_start.php
+    $r = db_big_update('website_data', $cond, $update, $d);
+    // hook model_data_big_update_end.php
+    return $r;
+}
 //--------------------------强相关--------------------------
 // $arr = array('tid' => $tid, 'gid' => $gid, 'message' => $arr['message'], 'doctype' => $doctype);
 function data_create($arr)

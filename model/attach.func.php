@@ -54,6 +54,21 @@ function well_attach_count($cond = array(), $d = NULL)
     return $n;
 }
 
+function attach_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_attach_big_insert_start.php
+    $r = db_big_insert('website_attach', $arr, $d);
+    // hook model_attach_big_insert_end.php
+    return $r;
+}
+
+function attach_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_attach_big_update_start.php
+    $r = db_big_update('website_attach', $cond, $update, $d);
+    // hook model_attach_big_update_end.php
+    return $r;
+}
 // ------------> 关联 CURD，主要是强相关的数据，比如缓存。弱相关的大量数据需要另外处理
 function well_attach_create($arr)
 {

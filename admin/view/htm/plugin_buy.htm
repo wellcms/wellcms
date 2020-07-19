@@ -82,7 +82,7 @@
                 return false;
             }
             $.xget(xn.url('plugin-is_bought', {dir:dir}, true), function(code, message) {
-                clearInterval(t); // 有返回则清除
+                clearInterval(t); /*有返回则清除*/
                 if(code == 0) {
                     window.location = xn.url('plugin-download', {dir:dir}, true);
                 } else {

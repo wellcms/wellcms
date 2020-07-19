@@ -55,6 +55,21 @@ function comment_count($cond = array(), $d = NULL)
     return $n;
 }
 
+function comment_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_comment_big_insert_start.php
+    $r = db_big_insert('website_comment', $arr, $d);
+    // hook model_comment_big_insert_end.php
+    return $r;
+}
+
+function comment_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_comment_big_update_start.php
+    $r = db_big_update('website_comment', $cond, $update, $d);
+    // hook model_comment_big_update_end.php
+    return $r;
+}
 //--------------------------强相关--------------------------
 // 评论回复不支持html标签，不支持附件和图片
 // array('tid' => $tid, 'fid' => $fid, 'doctype' => $doctype, 'message' => $message);

@@ -49,6 +49,21 @@ function well_tag_thread__count($cond = array(), $d = NULL)
     return $n;
 }
 
+function tag_thread_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_tag_thread_big_insert_start.php
+    $r = db_big_insert('website_tag_thread', $arr, $d);
+    // hook model_tag_thread_big_insert_end.php
+    return $r;
+}
+
+function tag_thread_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_tag_thread_big_update_start.php
+    $r = db_big_update('website_tag_thread', $cond, $update, $d);
+    // hook model_tag_thread_big_update_end.php
+    return $r;
+}
 //--------------------------强相关--------------------------
 function well_tag_thread_update($tagid, $tid, $update)
 {

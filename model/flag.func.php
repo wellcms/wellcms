@@ -53,6 +53,21 @@ function flag__count($cond = array(), $d = NULL)
     return $n;
 }
 
+function flag_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_flag_big_insert_start.php
+    $r = db_big_insert('website_flag', $arr, $d);
+    // hook model_flag_big_insert_end.php
+    return $r;
+}
+
+function flag_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_flag_big_update_start.php
+    $r = db_big_update('website_flag', $cond, $update, $d);
+    // hook model_flag_big_update_end.php
+    return $r;
+}
 //--------------------------强相关--------------------------
 function flag_create($arr)
 {

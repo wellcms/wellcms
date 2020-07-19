@@ -211,6 +211,13 @@
 			</div>
 		</div>
 		<!--{hook read_comment_after.htm}-->
+		
+		<div class="d-none threadlist">
+            <input type="checkbox" name="modtid" value="<?php echo $thread['tid']; ?>" checked />
+            <?php $extra += array('fid' => $fid);?>
+        </div>
+        <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+
         <?php if($pagination) { ?>
         <nav>
             <ul class="pagination my-4 justify-content-center flex-wrap">

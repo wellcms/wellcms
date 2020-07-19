@@ -55,6 +55,13 @@ function user_count($cond = array(), $d = NULL)
     return $n;
 }
 
+function user_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_user_big_update_start.php
+    $r = db_big_update('user', $cond, $update, $d);
+    // hook model_user_big_update_end.php
+    return $r;
+}
 // ------------> 关联 CURD，主要是强相关的数据，比如缓存。弱相关的大量数据需要另外处理。
 
 function user_create($arr)

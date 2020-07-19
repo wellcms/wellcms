@@ -84,6 +84,21 @@ function well_thread_count($cond = array(), $d = NULL)
     return $n;
 }
 
+function thread_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_thread_big_insert_start.php
+    $r = db_big_insert('website_thread', $arr, $d);
+    // hook model_thread_big_insert_end.php
+    return $r;
+}
+
+function thread_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_thread_big_update_start.php
+    $r = db_big_update('website_thread', $cond, $update, $d);
+    // hook model_thread_big_update_end.php
+    return $r;
+}
 //--------------------------强相关--------------------------
 
 function well_thread_create($arr)
