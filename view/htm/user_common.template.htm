@@ -2,57 +2,60 @@
 <!--共享文件-->
 <!--{hook user_common_start.htm}-->
 <div class="container">
-
-    <div class="row bg-white px-0 py-3 rounded">
-        <div class="col-4 col-md-2 align-self-center">
-            <img class="avatar-5 rounded mx-auto d-block img-responsive" src="<?php echo $_user['avatar_url'];?>">
-        </div>
-        <div class="col-8 col-md-6">
-            <div class="h4">
-                <?php echo $_user['username'];?>
-                <small>
-                    <!--{hook user_common_rank.htm}-->
-                </small>
-            </div>
-            <div class="text-muted break-all small">
-                <!--{hook user_common_brief.htm}-->
-            </div>
-            <hr>
-            <div class="text-muted small">
-                <!--{hook user_common_count_register_before.htm}-->
-                <?php echo lang('register'),'&nbsp;',$_user['create_date_fmt'];?>
-                <!--{hook user_common_count_register_after.htm}-->
-            </div>
-        </div>
-        <div class="col-12 col-md-4 align-self-center">
-            <!--{hook user_common_count_start.htm}-->
-            <div class="row pt-1 text-center small">
-                <!--{hook user_common_count_before.htm}-->
-                <div class="col-3">
-                    <div class="w-100">
-                        <?php echo lang('thread');?>
+    <div class="bg-white py-3 rounded">
+        <div class="row">
+            <div class="col-lg-8 d-flex align-items-center">
+                <div class="px-3">
+                    <img class="avatar-5 rounded mx-auto d-block img-responsive" src="<?php echo $_user['avatar_url'];?>">
+                </div>
+                <div class="col">
+                    <div class="h5">
+                        <?php echo $_user['username'];?>
+                        <small class="text-muted text-break">
+                            <!--{hook user_common_rank.htm}-->
+                        </small>
                     </div>
-                    <div class="w-100 font-weight-bold d-inline">
-                        <?php echo $_user['articles'];?>
+                    <div class="text-muted text-break small">
+                        <!--{hook user_common_brief.htm}-->
+                    </div>
+                    <hr class="my-2">
+                    <div class="text-muted small">
+                        <!--{hook user_common_count_register_before.htm}-->
+                        <?php echo lang('register'),'&nbsp;',$_user['create_date_fmt'];?>
+                        <!--{hook user_common_count_register_after.htm}-->
                     </div>
                 </div>
-                <div class="col-3">
-                    <div class="w-100">
-                        <?php echo lang('comment');?>
-                    </div>
-                    <div class="w-100 font-weight-bold d-inline">
-                        <?php echo $_user['comments'];?>
-                    </div>
-                </div>
-                <!--{hook user_common_count_comment_after.htm}-->
             </div>
-            <!--{hook user_common_count_end.htm}-->
+            <div class="col-lg-4 align-self-center small">
+                <!--{hook user_common_count_start.htm}-->
+                <div class="row text-center">
+                    <!--{hook user_common_count_before.htm}-->
+                    <div class="col-3">
+                        <div>
+                            <?php echo lang('thread');?>
+                        </div>
+                        <div class="font-weight-bold d-inline">
+                            <?php echo $_user['articles'];?>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div>
+                            <?php echo lang('comment');?>
+                        </div>
+                        <div class="font-weight-bold d-inline">
+                            <?php echo $_user['comments'];?>
+                        </div>
+                    </div>
+                    <!--{hook user_common_count_comment_after.htm}-->
+                </div>
+                <!--{hook user_common_count_end.htm}-->
+            </div>
         </div>
     </div>
-
+    
     <div class="row mt-3">
         <!-- 左侧内容 -->
-        <div class="col-lg-9 px-0 main">
+        <div class="col-lg-9 main">
             <!--{hook user_common_main_start.htm}-->
             <slot name="nav" />
             <!--{hook user_common_main_center.htm}-->

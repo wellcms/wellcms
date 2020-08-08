@@ -6,8 +6,8 @@
     <div class="col-lg-12">
         <!--{hook admin_page_list_breadcrumb_before.htm}-->
         <?php if(empty($hide_breadcrumb)) { ?>
-        <ol class="breadcrumb d-none d-md-flex text-muted">
-            <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+        <ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+            <li class="breadcrumb-item"><a href="./"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
             <li class="breadcrumb-item"><?php echo lang('single_page');?></li>
             <li class="breadcrumb-item"><?php echo lang('list');?></li>
             <!--{hook admin_page_list_breadcrumb.htm}-->
@@ -34,9 +34,9 @@
                     <!--{hook admin_page_list_menu_end.htm}-->
                     <div>
                         <?php if (empty($columnlist)) { ?>
-                        <a class="btn btn-info btn-sm" href="<?php echo url('column-list', '', TRUE);?>"><?php echo lang('create').lang('column'); ?></a>
+                        <a class="btn btn-danger btn-sm" href="<?php echo url('column-list', '', TRUE);?>"><?php echo lang('create').lang('column'); ?></a>
                         <?php } else { ?>
-                        <a class="btn btn-info btn-sm" href="<?php echo url('page-create', array('fid'=>$fid), TRUE);?>"><?php echo lang('increase').lang('content'); ?></a>
+                        <a class="btn btn-danger btn-sm" href="<?php echo url('page-create', array('fid'=>$fid), TRUE);?>"><?php echo lang('increase').lang('content'); ?></a>
                         <?php } ?>
                     </div>
                     <!--{hook admin_page_list_menu_end.htm}-->
@@ -51,7 +51,7 @@
                                 <?php if ($fid) { ?>
                                 <input type="text" placeholder="<?php echo lang('well_rank');?>" name="rank" value="<?php echo $_thread['rank']; ?>" class="form-control small mr-2" rank="<?php echo $_thread['rank'];?>" tid="<?php echo $_thread['tid'];?>" style="width:45px;">
                                 <?php } ?>
-                                <h2 class="break-all font-weight-bold mt-2 mb-0">
+                                <h2 class="h6 text-break font-weight-bold mt-2 mb-0">
                                     <a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>"><?php echo $_thread['subject'];?></a>
                                 </h2>
                             </div>
@@ -153,8 +153,9 @@
         });
     });
     <?php } ?>
-    $('#content').addClass('show');
-    $('.sidebar-sticky li.menu-page').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+
+    $('#menu-content').addClass('show');
+    $('li.menu-content, .menu-page').addClass('active');
 </script>
 
 <!--{hook admin_page_list_js.htm}-->

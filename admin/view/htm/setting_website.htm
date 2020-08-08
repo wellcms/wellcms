@@ -44,7 +44,7 @@
                     <!--{hook admin_setting_save_image_on_after.htm}-->
 
                     <div class="form-group text-center mt-4">
-                        <button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."> <?php echo lang('submit');?> </button>
+                        <button type="submit" class="btn btn-danger btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."> <?php echo lang('submit');?> </button>
                     </div>
                     <!--{hook admin_setting_website_submit_after.htm}-->
                 </form>
@@ -83,8 +83,8 @@
         return false;
     });
 
-    $('#setting').addClass('show');
-    $('.sidebar-sticky li.menu-setting-website').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-setting').addClass('show');
+    $('li.menu-setting, .menu-setting-website').addClass('active');
 </script>
 
 <!--{hook admin_setting_website_js.htm}-->

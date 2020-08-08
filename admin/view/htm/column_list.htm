@@ -4,8 +4,8 @@
 <div class="container-fluid">
 <div class="row">
 	<div class="col-12">
-        <ol class="breadcrumb d-none d-md-flex text-muted">
-            <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+        <ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+            <li class="breadcrumb-item"><a href="./"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
             <li class="breadcrumb-item"><?php echo lang('website');?></li>
             <li class="breadcrumb-item"><?php echo lang('column'),lang('list');?></li>
             <!--{hook admin_column_list_breadcrumb.htm}-->
@@ -19,7 +19,7 @@
                         <tbody>
                         <tr>
                             <td class="text-right" colspan="7">
-                                <a class="btn btn-info btn-sm" href="<?php echo url('column-create', '', TRUE);?>"><?php echo lang('increase').lang('column'); ?></a>
+                                <a class="btn btn-danger btn-sm" href="<?php echo url('column-create', '', TRUE);?>"><?php echo lang('increase').lang('column'); ?></a>
                             </td>
                         </tr>
                         <tr>
@@ -142,7 +142,7 @@
                     </table>
 
 					<p class="text-center">
-						<button type="submit" class="btn btn-primary btn-lock col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+						<button type="submit" class="btn btn-danger btn-lock col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
 					</p>
 				</form>
 			</div>
@@ -190,8 +190,8 @@ $('table').on('click', 'a.delete', function() {
     return false;
 });
 
-$('#forum').addClass('show');
-$('.sidebar-sticky li.menu-website').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#menu-forum').addClass('show');
+$('li.menu-forum, .menu-website').addClass('active');
 </script>
 
 <!--{hook admin_column_list_js.htm}-->

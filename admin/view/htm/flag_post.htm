@@ -6,8 +6,8 @@
 	<div class="col-lg-12">
 		<!--{hook admin_flag_post_breadcrumb_before.htm}-->
 		<?php if(empty($hide_breadcrumb)) { ?>
-		<ol class="breadcrumb d-none d-md-flex text-muted">
-			<li class="breadcrumb-item"><a href="<?php echo url('flag-list', '', TRUE);?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+        <ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+			<li class="breadcrumb-item"><a href="<?php echo url('flag-list', '', TRUE);?>"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
 			<?php if ($fid) { ?>
 			<li class="breadcrumb-item"><?php echo $forum['name'];?></li>
 			<?php } ?>
@@ -37,10 +37,12 @@
                                     </label>
                                 </div>
                                 <div class="media-body col-12">
-                                    <label class="custom-input custom-checkbox m-0">
-                                        <input class="mr-2" type="checkbox" name="delete" value="1">
-                                        <?php echo lang('delete').lang('icon');?>
-                                    </label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="delete" name="delete" value="1" />
+                                        <label class="custom-control-label custom-checkbox" for="delete">
+                                            <?php echo lang('delete').lang('icon');?>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +85,7 @@
                     </div>
                     <!--{hook admin_flag_post_form_number_after.htm}-->
                     <div class="form-group text-center mt-4">
-                        <button type="submit" class="btn btn-primary btn-block xn-back col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."> <?php echo lang('submit');?> </button>
+                        <button type="submit" class="btn btn-danger btn-block xn-back col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."> <?php echo lang('submit');?> </button>
                     </div>
                     <!--{hook admin_flag_post_form_after.htm}-->
                 </form>
@@ -129,8 +131,8 @@
         return false;
     });
 
-    $('#category').addClass('show');
-    $('.sidebar-sticky li.menu-flag').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-category').addClass('show');
+    $('li.menu-category, .menu-flag').addClass('active');
 </script>
 
 <!--{hook admin_flag_post_js.htm}-->

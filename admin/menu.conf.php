@@ -4,7 +4,7 @@
  */
 return array(
     // hook admin_menu_conf_start.php
-    'content' => array(
+    'menu-content' => array(
         'url' => url('content-list', '', TRUE),
         'text' => lang('manage_content'),
         'icon' => 'icon-pencil-square',
@@ -22,7 +22,7 @@ return array(
         )
     ),
     // hook admin_menu_conf_column_before.php
-    'forum' => array(
+    'menu-forum' => array(
         'url' => url('column-list', '', TRUE),
         'text' => lang('manage_forum'),
         'icon' => 'icon-columns',
@@ -33,7 +33,7 @@ return array(
         )
     ),
     // hook admin_menu_conf_category_before.php
-    'category' => array(
+    'menu-category' => array(
         'url' => url('column-list', '', TRUE),
         'text' => lang('manage_category'),
         'icon' => 'icon-sort-alpha-asc',
@@ -44,7 +44,7 @@ return array(
         )
     ),
     // hook admin_menu_conf_user_before.php
-    'user' => array(
+    'menu-user' => array(
         'url' => url('user-list', '', TRUE),
         'text' => lang('manage_user'),
         'icon' => 'icon-user',
@@ -59,7 +59,7 @@ return array(
         )
     ),
     // hook admin_menu_conf_plugin_before.php
-    'plugin' => array(
+    'menu-plugin' => array(
         'url' => url('plugin', '', TRUE),
         'text' => lang('manage_warehouse'),
         'icon' => 'icon-cogs',
@@ -74,7 +74,7 @@ return array(
         )
     ),
     // hook admin_menu_conf_other_before.php
-    'other' => array(
+    'menu-other' => array(
         'url' => url('other', '', TRUE),
         'text' => lang('other_function'),
         'icon' => 'icon-wrench',
@@ -87,7 +87,7 @@ return array(
         )
     ),
     // hook admin_menu_conf_setting_before.php
-    'setting' => array(
+    'menu-setting' => array(
         'url' => url('setting-base', '', TRUE),
         'text' => lang('system_setting'),
         'icon' => 'icon-cog',

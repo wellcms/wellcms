@@ -6,8 +6,8 @@
     <div class="col-lg-12">
         <!--{hook admin_link_list_breadcrumb_before.htm}-->
         <?php if(empty($hide_breadcrumb)) { ?>
-        <ol class="breadcrumb d-none d-md-flex text-muted">
-            <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+        <ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+            <li class="breadcrumb-item"><a href="./"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
             <li class="breadcrumb-item"><?php echo lang('friends_link');?></li>
             <li class="breadcrumb-item"><?php echo lang('list');?></li>
             <!--{hook admin_link_list_breadcrumb.htm}-->
@@ -22,7 +22,7 @@
                     <?php echo $input['name'];?>
                     <?php echo $input['url'];?>
                     <div class="input-group-append">
-                        <button class="create btn btn-outline-secondary" type="button" id="button"><?php echo lang('submit');?></button>
+                        <button class="create btn btn-danger" type="button" id="button"><?php echo lang('submit');?></button>
                     </div>
                 </div>
 
@@ -59,7 +59,7 @@
         </div>
         <div class="text-center">
             <div class="btn-group mod-button my-3" role="group" aria-label="">
-                <button class="btn btn-secondary rank"><?php echo lang('rank');?></button>
+                <button class="btn btn-danger rank"><?php echo lang('rank');?></button>
             </div>
         </div>
         <!--{hook admin_link_list_page_before.htm}-->
@@ -124,8 +124,8 @@
         });
     });
 
-    $('#other').addClass('show');
-    $('.sidebar-sticky li.menu-link').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-other').addClass('show');
+    $('li.menu-other, .menu-link').addClass('active');
 </script>
 
 <!--{hook admin_link_list_js.htm}-->

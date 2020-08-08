@@ -46,7 +46,7 @@
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
+                        <button type="submit" class="btn btn-danger btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
                             <?php echo lang('login');?>
                         </button>
                     </div>
@@ -89,7 +89,7 @@
     </div>
 
     <?php if ($pluginlist) { ?>
-    <div class="threadlist card-columns">
+    <div class="threadlist card-columns mb-3">
         <?php foreach($pluginlist as $dir=>$plugin) { ?>
 
         <?php $plugin['name'] = array_value($plugin, 'name');
@@ -100,14 +100,14 @@
         <div class="card">
             <div class="d-flex thread">
                 <div class="d-flex align-items-center mx-3">
-                    <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
+                    <a data-modal-title="<?php echo $plugin['name']; ?>" data-modal-size="lg" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
                         <img src="<?php echo $plugin['icon_url']; ?>" width="54" height="54" />
                     </a>
                 </div>
                 <div class="col p-0 m-0">
                     <div class="d-flex justify-content-between">
                         <div class="col px-0 break-all font-weight-bold">
-                            <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
+                            <a data-modal-title="<?php echo $plugin['name']; ?>" data-modal-size="lg" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
                                 <?php echo $plugin['name']; ?>
                             </a>
                             <span class="small">
@@ -117,7 +117,7 @@
 
                         <div class="mx-2">
                             <?php if($plugin['official']['price'] > 0 && !$plugin['downloaded']) { ?>
-                            <a role="button" class="btn btn-danger btn-sm buy mx-1" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>"><?php echo lang('buy');?></a>
+                            <a role="button" class="btn btn-danger btn-sm buy mx-1" data-modal-title="<?php echo $plugin['name']; ?>" data-modal-size="lg" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>"><?php echo lang('buy');?></a>
                             <?php } ?>
 
                             <?php if(0 == $plugin['official']['price'] && !$plugin['downloaded']) { ?>
@@ -166,7 +166,7 @@
                         <?php } else { echo lang('none');}?>
                     </div>
                     <div class="text-muted small">
-                        最后更新<span class="ml-1"><?php echo $plugin['last_update_fmt']; ?></span>
+                        Last Update<span class="ml-1"><?php echo $plugin['last_update_fmt']; ?></span>
                         <br>
                         <span class="<?php if($plugin['have_upgrade']) { echo 'text-danger'; } ?>">
                             <?php echo lang('official_version');?><span class="mx-1">v</span><?php echo array_value($plugin, 'official_version'); ?>
@@ -250,6 +250,6 @@
         if(e.keyCode == 13) jsearch.trigger('click');
     });
 
-$('#plugin').addClass('show');
-$('.sidebar-sticky li.menu-<?php echo $active;?>').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-plugin').addClass('show');
+    $('li.menu-plugin, .menu-store').addClass('active');
 </script>

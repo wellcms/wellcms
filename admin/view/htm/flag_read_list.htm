@@ -6,8 +6,8 @@
 	<div class="col-lg-12">
 		<!--{hook admin_flag_read_breadcrumb_before.htm}-->
 		<?php if(empty($hide_breadcrumb)) { ?>
-		<ol class="breadcrumb d-none d-md-flex text-muted">
-            <li class="breadcrumb-item"><a href="<?php echo url('flag-list', '', TRUE);?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+		<ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+            <li class="breadcrumb-item"><a href="<?php echo url('flag-list', '', TRUE);?>"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
             <li class="breadcrumb-item"><?php echo $read['name'];?></li>
             <li class="breadcrumb-item"><?php echo lang('list');?></li>
             <!--{hook admin_flag_read_breadcrumb.htm}-->
@@ -25,7 +25,7 @@
 							<input type="checkbox" name="id" class="mt-1" value="<?php echo $idarr[$v['tid']]; ?>" />
 						</td>
                         <!--{hook admin_flag_read_table_before.htm}-->
-						<td class="break-all text-left">
+						<td class="text-break text-left">
                             <a href="../<?php echo $v['url']; ?>" target="_blank"><?php echo $v['subject'];?></a>
 						</td>
                         <!--{hook admin_flag_read_table_middle.htm}-->
@@ -50,7 +50,7 @@
             </label>
             <div class="btn-group mod-button my-3" role="group" aria-label="">
                 <!--{hook thread_list_mod_delete_before.htm}-->
-                <button class="btn btn-secondary delete" data-href="<?php echo url('flag-read', array('flagid' => $flagid,'type' => 1));?>"><?php echo lang('delete');?></button>
+                <button class="btn btn-danger delete" data-href="<?php echo url('flag-read', array('flagid' => $flagid,'type' => 1));?>"><?php echo lang('delete');?></button>
                 <!--{hook thread_list_mod_close_after.htm}-->
             </div>
         </div>
@@ -100,8 +100,8 @@
         return false;
     });
 
-    $('#category').addClass('show');
-    $('.sidebar-sticky li.menu-flag').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-category').addClass('show');
+    $('li.menu-category, .menu-flag').addClass('active');
 </script>
 
 <!--{hook admin_flag_read_js.htm}-->

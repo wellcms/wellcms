@@ -84,6 +84,8 @@ function comment_create($post)
 
     // 格式化后为空不入库
     if (empty($post['message'])) return FALSE;
+
+    // hook model_comment_create_before.php
     
     $pid = comment__create($post);
     if (FALSE === $pid) return FALSE;

@@ -99,6 +99,7 @@ function unique_array($array2D, $stkeep = FALSE, $ndformat = TRUE)
 // 合并二维数组 如重复 值以第一个数组值为准
 function array2_merge($array1, $array2, $key = '')
 {
+    if (empty($array1) || empty($array2)) return NULL;
     $arr = array();
     foreach ($array1 as $k => $v) {
         isset($v[$key]) ? $arr[$v[$key]] = array_merge($v, $array2[$k]) : $arr[] = array_merge($v, $array2[$k]);
@@ -113,6 +114,7 @@ function array2_merge($array1, $array2, $key = '')
  * */
 function array2_sort_key($array1, $array2, $key = '')
 {
+    if (empty($array1) || empty($array2)) return NULL;
     $arr = array();
     foreach ($array2 as $k => $v) {
         if (isset($v[$key]) && $v[$key] == $array1[$v[$key]][$key]) {

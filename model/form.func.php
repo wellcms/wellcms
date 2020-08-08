@@ -12,20 +12,20 @@ function form_radio_yes_no($name, $checked = 0)
 function form_radio($name, $arr, $checked = 0, $disabled = FALSE)
 {
     empty($arr) && $arr = array(lang('no'), lang('yes'));
-    $s = '';
-
+    $s = '<div class="d-flex flex-wrap">';
     foreach ((array)$arr as $k => $v) {
         $add = $k == $checked ? ' checked="checked"' : '';
         $add .= FALSE !== $disabled ? ' disabled' : '';
-        $s .= "<label class=\"custom-input custom-radio\"><input type=\"radio\" name=\"$name\" value=\"$k\"$add /> $v</label> &nbsp; \r\n";
+        $s .= "<div class=\"custom-control custom-radio\"><input type=\"radio\" class=\"custom-control-input\" id=\"$name-$v\" name=\"$name\" value=\"$k\"$add /><label class=\"custom-control-label mr-2\" for=\"$name-$v\">$v</label></div>";
     }
+    $s .= '</div>';
     return $s;
 }
 
 function form_checkbox($name, $checked = 0, $txt = '', $val = 1)
 {
     $add = $checked ? ' checked="checked"' : '';
-    $s = "<label class=\"custom-input custom-checkbox mr-2\"><input type=\"checkbox\" name=\"$name\" value=\"$val\" $add /> $txt</label>";
+    $s = "<div class=\"custom-control custom-checkbox\"><input class=\"custom-control-input\" type=\"checkbox\" id=\"$name-$val\" name=\"$name\" value=\"$val\" $add /><label class=\"custom-control-label custom-checkbox mr-2\" for=\"$name-$val\">$txt</label></div>";
     return $s;
 }
 
@@ -33,12 +33,13 @@ function form_checkbox($name, $checked = 0, $txt = '', $val = 1)
 // name  选项内容  被选中选项(选项内容的键名)
 function form_multi_checkbox($name, $arr, $checked = array())
 {
-    $s = '';
+    $s = '<div class="d-flex flex-wrap">';
     foreach ($arr as $k => $v) {
         $ischecked = in_array($k, $checked) ? ' checked="checked"' : '';
         $_name = $name . '[' . $k . ']';
-        $s .= "<label class=\"custom-input custom-checkbox pr-2 mr-1\"><input type=\"checkbox\" name=\"$_name\" value=\"$k\" $ischecked /> $v </label> ";
+        $s .= "<div class=\"custom-control custom-checkbox\"><input class=\"custom-control-input\" type=\"checkbox\" id=\"$_name\" name=\"$name-$k\" value=\"$k\" $ischecked /><label class=\"custom-control-label custom-checkbox mr-2\" for=\"$name-$k\">$v</label></div>";
     }
+    $s .= '</div>';
     return $s;
 }
 

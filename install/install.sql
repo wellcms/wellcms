@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS","version":"2.0.09","official_version":"2.0.09","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.0.10","official_version":"2.0.10","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;
@@ -317,7 +317,7 @@ CREATE TABLE `wellcms_website_thread` (
   `images` tinyint(3) NOT NULL DEFAULT '0', # 附件中包含的图片数
   `files` tinyint(3) NOT NULL DEFAULT '0',  # 附件中包含的文件数
   `mods` tinyint(3) NOT NULL DEFAULT '0',   # 预留：版主操作次数，如果 > 0, 则查询 operate，显示斑竹的评分
-  `status` tinyint(2) NOT NULL DEFAULT '0', # 0:通过 1~9审核:1待审核 10~19:10退稿 11逻辑删除
+  `status` tinyint(2) NOT NULL DEFAULT '0', # 0:通过 1~9审核:1待审核 2草稿 10~19:10退稿 11逻辑删除
   `closed` tinyint(1) unsigned NOT NULL DEFAULT '0', # 1关闭回复 2关闭主题不能回复、编辑
   `lastuid` int(11) unsigned NOT NULL DEFAULT '0',   # 最近参与的 uid
   `last_date` int(11) unsigned NOT NULL DEFAULT '0', # 最后回复时间

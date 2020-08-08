@@ -36,7 +36,7 @@
 					</div>
 					<p><a role="button" class="btn row_add">[+]<?php echo lang('add_new_line');?></a></p>
 					<p class="text-center">
-						<button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+						<button type="submit" class="btn btn-danger btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
 					</p>
 				</form>
 				<p>
@@ -106,8 +106,8 @@ jadd.on('click', function() {
 	return false;
 });
 
-$('#setting').addClass('show');
-$('.sidebar-sticky li.menu-smtp').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#menu-setting').addClass('show');
+$('li.menu-setting, .menu-smtp').addClass('active');
 </script>
 
 <!--{hook admin_setting_smtp_js.htm}-->

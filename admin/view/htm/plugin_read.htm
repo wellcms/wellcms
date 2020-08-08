@@ -3,10 +3,6 @@
 <div class="container-fluid">
 <div class="row">
 	<div class="col-12">
-		<div class="btn-group mb-3" role="group">
-			<?php echo admin_tab_active($menu['plugin']['tab'], $tab);?>
-		</div>
-
 		<div class="card">
 			<div class="card-body">
 				<div class="media">
@@ -131,7 +127,7 @@
 					<?php } ?>
 
 					<?php if($islocal && !$plugin['installed'] && 1 != $plugin['type']) { ?>
-					<a role="button" class="btn btn-primary mx-1" href="<?php echo url('plugin-install', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('install');?></a>
+					<a role="button" class="btn btn-success mx-1" href="<?php echo url('plugin-install', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('install');?></a>
 					<?php } ?>
 
 					<?php if($plugin['installed'] && $plugin['enable'] && 1 != $plugin['type']) { ?>
@@ -163,9 +159,6 @@
 		</div>
     </div>
 </div>
-	<p class="text-center">
-		<a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
-	</p>
 </div>
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
@@ -192,7 +185,6 @@
         return false;
     });
 
-    $('#nav li.nav-item-plugin').addClass('active');
-    $('#plugin').addClass('show');
-    $('.sidebar-sticky li.menu-plugin').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-plugin').addClass('show');
+    $('li.menu-plugin, .menu-plugin').addClass('active');
 </script>

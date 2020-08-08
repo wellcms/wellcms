@@ -669,6 +669,7 @@ return array(
     'keywords_limit_tips' => '推荐3个关键词，不超过64个字符',
     'description' => '描述',
     'description_limit_tips' => '描述120个字符',
+    'member_adv' => '再小的个体，也是一个品牌！',
     // hook lang_zh_cn.php
 );
 

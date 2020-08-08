@@ -6,8 +6,8 @@
 	<div class="col-lg-12">
 		<div class="content mr-3">
 			<div class="d-flex justify-content-between">
-				<ol class="breadcrumb col">
-					<li class="breadcrumb-item"><a href="<?php echo $conf['path'];?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+				<ol class="breadcrumb col shadow border-light border-left-primary">
+					<li class="breadcrumb-item"><a href="<?php echo $conf['path'];?>"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
 					<li class="breadcrumb-item">
 						<a href="<?php echo $header['mobile_link'];?>">
 							<?php echo lang('well_tag');?>
@@ -23,12 +23,12 @@
 
 			<ul class="row list-unstyled mb-0">
 				<?php if($taglist){foreach ($taglist as &$_tag){ ?>
-				<li class="col-md-3 tap" data-href="<?php echo $_tag['url'];?>">
+				<li class="col-md-3 tap mb-3" data-href="<?php echo $_tag['url'];?>">
 					<div class="card">
 						<div class="card-body">
 							<ul class="list-unstyled d-flex justify-content-between">
 								<li>
-                                    <h2 class="mb-0 size1">
+                                    <h2 class="h6 mb-0">
                                         <a href="<?php echo $_tag['url'];?>">
                                             <strong>
                                                 <?php echo $_tag['name'];?>
@@ -37,7 +37,7 @@
                                     </h2>
 								</li>
 								<li>
-									<?php echo lang('threads');?>：<?php echo $_tag['count'];?>
+									<?php echo $_tag['count'];?>
 								</li>
 							</ul>
 						</div>

@@ -55,8 +55,8 @@
 <div class="container-fluid">
 <div class="row">
 	<div class="col-12">
-        <ol class="breadcrumb d-none d-md-flex text-muted">
-            <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+        <ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+            <li class="breadcrumb-item"><a href="./"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
             <li class="breadcrumb-item"><?php echo lang('website');?></li>
             <li class="breadcrumb-item"><?php echo $breadcrumb;?></li>
             <!--{hook admin_column_post_breadcrumb.htm}-->
@@ -101,7 +101,7 @@
                 </div>
                 <!--{hook admin_column_post_next_after.htm}-->
                 <div class="text-center m-3">
-                    <button class="btn btn-primary btn-lock col-md-3 mx-auto" id="next" data-loading-text="Loding...">Next</button>
+                    <button class="btn btn-danger btn-lock col-md-3 mx-auto" id="next" data-loading-text="Loding...">Next</button>
                 </div>
                 <?php } ?>
 
@@ -228,7 +228,9 @@
                         <div class="tab-pane fade" id="privilege" role="tabpanel" aria-labelledby="privilege-tab">
                             <div class="form-group row">
                                 <div class="col-sm-12">
-                                    <p><?php echo lang('user_privilege');?>：<?php echo $input['accesson'];?><?php echo lang('enable');?></p>
+                                    <div class="d-flex flex-wrap mb-3">
+                                    <?php echo lang('user_privilege');?>：<?php echo $input['accesson'];?><?php echo lang('enable');?>
+                                    </div>
                                     <div class="table-responsive <?php echo $accesson ? '' : 'collapse';?>" id="accesslist_div">
                                         <table class="table table-hover text-small" id="accesslist" style="min-width: 500px;">
                                             <thead>
@@ -258,7 +260,6 @@
                                             <?php } ?>
                                             </tbody>
                                         </table>
-
                                     </div>
                                 </div>
                             </div>
@@ -328,9 +329,8 @@
 
                         <!--{hook admin_column_post_tab_end.htm}-->
                     </div>
-
                     <p class="text-center">
-                        <button type="submit" class="btn btn-primary btn-lock col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+                        <button type="submit" class="btn btn-danger btn-lock col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
                         <a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
                     </p>
                 </form>
@@ -401,10 +401,8 @@
     });
     <?php } ?>
 
-$('#forum').addClass('show');
-$('.sidebar-sticky li.menu-website').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
-
-    <!--{hook admin_column_post_js_after.htm}-->
+    $('#menu-forum').addClass('show');
+    $('li.menu-forum, .menu-website').addClass('active');
 </script>
 
 <!--{hook admin_column_post_js.htm}-->

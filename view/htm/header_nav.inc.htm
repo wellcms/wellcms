@@ -1,5 +1,5 @@
 	<!--{hook header_nav_start.htm}-->
-	<header class="navbar navbar-expand-lg navbar-dark bg-dark-blue py-1" id="header">
+	<header class="navbar navbar-expand-lg navbar-dark bg-primary py-1 mb-3" id="header">
 		<div class="container">
 			<button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#nav" aria-controls="navbar_collapse" aria-expanded="false" aria-label="<?php echo lang('toggler_menu');?>">
 				<span class="navbar-toggler-icon"></span>
@@ -11,9 +11,9 @@
 			<?php } ?>
 			<a class="navbar-brand text-truncate" href="<?php echo $header['mobile_link'];?>">
                 <!--替换LOGO 直接替换 view/img/logo.png 不要修改此处-->
-				<img src="<?php echo view_path(),$conf['logo_mobile_url'];?>" class="logo-2" alt="<?php echo $conf['sitename'] ;?>-WellCMS X">
+				<img src="<?php echo view_path(),$conf['logo_mobile_url'];?>" class="logo-2" alt="<?php echo $conf['sitename'] ;?>-WellCMS">
 				<?php if($header['mobile_title']) { ?>
-					<span class="hidden-lg"><?php echo $header['mobile_title'];?></span>
+					<span class="d-block d-lg-none"><?php echo $header['mobile_title'];?></span>
 				<?php } ?>
 			</a>
 			
@@ -21,10 +21,10 @@
 			
 			<?php if(empty($uid)) { ?>
             <!--登录图标-->
-				<a class="navbar-brand hidden-lg" rel="nofollow" href="<?php echo url('user-login');?>" aria-label="<?php echo lang('login');?>"> <i class="icon-user icon"></i></a>
+				<a class="navbar-brand d-block d-lg-none" rel="nofollow" href="<?php echo url('user-login');?>" aria-label="<?php echo lang('login');?>"> <i class="icon-user"></i></a>
 			<?php } else { ?>
             <!--搜索图标-->
-				<a class="navbar-brand hidden-lg" href="<?php echo url('operate-search');?>"><i class="icon-search"></i></a>
+				<a class="navbar-brand d-block d-lg-none" href="<?php echo url('operate-search');?>"><i class="icon-search"></i></a>
 			<?php } ?>
 			
 			<!--{hook header_nav_user_icon_after.htm}-->
@@ -51,7 +51,7 @@
 				<ul class="navbar-nav">
                     <!-- 搜索 -->
 					<li class="nav-item">
-						<div class="form-group px-2 mb-0 mt-2">
+						<div class="form-group px-2 mb-0 mt-1">
                             <form action="<?php echo url('operate-search'); ?>" id="form-search">
                                 <div class="input-group input-group-sm mb-0">
                                     <input type="text" class="form-control" placeholder="<?php echo lang('keyword'); ?>" name="keyword" value="">
@@ -70,7 +70,7 @@
 					<li class="nav-item"><a class="nav-link" rel="nofollow" data-modal-title="<?php echo lang('login');?>" data-modal-size="md" href="<?php echo url('user-login');?>"><i class="icon-user"></i>&nbsp;<?php echo lang('login');?></a></li>
 					<!--<li class="nav-item"><a class="nav-link" href="<?php echo url('user-create');?>"><?php echo lang('register');?></a></li>-->
 				<?php } else { ?>
-					<li class="nav-item username"><a class="nav-link" rel="nofollow" href="<?php echo url('home');?>"><img class="avatar-1 mr-1" src="<?php echo $user['avatar_url'];?>">&nbsp;<?php echo $user['username'];?></a></li>
+					<li class="nav-item username"><a class="nav-link" rel="nofollow" href="<?php echo url('home');?>"><!--<img class="avatar-1" src="<?php echo $user['avatar_url'];?>">&nbsp;--><?php echo $user['username'];?></a></li>
 					<!-- 管理员 -->
 					<?php if(group_access($gid, 'intoadmin')) { ?>
 					<li class="nav-item"><a class="nav-link" rel="nofollow" href="<?php echo $conf['path'];?>admin/"><i class="icon-home"></i>&nbsp;<?php echo lang('admin_page');?></a></li>

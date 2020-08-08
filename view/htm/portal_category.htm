@@ -23,7 +23,7 @@
                                 <a href="<?php echo $_thread['url'];?>">
                                     <img class="d-block w-100 rounded" src="<?php echo $_thread['icon_text']; ?>" alt='<?php echo $_thread['subject'];?>'>
                                     <!--<div class="carousel-caption d-none d-md-block">
-                                        <h2>
+                                        <h2 class="h6">
                                             <?php echo $_thread['subject'];?>
                                         </h2>
                                     </div>-->
@@ -46,7 +46,7 @@
                     <ul class="list-unstyled threadlist ul_round nowrap">
                         <?php if (!empty($arrlist['flag'])) {foreach($arrlist['flag'] as $_thread) { ?>
                         <li class="tap ml-2" data-href="<?php echo $_thread['url'];?>">
-                            <h2>
+                            <h2 class="h6">
                             <a href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                                 <div class="ellipsis">
                                     <?php echo $_thread['subject'];?>
@@ -67,13 +67,13 @@
                 <ul class="list-unstyled threadlist">
                     <?php if (!empty($arrlist['sticky'])) { $i=0; foreach ($arrlist['sticky'] as $_thread) { $i++; if ($i <= 4) { ?>
                     <li class="thread">
-                        <h2 class="font-weight-bold break-all nowrap">
+                        <h2 class="h6 font-weight-bold text-break nowrap">
                             <a class="d-block ellipsis" href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                                 <?php echo $_thread['subject'];?>
                             </a>
                         </h2>
                         <a  href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
-                            <p class="m-t-sm mb-1 text-grey break-all">
+                            <p class="m-t-sm mb-1 text-grey text-break">
                                 <?php echo $_thread['brief']?$_thread['brief']:lang('no_brief');?>
                             </p>
                         </a>
@@ -98,7 +98,6 @@
             </div>
         </div>
     </div>
-
 </div>
 <!--{hook portal_category_before.htm}-->
 <div class="row">

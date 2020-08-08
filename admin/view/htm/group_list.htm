@@ -36,7 +36,7 @@
 					</div>
 					<p><a role="button" class="btn row_add">[+]<?php echo lang('add_new_line');?></a></p>
 					<p class="text-center">
-						<button type="submit" class="btn btn-primary " id="submit" data-loading-text="<?php echo lang('submiting');?>..." style="width: 10rem;"><?php echo lang('confirm');?></button>
+						<button type="submit" class="btn btn-danger " id="submit" data-loading-text="<?php echo lang('submiting');?>..." style="width: 10rem;"><?php echo lang('confirm');?></button>
 					</p>
 				</form>
 				<p class="small text-grey"><?php echo lang('tips');?>：<?php echo lang('forum_edit_tip');?></p>
@@ -108,8 +108,8 @@ jadd.on('click', function() {
 	return false;
 });
 
-$('#user').addClass('show');
-$('.sidebar-sticky li.menu-group').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#menu-user').addClass('show');
+$('li.menu-user, .menu-group').addClass('active');
 </script>
 
 <!--{hook admin_group_list_js.htm}-->

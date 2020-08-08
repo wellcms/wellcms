@@ -6,8 +6,8 @@
         <div class="col-lg-12">
             <!--{hook admin_comment_breadcrumb_before.htm}-->
             <?php if(empty($hide_breadcrumb)) { ?>
-            <ol class="breadcrumb d-none d-md-flex text-muted">
-                <li class="breadcrumb-item"><a href="./"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+                <li class="breadcrumb-item"><a href="./"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
                 <li class="breadcrumb-item"><?php echo lang('comment');?></li>
                 <li class="breadcrumb-item"><?php echo lang('list');?></li>
                 <!--{hook admin_comment_breadcrumb.htm}-->
@@ -21,9 +21,13 @@
                     <ul class="list-unstyled threadlist mb-0">
                         <!--{hook admin_comment_threadlist_before.htm}-->
                         <?php if(!empty($postlist)) { foreach($postlist as $_post) { ?>
-                        <li class="media <?php echo $_post['classname'];?>" data-pid="<?php echo $_post['pid'];?>" data-uid="<?php echo $_post['uid'];?>">
+                        <li class="media thread <?php echo $_post['classname'];?>" data-pid="<?php echo $_post['pid'];?>" data-uid="<?php echo $_post['uid'];?>">
                             <?php if($_post['allowdelete']) { ?>
-                            <input type="checkbox" name="pid" class="mt-3 mr-2" value="<?php echo $_post['pid']; ?>" />
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" type="checkbox" id="pid-<?php echo $_post['pid']; ?>" name="pid" value="<?php echo $_post['pid']; ?>" />
+                                <label class="custom-control-label custom-checkbox" for="pid-<?php echo $_post['pid']; ?>">
+                                </label>
+                            </div>
                             <?php } ?>
                             <!--{hook reply_list_inc_avatar_after.htm}-->
                             <div class="media-body">
@@ -59,7 +63,7 @@
 
                                     </div>
                                 </div>
-                                <div class="message mt-1 break-all">
+                                <div class="message mt-1 text-break">
 
                                     <!--{hook admin_comment_list_inc_subject_before.htm}-->
                                     <?php if('read' != $route && !empty($_post['subject'])) { ?>
@@ -141,8 +145,8 @@
         }
     });
 
-    $('#content').addClass('show');
-    $('.sidebar-sticky li.menu-comment').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-content').addClass('show');
+    $('li.menu-content, .menu-comment').addClass('active');
 </script>
 
 <!--{hook admin_comment_js.htm}-->

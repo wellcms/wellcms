@@ -102,7 +102,7 @@
         <?php if($flaglist){foreach($flaglist as &$_flag) { ?>
         <div class="d-none d-lg-block aside shadow mt-3">
             <div class="card-header bg-light">
-                <h3 class="font-weight-bold my-0">
+                <h3 class="h6 font-weight-bold my-0">
                     <a href="<?php echo $_flag['url'];?>" title='<?php echo $_flag['name'];?>' aria-label='<?php echo $_flag['name'];?>'>
                         <?php echo $_flag['name']; ?>
                     </a>
@@ -111,7 +111,7 @@
             <ul class="list-group list-group-flush nowrap">
                 <?php if(isset($_flag['list'])){foreach($_flag['list'] as $_thread) { ?>
                 <li class="list-group-item bg-white">
-                    <h4 class="my-0">
+                    <h4 class="h6 my-0">
                         <a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                             <?php echo $_thread['subject'];?>
                         </a>
@@ -121,25 +121,6 @@
             </ul>
         </div>
         <?php }} ?>
-
-        <?php if(!empty($linklist)){ ?>
-        <div class="d-none d-lg-block aside shadow mt-3">
-            <div class="card-header bg-light">
-                <h3 class="font-weight-bold my-0">
-                    <?php echo lang('friends_link');?>
-                </h3>
-            </div>
-            <ul class="list-group list-group-flush nowrap">
-                <?php foreach($linklist as &$_link) { ?>
-                <li class="list-group-item">
-                    <a href="<?php echo $_link['url'];?>" class="d-block"  target="_blank" aria-label='<?php echo $_link['name'];?>'>
-                        <?php echo $_link['name'];?>
-                    </a>
-                </li>
-                <?php } ?>
-            </ul>
-        </div>
-        <?php } ?>
     </div>
 </div>
 

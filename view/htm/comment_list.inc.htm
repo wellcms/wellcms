@@ -2,7 +2,7 @@
 
 				<?php if($postlist) { foreach($postlist as $_post) { ?>
 					<li class="row <?php echo $_post['classname'];?>" data-pid="<?php echo $_post['pid'];?>" data-uid="<?php echo $_post['uid'];?>">
-                        <div class="col-lg-12 d-flex justify-content-between small text-muted">
+                        <div class="col-lg-12 d-flex justify-content-between text-muted">
                             <div>
                                 <!--{hook comment_list_inc_avatar_before.htm}-->
                                 <a href="<?php echo url('user-' . $_post['uid']);?>" class="mr-2" tabindex="-1">
@@ -48,7 +48,7 @@
                                 <?php if($_post['allowdelete'] || $_post['allowupdate']) { ?>
                                 <span class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="true" aria-expanded="false"><?php echo lang('manage');?></a>
-                                    <span class="dropdown-menu dropdown-menu-right size0 py-0">
+                                    <span class="dropdown-menu dropdown-menu-right animated--fade-in-up shadow border-left-primary py-0">
 
                                         <?php if(2 == array_value($forum, 'comment', 0)) { ?>
                                         <?php if($allowupdate || $_post['allowupdate']) { ?>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-12 message mt-2 break-all">
+                        <div class="col-lg-12 message mt-2 text-break">
 
                             <!--{hook comment_list_inc_subject_before.htm}-->
                             <?php if('read' != $route && !empty($_post['subject'])) {?>

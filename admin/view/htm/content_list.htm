@@ -1,13 +1,14 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <!--{hook admin_content_start.htm}-->
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-12">
             <!--{hook admin_content_breadcrumb_before.htm}-->
             <?php if(empty($hide_breadcrumb)) { ?>
-            <ol class="breadcrumb text-muted">
-                <li class="breadcrumb-item"><a href="<?php echo url($route.'-list','', TRUE);?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+            <ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+                <li class="breadcrumb-item"><a href="<?php echo url($route.'-list','', TRUE);?>"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
                 <li class="breadcrumb-item"><?php echo lang($route);?></li>
                 <?php if ($fid) { ?>
                 <li class="breadcrumb-item"><a href="<?php echo url('content-list', array('fid'=>$fid), TRUE);?>"><?php echo $forum['name'];?></a></li>
@@ -41,9 +42,9 @@
                         <!--{hook admin_content_rank_after.htm}-->
                         <div>
                             <?php if (empty($columnlist)) { ?>
-                            <a class="btn btn-info btn-sm" href="<?php echo url('column-list','',TRUE);?>"><?php echo lang('create').lang('column'); ?></a>
+                            <a class="btn btn-danger btn-sm" href="<?php echo url('column-list','',TRUE);?>"><?php echo lang('create').lang('column'); ?></a>
                             <?php } else { ?>
-                            <a class="btn btn-info btn-sm" href="<?php echo url('content-create', array('fid'=>$fid), TRUE);?>"><?php echo lang('increase').lang('content'); ?></a>
+                            <a class="btn btn-danger btn-sm" href="<?php echo url('content-create', array('fid'=>$fid), TRUE);?>"><?php echo lang('increase').lang('content'); ?></a>
                             <?php } ?>
                         </div>
                         <!--{hook admin_content_menu_end.htm}-->
@@ -66,6 +67,7 @@
         </div>
     </div>
 </div>
+
 <!--{hook admin_content_end.htm}-->
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
@@ -104,8 +106,8 @@
         <!--{hook admin_content_jump_by_fid.htm}-->
     });
 
-    $('#content').addClass('show');
-    $('.sidebar-sticky li.menu-<?php echo $route;?>').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-content').addClass('show');
+    $('li.menu-content, .menu-<?php echo $route;?>').addClass('active');
 </script>
 
 <!--{hook admin_content_js.htm}-->

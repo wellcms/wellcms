@@ -12,8 +12,6 @@ empty($fid) AND message(1, lang('data_malformation'));
 $page = param(2, 1);
 $extra = array(); // 插件预留
 $active = 'default';
-// 管理时使用
-(forum_access_mod($fid, $gid, 'allowdelete') OR forum_access_mod($fid, $gid, 'allowtop')) AND $extra['fid'] = $fid;
 
 // hook list_before.php
 
@@ -94,6 +92,9 @@ if (1 == $forum['type']) {
             $header['keywords'] = strip_tags($seo_keywords);
             $header['description'] = strip_tags($forum['brief']);
             $_SESSION['fid'] = $fid;
+
+            // 管理时使用
+            (forum_access_mod($fid, $gid, 'allowdelete') OR forum_access_mod($fid, $gid, 'allowtop')) AND $extra['fid'] = $fid;
 
             // hook list_header_after.php
 

@@ -4,7 +4,11 @@
 <li class="media thread tap bg-white" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
 
     <?php if($_thread['allowtop']) { ?>
-    <input type="checkbox" name="modtid" class="mt-3 mx-2" value="<?php echo $_thread['tid']; ?>" />
+    <div class="custom-control custom-checkbox ml-2">
+        <input class="custom-control-input" type="checkbox" id="modtid-<?php echo $_thread['tid']; ?>" name="modtid" value="<?php echo $_thread['tid']; ?>" />
+        <label class="custom-control-label custom-checkbox" for="modtid-<?php echo $_thread['tid']; ?>">
+        </label>
+    </div>
     <?php } ?>
 
     <div class="media-body">
@@ -37,7 +41,7 @@
                     </span>
                     <?php } ?>
                     <!--{hook thread__list_inc_closed_after.htm}-->
-                    <h2 class="break-all font-weight-bold d-inline">
+                    <h2 class="h6 text-break font-weight-bold d-inline">
                         <!--{hook thread__list_inc_subject_before.htm}-->
                         <a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
                         <?php echo $_thread['subject'];?>
@@ -61,7 +65,7 @@
                 <!--{hook thread__list_inc_tag_before.htm}-->
 
                 <?php if($_thread['tag']){?>
-                <div class="tag hidden-sm col-lg-12 small text-muted mt-3">
+                <div class="tag col-lg-12 d-none d-md-block small text-muted mt-3">
                     <i class="icon-tags mr-2"></i>
                     <?php foreach($_thread['tag_text'] as $key => $_tag) {?>
                     <span class="mr-2">
@@ -84,22 +88,22 @@
                     </a>
                     <!--{hook thread__list_inc_avatar_after.htm}-->
 
-                    <span class="username text-grey mr-1" uid="<?php echo $_thread['uid'];?>">
+                    <span class="username mr-1" uid="<?php echo $_thread['uid'];?>">
                         <?php echo $_thread['username'];?>
                     </span>
-                    <span class="date text-grey hidden-sm">
+                    <span class="date hidden-sm">
                         <?php echo $_thread['create_date_fmt'];?>
                     </span>
                     <!--{hook thread__list_inc_username_after.htm}-->
 
                     <!--{hook thread__list_inc_lastuid_before.htm}-->
                     <?php if($_thread['lastuid']) { ?>
-                    <span>
-                        <span class="hidden-sm text-grey mx-1">←</span>
-                        <span class="hidden-sm username text-grey mr-1" uid="<?php echo $_thread['lastuid'];?>">
+                    <span class="hidden-sm">
+                        <span class="mx-1">←</span>
+                        <span class="username mr-1" uid="<?php echo $_thread['lastuid'];?>">
                             <?php echo $_thread['lastusername'];?>
                         </span>
-                        <span class="text-grey hidden-sm">
+                        <span>
                             <?php echo $_thread['last_date_fmt'];?>
                         </span>
                     </span>

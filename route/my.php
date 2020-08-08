@@ -12,8 +12,9 @@ $action = param(1);
 // hook my_start.php
 
 // 从全局拉取$user
-$header['mobile_title'] = $user['username'];
-$header['mobile_linke'] = url("my");
+$header['mobile_title'] = '';
+$header['mobile_linke'] = '';
+list($member_navs, $member_menus) = nav_member();
 
 // hook my_before.php
 

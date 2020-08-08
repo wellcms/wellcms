@@ -18,7 +18,7 @@
                         <a href="<?php echo $_thread['url'];?>">
                             <img class="d-block w-100" src="<?php echo $_thread['icon_text']; ?>" alt='<?php echo $_thread['subject'];?>'>
                             <!--<div class="carousel-caption d-none d-md-block">
-                                <h2>
+                                <h2 class="h6">
                                     <?php echo $_thread['subject'];?>
                                 </h2>
                             </div>-->
@@ -35,7 +35,7 @@
                     <ul class="list-unstyled threadlist ul_round nowrap">
                         <?php if (!empty($arrlist['flag'])) {foreach($arrlist['flag'] as $_thread) { ?>
                         <li class="tap ml-2" data-href="<?php echo $_thread['url'];?>">
-                            <h2 class="ellipsis">
+                            <h2 class="h6 ellipsis">
                                 <a href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                                     <?php echo $_thread['subject'];?>
                                 </a>
@@ -54,13 +54,13 @@
                 <ul class="list-unstyled threadlist">
                     <?php if (!empty($arrlist['sticky'])) {foreach ($arrlist['sticky'] as $_thread) {if ($_thread['i'] <= 4 /* 4为显示数量，根据自己需要调整数字 */) { ?>
                     <li class="thread">
-                        <h2 class="font-weight-bold break-all nowrap">
+                        <h2 class="h6 font-weight-bold text-break nowrap">
                             <a class="d-block ellipsis" href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                                 <?php echo $_thread['subject'];?>
                             </a>
                         </h2>
                         <a href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
-                            <p class="m-t-sm mb-1 text-grey break-all">
+                            <p class="m-t-sm mb-1 text-grey text-break">
                                 <?php echo $_thread['brief']?$_thread['brief']:lang('no_brief');?>
                             </p>
                         </a>
@@ -85,7 +85,6 @@
             </div>
         </div>
     </div>
-
 </div>
 <!--{hook portal_before.htm}-->
 <div class="row">
@@ -138,7 +137,7 @@
                         <?php if (!empty($_forum['news'])) { foreach ($_forum['news'] as $_thread) { ?>
                         <li class="col-lg-12 tap ellipsis" data-href="<?php echo $_thread['url'];?>">
                             <a href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>'>
-                                <h2 class="ellipsis">
+                                <h2 class="h6 ellipsis">
                                     <?php echo $_thread['subject'];?>
                                 </h2>
                             </a>
@@ -147,7 +146,6 @@
                     </ul>
                 </div>
             </div>
-
         </div>
     </div>
     <?php }} ?>

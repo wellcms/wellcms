@@ -4,50 +4,15 @@
         <div class="card-header bg-light shadow">
             <div class="nav-scroller overflow-hidden position-relative p-1">
                 <ul class="nav nav-pills small">
-                    <!--{hook common_header_nav_start.htm}-->
-                    <?php if('my' == $route){ ?>
-                    <!--个人中心-->
-                    <!--{hook common_header_nav_profile_before.htm}-->
-                    <li class="nav-item pb-2 mx-1">
-                        <a class="nav-link " href="<?php echo url('my');?>" data-active="my-profile">
-                            <?php echo lang('my_basic_profile');?>
+                    <?php if(!empty($member_menus)){ ?>
+                    <?php foreach ($member_menus as $_member_menu) { ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $_member_menu['url'];?>" data-active="<?php echo $_member_menu['active'];?>">
+                            <?php echo $_member_menu['name'];?>
                         </a>
                     </li>
-                    <!--{hook common_header_nav_password_before.htm}-->
-                    <li class="nav-item pb-2 mx-1">
-                        <a class="nav-link" href="<?php echo url('my-password');?>" data-active="my-password">
-                            <?php echo lang('modify_password');?>
-                        </a>
-                    </li>
-                    <!--{hook common_header_nav_avatar_before.htm}-->
-                    <li class="nav-item pb-2 mx-1">
-                        <a class="nav-link" href="<?php echo url('my-avatar');?>" data-active="my-avatar">
-                            <?php echo lang('modify_avatar');?>
-                        </a>
-                    </li>
-                    <!--{hook common_header_nav_avatar_after.htm}-->
                     <?php } ?>
-
-                    <!--{hook common_header_nav_before.htm}-->
-
-                    <?php if('home' == $route){ ?>
-                    <!--我的首页-->
-                    <!--{hook common_header_nav_thread_before.htm}-->
-                    <li class="nav-item pb-2 mx-1">
-                        <a class="nav-link" href="<?php echo url('home');?>" data-active="my-home">
-                            <?php echo lang('thread');?>
-                        </a>
-                    </li>
-                    <!--{hook common_header_nav_thread_after.htm}-->
-                    <li class="nav-item pb-2 mx-1">
-                        <a class="nav-link" href="<?php echo url('home-comment');?>" data-active="my-comment">
-                            <?php echo lang('comment');?>
-                        </a>
-                    </li>
-                    <!--{hook common_header_nav_comment_after.htm}-->
                     <?php } ?>
-                    <!--{hook common_header_nav_end.htm}-->
-
                 </ul>
             </div>
         </div>

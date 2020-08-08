@@ -7,35 +7,30 @@
 	<div class="card-body ajax-body">
 		<form action="<?php echo $url_path.url('operate-move');?>" method="post" id="mode_move_form">
 			<?php echo form_hidden('safe_token', $safe_token);?>
-			<div class="form-group row">
-				<label class="col-4 form-control-label text-right">
-					<?php echo lang('total');?>：
-				</label>
-				<div class="col-8">
+			<div class="form-group d-flex justify-content-center">
+				<span class="mr-2">
+					<?php echo lang('total');?>
+				</span>
+				<span>
 					<span class="total font-weight-bold text-danger"></span>
 					<?php echo lang('piece');?>
-				</div>
+				</span>
 			</div>
-			<div class="form-group row">
-				<label class="col-4 form-control-label text-right">
-                    <?php echo lang('choose_move_forum');?>：
-                </label>
-				<div class="col-8">
-					<select class="custom-select w-auto" name="newfid">
-						<?php echo form_options($forumarr, 0);?>
-					</select>
-				</div>
+			<div class="form-group d-flex justify-content-center">
+				<span class="p-2">
+                    <?php echo lang('choose_move_forum');?>
+                </span>
+				<select class="custom-select w-auto" name="newfid">
+					<?php echo form_options($forumarr, 0);?>
+				</select>
 			</div>
-			<div class="form-group row">
-				<label class="col-4 form-control-label text-right"></label>
-				<div class="col-8">
-					<button type="submit" class="btn btn-primary mr-2" data-loading-text="<?php echo lang('submiting');?>...">
-                        <?php echo lang('confirm');?>
-                    </button>
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <?php echo lang('close');?>
-                    </button>
-				</div>
+			<div class="form-group d-flex justify-content-center">
+				<button type="submit" class="btn btn-primary mr-2" data-loading-text="<?php echo lang('submiting');?>...">
+					<?php echo lang('confirm');?>
+				</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">
+					<?php echo lang('close');?>
+				</button>
 			</div>
 		</form>
 	</div>

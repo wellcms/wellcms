@@ -7,39 +7,40 @@
 // 检查是否登录
 user_login_check();
 
-$action = param(1, 'index');
+$action = param(1, 'article');
 
 // hook home_start.php
 
 // 从全局拉取$user
-$header['mobile_title'] = $user['username'];
-$header['mobile_linke'] = url('my');
+$header['mobile_title'] = '';
+$header['mobile_linke'] = '';
+list($member_navs, $member_menus) = nav_member();
 
 switch ($action) {
     // hook home_case_start.php
-    case 'index':
+    case 'article':
         $page = param(2, 1);
         $pagesize = $conf['pagesize'];
         $extra = array(); // 插件预留
 
-        // hook home_index_start.php
+        // hook home_article_start.php
 
         $threadlist = well_thread_find_by_uid($uid, $page, $pagesize);
 
         $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || 1 == $gid;
 
-        $page_url = url('home-index-{page}', $extra);
+        $page_url = url('home-article-{page}', $extra);
         $num = $user['articles'];
 
-        // hook home_index_pagination_before.php
+        // hook home_article_pagination_before.php
 
         $pagination = pagination($page_url, $num, $page, $pagesize);
 
         $header['title'] = lang('my_index_page');
 
-        // hook home_index_end.php
+        // hook home_article_end.php
 
-        include _include(theme_load('home'));
+        include _include(theme_load('article'));
         break;
     case 'comment':
         // hook home_comment_start.php
@@ -71,7 +72,7 @@ switch ($action) {
                 foreach ($commentlist as &$val) {
                     comment_filter($val);
                     $val['subject'] = $threadlist[$val['tid']]['subject'];
-					$val['url'] = $threadlist[$val['tid']]['url'];
+                    $val['url'] = $threadlist[$val['tid']]['url'];
                     $val['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
                 }
             }
@@ -99,9 +100,6 @@ switch ($action) {
         // hook home_comment_end.php
         break;
     // hook home_case_end.php
-    default:
-        message(-1, lang('data_malformation'));
-        break;
 }
 
 // hook home_end.php

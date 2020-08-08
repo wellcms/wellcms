@@ -5,10 +5,10 @@
 <div class="row">
 	<div class="col-lg-9 mx-auto main">
 		<!--{hook read_main_breadcrumb_start.htm}-->
-		<ol class="breadcrumb d-none d-md-flex shadow border-light">
+		<ol class="breadcrumb d-none d-md-flex shadow border-light border-left-primary">
 			<li class="breadcrumb-item">
 				<a href="<?php echo $conf['path'];?>" aria-label="<?php echo lang('index_page'); ?>">
-					<i class="icon-home"></i>
+					<i class="icon-home text-primary"></i>
 				</a>
 			</li>
 			<!--{hook read_main_breadcrumb_before.htm}-->
@@ -37,13 +37,13 @@
 					<!--{hook read_main_after_before.htm}-->
 					<div class="media-body subject">
 						<!--{hook read_subject_before.htm}-->
-						<h1 class="break-all font-weight-bold">
+						<h1 class="h5 text-break font-weight-bold">
 							<!--{hook read_subject_start.htm}-->
 							<?php echo $thread['subject'];?>
 							<!--{hook read_subject_end.htm}-->
 						</h1>
 						<!--{hook read_subject_after.htm}-->
-						<div class="d-flex justify-content-between small">
+						<div class="d-flex justify-content-between">
 							<div>
 								<!--{hook read_username_before.htm}-->
 								<span class="username">
@@ -69,10 +69,10 @@
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="true" aria-expanded="false">
                                     <?php echo lang('manage');?>
                                 </a>
-                                <span class="dropdown-menu dropdown-menu-right size0 py-0">
+                                <span class="dropdown-menu dropdown-menu-right animated--fade-in-up shadow border-left-primary py-0">
                                     <!--{hook read_dropdown_menu_start.htm}-->
 									<?php if($thread['allowdelete']) { ?>
-									<a data-href="<?php echo url('operate-delete-'.$tid);?>" href="javascript:void(0);" class="dropdown-item post_delete" isfirst="1">
+									<a data-href="<?php echo url('operate-delete-'.$tid);?>" href="javascript:void(0);" class="dropdown-item post_delete">
                                     <?php echo lang('delete');?>
                                     </a>
 									<?php } ?>
@@ -86,7 +86,7 @@
 					</div>
 				</div>
 				<hr />
-				<div class="message break-all">
+				<div class="message text-break">
 				<?php if(1 == $page) { ?>
 					<!--需要 主图 文字环绕 删除下面的注释代码即可-->
                     <!--<div class="clearfix float-left mx-2">
@@ -212,12 +212,6 @@
 		</div>
 		<!--{hook read_comment_after.htm}-->
 		
-		<div class="d-none threadlist">
-            <input type="checkbox" name="modtid" value="<?php echo $thread['tid']; ?>" checked />
-            <?php $extra += array('fid' => $fid);?>
-        </div>
-        <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
-
         <?php if($pagination) { ?>
         <nav>
             <ul class="pagination my-4 justify-content-center flex-wrap">
@@ -227,6 +221,12 @@
         <?php }?>
         <!--{hook read_page_after.htm}-->
         <?php } ?>
+
+		<div class="d-none threadlist">
+            <input type="checkbox" name="modtid" value="<?php echo $thread['tid']; ?>" checked />
+            <?php $extra += array('fid' => $fid);?>
+        </div>
+        <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
 		
 		<!--<a role="button" class="btn btn-secondary btn-block xn-back col-lg-6 mx-auto mb-3" href="javascript:history.back();"><?php echo lang('back');?></a>-->
 		<!--{hook read_back_after.htm}-->

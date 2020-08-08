@@ -57,6 +57,21 @@ function thread_tid__count($cond = array(), $d = NULL)
     return $n;
 }
 
+function thread_tid_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_thread_tid_big_insert_start.php
+    $r = db_big_insert('website_thread_tid', $arr, $d);
+    // hook model_thread_tid_big_insert_end.php
+    return $r;
+}
+
+function thread_tid_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_thread_tid_big_update_start.php
+    $r = db_big_update('website_thread_tid', $cond, $update, $d);
+    // hook model_thread_tid_big_update_end.php
+    return $r;
+}
 //--------------------------强相关--------------------------
 function thread_tid_create($arr)
 {
@@ -110,10 +125,10 @@ function thread_tid_update_rank($tid, $rank)
 // 遍历所有主题tid
 function thread_tid_find($page = 1, $pagesize = 20, $desc = TRUE)
 {
-    // hook model_thread_tid_find_by_uid_start.php
+    // hook model_thread_tid_find_start.php
     $orderby = TRUE == $desc ? -1 : 1;
     $arr = thread_tid__find($cond = array(), array('tid' => $orderby), $page, $pagesize, 'tid', array('tid', 'verify_date'));
-    // hook model_thread_tid_find_by_uid_end.php
+    // hook model_thread_tid_find_end.php
     return $arr;
 }
 

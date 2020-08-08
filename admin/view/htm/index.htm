@@ -1,72 +1,149 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 <!--{hook admin_index_start.htm}-->
-<div class="container-fluid">
-		<!--{hook admin_index_site_stat_before.htm}-->
-        <div class="d-flex justify-content-between pb-2 mb-3 border-bottom">
-            <h3><?php echo lang('admin_index');?></h3>
-        </div>
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title"><?php echo lang('site_stat_info');?></h5>
-				<div class="row">
-                    <!--{hook admin_index_info_start.htm}-->
-					<div class="col-md-4"><span class="text-muted"><?php echo lang('thread');?>：</span><?php echo $stat['articles']; ?></div>
-					<div class="col-md-4"><span class="text-muted"><?php echo lang('comments');?>：</span><?php echo $stat['comments']; ?></div>
-					<div class="col-md-4"><span class="text-muted"><?php echo lang('attach');?>：</span><?php echo $stat['website_attachs']; ?></div>
-					<div class="col-md-4"><span class="text-muted"><?php echo lang('disk_free_space');?>：</span><?php echo $stat['disk_free_space']; ?></div>
-                    <div class="col-md-4"><span class="text-muted"><?php echo lang('users');?>：</span><?php echo $stat['users']; ?></div>
-					<div class="col-md-4"><span class="text-muted"><?php echo lang('onlines');?>：</span><?php echo $runtime['onlines']; ?></div>
-                    <!--{hook admin_index_info_end.htm}-->
-				</div>
-			</div>
-		</div>
-		<!--{hook admin_index_server_info_before.htm}-->
-        <?php if (1 == $gid) { ?>
-		<div class="card">
-			<div class="card-body">
-				<h5><?php echo lang('server_info');?> <a href="<?php echo url('index-phpinfo', '', TRUE);?>"><small>[PHPINFO]</small></a></h5>
-				<div class="row">
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('os');?>：</span><?php echo PHP_OS; ?></div>
-					<div class="col-md-6"><span class="text-muted">Web Server：</span><?php echo $info['SERVER_SOFTWARE']; ?></div>
-					<div class="col-md-6"><span class="text-muted">PHP：</span><?php echo PHP_VERSION; ?></div>
-					
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('database');?>：</span><?php echo $conf['db']['type']; ?><small> (<?php echo $info['dbversion']; ?>)</small></div>
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('post_max_size');?>：</span><?php echo $info['post_max_size']; ?></div>
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('upload_max_filesize');?>：</span><?php echo $info['upload_max_filesize']; ?></div>
-					
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('allow_url_fopen');?>：</span><?php echo $info['allow_url_fopen']; ?></div>
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('safe_mode');?>：</span><?php echo $info['safe_mode']; ?></div>
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('max_execution_time');?>：</span><?php echo $info['max_execution_time']; ?></div>
-					
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('memory_limit');?>：</span><?php echo $info['memory_limit']; ?></div>
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('client_ip');?>：</span><?php echo $ip; ?></div>
-					<div class="col-md-6"><span class="text-muted"><?php echo lang('server_ip');?>：</span><?php echo _SERVER('SERVER_ADDR'); ?></div>
-					
-				</div>
-			</div>
-		</div>
-        <?php } ?>
-		<!--{hook admin_index_team_before.htm}-->
-		<div class="card">
-			<div class="card-body">
-				<h5><?php echo lang('dev_team_info');?></h5>
-				<div>Official Site: <a href="http://www.wellcms.cn" target="_blank">http://www.wellcms.cn/</a></div>
-				<div>Dev Team:  
-					<a href="http://www.wellcms.cn/" target="_blank">Burning ice</a>
-				</div>
-				<div>Thanks For: 
 
-				</div>
-			</div>
-		</div>
-		<!--{hook admin_index_team_after.htm}-->
+<div class="text-white-50 bg-purple pb-10 mt-n3">
+    <div class="container-fluid">
+        <div class="page-header-content text-center">
+            <h1 class="text-white">
+                WellCMS
+                <sub class="sub h6">Oriental Lion</sub>
+            </h1>
+            <h5 class="">
+                Open the precedent for content management in the era of big data
+            </h5>
+            <h5 class="">
+                High performance&nbsp;/&nbsp;High load&nbsp;/&nbsp;High safety
+            </h5>
+        </div>
+    </div>
 </div>
+
+<!-- Begin Page Content -->
+<div class="container-fluid mt-n10">
+
+    <!--{hook admin_index_site_stat_before.htm}-->
+
+    <div class="row">
+
+        <!--{hook admin_index_info_start.htm}-->
+
+        <div class="col-lg-3">
+            <div class="card shadow mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <?php echo $config['name']; ?>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <span><?php echo lang('current_version');?></span><?php echo $config['version']; ?>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <span><?php echo lang('official_version');?></span><?php echo $config['official_version']; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card shadow mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span><?php echo lang('users');?></span><?php echo $stat['users']; ?>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <span><?php echo lang('onlines');?></span><?php echo $runtime['onlines']; ?>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <span><?php echo lang('disk_free_space');?></span><?php echo $stat['disk_free_space']; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card shadow mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span><?php echo lang('thread');?></span><?php echo $stat['articles']; ?>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <span><?php echo lang('comments');?></span><?php echo $stat['comments']; ?>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <span><?php echo lang('attach');?></span><?php echo $stat['website_attachs']; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--{hook admin_index_info_end.htm}-->
+
+    </div>
+
+    <!--{hook admin_index_server_info_before.htm}-->
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow mb-3">
+                <div class="card-header bg-primary text-white py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        <?php echo lang('server_info');?>
+                        <a class="ml-4" href="<?php echo url('index-phpinfo', '', TRUE);?>"><small>[PHPINFO]</small></a>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6"><span><?php echo lang('os');?>：</span><?php echo PHP_OS; ?></div>
+                        <div class="col-md-6"><span>Web Server：</span><?php echo $info['SERVER_SOFTWARE']; ?></div>
+                        <div class="col-md-6"><span>PHP：</span><?php echo PHP_VERSION; ?></div>
+
+                        <div class="col-md-6"><span><?php echo lang('database');?>：</span><?php echo $conf['db']['type']; ?><small> (<?php echo $info['dbversion']; ?>)</small></div>
+                        <div class="col-md-6"><span><?php echo lang('post_max_size');?>：</span><?php echo $info['post_max_size']; ?></div>
+                        <div class="col-md-6"><span><?php echo lang('upload_max_filesize');?>：</span><?php echo $info['upload_max_filesize']; ?></div>
+
+                        <div class="col-md-6"><span><?php echo lang('allow_url_fopen');?>：</span><?php echo $info['allow_url_fopen']; ?></div>
+                        <div class="col-md-6"><span><?php echo lang('safe_mode');?>：</span><?php echo $info['safe_mode']; ?></div>
+                        <div class="col-md-6"><span><?php echo lang('max_execution_time');?>：</span><?php echo $info['max_execution_time']; ?></div>
+
+                        <div class="col-md-6"><span><?php echo lang('memory_limit');?>：</span><?php echo $info['memory_limit']; ?></div>
+                        <div class="col-md-6"><span><?php echo lang('client_ip');?>：</span><?php echo $ip; ?></div>
+                        <div class="col-md-6"><span><?php echo lang('server_ip');?>：</span><?php echo _SERVER('SERVER_ADDR'); ?></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow mb-3">
+                <div class="card-header bg-primary text-white py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        <?php echo lang('dev_team_info');?>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div>Official Site: <a href="http://www.wellcms.cn" target="_blank">http://www.wellcms.cn/</a></div>
+                    <div>Dev Team:
+                        <a href="http://www.wellcms.cn/" target="_blank">Burning ice</a>
+                    </div>
+                    <div>
+                        Thanks For:
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--{hook admin_index_team_before.htm}-->
+
+</div>
+<!-- /.container-fluid -->
+
 <!--{hook admin_index_end.htm}-->
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-$('#nav li.home').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('li a.home').addClass('active');
 </script>
 
 <!--{hook admin_index_js.htm}-->

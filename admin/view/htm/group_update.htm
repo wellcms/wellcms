@@ -5,10 +5,11 @@
 <div class="row">
 	<div class="col-12">
 		<div class="card">
+            <div class="card-header"><?php echo lang('group_edit');?> - <?php echo $_group['name'];?></div>
 			<div class="card-body">
 				<form action="<?php echo url('group-update', $extra, TRUE);?>" method="post" id="form">
                     <?php echo $input['safe_token'];?>
-					<h4 class="card-title"><?php echo lang('group_edit');?> - <?php echo $_group['name'];?></h4>
+
 					<div class="form-group row">
 						<label class="col-sm-2 form-control-label"><?php echo lang('group_name');?>：</label>
 						<div class="col-sm-10">
@@ -155,7 +156,7 @@
 
 					<div class="form-group row">
 						<div class="col-sm-12">
-							<button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+							<button type="submit" class="btn btn-danger btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
 							<a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
 						</div>
 					</div>
@@ -192,8 +193,8 @@ jform.on('submit', function(){
 	return false;
 });
 
-$('#user').addClass('show');
-$('.sidebar-sticky li.menu-group').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#menu-user').addClass('show');
+$('li.menu-user, .menu-group').addClass('active');
 </script>
 
 <!--{hook admin_group_update_js.htm}-->

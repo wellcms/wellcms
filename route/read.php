@@ -201,7 +201,7 @@ switch ($thread['type']) {
             well_thread_filter($thread);
             message(0, array('thread' => $thread, 'data' => $data));
         } else {
-            include _include(theme_load(15, $fid));
+            include _include(theme_load('single_page', $fid));
         }
         break;
     // hook read_type_case_after.php

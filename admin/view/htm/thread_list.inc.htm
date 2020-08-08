@@ -1,15 +1,19 @@
 <!--{hook admin_thread_list_inc_start.htm}-->
 
 <?php if($threadlist) { foreach($threadlist as &$_thread) { ?>
-<li class="media thread bg-white" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
+<li class="media thread" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
 	<?php if($_thread['allowtop']) { ?>
-	<input type="checkbox" name="modtid" class="mt-3 mr-2" value="<?php echo $_thread['tid']; ?>" />
+	<div class="custom-control custom-checkbox">
+		<input class="custom-control-input" type="checkbox" id="modtid-<?php echo $_thread['tid']; ?>" name="modtid" value="<?php echo $_thread['tid']; ?>" />
+		<label class="custom-control-label custom-checkbox" for="modtid-<?php echo $_thread['tid']; ?>">
+		</label>
+	</div>
 	<?php } ?>
 
 	<div class="media-body">
 		<div class="media">
 			<?php if ($_thread['icon']) { ?>
-			<div class="col-lg-2 col-md-3 hidden-sm">
+			<div class="col-lg-2 col-md-3 d-none d-md-block">
 				<a href="<?php echo $_thread['url']; ?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
 				<img class="d-block w-100 rounded" src="<?php echo $_thread['icon_text'];?>" title="<?php echo $_thread['subject'];?>" alt="<?php echo $_thread['subject'];?>" />
 				</a>
@@ -37,7 +41,7 @@
 					<?php } ?>
 					<!--{hook admin_thread_list_inc_closed_after.htm}-->
 
-					<h2 class="break-all font-weight-bold d-inline">
+					<h2 class="h6 text-break font-weight-bold d-inline">
 						<!--{hook admin_thread_list_inc_subject_before.htm}-->
 						<a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>><?php echo $_thread['subject'];?></a>
 						<!--{hook admin_thread_list_inc_subject_after.htm}-->
@@ -55,7 +59,7 @@
 				<!--{hook admin_thread_list_inc_tag_before.htm}-->
 
 				<?php if($_thread['tag']){?>
-				<div class="tag hidden-sm col-lg-12 small text-muted mt-3">
+				<div class="tag col-lg-12 d-none d-md-block small text-muted mt-3">
 					<i class="icon-tags mr-2"></i>
 					<?php foreach($_thread['tag_text'] as $key => $_tag) {?>
 					<span class="mr-2">
@@ -78,8 +82,8 @@
 					</a>
 					<!--{hook admin_thread_list_inc_avatar_after.htm}-->
 
-					<span class="username text-grey mr-1 <?php if($_thread['lastuid']) { ?> hidden-sm<?php } ?>" uid="<?php echo $_thread['uid'];?>"><?php echo $_thread['username'];?></span>
-					<span class="date text-grey <?php if($_thread['lastuid']) { ?> hidden-sm<?php } ?>"><?php echo $_thread['create_date_fmt'];?></span>
+					<span class="username text-grey mr-1 <?php if($_thread['lastuid']) { ?> d-none<?php } ?>" uid="<?php echo $_thread['uid'];?>"><?php echo $_thread['username'];?></span>
+					<span class="date text-grey <?php if($_thread['lastuid']) { ?> d-none<?php } ?>"><?php echo $_thread['create_date_fmt'];?></span>
 					<!--{hook admin_thread_list_inc_username_after.htm}-->
 
 					<!--{hook admin_thread_list_inc_lastuid_before.htm}-->
@@ -95,7 +99,7 @@
 					<div class="float-right text-muted small">
 						<!--{hook admin_thread_list_inc_update_before.htm}-->
 						<?php if( $_thread['allowupdate']) { ?>
-						<span data-href="<?php echo url('content-update', array('tid' => $_thread['tid']), TRUE); ?>" class="text-grey update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></span>
+						<a href="javascript:void(0);" data-href="<?php echo url('content-update', array('tid' => $_thread['tid']), TRUE); ?>" class="nav-link update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
 						<?php } ?>
                         <!--{hook admin_thread_list_inc_update_after.htm}-->
 					</div>

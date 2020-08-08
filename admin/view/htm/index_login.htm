@@ -1,51 +1,127 @@
-<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+<?php $header = GLOBALS('header');
+$conf= GLOBALS('conf');
+$user = GLOBALS('user');
+$gid = GLOBALS('gid');
+isset($user['avatar_url']) || $user['avatar_url'] = '';
+$menu = GLOBALS('menu');
+$forumlist_show = GLOBALS('forumlist_show');
+$route = GLOBALS('route');
+$action = GLOBALS('action');
+$config = GLOBALS('config');
+$static_version = $conf['static_version'];
+?>
+<!DOCTYPE html>
+<html lang="<?php echo $conf['lang'];?>">
+<head>
 
+	<!--{hook admin_header_meta_before.htm}-->
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+	<meta name="renderer" content="webkit" />
+	<meta name="referrer" content="no-referrer">
+	<meta name="applicable-device" content="pc,mobile" />
+	<meta name="MobileOptimized" content="width" />
+	<meta name="HandheldFriendly" content="true" />
+	<meta name="author" content="WellCMS.cn" />
+	<meta name="keywords" content="<?php echo strip_tags($header['keywords']);?>" />
+	<meta name="description" content="<?php echo strip_tags($header['description']);?>" />
+	<title><?php echo $header['title'];?> - WellCMS</title>
+	<link rel="shortcut icon" href="../view/img/favicon.ico" />
+	<link rel="icon" sizes="32x32" href="../view/img/favicon.ico">
+	<link rel="Bookmark" href="../view/img/favicon.ico" />
+
+	<!--{hook admin_header_css_start.htm}-->
+
+	<link rel="stylesheet" href="<?php echo admin_view_path();?>css/bootstrap.min.css<?php echo $static_version;?>">
+	<!--{hook admin_header_css_before.htm}-->
+	<link rel="stylesheet" href="<?php echo admin_view_path();?>css/font-awesome.min.css<?php echo $static_version;?>">
+	<!--{hook admin_header_css_after.htm}-->
+	<link rel="stylesheet" href="<?php echo admin_view_path();?>css/wellcms.css<?php echo $static_version;?>">
+	<!--{hook admin_header_css_end.htm}-->
+</head>
+
+<body class="bg-dark">
 <!--{hook admin_index_login_start.htm}-->
 <div class="container">
-	<div class="col-lg-5 col-md-6 col-12 mx-auto">
-		<div class="card">
-			<div class="card-body">
-				<h4><?php echo lang('admin_login');?></h4>
-				<form action="<?php echo url('index-login', '', TRUE);?>" method="post" id="form">
-					<div class="form-group"><?php echo lang('for_safe_input_password_again');?>：</div>
-					<div class="form-group input-group">
-						<div class="input-group-prepend">
-							<span class="input-group-text"><i class="icon-lock"></i></span>
-						</div>
-						<input type="password" class="form-control" placeholder="<?php echo lang('password');?>" id="password" name="password">
-					</div>
-					<div class="form-group text-right">
-						<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('login');?></button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+    <!-- Outer Row -->
+    <div class="row vh-100 justify-content-center align-items-center">
+        <div class="col-xl-10 col-lg-12 col-md-9">
+            <div class="card border-0 shadow-lg my-5">
+                <div class="card-body p-0">
+                    <!-- Nested Row within Card Body -->
+                    <div class="row">
+                        <div class="col-lg-6 mx-auto">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="font-weight-bold text-gray-900 mb-4">WellCMS</h1>
+                                </div>
+
+                                <form class="" action="<?php echo url('index-login', '', TRUE);?>" method="post" id="form">
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-user" placeholder="<?php echo lang('password');?>" id="password" name="password">
+                                    </div>
+                                    <button type="submit" class="btn btn-block btn-danger shadow" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('login');?></button>
+                                </form>
+                                <hr>
+                                <a href="../" class="btn btn-primary btn-block mt-3">
+                                    <?php echo lang('front_index_page');?>
+                                </a>
+                                <a href="<?php echo url_path(),url('my', '', 2);?>" class="btn btn-primary btn-block mt-3">
+                                    <?php echo lang('my_home');?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!--{hook admin_index_login_end.htm}-->
-
-<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+<!--[if lt IE 9]>
+<script>window.location = '<?php echo url('browser');?>';</script>
+<![endif]-->
+<script src="../lang/<?php echo $conf['lang'];?>/lang.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/jquery.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/popper.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/bootstrap.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/xiuno.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/bootstrap-plugin.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/async.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/form.js<?php echo $static_version;?>"></script>
+<script>
+    var debug = DEBUG = <?php echo DEBUG; ?>;
+    var fid = <?php echo $fid;?>;
+    var url_rewrite_on = <?php echo $conf['url_rewrite_on'];?>;
+    var url_access = true;
+    var url_path = '<?php echo $conf['path'];?>';
+</script>
+<script src="<?php echo admin_view_path();?>js/wellcms.js<?php echo $static_version;?>"></script>
 <script src="<?php echo admin_view_path();?>js/md5.js"></script>
 
 <script>
-var jform = $('#form');
-jform.on('submit', function() {
-	jform.reset();
-    var jthis = $(this);
-    var jsubmit = jthis.find('#submit');
-	jsubmit.button('loading');
-	var postdata = jform.serializeObject();
-	postdata.password = $.md5(postdata.password);
-	$.xpost(jform.attr('action'), postdata, function(code, message) {
-		if(code == 0) {
-			jsubmit.button(message).delay(1000).location();
-		} else {
-			$.alert(message);
-			jsubmit.button('reset');
-		}
-	});
-	return false;
-});
+    var jform = $('#form');
+    jform.on('submit', function() {
+        jform.reset();
+        var jthis = $(this);
+        var jsubmit = jthis.find('#submit');
+        jsubmit.button('loading');
+        var postdata = jform.serializeObject();
+        postdata.password = $.md5(postdata.password);
+        $.xpost(jform.attr('action'), postdata, function(code, message) {
+            if(code == 0) {
+                jsubmit.button(message).delay(1000).location();
+            } else {
+                $.alert(message);
+                jsubmit.button('reset');
+            }
+        });
+        return false;
+    });
 </script>
 
 <!--{hook admin_index_login_js.htm}-->
+</body>
+</html>

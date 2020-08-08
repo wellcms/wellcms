@@ -667,6 +667,7 @@ return array(
     'keywords_limit_tips' => '推薦3個關鍵詞，不超過64個字符',
     'description' => '描述',
     'description_limit_tips' => '描述120個字符',
+    'member_adv' => '再小的個體，也是一個品牌！',
     // hook lang_zh_tw.php
 
 );

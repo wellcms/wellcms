@@ -36,7 +36,7 @@
 					<!--{hook admin_user_update_group_after.htm}-->
 					<div class="form-group">
 						<div class="col-sm-12">
-							<button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+							<button type="submit" class="btn btn-danger btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
 							<a role="button" class="btn btn-secondary btn-block col-md-3 mx-auto mt-3" href="javascript:history.back();"><?php echo lang('back');?></a>
 						</div>
 					</div>
@@ -74,8 +74,8 @@ jform.on('submit', function() {
 	return false;
 });
 
-$('#user').addClass('show');
-$('.sidebar-sticky li.menu-list').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#menu-user').addClass('show');
+$('li.menu-user, .menu-user').addClass('active');
 </script>
 
 <!--{hook admin_user_update_js.htm}-->

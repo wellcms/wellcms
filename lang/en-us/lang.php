@@ -670,6 +670,7 @@ return array(
     'keywords_limit_tips' => 'Keywords are limited to 3 and no more than 64 characters',
     'description' => 'description',
     'description_limit_tips' => 'Description is limited to 120 characters',
+    'member_adv' => 'No matter how small an individual is, it is also a brand!',
 	// hook lang_en_us.php
 	
 );

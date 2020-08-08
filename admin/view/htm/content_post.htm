@@ -5,8 +5,8 @@
 	<div class="col-lg-12">
 		<!--{hook admin_content_post_breadcrumb_before.htm}-->
 		<?php if(empty($hide_breadcrumb)) { ?>
-		<ol class="breadcrumb d-none d-md-flex text-muted">
-			<li class="breadcrumb-item"><a href="<?php echo url('content-list', '', TRUE);?>"><i class="icon-home" aria-hidden="true"></i></a></li>
+		<ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+			<li class="breadcrumb-item"><a href="<?php echo url('content-list', '', TRUE);?>"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
 			<?php if ($fid) { ?>
 			<li class="breadcrumb-item"><?php echo $forum['name'];?></li>
 			<?php } ?>
@@ -301,8 +301,8 @@
 
     jform.find('[name="fid"]').checked(fid);
 
-    $('#content').addClass('show');
-    $('.sidebar-sticky li.menu-<?php echo $route;?>').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-content').addClass('show');
+    $('.menu-<?php echo $route;?>').addClass('active');
 </script>
 
 <!--{hook admin_content_post_js.htm}-->

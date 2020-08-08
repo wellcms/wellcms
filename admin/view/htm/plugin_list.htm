@@ -1,7 +1,7 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 
 <div class="container-fluid">
-	<div class="border bg-white">
+	<div class="border bg-white mb-3">
         <div class="d-flex justify-content-between thread p-3">
             <div class="btn-group" role="group">
                 <?php echo $plugin_cate_html;?>
@@ -17,16 +17,16 @@
 		    $plugin['version_fmt'] = 'local' == $action ? $plugin['version'] : array_value($plugin, 'official_version');
 		?>
 
-            <article class="d-flex thread size1" dir="<?php echo $dir; ?>">
-                <div class="hidden-sm hidden-md d-flex align-items-center mx-3">
-                    <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
+            <article class="d-flex thread" dir="<?php echo $dir; ?>">
+                <div class="d-none d-md-block mx-3">
+                    <a data-modal-title="<?php echo $plugin['name']; ?>" data-modal-size="lg" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
                         <img src="<?php echo $plugin['icon_url']; ?>" width="54" height="54" />
                     </a>
                 </div>
                 <div class="col row p-0 m-0">
                     <div class="col-lg-3">
-                        <p class="break-all font-weight-bold d-inline m-0">
-                            <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
+                        <p class="text-break font-weight-bold d-inline m-0">
+                            <a data-modal-title="<?php echo $plugin['name']; ?>" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>" data-modal-size="lg">
                                 <?php echo $plugin['name']; ?>
                             </a>
                             <i class="icon-rmb mx-1"></i>
@@ -46,7 +46,7 @@
                         <div class="d-flex justify-content-start mb-3">
                             <!-- 付费查看详情 -->
                             <?php if('official_fee' == $action && !$plugin['downloaded']) { ?>
-                            <a role="button" class="btn btn-primary btn-sm buy mx-1" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>"><?php echo lang('buy');?></a>
+                            <a role="button" data-modal-title="<?php echo $plugin['name']; ?>" data-modal-size="lg" class="btn btn-primary btn-sm buy mx-1" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>"><?php echo lang('buy');?></a>
                             <?php } ?>
 
                             <?php if('official_free' == $action && !$plugin['downloaded']) { ?>
@@ -58,7 +58,7 @@
                             <?php } ?>
 
                             <?php if(!$plugin['installed'] && $plugin['downloaded']) { ?>
-                            <a role="button" class="btn btn-primary btn-sm mx-1" href="<?php echo url('plugin-install', array('dir'=> $dir, 'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('install');?></a>
+                            <a role="button" class="btn btn-success btn-sm mx-1" href="<?php echo url('plugin-install', array('dir'=> $dir, 'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('install');?></a>
                             <?php } ?>
 
                             <?php if($plugin['installed'] && $plugin['enable']) { ?>
@@ -80,7 +80,7 @@
                         </div>
 
                     </div>
-                    <div class="col-lg-9 grey break-all">
+                    <div class="col-lg-9 grey text-break">
                         <?php echo $plugin['brief']; ?>
                         <br>
                         <span class="small text-muted">
@@ -111,7 +111,6 @@
         </ul>
     </nav>
     <?php } ?>
-
 </div>
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
@@ -154,6 +153,6 @@
 
     <?php } ?>
 
-$('#plugin').addClass('show');
-$('.sidebar-sticky li.menu-<?php echo $active;?>').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+    $('#menu-plugin').addClass('show');
+    $('li.menu-plugin, .menu-plugin').addClass('active');
 </script>

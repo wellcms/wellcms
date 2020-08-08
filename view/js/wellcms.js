@@ -1,21 +1,13 @@
 var body = $('body');
 
 /*
-关闭click.bs.dropdown.data-api事件，使头部顶级菜单可点击
-鼠标移动弹出下拉菜单 css 追加
-.navbar-nav > li:hover .dropdown-menu {display: block;}
-span.dropdown:hover .dropdown-menu {display: block;}
-$(document).off('click.bs.dropdown.data-api');
-*/
-
-/*
  ajax 推出登陆 绑定id="user-logout"
  <a class="nav-link" rel="nofollow" id="user-logout" href="<?php echo url('user-logout');?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a>
  */
 body.on('click', '#user-logout', function () {
     var href = $(this).attr('href') || $(this).data('href');
-    $.xpost(href, function(code, message) {
-        if(code == 0) {
+    $.xpost(href, function (code, message) {
+        if (code == 0) {
             $.alert(message).delay(1000).location();
         } else {
             alert(message);
@@ -25,7 +17,7 @@ body.on('click', '#user-logout', function () {
 });
 
 /* 搜索使用 */
-$('#form-search').on('submit', function() {
+$('#form-search').on('submit', function () {
     var jthis = $(this);
     var range = jthis.find('input[name="range"]').val();
     var keyword = jthis.find('input[name="keyword"]').val();
@@ -88,8 +80,8 @@ $(function () {
     var remove = 'd-lg-none position-fixed rounded-left bg-secondary d-flex align-items-center';
     var remove1 = 'd-none d-lg-block';
     var remove2 = 'sticky-top pt-2';
-    var add = 'position-fixed col-9 h-100 bg-white p-0';
-    var add1 = 'pt-5 px-2';
+    var add = 'shadow position-fixed col-9 h-100 bg-white p-0';
+    var add1 = 'px-2';
     /*菜单侧边滑出 .nav-block 控制在左右 */
     $('.button-show').click(function () {
         var jthis = $(this);
@@ -97,7 +89,7 @@ $(function () {
         add += left ? ' offset-3' : '';
         jthis.css('display', 'none');
         jthis.removeClass(remove);
-        nav.css({"top": "0", "bottom": "0", "z-index": "1020"});
+        nav.css({"top": "0", "bottom": "0", "right": "0", "z-index": "1030"});
         nav.removeClass(remove1).addClass(add);
         nav.find('.post-sticky-top').removeClass(remove2).addClass(add1);
         /*nav.animate({right: ''}, 500);*/
@@ -335,3 +327,48 @@ body.on('click', '.install, .uninstall', function () {
     });
     return false;
 });
+
+(function ($) {
+    var body = $('body');
+    body.on('click', '#but-sidebar-toggle', function () {
+        var toggle = $('#sidebar-toggle');
+        toggle.toggleClass('position-fixed d-none d-lg-block');
+        toggle.collapse('hide');
+        toggle.css('z-index', '999');
+    });
+
+    var scroll_top = function (scroll_distance) {
+        if (scroll_distance > 100) {
+            $('.scroll-to-top').fadeIn();
+            $('.scroll-to-bottom').fadeOut();
+        } else {
+            $('.scroll-to-top').fadeOut();
+            $('.scroll-to-bottom').fadeIn();
+        }
+    };
+
+    /* Scroll to top button appear */
+    var wrapper = $('#content-wrapper');
+    if (wrapper.length > 0) {
+        wrapper.on('scroll', function () {
+            scroll_top($(this).scrollTop());
+        });
+    } else {
+        $(document).on('scroll', function () {
+            scroll_top($(this).scrollTop());
+        });
+    }
+
+    /* scroll to top */
+    body.on('click', 'a.scroll-to-top', function (e) {
+        $('html, body, #content-wrapper').animate({scrollTop: 0}, 500);
+        e.preventDefault();
+    });
+
+    /* scroll to bottom */
+    body.on('click', 'a.scroll-to-bottom', function (e) {
+        var height = $('#body').height() || $('body').height();
+        $('html, body, #content-wrapper').animate({scrollTop: height}, 500);
+        e.preventDefault();
+    });
+})(jQuery);

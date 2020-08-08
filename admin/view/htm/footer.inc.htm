@@ -11,63 +11,66 @@
 <?php $conf = GLOBALS('conf');?>
 <?php $config = GLOBALS('config');?>
 <?php $static_version = $conf['static_version'];?>
+<?php echo xn_debug_info();?>
 
-    <?php echo xn_debug_info();?>
-</div> <!--main ./ end-->
-    <!--{hook admin_footer_footer_before.htm}-->
+            </div>
+            <!-- End of Main Body -->
 
-            </div> <!--row ./ end-->
-        </div> <!--container-fluid ./ end-->
-    </main>
-
-    <!--{hook admin_footer_footer_center.htm}-->
-
-<footer class="d-flex justify-content-between text-muted small border-top bg-light py-3" id="footer">
-    <div class="col">
-        <!--{hook admin_footer_footer_left_start.htm}-->
-        Powered by <b><?php echo $config['name'];?></b>
-        <!--{hook admin_footer_footer_left_end.htm}-->
+        <!-- Footer -->
+        <footer class="bg-white">
+            <div class="container d-flex justify-content-between">
+                <div>
+                    Powered&nbsp;by&nbsp;<a href="http://www.wellcms.cn" target="_blank"><b>WellCMS</b></a>
+                </div>
+                <div>
+                    <!--{hook admin_footer_footer_right_start.htm}-->
+                    Time: <b><?php echo substr(microtime(1) - $starttime, 0, 5);?></b>,&nbsp;SQL:&nbsp;<b><?php echo count($db->sqls);?></b>
+                    <!--{hook admin_footer_footer_right_end.htm}-->
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
     </div>
-    <div class="col text-right">
-        <!--{hook admin_footer_footer_right_start.htm}-->
-        Time: <b><?php echo substr(microtime(1) - $starttime, 0, 5);?></b>, SQL: <b><?php echo count($db->sqls);?></b>
-        <!--{hook admin_footer_footer_right_end.htm}-->
-    </div>
-</footer>
+</div>
+<!-- End of Page Wrapper -->
 
-    <!--{hook admin_footer_footer_after.htm}-->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="javascript:void(0);">
+    <i class="icon-angle-up"></i>
+</a>
+<!-- Scroll to bottom Button-->
+<a class="scroll-to-bottom rounded" href="javascript:void(0);" style="display: inline;">
+    <i class="icon-angle-down"></i>
+</a>
 
-	<!--[if lt IE 9]>
-	<script>window.location = '<?php echo url('browser');?>';</script>
-	<![endif]-->
+<!--{hook admin_footer_footer_after.htm}-->
+
+<!--[if lt IE 9]>
+<script>window.location = '<?php echo url('browser');?>';</script>
+<![endif]-->
 	
-	<!--{hook admin_footer_js_before.htm}-->
+<!--{hook admin_footer_js_before.htm}-->
 
-	<script src="../lang/<?php echo $conf['lang'];?>/lang.js<?php echo $static_version;?>"></script>
-	<script src="<?php echo admin_view_path();?>js/jquery-3.4.1.min.js<?php echo $static_version;?>"></script>
-	<script src="<?php echo admin_view_path();?>js/popper.min.js<?php echo $static_version;?>"></script>
-	<script src="<?php echo admin_view_path();?>js/bootstrap.min.js<?php echo $static_version;?>"></script>
-	<script src="<?php echo admin_view_path();?>js/xiuno.js<?php echo $static_version;?>"></script>
-	<script src="<?php echo admin_view_path();?>js/bootstrap-plugin.js<?php echo $static_version;?>"></script>
-	<script src="<?php echo admin_view_path();?>js/async.min.js<?php echo $static_version;?>"></script>
-	<script src="<?php echo admin_view_path();?>js/form.js<?php echo $static_version;?>"></script>
-	<script>
+<script src="../lang/<?php echo $conf['lang'];?>/lang.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/jquery.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/popper.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/bootstrap.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/xiuno.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/bootstrap-plugin.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/async.min.js<?php echo $static_version;?>"></script>
+<script src="<?php echo admin_view_path();?>js/form.js<?php echo $static_version;?>"></script>
+<script>
 	var debug = DEBUG = <?php echo DEBUG; ?>;
     var fid = <?php echo $fid;?>;
 	var url_rewrite_on = <?php echo $conf['url_rewrite_on'];?>;
 	var url_access = true;
     var url_path = '<?php echo $conf['path'];?>';
-	</script>
-	<script src="<?php echo admin_view_path();?>js/wellcms.js<?php echo $static_version;?>"></script>
-	
-	<!--{hook admin_footer_js_after.htm}-->
-	
-	</body>
-</html>
+</script>
+<script src="<?php echo admin_view_path();?>js/wellcms.js<?php echo $static_version;?>"></script>
 <script>
     $(function () {
         if (url_rewrite_on < 2) {
-            $('body .avatar-1, body .avatar-2, body .avatar-3').each(function(){
+            $('body .avatar-1, body .avatar-2, body .avatar-3').each(function() {
                 var jthis = $(this);
                 var src = jthis.attr('src');
                 var n = xn.strpos(src, 'view/');
@@ -76,38 +79,12 @@
                 jthis.attr('src', '../' + s);
             });
         }
-        
-        <?php if ('login' != $action) { ?>
-        $(document).ready(function () {
-            window_width_auto();
-        });
-        <?php } ?>
-        
-        $(window).resize(function () {
-            var width = $(document.body).width();
-            if (width > 991) {
-                var nav_width = $('nav#nav').width();
-                $('[role="main"]').css('margin-left', nav_width);
-            } else {
-                $('[role="main"]').removeAttr("style");
-            }
-            window_width_auto();
-        });
-        var width = $(document.body).width();
-        if (width > 991) {
-            var nav_width = $('nav#nav').width();
-            $('[role="main"]').css('margin-left', nav_width);
-        } else {
-            $('[role="main"]').removeAttr('style');
-        }
-        function window_width_auto() {
-            window_width = $(window).width();
-            if (window_width < 769) {
-                $('header').addClass('navbar-dark bg-dark-blue py-1');
-            } else {
-                $('header').removeClass('navbar-dark bg-dark-blue py-1');
-            }
-        }
     });
 </script>
+
+<!--{hook admin_footer_js_after.htm}-->
+	
+</body>
+</html>
+
 <!--{hook admin_footer_end.htm}-->

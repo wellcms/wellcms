@@ -21,29 +21,26 @@
             </div>
             <!--{hook admin_thread_post_inc_subject_after.htm}-->
             <div class="form-group form-message">
-                <textarea class="form-control break-all" placeholder="<?php echo lang('message');?>" name="message" id="message" style="height: 300px;"><?php echo $form_message;?></textarea>
+                <textarea class="form-control text-break" placeholder="<?php echo lang('message');?>" name="message" id="message" style="height: 300px;"><?php echo $form_message;?></textarea>
             </div>
             <!--{hook admin_thread_post_inc_message_after.htm}-->
         </div>
-
         <!--移动端隐藏点击展示-->
         <div class="button-show d-lg-none position-fixed bg-secondary d-flex align-items-center rounded-left nav-block">
             <i class="icon-chevron-left text-white mx-auto"></i>
         </div>
         <div id="nav-show" class="col-lg-3 d-none d-lg-block">
-
             <div class="button-hide d-lg-none position-absolute bg-secondary d-flex align-items-center rounded-left nav-block">
                 <i class="icon-chevron-right text-white mx-auto"></i>
             </div>
-
             <div class="sticky-top post-sticky-top pt-2">
-
                 <div id="accordionthread">
-                    <!--{hook admin_header_nav_start.htm}-->
+                    <!--{hook admin_thread_post_inc_nav_start.htm}-->
                     <ul class="navbar-nav flex-column">
+                        <!--{hook admin_thread_post_inc_nav_before.htm}-->
                         <!-- thumbnail -->
                         <li class="nav-item">
-                            <a class="nav-link alert-dark px-3 mb-2" data-toggle="collapse" data-target="#thumbnail" aria-expanded="true" aria-controls="collapse" href="javascript:void(0);">
+                            <a class="nav-link alert-primary px-3 mb-2" data-toggle="collapse" data-target="#thumbnail" aria-expanded="true" aria-controls="collapse" href="javascript:void(0);">
                                 <?php echo lang('thumbnail');?>
                             </a>
                             <div id="thumbnail" class="collapse show" aria-labelledby="heading" data-parent="#accordionthread">
@@ -61,17 +58,23 @@
                                     <!--{hook admin_thread_post_inc_addicon_after.htm}-->
                                 </div>
                                 <!--{hook admin_thread_post_inc_addicon_end.htm}-->
-                                <div class="form-group text-center">
+                                <div class="d-flex flex-wrap justify-content-around mb-2">
                                     <!--{hook admin_thread_post_inc_thumbnail_before.htm}-->
-                                    <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="thumbnail" value="1"  <?php echo $thumbnail_on;?>/>
-                                        <?php echo lang('get_the_thumbnail');?>
-                                    </label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="thumbnail-box" name="thumbnail" value="1" <?php echo $thumbnail_on;?> />
+                                        <label class="custom-control-label custom-checkbox mr-1" for="thumbnail-box">
+                                            <?php echo lang('get_the_thumbnail');?>
+                                        </label>
+                                    </div>
                                     <!--{hook admin_thread_post_inc_thumbnail_after.htm}-->
 
                                     <!--{hook admin_thread_post_inc_delete_before.htm}-->
-                                    <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="delete_pic" value="1" />
-                                        <?php echo lang('delete_thumbnail');?>
-                                    </label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="delete_pic-box" name="delete_pic" value="1" />
+                                        <label class="custom-control-label custom-checkbox mr-1" for="delete_pic-box">
+                                            <?php echo lang('delete_thumbnail');?>
+                                        </label>
+                                    </div>
                                     <!--{hook admin_thread_post_inc_delete_after.htm}-->
 
                                 </div>
@@ -80,27 +83,42 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link alert-dark px-3 mb-2" data-toggle="collapse" data-target="#centent" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
+                            <a class="nav-link alert-primary px-3 mb-2" data-toggle="collapse" data-target="#centent" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
                                 <?php echo lang('message');?>
                             </a>
                             <div id="centent" class="collapse" aria-labelledby="heading" data-parent="#accordionthread">
                                 <div class="form-group">
-                                    <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="save_image" value="1" <?php echo $save_image;?> />
-                                        <?php echo lang('save_remote_image');?>
-                                    </label>
-                                    <!--{hook admin_thread_post_inc_save_image_after.htm}-->
-                                    <label class="custom-input custom-checkbox mb-0 mr-2"><input class="mr-1" type="checkbox" name="link" value="1" <?php echo $form_link;?> /><?php echo lang('external_link');?></label>
-                                    <!--{hook admin_thread_post_inc_type_after.htm}-->
-                                    <label class="custom-input custom-checkbox m-0 mr-2"><input class="mr-1" type="checkbox" name="closed" value="1" <?php echo $form_closed;?> />
-                                        <?php echo lang('disable_comment');?>
-                                    </label>
-                                    <!--{hook admin_thread_post_inc_brief_auto_before.htm}-->
-                                    <label class="custom-input custom-checkbox"><input class="mr-1" type="checkbox" name="brief_auto" value="1" />
-                                        <?php echo lang('brief_get');?>
-                                    </label>
-                                    <!--{hook admin_thread_post_inc_brief_auto_after.htm}-->
-
-                                    <div class="form-group row tags mx-0">
+                                    <div class="d-flex flex-wrap justify-content-around">
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="save_image-box" name="save_image" value="1" <?php echo $save_image;?> />
+                                            <label class="custom-control-label custom-checkbox mr-1" for="save_image-box">
+                                                <?php echo lang('save_remote_image');?>
+                                            </label>
+                                        </div>
+                                        <!--{hook admin_thread_post_inc_save_image_after.htm}-->
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="link-box" name="link" value="1" <?php echo $form_link;?> />
+                                            <label class="custom-control-label custom-checkbox mr-1" for="link-box">
+                                                <?php echo lang('external_link');?>
+                                            </label>
+                                        </div>
+                                        <!--{hook admin_thread_post_inc_type_after.htm}-->
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="closed-box" name="closed" value="1" <?php echo $form_closed;?> />
+                                            <label class="custom-control-label custom-checkbox mr-1" for="closed-box">
+                                                <?php echo lang('disable_comment');?>
+                                            </label>
+                                        </div>
+                                        <!--{hook admin_thread_post_inc_brief_auto_before.htm}-->
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="brief_auto-box" name="brief_auto" value="1" />
+                                            <label class="custom-control-label custom-checkbox mr-1" for="brief_auto-box">
+                                                <?php echo lang('brief_get');?>
+                                            </label>
+                                        </div>
+                                        <!--{hook admin_thread_post_inc_brief_auto_after.htm}-->
+                                    </div>
+                                    <div class="form-group row tags mx-0 mt-2">
                                         <!--tag插在这之后-->
                                         <?php if (!empty($thread['tag_text'])) {foreach ($thread['tag_text'] as $key => $_tag) { ?>
                                         <span class="border border-secondary tag btn-sm my-1 mr-3 tags-token">
@@ -108,21 +126,21 @@
                                         </span>
                                         <?php }} ?>
                                         <div class="tag-wrap">
-                                            <input id="tag-input" type="text" class="form-control tag-input small btn-sm my-1" placeholder="<?php echo lang('spatial_segmentation');?> tag" name="tag-input" value="" style="width: 90px">
+                                            <input id="tag-input" type="text" class="form-control tag-input text-small btn-sm my-1" placeholder="<?php echo lang('spatial_segmentation');?> tag" title="<?php echo lang('spatial_segmentation');?> tag" name="tag-input" value="" style="width: 90px">
                                         </div>
                                         <input class="tags-val" type="hidden" name="tags" id="tags" value="<?php echo $tagstr;?>" />
                                     </div>
                                     <!--{hook admin_thread_post_inc_tag_after.htm}-->
                                     <div class="form-group brief">
-                                        <textarea class="form-control" placeholder="<?php echo lang('brief_limit_character');?>" name="brief" id="brief" style="height: 2.5rem;"><?php echo $form_brief;?></textarea>
+                                        <textarea class="form-control text-small" placeholder="<?php echo lang('brief_limit_character');?>" name="brief" id="brief" style="height: 2.5rem;"><?php echo $form_brief;?></textarea>
                                     </div>
                                     <!--{hook admin_thread_post_inc_brief_after.htm}-->
                                     <div class="form-group keyword" style="<?php echo (!empty($form_link)?'display: none;':'');?>">
-                                        <textarea class="form-control" placeholder="SEO<?php echo lang('keywords') . lang('exceed_limit_will_be_intercepted', array('n' => 64));?>" name="keyword" id="keyword" style="height: 2.5rem;"><?php echo $form_keyword;?></textarea>
+                                        <textarea class="form-control text-small" placeholder="SEO<?php echo lang('keywords') . lang('exceed_limit_will_be_intercepted', array('n' => 64));?>" name="keyword" id="keyword" style="height: 2.5rem;"><?php echo $form_keyword;?></textarea>
                                     </div>
                                     <!--{hook admin_thread_post_inc_keyword_after.htm}-->
                                     <div class="form-group description">
-                                        <textarea class="form-control description" placeholder="<?php echo !empty($form_link)?lang('external_link'):('SEO'.lang('description') . lang('exceed_limit_will_be_intercepted', array('n' => 120)) .'('.lang('description_empty_use_brief').')');?>" name="description" id="description" style="height: 2.5rem;"><?php echo $form_description;?></textarea>
+                                        <textarea class="form-control text-small description" placeholder="<?php echo !empty($form_link)?lang('external_link'):('SEO'.lang('description') . lang('exceed_limit_will_be_intercepted', array('n' => 120)) .'('.lang('description_empty_use_brief').')');?>" name="description" id="description" style="height: 2.5rem;"><?php echo $form_description;?></textarea>
                                     </div>
                                     <!--{hook admin_thread_post_inc_description_after.htm}-->
 
@@ -131,7 +149,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link alert-dark px-3 mb-2" data-toggle="collapse" data-target="#attach" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
+                            <a class="nav-link alert-primary px-3 mb-2" data-toggle="collapse" data-target="#attach" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
                                 <?php echo lang('attach');?>
                             </a>
                             <div id="attach" class="collapse" aria-labelledby="heading" data-parent="#accordionthread">
@@ -157,7 +175,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link alert-dark px-3 mb-2" data-toggle="collapse" data-target="#flag" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
+                            <a class="nav-link alert-primary px-3 mb-2" data-toggle="collapse" data-target="#flag" aria-expanded="false" aria-controls="collapse" href="javascript:void(0);">
                                 <?php echo lang('customize');?>
                             </a>
                             <div id="flag" class="collapse" aria-labelledby="heading" data-parent="#accordionthread">
@@ -171,15 +189,17 @@
                                 <!--{hook admin_thread_post_inc_flag_after.htm}-->
                             </div>
                         </li>
+
+                        <!--{hook admin_thread_post_inc_nav_after.htm}-->
                     </ul>
-                    <!--{hook admin_header_nav_end.htm}-->
+                    <!--{hook admin_thread_post_inc_nav_end.htm}-->
                 </div>
             </div>
         </div>
     </div>
     <div class="form-group my-3">
         <!--{hook admin_thread_post_inc_submit_after.htm}-->
-        <button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto mb-4" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
+        <button type="submit" class="btn btn-danger btn-block col-md-3 mx-auto mb-4" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
             <?php echo $form_submit_txt;?>
         </button>
         <!--{hook admin_post_inc_submit_after.htm}-->

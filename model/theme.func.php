@@ -100,15 +100,15 @@ function theme_load($type = '', $id = 0, $dir = '')
             // 我的首页评论
             $pre .= $default_pre .= 'user_comment.htm';
             break;
-        case 'home':
-            // 我的首页
-            $pre .= $default_pre .= 'home.htm';
+        case 'article':
+            // 我的文章
+            $pre .= $default_pre .= 'home_article.htm';
             break;
         case 'home_comment':
-            // 我的首页评论
+            // 我的评论
             $pre .= $default_pre .= 'home_comment.htm';
             break;
-        case '15':
+        case 'single_page':
             // 单页
             $pre .= $default_pre .= 'single_page.htm';
             break;

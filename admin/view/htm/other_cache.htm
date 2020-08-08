@@ -24,7 +24,7 @@
 
 					<div class="form-group row">
 						<div class="col-sm-12">
-							<button type="submit" class="btn btn-primary btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+							<button type="submit" class="btn btn-danger btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
 						</div>
 					</div>
 				</form>
@@ -60,8 +60,8 @@ jform.on('submit', function() {
 	return false;
 });
 
-$('#other').addClass('show');
-$('.sidebar-sticky li.menu-cache').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#menu-other').addClass('show');
+$('li.menu-other, .menu-cache').addClass('active');
 </script>
 
 <!--{hook admin_other_cache_js.htm}-->

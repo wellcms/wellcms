@@ -18,7 +18,7 @@
 			<input type="text" id="keyword" placeholder="<?php echo lang('keyword');?>" value="<?php echo $keyword; ?>"  class="form-control" />
 		</div>
 		<div class="col-md-2 mb-3">
-			<button id="search" class="form-control btn btn-primary"><?php echo lang('search');?></button>
+			<button id="search" class="form-control btn btn-danger"><?php echo lang('search');?></button>
 		</div>
 	</div>
 
@@ -44,7 +44,14 @@
 							<tbody id="userlist">
 						<?php foreach($userlist as &$_user){ ?>
 							<tr uid="<?php echo $_user['uid']; ?>">
-								<td class="text-center"><input type="checkbox" name="delete" /></td>
+								<td class="text-center">
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="delete-<?php echo $_user['uid']; ?>" name="delete" value="1" />
+                                        <label class="custom-control-label custom-checkbox" for="delete-<?php echo $_user['uid']; ?>">
+
+                                        </label>
+                                    </div>
+								</td>
 								<td><?php echo $_user['uid']; ?></td>
 								<!--{hook admin_user_list_id_td_after.htm}-->
 								<td><?php echo $_user['email']; ?></td>
@@ -59,7 +66,7 @@
 						</table>
 					</div>
 					<hr class="mt-0" />
-					<p><button class="btn btn-primary btn-sm ml-3" id="confirm"><?php echo lang('delete');?></button></p>
+					<p><button class="btn btn-danger btn-sm ml-3" id="confirm"><?php echo lang('delete');?></button></p>
 				</div>
 			</div>
 			<nav><ul class="pagination justify-content-center"><?php echo $pagination; ?></ul></nav>
@@ -100,7 +107,8 @@ jconfirm.on('click', function(){
 		if(uid == 1) return alert('<?php echo lang('user_admin_cant_be_deleted');?>');
         $.xpost(xn.url('user-delete', '', true), {uid: uid, safe_token: safe_token}, function (code, message) {
             if (code == 0) {
-                jtr.remove();
+                /*jtr.remove();*/
+                window.location.reload();
             } else {
                 $.alert(message);
             }
@@ -108,8 +116,8 @@ jconfirm.on('click', function(){
 	});
 });
 
-$('#user').addClass('show');
-$('.sidebar-sticky li.menu-user').addClass('active').prepend('<div class="arrow-tips float-right d-none d-md-block"></div>');
+$('#menu-user').addClass('show');
+$('li.menu-user, .menu-user').addClass('active');
 </script>
 
 <!--{hook admin_user_list_js.htm}-->

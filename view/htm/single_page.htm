@@ -4,7 +4,7 @@
 
 <div class="row">
 	<?php if($threadlist){ ?>
-	<div class="col-lg-2 d-none d-lg-block pr-0">
+	<div class="col-lg-2 d-none d-lg-block">
 		<!--{hook single_page_list_start.htm}-->
         <div class="threadlist list-group nowrap shadow text-center">
             <?php foreach($threadlist as $_thread) { ?>
@@ -42,7 +42,7 @@
 					</div>
 				</div>
 				<hr />
-				<div class="message break-all">
+				<div class="message text-break">
 					<!--{hook single_page_message_before.htm}-->
 					<?php echo $data['message'];?>
 					<!--{hook single_page_message_after.htm}-->
