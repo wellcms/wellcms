@@ -4,6 +4,14 @@ html, body {
     flex-direction: column;
 }
 
+#header, #body, #footer {
+    width: 100%;
+}
+
+#header {
+    flex: 0 0 auto;
+}
+
 #body {
     flex: 1 0 auto;
 }

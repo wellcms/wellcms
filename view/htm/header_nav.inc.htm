@@ -9,11 +9,11 @@
 			<?php if ('index' == $route) { ?>
 			<h1 class="d-none"><?php echo $conf['sitename'] ;?></h1>
 			<?php } ?>
-			<a class="navbar-brand text-truncate" href="<?php echo $header['mobile_link'];?>">
+			<a class="navbar-brand text-truncate d-flex flex-wrap" href="<?php echo $header['mobile_link'];?>">
                 <!--替换LOGO 直接替换 view/img/logo.png 不要修改此处-->
 				<img src="<?php echo view_path(),$conf['logo_mobile_url'];?>" class="logo-2" alt="<?php echo $conf['sitename'] ;?>-WellCMS">
 				<?php if($header['mobile_title']) { ?>
-					<span class="d-block d-lg-none"><?php echo $header['mobile_title'];?></span>
+					<span class="d-block d-lg-none h5 ml-2 mt-2"><?php echo $header['mobile_title'];?></span>
 				<?php } ?>
 			</a>
 			
