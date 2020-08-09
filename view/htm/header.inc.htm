@@ -51,19 +51,18 @@
 
 	<link rel="stylesheet" href="<?php echo view_path();?>css/font-awesome.min.css<?php echo $static_version;?>">
 
-	<!--{hook header_bootstrap_wellcms_before.htm}-->
 	<link rel="stylesheet" href="<?php echo view_path();?>css/wellcms.css<?php echo $static_version;?>">
 	<!--{hook header_link_after.htm}-->
 	
 </head>
 
 <body>
-	
+
 	<!--{hook header_body_start.htm}-->
     <!-- 此处加载导航栏 请先创建导航 -->
 	<?php include _include(APP_PATH.'view/htm/header_nav.inc.htm');?>
 
-	<main id="body">
+	<div id="body">
 		<!-- 此处控制整页不溢出，如需宽度100%用 container-fluid 替换 container -->
 		<div class="container">
 	
