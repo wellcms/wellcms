@@ -51,7 +51,7 @@ switch ($action) {
             // hook comment_create_get_before.php
 
             $header['title'] = lang('reply');
-            $header['mobile_title'] = lang('reply');
+            $header['mobile_title'] = '';
             $header['mobile_link'] = $referer ? $referer : url('read-' . $tid);
 
             // hook comment_create_get_end.php
@@ -186,7 +186,7 @@ switch ($action) {
             // 来源
             $referer = http_referer();
             $header['title'] = lang('reply');
-            $header['mobile_title'] = lang('reply');
+            $header['mobile_title'] = '';
             $header['mobile_link'] = $referer ? $referer : url('read-' . $tid);
 
             // hook comment_update_get_end.php
