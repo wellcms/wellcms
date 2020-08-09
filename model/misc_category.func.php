@@ -47,7 +47,7 @@ function nav_member()
                 'home-article' => array('url' => url('home-article'), 'name' => lang('thread'), 'active' => 'my-article'),
                 // hook model_misc_nav_member_home_comment_before.php
                 'home-comment' => array('url' => url('home-comment'), 'name' => lang('comment'), 'active' => 'my-comment'),
-                // hook model_misc_nav_member_home_article_before.php
+                // hook model_misc_nav_member_home_comment_after.php
             );
             break;
         // hook model_misc_nav_member_case_end.php

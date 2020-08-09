@@ -120,7 +120,7 @@
 						<i class="icon-tags mr-2"></i>
 						<?php foreach($thread['tag_text'] as $_tag => $_tagname) { ?>
 						<span class="badge border border-secondary mr-2">
-                            <h2 class="mb-0 small">
+                            <h2 class="h6 mb-0 small">
                                 <a class="text-secondary" href="<?php echo url('tag-' . $_tag);?>">
                                     <?php echo $_tagname; ?>
                                 </a>
@@ -237,7 +237,7 @@
 		<?php foreach($flaglist as $_flag) { ?>
         <div class="d-none d-lg-block aside shadow mb-3">
             <div class="card-header bg-light">
-                <h3 class="font-weight-bold my-0">
+                <h3 class="h6 font-weight-bold my-0">
 					<a href="<?php echo $_flag['url'];?>" title='<?php echo $_flag['name'];?>' aria-label='<?php echo $_flag['name'];?>'>
                         <?php echo $_flag['name']; ?>
                     </a>
@@ -246,7 +246,7 @@
             <ul class="list-unstyled threadlist list-group list-group-flush nowrap">
 				<?php if(isset($_flag['list'])){foreach($_flag['list'] as $_thread) { ?>
                 <li class="thread bg-white">
-                    <h4 class="my-0 mx-3">
+                    <h4 class="h6 my-0 mx-3">
 						<a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                             <?php echo $_thread['subject'];?>
 						</a>
