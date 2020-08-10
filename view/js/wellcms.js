@@ -37,7 +37,7 @@ $('form').keyup(function (e) {
 /*点击响应整行：方便手机浏览  / check response line*/
 $('.tap').on('click', function (e) {
     var href = $(this).attr('href') || $(this).data('href');
-    if (e.target.nodeName == 'INPUT') return true;
+    if (e.target.nodeName == 'LABEL' || e.target.nodeName == 'INPUT') return true;
     if ($(window).width() > 992) return;
     if (e.ctrlKey) {
         window.open(href);
@@ -45,6 +45,11 @@ $('.tap').on('click', function (e) {
     } else {
         window.location = href;
     }
+});
+
+/*点击响应整行：，但是不响应 checkbox 的点击  / check response line, without checkbox*/
+$('.thread input[type="checkbox"]').parents('td').on('click', function (e) {
+    e.stopPropagation();
 });
 
 /*点击响应整行：导航栏下拉菜单   / check response line*/
@@ -55,11 +60,6 @@ $('ul.nav > li').on('click', function (e) {
         window.open(href);
         return false;
     }
-});
-
-/*点击响应整行：，但是不响应 checkbox 的点击  / check response line, without checkbox*/
-$('.thread input[type="checkbox"]').parents('td').on('click', function (e) {
-    e.stopPropagation();
 });
 
 /*管理用户组*/
