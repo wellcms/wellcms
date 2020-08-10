@@ -31,6 +31,7 @@ function nav_member()
     switch ($route) {
         // hook model_misc_nav_member_case_start.php
         case 'my':
+            // hook model_misc_nav_member_my_start.php
             $menus += array(
                 // hook model_misc_nav_member_my_profile_before.php
                 'my' => array('url' => url('my'), 'name' => lang('my_basic_profile'), 'active' => 'my-profile'),
@@ -40,8 +41,10 @@ function nav_member()
                 'my-avatar' => array('url' => url('my-avatar'), 'name' => lang('modify_avatar'), 'active' => 'my-avatar'),
                 // hook model_misc_nav_member_my_avatar_after.php
             );
+            // hook model_misc_nav_member_my_end.php
             break;
         case 'home':
+            // hook model_misc_nav_member_home_start.php
             $menus += array(
                 // hook model_misc_nav_member_home_article_before.php
                 'home-article' => array('url' => url('home-article'), 'name' => lang('thread'), 'active' => 'my-article'),
@@ -49,6 +52,7 @@ function nav_member()
                 'home-comment' => array('url' => url('home-comment'), 'name' => lang('comment'), 'active' => 'my-comment'),
                 // hook model_misc_nav_member_home_comment_after.php
             );
+            // hook model_misc_nav_member_home_end.php
             break;
         // hook model_misc_nav_member_case_end.php
     }
