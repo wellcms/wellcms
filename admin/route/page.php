@@ -346,7 +346,7 @@ switch ($action) {
 
                 // hook admin_page_update_post_fid_access.php
 
-                $thread['uid'] != $uid AND !forum_access_mod($fid, $gid, 'allowupdate') AND message(1, lang('user_group_insufficient_privilege'));
+                $thread['uid'] != $uid && !forum_access_mod($fid, $gid, 'allowupdate') AND message(1, lang('user_group_insufficient_privilege'));
 
                 // hook admin_page_update_post_fid_update.php
 
@@ -361,9 +361,9 @@ switch ($action) {
 
             // hook admin_page_update_post_arr_after.php
 
-            $longip != $thread['userip'] AND $arr['userip'] = $longip;
+            $arr['userip'] = $longip;
 
-            !empty($arr) AND FALSE === well_thread_update($tid, $arr) AND message(-1, lang('update_thread_failed'));
+            !empty($arr) && FALSE === well_thread_update($tid, $arr) AND message(-1, lang('update_thread_failed'));
             unset($arr);
 
             // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
