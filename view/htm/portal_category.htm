@@ -2,7 +2,7 @@
 <!--{hook portal_category_start.htm}-->
 <div class="row">
     <div class="col-lg-4 padding-right">
-        <div class="card" style="min-height: 402px;">
+        <div class="card mb-3" style="min-height: 402px;">
             <?php if (!empty($slide)) { ?>
             <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel">
                 <ol class="carousel-indicators">
@@ -62,7 +62,7 @@
     </div>
     <!--置顶-->
     <div class="col-lg-5 padding-right padding-left">
-        <div class="card" style="min-height: 402px;">
+        <div class="card mb-3" style="min-height: 402px;">
             <div class="py-1 px-4">
                 <ul class="list-unstyled threadlist">
                     <?php if (!empty($arrlist['sticky'])) { $i=0; foreach ($arrlist['sticky'] as $_thread) { $i++; if ($i <= 4) { ?>
@@ -85,7 +85,7 @@
     </div>
 
     <div class="col-lg-3 padding-left d-none d-lg-block">
-        <div class="card" style="min-height: 402px;">
+        <div class="card mb-3" style="min-height: 402px;">
             <!--<div class="card-header">推荐</div>-->
             <div class="row nowrap mx-1 mt-3">
                 <?php if($first_flag){foreach($first_flag as $_thread) { ?>
@@ -103,7 +103,7 @@
 <div class="row">
     <?php if (!empty($arrlist['list'])) { foreach ($arrlist['list'] as $_forum) { ?>
     <div class="col-md-6">
-        <div class="card">
+        <div class="card mb-3">
             <div class="card-header">
                 <div class="row justify-content-between m-0">
                     <div>
@@ -149,7 +149,7 @@
                         <!--最新内容-->
                         <?php if (!empty($_forum['news'])) { foreach ($_forum['news'] as $_thread) { ?>
                         <li class="col-lg-12 tap" data-href='<?php echo $_thread['url'];?>'>
-                            <h3 class="ellipsis">
+                            <h3 class="h6 ellipsis">
                             <a href="<?php echo $_thread['url'];?>" title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                                 <?php echo $_thread['subject'];?>
                             </a>

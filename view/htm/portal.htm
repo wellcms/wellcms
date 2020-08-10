@@ -2,7 +2,7 @@
 <!--{hook portal_start.htm}-->
 <div class="row">
     <div class="col-lg-4">
-        <div class="card" style="min-height: 402px;">
+        <div class="card mb-3" style="min-height: 402px;">
             <?php if (!empty($slide)) { ?>
             <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
 
@@ -49,7 +49,7 @@
     </div>
     <!--置顶-->
     <div class="col-lg-5 px-0">
-        <div class="card" style="min-height: 402px;">
+        <div class="card mb-3" style="min-height: 402px;">
             <div class="py-1 px-4">
                 <ul class="list-unstyled threadlist">
                     <?php if (!empty($arrlist['sticky'])) {foreach ($arrlist['sticky'] as $_thread) {if ($_thread['i'] <= 4 /* 4为显示数量，根据自己需要调整数字 */) { ?>
@@ -72,7 +72,7 @@
     </div>
 
     <div class="col-lg-3 d-none d-lg-block">
-        <div class="card" style="min-height: 402px;">
+        <div class="card mb-3" style="min-height: 402px;">
             <!--<div class="card-header">推荐</div>-->
             <div class="row nowrap mx-1 mt-3">
                 <?php if($first_flag){foreach($first_flag as $_thread) { ?>
@@ -90,7 +90,7 @@
 <div class="row">
     <?php if (!empty($arrlist['list'])) { foreach ($arrlist['list'] as $_forum) { ?>
     <div class="col-md-6">
-        <div class="card">
+        <div class="card mb-3">
             <div class="card-header">
                 <div class="row justify-content-between m-0">
                     <div>
@@ -152,7 +152,7 @@
 </div>
 
 <?php if(!empty($linklist)){ ?>
-<div class="card">
+<div class="card mb-3">
     <div class="card-header"><?php echo lang('friends_link');?></div>
     <div class="nav bg-white">
         <?php foreach($linklist as &$_link) { ?>
