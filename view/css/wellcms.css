@@ -350,12 +350,77 @@ html, body {
 
 /* 左倾斜15度 */
 .rotate-l-15 {
+    -webkit-transform: rotate(-15deg);
     transform: rotate(-15deg);
 }
 
 /* 右倾斜15度 */
 .rotate-r-15 {
+    -webkit-transform: rotate(15deg);
     transform: rotate(15deg);
+}
+
+/* 左倾斜45度 */
+.rotate-l-45 {
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+/* 右倾斜45度 */
+.rotate-r-45 {
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+/*---- 时间线 ----*/
+.timeline {
+    position: relative;
+    padding-left: 32px
+}
+.timeline:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: #e3e9ed
+}
+.timeline .date-before-point {
+    position: absolute;
+    margin-left: -4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #fe7708;
+    background: #fff;
+    z-index: 10;
+}
+/*---- 时间线结束 ----*/
+/*边框上浮*/
+.float-up:hover{
+    position: relative;
+    z-index: 1;
+    transform: translateY(-10px);
+    -webkit-transform: translateY(-10px);
+    -moz-transform: translateY(-10px);
+    -webkit-box-shadow: 0 26px 40px -24px rgba(0, 36, 100, 0.3);
+    -moz-box-shadow: 0 26px 40px -24px rgba(0, 36, 100, 0.3);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.float-up:hover .transform-scale{
+    /*transform: scale(1.01);*/
+    -webkit-transform: scale(1);
+    transform: scale(1.02);
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -ms-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;
 }
 
 .scroll-to-top {

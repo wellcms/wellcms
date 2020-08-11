@@ -1,107 +1,105 @@
 <?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
 <!--共享文件-->
 <!--{hook common_start.htm}-->
-<div class="container">
-    <div class="d-flex align-items-center justify-content-center bg-secondary text-white rounded-top" style="height: 80px;">
-        <h4><?php echo lang('member_adv');?></h4>
+<div class="d-flex align-items-center justify-content-center bg-secondary text-white rounded-top" style="height: 80px;">
+    <h4><?php echo lang('member_adv');?></h4>
+</div>
+<div class="media bg-white" style="height: 80px;">
+    <div class="pb-4 pl-4">
+        <img src="<?php echo $user['avatar_url'];?>" class="avatar-4 mt-n4 position-relative figure-img img-fluid rounded">
     </div>
-    <div class="media bg-white" style="height: 80px;">
-        <div class="pb-4 pl-4">
-            <img src="<?php echo $user['avatar_url'];?>" class="avatar-4 mt-n4 position-relative figure-img img-fluid rounded">
-        </div>
-        <div class="media-body h-100 ml-3">
-            <div class="line-height-3">
+    <div class="media-body h-100 ml-3">
+        <div class="line-height-3">
                 <span>
                    <?php echo $user['username'];?>
                 </span>
-                <span class="mx-2">
+            <span class="mx-2">
                    <?php echo $user['groupname'];?>
                 </span>
-            </div>
-            <div class="text-break line-height-3">
-                <!--{hook common_brief.htm}-->
-            </div>
+        </div>
+        <div class="text-break line-height-3">
+            <!--{hook common_brief.htm}-->
         </div>
     </div>
+</div>
 
-    <div class="row mt-3">
-        <!-- 左侧内容 -->
-        <div class="col-lg-9">
-            <!--{hook common_main_start.htm}-->
-            <slot name="nav" />
-            <!--{hook common_main_center.htm}-->
-            <slot name="body" />
-            <!--{hook common_main_end.htm}-->
-        </div>
+<div class="row mt-3">
+    <!-- 左侧内容 -->
+    <div class="col-lg-9">
+        <!--{hook common_main_start.htm}-->
+        <slot name="nav" />
+        <!--{hook common_main_center.htm}-->
+        <slot name="body" />
+        <!--{hook common_main_end.htm}-->
+    </div>
 
-        <!-- 右侧导航 -->
+    <!-- 右侧导航 -->
+    <!--移动端-->
+    <div class="button-show d-lg-none position-fixed bg-secondary d-flex align-items-center rounded-left nav-block">
+        <i class="icon-chevron-left text-white mx-auto"></i>
+    </div>
+    <div id="nav-show" class="col-lg-3 d-none d-lg-block">
         <!--移动端-->
-        <div class="button-show d-lg-none position-fixed bg-secondary d-flex align-items-center rounded-left nav-block">
-            <i class="icon-chevron-left text-white mx-auto"></i>
+        <div class="button-hide d-lg-none position-absolute bg-secondary d-flex align-items-center rounded-left nav-block">
+            <i class="icon-chevron-right text-white mx-auto"></i>
         </div>
-        <div id="nav-show" class="col-lg-3 d-none d-lg-block">
-            <!--移动端-->
-            <div class="button-hide d-lg-none position-absolute bg-secondary d-flex align-items-center rounded-left nav-block">
-                <i class="icon-chevron-right text-white mx-auto"></i>
+        <!--右侧头部-->
+        <!--{hook common_header_start.htm}-->
+        <div class="card-site-info bg-white shadow">
+            <!--{hook common_site_start.htm}-->
+            <div class="mx-3 pt-3">
+                <h5 class="line-height-2 text-center">
+                    <?php echo $user['username'];?>
+                </h5>
+                <!--{hook common_sitename_after.htm}-->
             </div>
-            <!--右侧头部-->
-            <!--{hook common_header_start.htm}-->
-            <div class="card-site-info bg-white shadow">
-                <!--{hook common_site_start.htm}-->
-                <div class="mx-3 pt-3">
-                    <h5 class="line-height-2 text-center">
-                        <?php echo $user['username'];?>
-                    </h5>
-                    <!--{hook common_sitename_after.htm}-->
-                </div>
-                <!--{hook common_site_before.htm}-->
-                <div class="card-footer p-2">
-                    <table class="w-100 small text-muted text-center">
-                        <!--{hook common_count_start.htm}-->
-                        <tr>
-                            <!--{hook common_count_article_before.htm}-->
-                            <td>
+            <!--{hook common_site_before.htm}-->
+            <div class="card-footer p-2">
+                <table class="w-100 small text-muted text-center">
+                    <!--{hook common_count_start.htm}-->
+                    <tr>
+                        <!--{hook common_count_article_before.htm}-->
+                        <td>
                                 <span>
                                     <?php echo lang('thread');?>
                                 </span>
-                                <br>
-                                <b>
-                                    <?php echo $user['articles'];?>
-                                </b>
-                            </td>
-                            <!--{hook common_count_article_after.htm}-->
-                            <td>
+                            <br>
+                            <b>
+                                <?php echo $user['articles'];?>
+                            </b>
+                        </td>
+                        <!--{hook common_count_article_after.htm}-->
+                        <td>
                                 <span>
                                     <?php echo lang('comment');?>
                                 </span>
-                                <br>
-                                <b>
-                                    <?php echo $user['comments'];?>
-                                </b>
-                            </td>
-                            <!--{hook common_count_comment_after.htm}-->
-                        </tr>
-                        <!--{hook common_count_end.htm}-->
-                    </table>
-                </div>
-                <!--{hook common_site_end.htm}-->
+                            <br>
+                            <b>
+                                <?php echo $user['comments'];?>
+                            </b>
+                        </td>
+                        <!--{hook common_count_comment_after.htm}-->
+                    </tr>
+                    <!--{hook common_count_end.htm}-->
+                </table>
             </div>
-            <!--{hook common_header_end.htm}-->
-            <!-- 右侧菜单 -->
-            <!--{hook common_nav_start.htm}-->
-            <div class="shadow mt-3">
-                <div class="list-group text-center">
-                    <?php if(!empty($member_navs)){ ?>
-                    <?php foreach ($member_navs as $_member_nav) { ?>
-                    <a href="<?php echo $_member_nav['url'];?>" class="list-group-item list-group-item-action" data-active="<?php echo $_member_nav['active'];?>">
-                        <?php echo $_member_nav['name'];?>
-                    </a>
-                    <?php } ?>
-                    <?php } ?>
-                </div>
-            </div>
-            <!--{hook common_nav_end.htm}-->
+            <!--{hook common_site_end.htm}-->
         </div>
+        <!--{hook common_header_end.htm}-->
+        <!-- 右侧菜单 -->
+        <!--{hook common_nav_start.htm}-->
+        <div class="shadow mt-3">
+            <div class="list-group text-center">
+                <?php if(!empty($member_navs)){ ?>
+                <?php foreach ($member_navs as $_member_nav) { ?>
+                <a href="<?php echo $_member_nav['url'];?>" class="list-group-item list-group-item-action" data-active="<?php echo $_member_nav['active'];?>">
+                    <?php echo $_member_nav['name'];?>
+                </a>
+                <?php } ?>
+                <?php } ?>
+            </div>
+        </div>
+        <!--{hook common_nav_end.htm}-->
     </div>
 </div>
 <!--{hook common_end.htm}-->
