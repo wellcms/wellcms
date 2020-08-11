@@ -79,19 +79,12 @@
     }
     threadlist.each(function(){
         var jthis = $(this);
-        jthis.find('a').attr('target','_blank');
+        jthis.find('a').not('.manage a').attr('target','_blank');
     });
 
     $('.mod-button button').each(function () {
         var modal_url = $(this).attr('data-modal-url');
         if (url_rewrite_on < 2) $(this).attr('data-modal-url', '../' + modal_url);
-    });
-
-    $('.update-thread').on('click', function () {
-        var href = $(this).data('href');
-        if (href) {
-            window.location = href;
-        }
     });
 
     var select = $('select[name="fid"]');

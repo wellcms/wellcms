@@ -103,7 +103,7 @@ switch ($action) {
             $page = param('page', 1);
             $pagesize = 10;
             $type = param('type', 0);
-            $extra += array('page' => '{page}', 'type' => $type);
+            $extra += array('type' => $type);
             $cond = $type ? array('type' => $type) : array();
 
             $srchtype = param('srchtype', 'name');
@@ -114,13 +114,13 @@ switch ($action) {
             // plugin category
             $plugin_cates = array(0 => lang('plugin_cate_0'), 1 => lang('plugin_cate_1'), 2 => lang('plugin_cate_2'), 3 => lang('plugin_cate_3'), 4 => lang('plugin_cate_4'));
 
-            $plugin_cate_html = plugin_cate_active($action, $plugin_cates, $type, $page);
+            $plugin_cate_html = plugin_cate_active($action, $plugin_cates, $type, 1);
 
             // official plugin
             $total = plugin_official_total($cond);
             $pluginlist = plugin_official_list($cond, array('storeid' => -1), $page, $pagesize);
 
-            $pagination = pagination(url('plugin-' . $action, $extra, TRUE), $total, $page, $pagesize);
+            $pagination = pagination(url('plugin-' . $action, $extra += array('page' => '{page}'), TRUE), $total, $page, $pagesize);
 
             $data_verify = plugin_data_verify();
             $safe_token = well_token_set($uid);

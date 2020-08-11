@@ -62,7 +62,7 @@
                 </form>
             </div>
             <p class="text-muted font-weight-bold my-3">
-                Online mode can be used normally / 线上模式可正常使用
+                Local mode does not allow login / 本地模式不允许登录
             </p>
         </div>
     </div>
@@ -179,12 +179,6 @@
 
         <?php } ?>
     </div>
-    <?php } else { ?>
-    <article class="d-flex justify-content-center thread my-3">
-        <?php echo lang('none');?>
-    </article>
-    <?php } ?>
-    <?php } ?>
 
     <?php if($pagination) { ?>
     <nav>
@@ -194,6 +188,12 @@
     </nav>
     <?php } ?>
 
+    <?php } else { ?>
+    <article class="d-flex justify-content-center thread my-3">
+        <?php echo lang('none');?>
+    </article>
+    <?php } ?>
+    <?php } ?>
 </div>
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>

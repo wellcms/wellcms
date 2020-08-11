@@ -283,7 +283,7 @@ function data_read_cache($tid)
         $r = cache_get($key);
         if (NULL === $r) {
             $r = data_read($tid);
-            $r AND cache_set($key, $r, 3600); // 60分钟
+            $r AND cache_set($key, $r, 1800); // 30分钟
         }
     }
     $cache[$key] = $r ? $r : NULL;

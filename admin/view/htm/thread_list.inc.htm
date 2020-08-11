@@ -96,10 +96,10 @@
 					<?php } ?>
 					<!--{hook admin_thread_list_inc_lastuid_after.htm}-->
 
-					<div class="float-right text-muted small">
+					<div class="manage float-right text-muted small">
 						<!--{hook admin_thread_list_inc_update_before.htm}-->
 						<?php if( $_thread['allowupdate']) { ?>
-						<a href="javascript:void(0);" data-href="<?php echo url('content-update', array('tid' => $_thread['tid']), TRUE); ?>" class="nav-link update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
+						<a href="<?php echo url('content-update', array('tid' => $_thread['tid']), TRUE); ?>" class="nav-link"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
 						<?php } ?>
                         <!--{hook admin_thread_list_inc_update_after.htm}-->
 					</div>

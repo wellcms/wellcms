@@ -56,12 +56,12 @@
                                 </h2>
                             </div>
 
-                            <div class="small">
+                            <div class="small manage">
                                 <?php if( $_thread['allowupdate']) { ?>
-                                <span data-href="<?php echo url('page-update', array('tid'=>$_thread['tid']), TRUE); ?>" class="text-grey update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></span>
+                                <a href="<?php echo url('page-update', array('tid'=>$_thread['tid']), TRUE); ?>"><i class="icon-edit"></i> <?php echo lang('edit');?></a>
                                 <?php } ?>
                                 <?php if($_thread['allowdelete']) { ?>
-                                <span data-href="<?php echo url('page-delete', array('tid'=>$_thread['tid']), TRUE);?>" class="text-grey delete-thread ml-2"><i class="icon-remove"></i> <?php echo lang('delete');?></span>
+                                <a class="confirm mx-1" data-method="post" data-confirm-text="<?php echo lang('confirm_delete');?>" href="<?php echo url('page-delete', array('tid'=>$_thread['tid']), TRUE);?>"><i class="icon-remove"></i> <?php echo lang('delete');?></a>
                                 <?php } ?>
                             </div>
                         </div>
@@ -101,7 +101,7 @@
     }
     threadlist.each(function(){
         var jthis = $(this);
-        jthis.find('a').attr('target','_blank');
+        jthis.find('a').not('.manage a').attr('target','_blank');
     });
 
     var select = $('select[name="fid"]');
@@ -111,27 +111,6 @@
         window.location = xn.url('page-list', {fid:fid}, true);
     });
 
-    $('.update-thread').on('click', function () {
-        var href = $(this).data('href');
-        if (href) {
-            window.location = href;
-        }
-    });
-
-    $('.delete-thread').on('click', function () {
-        var jthis = $(this);
-        var href = jthis.data('href');
-        var safe_token = '<?php echo $safe_token;?>';
-        if (window.confirm(lang.confirm_delete)) {
-            $.xpost(href, {safe_token: safe_token}, function (code, message) {
-                if (code == 0) {
-                    jthis.parents('li').removeDeep();
-                } else {
-                    $.alert(message);
-                }
-            });
-        }
-    });
     <?php if ($fid) { ?>
     $('button.rank').on('click', function () {
         var rankarr = new Array();
