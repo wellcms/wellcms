@@ -302,7 +302,7 @@
     jform.find('[name="fid"]').checked(fid);
 
     $('#menu-content').addClass('show');
-    $('.menu-<?php echo $route;?>').addClass('active');
+    $('.menu-<?php echo $route;?>').addClass('active').find('a').removeClass('collapsed');
 </script>
 
 <!--{hook admin_content_post_js.htm}-->

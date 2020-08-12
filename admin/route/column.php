@@ -128,6 +128,8 @@ switch ($action) {
             empty($name) AND message(1, lang('data_empty_to_last_step'));
 
             $rank = param('rank', 0);
+            $brief = param('brief', '', FALSE);
+            $brief = xn_html_safe($brief);
             $announcement = param('announcement', '', FALSE);
             $announcement = xn_html_safe($announcement);
             $accesson = param('accesson', 0);
@@ -185,6 +187,7 @@ switch ($action) {
                 'moduids' => $moduids,
                 'seo_title' => $seo_title,
                 'seo_keywords' => $seo_keywords,
+                'brief' => $brief,
                 'announcement' => $announcement,
             );
 
@@ -317,6 +320,8 @@ switch ($action) {
             empty($name) AND message(1, lang('data_empty_to_last_step'));
 
             $rank = param('rank', 0);
+            $brief = param('brief', '', FALSE);
+            $brief = xn_html_safe($brief);
             $announcement = param('announcement', '', FALSE);
             $announcement = xn_html_safe($announcement);
             $accesson = param('accesson', 0);
@@ -376,6 +381,7 @@ switch ($action) {
                 'moduids' => $moduids,
                 'seo_title' => $seo_title,
                 'seo_keywords' => $seo_keywords,
+                'brief' => $brief,
                 'announcement' => $announcement,
             );
 

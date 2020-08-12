@@ -191,7 +191,7 @@ $('table').on('click', 'a.delete', function() {
 });
 
 $('#menu-forum').addClass('show');
-$('li.menu-forum, .menu-website').addClass('active');
+$('li.menu-forum, .menu-website').addClass('active').find('a').removeClass('collapsed');
 </script>
 
 <!--{hook admin_column_list_js.htm}-->

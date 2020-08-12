@@ -80,7 +80,7 @@
     jform.find('[name="fid"]').checked(<?php echo $fid;?>);
 
     $('#menu-content').addClass('show');
-    $('li.menu-content, .menu-page').addClass('active');
+    $('li.menu-content, .menu-page').addClass('active').find('a').removeClass('collapsed');
 </script>
 
 <!--{hook admin_page_post_js.htm}-->

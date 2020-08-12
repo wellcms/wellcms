@@ -104,7 +104,7 @@
     });
 
     $('#menu-content').addClass('show');
-    $('li.menu-content, .menu-<?php echo $route;?>').addClass('active');
+    $('li.menu-content, .menu-<?php echo $route;?>').addClass('active').find('a').removeClass('collapsed');
 </script>
 
 <!--{hook admin_content_js.htm}-->

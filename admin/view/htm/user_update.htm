@@ -75,7 +75,7 @@ jform.on('submit', function() {
 });
 
 $('#menu-user').addClass('show');
-$('li.menu-user, .menu-user').addClass('active');
+$('li.menu-user, .menu-user').addClass('active').find('a').removeClass('collapsed');
 </script>
 
 <!--{hook admin_user_update_js.htm}-->
