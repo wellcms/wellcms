@@ -80,6 +80,10 @@
     threadlist.each(function(){
         var jthis = $(this);
         jthis.find('a').not('.manage a').attr('target','_blank');
+        $('.manage a').each(function(){
+            var manage_a = $(this).attr('href');
+            $(this).attr('href', manage_a.replace('../', ''));
+        });
     });
 
     $('.mod-button button').each(function () {
