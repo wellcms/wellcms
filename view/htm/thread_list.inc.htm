@@ -57,7 +57,7 @@
                 <!--{hook thread__list_inc_subject_end.htm}-->
 
                 <?php if($_thread['brief']){?>
-                <div class="col-lg-12 text-muted brief mt-2">
+                <div class="col-lg-12 text-break text-muted brief mt-2">
                     <?php echo $_thread['brief'];?>
                 </div>
                 <?php }?>
@@ -65,7 +65,7 @@
                 <!--{hook thread__list_inc_tag_before.htm}-->
 
                 <?php if($_thread['tag']){?>
-                <div class="tag col-lg-12 d-none d-md-block small text-muted mt-3">
+                <div class="tag text-break col-lg-12 d-none d-md-block small text-muted mt-3">
                     <i class="icon-tags mr-2"></i>
                     <?php foreach($_thread['tag_text'] as $key => $_tag) {?>
                     <span class="mr-2">
