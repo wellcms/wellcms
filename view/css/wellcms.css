@@ -73,8 +73,6 @@ html, body {
     min-height: 100vh;
 }
 
-#wrapper .nav-w {}
-
 /* 3.625rem */
 #wrapper .sidebar {
     top: 0;
@@ -852,6 +850,37 @@ small, .small {
 
 select option {
     background-color: #fff;
+}
+
+/*User center */
+.nav-scroller {
+    position: relative!important;
+    z-index: 2;
+    height: 1.7rem;
+    overflow: hidden!important;
+}
+
+.nav-scroller .nav {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    text-align: center;
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+}
+
+.nav-scroller .nav::-webkit-scrollbar {
+    display: block;
+    height: 0.2rem;
+}
+
+.nav-scroller .nav .nav-link {
+    display: block;
+    padding: .25rem 0.5rem;
 }
 
 .nav-block {
