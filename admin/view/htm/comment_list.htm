@@ -34,12 +34,12 @@
                                 <div class="d-flex justify-content-between small text-muted">
                                     <div>
                                         <!--{hook admin_comment_list_inc_avatar_before.htm}-->
-                                        <a target="_blank" href="../<?php echo url('user-' . $_post['uid'], '', 2);?>" rel="nofollow" tabindex="-1" class="mr-2">
-                                            <img class="avatar-1" src="../<?php echo $_post['user_avatar_url'];?>">
+                                        <a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('user-' . $_post['uid'], '', 2);?>" rel="nofollow" tabindex="-1" class="mr-2">
+                                            <img class="avatar-1" src="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),$_post['user_avatar_url'];?>">
                                         </a>
                                         <!--{hook admin_comment_list_inc_username_before.htm}-->
                                         <span>
-                                            <a target="_blank" href="../<?php echo url('user-' . $_post['uid'], '', 2);?>" class="text-muted font-weight-bold"><?php echo $_post['username'];?></a>
+                                            <a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('user-' . $_post['uid'], '', 2);?>" class="text-muted font-weight-bold"><?php echo $_post['username'];?></a>
                                         </span>
                                         <!--{hook admin_comment_list_inc_username_after.htm}-->
 
@@ -51,13 +51,13 @@
 
                                         <!--{hook admin_comment_list_inc_update_before.htm}-->
                                         <?php if($_post['allowupdate']) { ?>
-                                        <!--<a target="_blank" href="../<?php echo url('comment-update-'.$_post['pid'], '', 2);?>" class="text-grey post_update mr-3"><i class="icon-edit" title="<?php echo lang('edit');?>"></i> <span class="d-none"><?php echo lang('edit');?></span></a>-->
+                                        <!--<a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('comment-update-'.$_post['pid'], '', 2);?>" class="text-grey post_update mr-3"><i class="icon-edit" title="<?php echo lang('edit');?>"></i> <span class="d-none"><?php echo lang('edit');?></span></a>-->
                                         <?php } ?>
                                         <!--{hook admin_comment_list_inc_update_after.htm}-->
 
                                         <!--{hook admin_comment_list_inc_delete_before.htm}-->
                                         <?php if($_post['allowdelete']) { ?>
-                                        <span data-href="../<?php echo url('comment-delete-'.$_post['pid'], '', 2);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" class="btn text-grey post_delete _confirm mr-3"><i class="icon-remove" title="<?php echo lang('delete');?>"></i></span>
+                                        <span data-href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('comment-delete-'.$_post['pid'], '', 2);?>" data-confirm-text="<?php echo lang('confirm_delete');?>" class="btn text-grey post_delete _confirm mr-3"><i class="icon-remove" title="<?php echo lang('delete');?>"></i></span>
                                         <?php } ?>
                                         <!--{hook admin_comment_list_inc_delete_after.htm}-->
 
@@ -67,7 +67,7 @@
 
                                     <!--{hook admin_comment_list_inc_subject_before.htm}-->
                                     <?php if('read' != $route && !empty($_post['subject'])) { ?>
-                                    <h6><a href="../<?php echo url('read-' . $_post['tid'], '', 2);?>" target="_blank"><?php echo $_post['subject'];?></a></h6>
+                                    <h6><a href="<?php echo url($conf['url_rewrite_on'] < 2 ? '../' : ''),('read-' . $_post['tid'], '', 2);?>" target="_blank"><?php echo $_post['subject'];?></a></h6>
                                     <?php } ?>
                                     <!--{hook admin_comment_list_inc_subject_after.htm}-->
 
@@ -92,7 +92,7 @@
                 </label>
                 <div class="btn-group mod-button my-3" role="group" aria-label="">
                     <!--{hook admin_comment_mode_delete_before.htm}-->
-                    <button class="btn btn-secondary delete" data-href="../<?php echo url('comment-delete', '', 2);?>"><?php echo lang('delete');?></button>
+                    <button class="btn btn-secondary delete" data-href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('comment-delete', '', 2);?>"><?php echo lang('delete');?></button>
                     <!--{hook admin_comment_mode_delete_after.htm}-->
                 </div>
             </div>

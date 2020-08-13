@@ -70,18 +70,18 @@ $static_version = $conf['static_version'];
 
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="avatar-2" src="<?php echo $user['avatar_url'];?>">
+                        <img class="avatar-2" src="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),$user['avatar_url'];?>">
                     </a>
                     <div class="dropdown-menu dropdown-menu-right animated--fade-in-up shadow border-0 border-left-primary">
                         <div class="dropdown-header d-flex justify-content-between">
-                            <img class="avatar-1" src="<?php echo $user['avatar_url'];?>">
+                            <img class="avatar-1" src="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),$user['avatar_url'];?>">
                             <span>
                             <?php echo isset($user['username']) ? $user['username'] : '';?>
                         </span>
                         </div>
                         <hr class="my-0">
                         <!--{hook admin_header_user_start.htm}-->
-                        <a class="dropdown-item" href="<?php echo url_path(),url('my', '', 2);?>">
+                        <a class="dropdown-item" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('my', '', 2);?>">
                             <i class="icon-user mr-2"></i>
                             <?php echo lang('my_home');?>
                         </a>

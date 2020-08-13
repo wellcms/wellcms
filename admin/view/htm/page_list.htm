@@ -52,7 +52,7 @@
                                 <input type="text" placeholder="<?php echo lang('well_rank');?>" name="rank" value="<?php echo $_thread['rank']; ?>" class="form-control small mr-2" rank="<?php echo $_thread['rank'];?>" tid="<?php echo $_thread['tid'];?>" style="width:45px;">
                                 <?php } ?>
                                 <h2 class="h6 text-break font-weight-bold mt-2 mb-0">
-                                    <a href="../<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>"><?php echo $_thread['subject'];?></a>
+                                    <a href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),$_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>"><?php echo $_thread['subject'];?></a>
                                 </h2>
                             </div>
 
