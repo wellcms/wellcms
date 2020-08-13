@@ -34,12 +34,20 @@
                                 <div class="d-flex justify-content-between small text-muted">
                                     <div>
                                         <!--{hook admin_comment_list_inc_avatar_before.htm}-->
+<?php if ('view/' == $conf['view_url']) {
+    $avatar_path = '';
+    if ($conf['url_rewrite_on'] < 2) {
+        $avatar_path = empty($_post['user']['avatar'])?'../':'';
+    }
+} else {
+    $avatar_path = '';
+}?>
                                         <a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('user-' . $_post['uid'], '', 2);?>" rel="nofollow" tabindex="-1" class="mr-2">
-                                            <img class="avatar-1" src="<?php echo $_post['user_avatar_url'];?>">
+                                            <img class="avatar-1" src="<?php echo $avatar_path,$_post['user_avatar_url'];?>">
                                         </a>
                                         <!--{hook admin_comment_list_inc_username_before.htm}-->
                                         <span>
-                                            <a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('user-' . $_post['uid'], '', 2);?>" class="text-muted font-weight-bold"><?php echo $_post['username'];?></a>
+                                            <a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('user-' . $_post['uid'], '', 2);?>" class="font-weight-bold"><?php echo $_post['username'];?></a>
                                         </span>
                                         <!--{hook admin_comment_list_inc_username_after.htm}-->
 

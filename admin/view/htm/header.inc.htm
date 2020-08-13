@@ -70,11 +70,19 @@ $static_version = $conf['static_version'];
 
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="avatar-2" src="<?php echo $user['avatar_url'];?>">
+<?php if ('view/' == $conf['view_url']) {
+    $avatar_path = '';
+    if ($conf['url_rewrite_on'] < 2) {
+        $avatar_path = empty($user['avatar'])?'../':'';
+    }
+} else {
+    $avatar_path = '';
+}?>
+                        <img class="avatar-2" src="<?php echo $avatar_path,$user['avatar_url'];?>">
                     </a>
                     <div class="dropdown-menu dropdown-menu-right animated--fade-in-up shadow border-0 border-left-primary">
                         <div class="dropdown-header d-flex justify-content-between">
-                            <img class="avatar-1" src="<?php echo $user['avatar_url'];?>">
+                            <img class="avatar-1" src="<?php echo $avatar_path,$user['avatar_url'];?>">
                             <span>
                             <?php echo isset($user['username']) ? $user['username'] : '';?>
                         </span>
