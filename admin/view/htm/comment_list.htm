@@ -35,7 +35,7 @@
                                     <div>
                                         <!--{hook admin_comment_list_inc_avatar_before.htm}-->
                                         <a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('user-' . $_post['uid'], '', 2);?>" rel="nofollow" tabindex="-1" class="mr-2">
-                                            <img class="avatar-1" src="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),$_post['user_avatar_url'];?>">
+                                            <img class="avatar-1" src="<?php echo $_post['user_avatar_url'];?>">
                                         </a>
                                         <!--{hook admin_comment_list_inc_username_before.htm}-->
                                         <span>
@@ -67,7 +67,7 @@
 
                                     <!--{hook admin_comment_list_inc_subject_before.htm}-->
                                     <?php if('read' != $route && !empty($_post['subject'])) { ?>
-                                    <h6><a href="<?php echo url($conf['url_rewrite_on'] < 2 ? '../' : ''),('read-' . $_post['tid'], '', 2);?>" target="_blank"><?php echo $_post['subject'];?></a></h6>
+                                    <h6><a href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('read-' . $_post['tid'], '', 2);?>" target="_blank"><?php echo $_post['subject'];?></a></h6>
                                     <?php } ?>
                                     <!--{hook admin_comment_list_inc_subject_after.htm}-->
 

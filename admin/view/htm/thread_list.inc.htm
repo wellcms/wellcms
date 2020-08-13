@@ -78,7 +78,7 @@
 				<div class="col-lg-12 text-grey mt-2">
 					<!--{hook admin_thread_list_inc_avatar_before.htm}-->
 					<a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('user-' . $_thread['uid'], '', 2);?>" tabindex="-1" class="mr-2">
-						<img class="avatar-1" src="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),$_thread['user_avatar_url'];?>">
+						<img class="avatar-1" src="<?php echo $_thread['user_avatar_url'];?>">
 					</a>
 					<!--{hook admin_thread_list_inc_avatar_after.htm}-->
 
