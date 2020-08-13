@@ -73,19 +73,6 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-   var threadlist = $('ul.threadlist');
-    if (url_rewrite_on < 2) {
-        threadlist.base_href('../');
-    }
-    threadlist.each(function(){
-        var jthis = $(this);
-        jthis.find('a').not('.manage a').attr('target','_blank');
-        $('.manage a').each(function(){
-            var manage_a = $(this).attr('href');
-            $(this).attr('href', manage_a.replace('../', ''));
-        });
-    });
-
     $('.mod-button button').each(function () {
         var modal_url = $(this).attr('data-modal-url');
         if (url_rewrite_on < 2) $(this).attr('data-modal-url', '../' + modal_url);
@@ -103,8 +90,8 @@
         <!--{hook admin_content_jump_by_fid.htm}-->
     });
 
-    $('#menu-content').addClass('show');
-    $('li.menu-content, .menu-<?php echo $route;?>').addClass('active').find('a').removeClass('collapsed');
+    $('#content').addClass('show');
+    $('li.content, .menu-<?php echo $route;?>').addClass('active').find('a').removeClass('collapsed');
 </script>
 
 <!--{hook admin_content_js.htm}-->

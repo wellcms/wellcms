@@ -1,7 +1,7 @@
 <!--{hook admin_thread_list_inc_start.htm}-->
 
 <?php if($threadlist) { foreach($threadlist as &$_thread) { ?>
-<li class="media thread" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
+<li class="media thread" tid="<?php echo $_thread['tid'];?>">
 	<?php if($_thread['allowtop']) { ?>
 	<div class="custom-control custom-checkbox">
 		<input class="custom-control-input" type="checkbox" id="modtid-<?php echo $_thread['tid']; ?>" name="modtid" value="<?php echo $_thread['tid']; ?>" />
@@ -14,7 +14,7 @@
 		<div class="media">
 			<?php if ($_thread['icon']) { ?>
 			<div class="col-lg-2 col-md-3 d-none d-md-block">
-				<a href="<?php echo $_thread['url']; ?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
+				<a target="_blank" href="../<?php echo $_thread['url']; ?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
 				<img class="d-block w-100 rounded" src="<?php echo $_thread['icon_text'];?>" title="<?php echo $_thread['subject'];?>" alt="<?php echo $_thread['subject'];?>" />
 				</a>
 			</div>
@@ -43,7 +43,7 @@
 
 					<h2 class="h6 text-break font-weight-bold d-inline">
 						<!--{hook admin_thread_list_inc_subject_before.htm}-->
-						<a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>><?php echo $_thread['subject'];?></a>
+						<a target="_blank" href="../<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>><?php echo $_thread['subject'];?></a>
 						<!--{hook admin_thread_list_inc_subject_after.htm}-->
 					</h2>
 				</div>
@@ -64,7 +64,7 @@
 					<?php foreach($_thread['tag_text'] as $key => $_tag) {?>
 					<span class="mr-2">
                         <strong class="mb-0">
-                            <a class="text-secondary" href="<?php echo url('tag-'.$key, '', 2);?>">
+                            <a target="_blank" class="text-secondary" href="../<?php echo url('tag-'.$key, '', 2);?>">
                                 <?php echo $_tag;?>
                             </a>
                         </strong>
@@ -77,8 +77,8 @@
 
 				<div class="col-lg-12 text-grey mt-2">
 					<!--{hook admin_thread_list_inc_avatar_before.htm}-->
-					<a href="<?php echo url('user-' . $_thread['uid'], '', 2);?>" tabindex="-1" class="mr-2">
-						<img class="avatar-1" src="<?php echo $_thread['user_avatar_url'];?>">
+					<a target="_blank" href="../<?php echo url('user-' . $_thread['uid'], '', 2);?>" tabindex="-1" class="mr-2">
+						<img class="avatar-1" src="../<?php echo $_thread['user_avatar_url'];?>">
 					</a>
 					<!--{hook admin_thread_list_inc_avatar_after.htm}-->
 
@@ -104,7 +104,6 @@
                         <!--{hook admin_thread_list_inc_update_after.htm}-->
 					</div>
 				</div>
-
 				<!--{hook admin_thread_list_inc_thread_end.htm}-->
 			</div>
 		</div>

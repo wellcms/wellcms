@@ -1,29 +1,29 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
 <!--{hook admin_content_post_start.htm}-->
 <div class="container-fluid">
-<div class="row">
-	<div class="col-lg-12">
-		<!--{hook admin_content_post_breadcrumb_before.htm}-->
-		<?php if(empty($hide_breadcrumb)) { ?>
-		<ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
-			<li class="breadcrumb-item"><a href="<?php echo url('content-list', '', TRUE);?>"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
-			<?php if ($fid) { ?>
-			<li class="breadcrumb-item"><?php echo $forum['name'];?></li>
-			<?php } ?>
-            <li class="breadcrumb-item"><?php echo $breadcrumb_flag;?></li>
-			<!--{hook admin_content_post_breadcrumb.htm}-->
-		</ol>
-		<?php } ?>
-		<!--{hook admin_content_post_breadcrumb_after.htm}-->
-		<div class="card card-threadlist">
-			<div class="card-body">
-                <!--{hook admin_content_post_form_start.htm}-->
-                <?php include _include(ADMIN_PATH.'view/htm/thread_post.inc.htm');?>
-                <!--{hook admin_content_post_form_end.htm}-->
-			</div>
-		</div>
-	</div>
-</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <!--{hook admin_content_post_breadcrumb_before.htm}-->
+            <?php if(empty($hide_breadcrumb)) { ?>
+            <ol class="breadcrumb d-none d-md-flex text-muted border-left-primary">
+                <li class="breadcrumb-item"><a href="<?php echo url('content-list', '', TRUE);?>"><i class="icon-home text-primary" aria-hidden="true"></i></a></li>
+                <?php if ($fid) { ?>
+                <li class="breadcrumb-item"><?php echo $forum['name'];?></li>
+                <?php } ?>
+                <li class="breadcrumb-item"><?php echo $breadcrumb_flag;?></li>
+                <!--{hook admin_content_post_breadcrumb.htm}-->
+            </ol>
+            <?php } ?>
+            <!--{hook admin_content_post_breadcrumb_after.htm}-->
+            <div class="card card-threadlist">
+                <div class="card-body">
+                    <!--{hook admin_content_post_form_start.htm}-->
+                    <?php include _include(ADMIN_PATH.'view/htm/thread_post.inc.htm');?>
+                    <!--{hook admin_content_post_form_end.htm}-->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!--{hook admin_content_post_end.htm}-->
 
@@ -47,9 +47,9 @@
     var safe_token = '<?php echo $safe_token;?>';
 
     var jfid = $('select[name="fid"]');
-    var fid = <?php echo intval($fid); ?> || jfid.val();
+    var fid = <?php echo intval($fid); ?> || jfid.checked();
     jfid.on('change', function() {
-        var fid = jfid.val();
+        var fid = jfid.checked();
         fid_on_change(fid);
     });
 
@@ -177,8 +177,7 @@
                 action: "<?php echo array_value($conf, 'upload_resize', 'clip'); ?>",
                 n: n,
                 mode: 1, /*缩略图*/
-                water_image_url:'<?php echo admin_view_path();?>img/water-small.png',
-                safe_token: safe_token,
+                safe_token: safe_token
             }, function (code, message) {
                 if (code != 0) return $.alert(message);
                 jassoc.attr('src', message.url);
@@ -213,9 +212,10 @@
         }
         jprogressbar = jprogress.find('.progress-bar');
 
+        var fid = jfid.checked();
         $.each_sync(files, function(i, callback) {
             var file = files[i];
-            xn.upload_file(file, xn.url('attach-create-1', '', 2), {is_image: 0,safe_token: safe_token}, function (code, message) {
+            xn.upload_file(file, xn.url('attach-create-1', '', 2), {'fid': fid,'is_image': 0,'safe_token': safe_token}, function (code, message) {
                 if (code != 0) return $.alert(message);
                 /*把文件 append 到附件列表*/
                 var url = message.url;
@@ -287,7 +287,7 @@
         description.remove();
     });
 
-	if (action == 'update') {
+    if (action == 'update') {
         if (input_link.checked() == true) {
             var description = $('div.description');
             var copy = description.clone();
@@ -301,8 +301,8 @@
 
     jform.find('[name="fid"]').checked(fid);
 
-    $('#menu-content').addClass('show');
-    $('.menu-<?php echo $route;?>').addClass('active').find('a').removeClass('collapsed');
+    $('#content').addClass('show');
+    $('li.<?php echo $route;?>').addClass('active');
 </script>
 
 <!--{hook admin_content_post_js.htm}-->

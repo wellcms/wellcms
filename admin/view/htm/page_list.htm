@@ -44,7 +44,7 @@
                 <ul class="list-unstyled threadlist mb-0">
 
                     <?php if($threadlist) { foreach($threadlist as &$_thread) { ?>
-                    <li class="thread" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
+                    <li class="thread" tid="<?php echo $_thread['tid'];?>">
 
                         <div class="subject d-flex justify-content-between">
                             <div class="d-flex flex-row bd-highlight">
@@ -52,7 +52,7 @@
                                 <input type="text" placeholder="<?php echo lang('well_rank');?>" name="rank" value="<?php echo $_thread['rank']; ?>" class="form-control small mr-2" rank="<?php echo $_thread['rank'];?>" tid="<?php echo $_thread['tid'];?>" style="width:45px;">
                                 <?php } ?>
                                 <h2 class="h6 text-break font-weight-bold mt-2 mb-0">
-                                    <a href="<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>"><?php echo $_thread['subject'];?></a>
+                                    <a href="../<?php echo $_thread['url']; ?>" aria-label="<?php echo $_thread['subject'];?>"><?php echo $_thread['subject'];?></a>
                                 </h2>
                             </div>
 
@@ -95,19 +95,6 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    var threadlist = $('ul.threadlist');
-    if (url_rewrite_on < 2) {
-        threadlist.base_href('../');
-    }
-    threadlist.each(function(){
-        var jthis = $(this);
-        jthis.find('a').not('.manage a').attr('target','_blank');
-        $('.manage a').each(function(){
-            var manage_a = $(this).attr('href');
-            $(this).attr('href', manage_a.replace('../', ''));
-        });
-    });
-
     var select = $('select[name="fid"]');
     select.val(<?php echo $fid;?>);
     select.change(function () {
@@ -137,8 +124,8 @@
     });
     <?php } ?>
 
-    $('#menu-content').addClass('show');
-    $('li.menu-content, .menu-page').addClass('active').find('a').removeClass('collapsed');
+    $('#content').addClass('show');
+    $('li.content, .menu-page').addClass('active');
 </script>
 
 <!--{hook admin_page_list_js.htm}-->

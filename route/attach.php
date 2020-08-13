@@ -30,7 +30,14 @@ switch ($action) {
         }
 
         user_login_check();
-        empty($group['allowattach']) && $gid != 1 AND message(-1, lang('user_group_insufficient_privilege'));
+        
+        $fid = param('fid', 0);
+        if ($fid) {
+            $allowattach = forum_access_user($fid, $gid, 'allowattach');
+            empty($allowattach) && $gid != 1 AND message(-1, lang('user_group_insufficient_privilege'));
+        } else {
+            empty($group['allowattach']) && $gid != 1 AND message(-1, lang('user_group_insufficient_privilege'));
+        }
 
         // hook attach_create_start.php
 

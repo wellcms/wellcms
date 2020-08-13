@@ -52,7 +52,7 @@
 
 <script>
     var jfid = $('select[name="fid"]');
-    var fid = <?php echo intval($fid); ?> || $('select[name="fid"]').val();
+    var fid = <?php echo intval($fid); ?> || $('select[name="fid"]').checked();
 
     var jform = $('#form');
     jform.on('submit', function() {
@@ -65,7 +65,7 @@
         $.xpost(jform.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 $.alert(message);
-                jsubmit.button(message).delay(1000).location(xn.url('page-list', {fid:fid}, true));
+                jsubmit.button(message).delay(1000).location(xn.url('page-list', {'fid':fid}, true));
             } else if(xn.is_number(code)) {
                 $.alert(message);
                 jsubmit.button('reset');
@@ -79,8 +79,8 @@
 
     jform.find('[name="fid"]').checked(<?php echo $fid;?>);
 
-    $('#menu-content').addClass('show');
-    $('li.menu-content, .menu-page').addClass('active').find('a').removeClass('collapsed');
+    $('#content').addClass('show');
+    $('li.content, .menu-page').addClass('active').find('a').removeClass('collapsed');
 </script>
 
 <!--{hook admin_page_post_js.htm}-->
