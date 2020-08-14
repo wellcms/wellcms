@@ -120,7 +120,7 @@
                                     </div>
                                     <div class="form-group row tags mx-0 mt-2">
                                         <!--tag插在这之后-->
-                                        <?php if (!empty($thread['tag_text'])) {foreach ($thread['tag_text'] as $key => $_tag) { ?>
+                                        <?php if (!empty($thread['tag_fmt'])) {foreach ($thread['tag_fmt'] as $key => $_tag) { ?>
                                         <span class="border border-secondary tag btn-sm my-1 mr-3 tags-token">
                                             <?php echo $_tag; ?>
                                         </span>

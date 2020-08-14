@@ -79,17 +79,17 @@
         if (!xn.empty(forum.fup) && !xn.empty(fup.flagstr)) {
             s += ' <p class="font-weight-bold mb-2"><?php echo lang('channel').lang('flag');?></p>';
             s += '<p class="tag-outline-list">';
-            $.each(fup.flagstr_text, function(k, flag) {
+            $.each(fup.flagstr_fmt, function(k, flag) {
                 s += '<a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm mr-3 mb-2 flag-option ' + (xn.in_array(flag.flagid, category_flagids) ? 'active' : '') + '" flagid="' + flag.flagid + '">' + flag.name + '</a>';
                 s += '<input type="hidden" name="category[]" value="' + (xn.in_array(flag.flagid, category_flagids)) + '" />';
             });
             s += '</p>';
         }
 
-        if (xn.isset(forum.flagstr_text)) {
+        if (xn.isset(forum.flagstr_fmt)) {
             s += ' <p class="font-weight-bold mb-2"><?php echo lang('column').lang('flag');?></p>';
             s += '<p class="tag-outline-list">';
-            $.each(forum.flagstr_text, function(k, flag) {
+            $.each(forum.flagstr_fmt, function(k, flag) {
                 s += '<a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm mr-3 mb-2 flag-option ' + (xn.in_array(flag.flagid, forum_flagids) ? 'active' : '') + '" flagid="' + flag.flagid + '">' + flag.name + '</a>';
                 s += '<input type="hidden" name="forum[]" value="' + (xn.in_array(flag.flagid, forum_flagids) ? flag.flagid : '') + '" />';
             });

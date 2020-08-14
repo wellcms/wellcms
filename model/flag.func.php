@@ -68,6 +68,7 @@ function flag_big_update($cond = array(), $update = array(), $d = NULL)
     // hook model_flag_big_update_end.php
     return $r;
 }
+
 //--------------------------强相关--------------------------
 function flag_create($arr)
 {
@@ -203,12 +204,12 @@ function flag_format(&$val)
     $forum = array_value($forumlist, $val['fid']);
 
     $val['forum_name'] = isset($forum['name']) ? $forum['name'] : lang('index_page');
-    $val['display_text'] = $val['display'] ? lang('yes') : lang('no');
+    $val['display_fmt'] = $val['display'] ? lang('yes') : lang('no');
     $val['forum_url'] = isset($forum['url']) ? $forum['url'] : $conf['path'];
     $val['url'] = url('flag-' . $val['flagid'], '', FALSE);
-    $val['create_date_text'] = date('Y-m-d', $val['create_date']);
+    $val['create_date_fmt'] = date('Y-m-d', $val['create_date']);
     // 主图只支持本地和云储存，不支持图床
-    $val['icon_text'] = $val['icon'] ? file_path() . 'flag/' . $val['flagid'] . '.png?' . $val['icon'] : '';
+    $val['icon_fmt'] = $val['icon'] ? file_path() . 'flag/' . $val['flagid'] . '.png?' . $val['icon'] : view_path() . 'img/nopic.png';
     // hook model_flag_format_end.php
 }
 
@@ -222,7 +223,7 @@ function flag_filter(&$arr)
         unset($val['count']);
         unset($val['display']);
         unset($val['create_date']);
-        unset($val['display_text']);
+        unset($val['display_fmt']);
         unset($val['forum_name']);
         // hook flag_filter_center.php
     }

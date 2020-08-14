@@ -16,7 +16,7 @@
             <?php if ($_thread['icon']) { ?>
             <div class="col-4 col-md-3">
                 <a href="<?php echo $_thread['url']; ?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
-                    <img class="d-block w-100 rounded" src="<?php echo $_thread['icon_text'];?>" title='<?php echo $_thread['subject'];?>' alt='<?php echo $_thread['subject'];?>' />
+                    <img class="d-block w-100 rounded" src="<?php echo $_thread['icon_fmt'];?>" title='<?php echo $_thread['subject'];?>' alt='<?php echo $_thread['subject'];?>' />
                 </a>
             </div>
             <?php } ?>
@@ -65,9 +65,9 @@
                 <!--{hook thread__list_inc_tag_before.htm}-->
 
                 <?php if($_thread['tag']){?>
-                <div class="tag text-break col-lg-12 d-none d-md-block small text-muted mt-3">
+                <div class="tag col-lg-12 text-break d-none d-md-block small text-muted mt-3">
                     <i class="icon-tags mr-2"></i>
-                    <?php foreach($_thread['tag_text'] as $key => $_tag) {?>
+                    <?php foreach($_thread['tag_fmt'] as $key => $_tag) {?>
                     <span class="mr-2">
                         <strong class="mb-0">
                             <a class="text-secondary" href="<?php echo url('tag-'.$key);?>">

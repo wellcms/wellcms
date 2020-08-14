@@ -34,16 +34,8 @@
                                 <div class="d-flex justify-content-between small text-muted">
                                     <div>
                                         <!--{hook admin_comment_list_inc_avatar_before.htm}-->
-<?php if ('view/' == $conf['view_url']) {
-    $avatar_path = '';
-    if ($conf['url_rewrite_on'] < 2) {
-        $avatar_path = empty($_post['user']['avatar'])?'../':'';
-    }
-} else {
-    $avatar_path = '';
-}?>
                                         <a target="_blank" href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('user-' . $_post['uid'], '', 2);?>" rel="nofollow" tabindex="-1" class="mr-2">
-                                            <img class="avatar-1" src="<?php echo $avatar_path,$_post['user_avatar_url'];?>">
+                                            <img class="avatar-1" src="<?php echo admin_access_file(array_value($_post['user'], 'avatar'), $_post['user_avatar_url']);?>">
                                         </a>
                                         <!--{hook admin_comment_list_inc_username_before.htm}-->
                                         <span>
@@ -80,7 +72,7 @@
                                     <!--{hook admin_comment_list_inc_subject_after.htm}-->
 
                                     <!--{hook admin_comment_list_inc_message_before.htm}-->
-                                    <?php echo $_post['message'];?>
+                                    <?php echo str_replace('="upload/', '="'.admin_attach_path().'upload/', $_post['message']);?>
                                     <!--{hook admin_comment_list_inc_message_after.htm}-->
 
                                 </div>

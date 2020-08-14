@@ -199,7 +199,7 @@ function well_tag_format(&$val)
     global $conf;
     if (empty($val)) return;
     // hook model__tag_format_start.php
-    $val['icon_text'] = $val['icon'] ? file_path() . 'website_tag/' . $val['tagid'] . '.png?' . $val['icon'] : '';
+    $val['icon_fmt'] = $val['icon'] ? file_path() . 'website_tag/' . $val['tagid'] . '.png?' . $val['icon'] : '';
     $val['url'] = url('tag-' . $val['tagid'], '', FALSE);
     // hook model__tag_format_end.php
 }

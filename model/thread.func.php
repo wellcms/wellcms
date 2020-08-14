@@ -572,7 +572,7 @@ function well_thread_delete_all($tid)
 
     // 删除tag
     if ($thread['tag']) {
-        $tagids = array_keys($thread['tag_text']);
+        $tagids = array_keys($thread['tag_fmt']);
         well_oldtag_delete($tagids, $tid);
     }
 
@@ -818,8 +818,8 @@ function well_thread_format(&$thread)
 
     $thread['create_date_fmt'] = humandate($thread['create_date']);
     $thread['last_date_fmt'] = humandate($thread['last_date']);
-    $thread['create_date_text'] = date('Y-m-d', $thread['create_date']);
-    $thread['last_date_text'] = date('Y-m-d', $thread['last_date']);
+    $thread['create_date_fmt_ymd'] = $thread['create_date_text'] = date('Y-m-d', $thread['create_date']);
+    $thread['last_date_fmt_ymd'] = $thread['last_date_text'] = date('Y-m-d', $thread['last_date']);
 
     $user = user_read_cache($thread['uid']);
     $thread['username'] = $user['username'];
@@ -868,26 +868,26 @@ function well_thread_format(&$thread)
             $destfile = $conf['upload_path'] . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
 
             // 本地
-            $thread['icon_text'] = is_file($destfile) ? file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
+            $thread['icon_fmt'] = $thread['icon_text'] = is_file($destfile) ? file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
         }
 
         if (1 == $conf['attach_on']) {
             // 云储存
-            $thread['icon_text'] = file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
+            $thread['icon_fmt'] = $thread['icon_text'] = file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
 
         } elseif (2 == $conf['attach_on'] && 2 == $thread['attach_on']) {
             // 图床 未上传成功 本地图片在的话使用本地，不在则默认
-            $thread['icon_text'] = $thread['image_url'] ? $thread['image_url'] : $thread['icon_text'];
+            $thread['icon_fmt'] = $thread['icon_text'] = $thread['image_url'] ? $thread['image_url'] : $thread['icon_fmt'];
         }
 
     } else {
-        $thread['icon_text'] = $nopic;
+        $thread['icon_fmt'] = $thread['icon_text'] = $nopic;
     }
     // hook model__thread_format_middle.php
     // 回复页面
     $thread['pages'] = ceil($thread['posts'] / $conf['comment_pagesize']);
 
-    $thread['tag_text'] = $thread['tag'] ? xn_json_decode($thread['tag']) : '';
+    $thread['tag_fmt'] = $thread['tag_text'] = $thread['tag'] ? xn_json_decode($thread['tag']) : '';
     // hook model__thread_format_after.php
     // 权限判断
     $thread['allowupdate'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
@@ -1096,7 +1096,7 @@ function thread_other_pull($thread)
 
     if (empty($forum)) return NULL;
     //$tid = array_value($thread, 'tid');
-    //$tag_text = array_value($thread, 'tag_text');
+    //$tag_fmt = array_value($thread, 'tag_fmt');
 
     // hook model_thread_other_pull_before.php
 
@@ -1143,6 +1143,7 @@ function thread_other_pull($thread)
                 }
             }
         }
+
         // hook model_thread_other_pull_cate_after.php
     }
 

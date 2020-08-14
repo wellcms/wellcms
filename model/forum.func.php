@@ -164,7 +164,7 @@ function forum_format(&$forum)
 
     // hook model_forum_format_start.php
     $forum['create_date_fmt'] = date('Y-n-j', $forum['create_date']);
-    $forum['icon_url'] = $forum['icon'] ? forum_file_path() . "forum/$forum[fid].png" : forum_view_path() . 'img/forum.png';
+    $forum['icon_url'] = $forum['icon'] ? file_path() . 'forum/'.$forum['fid'].'.png' : view_path() . 'img/forum.png';
     $forum['accesslist'] = $forum['accesson'] ? forum_access_find_by_fid($forum['fid']) : array();
 
     $forum['modlist'] = array();
@@ -189,8 +189,8 @@ function forum_format(&$forum)
                     unset($val['number']);
                     unset($val['display']);
                     unset($val['create_date']);
-                    unset($val['create_date_text']);
-                    unset($val['display_text']);
+                    unset($val['create_date_fmt']);
+                    unset($val['display_fmt']);
                     unset($val['forum_name']);
                     unset($val['title']);
                     unset($val['keywords']);
@@ -199,7 +199,7 @@ function forum_format(&$forum)
                     unset($val['i']);
                     unset($val['tpl']);
                 }
-                $forum['flagstr_text'] = array_multisort_key($flaglist, 'rank', FALSE, 'flagid');
+                $forum['flagstr_fmt'] = $forum['flagstr_text'] = array_multisort_key($flaglist, 'rank', FALSE, 'flagid');
             }
         }
 
@@ -236,50 +236,6 @@ function forum_format(&$forum)
     }
 
     // hook model_forum_format_end.php
-}
-
-function forum_view_path()
-{
-    static $path = '';
-    if ($path) return $path;
-    $conf = _SERVER('conf');
-    if ($conf['view_url'] == 'view/') {
-        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['view_url'] : $conf['view_url'];
-    } else {
-        $path = $conf['view_url']; // 云储存
-    }
-    return $path;
-}
-
-function forum_file_path()
-{
-    static $path = '';
-    if ($path) return $path;
-    $conf = _SERVER('conf');
-    if (0 == $conf['attach_on']) {
-        // 本地
-        $path = $conf['url_rewrite_on'] > 1 ? file_path() : $conf['upload_url'];
-    } elseif (1 == $conf['attach_on']) {
-        // 云储存
-        $path = file_path();
-    } elseif (2 == $conf['attach_on']) {
-        // 云储存
-        $path = file_path();
-    }
-    return $path;
-}
-
-function forum_admin_format($forumlist)
-{
-    global $conf;
-    if (empty($forumlist)) return array();
-    // hook model_forum_admin_format_start.php
-    foreach ($forumlist as &$forum) {
-        $forum['icon_url'] = $forum['icon'] ? admin_file_path() . "forum/$forum[fid].png" : admin_view_path() . 'img/forum.png';
-        // hook model_forum_admin_format_before.php
-    }
-    // hook model_forum_admin_format_end.php
-    return $forumlist;
 }
 
 function forum_count($cond = array())
@@ -407,7 +363,7 @@ function forum_filter($forumlist)
         unset($val['accesslist']);
         unset($val['icon_url']);
         unset($val['modlist']);
-        unset($val['create_date_text']);
+        unset($val['create_date_fmt']);
         // hook model_forum_filter_after.php
     }
     // hook model_forum_filter_end.php

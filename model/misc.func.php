@@ -300,70 +300,79 @@ function xn_html_safe($doc, $arg = array())
 // 前台访问view目录下文件路径/支持分离
 function view_path()
 {
-    static $path = '';
-    if ($path) return $path;
+    static $path = array();
+    if (isset($path['view_path'])) return $path['view_path'];
     $conf = _SERVER('conf');
-    $path = 'view/' == $conf['view_url'] ? $conf['path'] . $conf['view_url'] : $conf['view_url'];
-    return $path;
-}
-
-// 后台访问view目录下文件路径/支持分离
-function admin_view_path()
-{
-    static $path = '';
-    if ($path) return $path;
-    $conf = _SERVER('conf');
-    $path = 'view/' == $conf['view_url'] ? '../' . $conf['view_url'] : $conf['view_url'];
-    return $path;
+    $conf_path = $conf['url_rewrite_on'] > 1 ? $conf['path'] : '';
+    $path['view_path'] = $conf_path . $conf['view_url'];
+    return $path['view_path'];
 }
 
 // 附件路径/支持分离
 function file_path()
 {
-    static $path = '';
-    if ($path) return $path;
+    static $path = array();
+    if (isset($path['file_path'])) return $path['file_path'];
     $conf = _SERVER('conf');
     if (0 == $conf['attach_on']) {
         // 本地
-        $url_access = GLOBALS('url_access');
-        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : (empty($url_access) ? $conf['upload_url'] : '../' . $conf['upload_url']);
-    } elseif (1 == $conf['attach_on']) {
+        $path['file_path'] = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : $conf['upload_url'];
+    } elseif (1 == $conf['attach_on'] || 2 == $conf['attach_on']) {
         // 云储存
-        $path = $conf['cloud_url'] . $conf['upload_url'];
-    } elseif (2 == $conf['attach_on']) {
-        // 云储存
-        $path = $conf['cloud_url'] . $conf['upload_url'];
+        $path['file_path'] = $conf['cloud_url'] . $conf['upload_url'];
     }
-    return $path;
+    return $path['file_path'];
 }
 
-// 后台访问附件路径
-function admin_file_path()
+// 后台访问view目录下文件路径/支持分离
+function admin_view_path()
 {
-    static $path = '';
-    if ($path) return $path;
+    static $path = array();
+    if (isset($path['admin_view_path'])) return $path['admin_view_path'];
     $conf = _SERVER('conf');
+    $path['admin_view_path'] = 'view/' == $conf['view_url'] ? '../' . $conf['view_url'] : $conf['view_url'];
+    return $path['admin_view_path'];
+}
+
+// 后台处理头像或主题缩略图、自定义图标
+function admin_access_file($icon = 0, $icon_fmt = '')
+{
+    global $conf;
+    if (empty($icon_fmt)) return $icon_fmt;
+    $local = FALSE;
+    // 本地未分离
+    if ($icon) {
+        // 上传文件
+        if (0 == $conf['attach_on']) $local = TRUE;
+    } else {
+        // icon 默认图片，view 目录
+        if ('view/' == $conf['view_url']) $local = TRUE;
+    }
+    if ($local) {
+        // 伪静态 1 追加 ../ 伪静态 2 追加 ..
+        $icon_fmt = $conf['url_rewrite_on'] < 2 ? '../' . $icon_fmt : '..' . $icon_fmt;
+    }
+    return $icon_fmt;
+}
+
+// 后台处理内容图、附件路径
+function admin_attach_path()
+{
+    global $conf;
+    static $cache = array();
+    $key = 'admin_attach_path';
+    if (isset($cache[$key])) return $cache[$key];
+    $cache[$key] = '';
+    // 未分离图片
     if (0 == $conf['attach_on']) {
-        // 本地
-        $path = $conf['url_rewrite_on'] > 1 ? file_path() : '../' . $conf['upload_url'];
-    } elseif (1 == $conf['attach_on']) {
-        // 云储存
-        $path = file_path();
-    } elseif (2 == $conf['attach_on']) {
-        // 云储存
-        $path = file_path();
+        // 伪静态 1 追加 ../
+        if ($conf['url_rewrite_on'] < 2) {
+            $cache[$key] = '../';
+        } else {
+            $cache[$key] = '..';
+        }
     }
-    return $path;
-}
-
-// 针对后台访问
-function url_path()
-{
-    static $path = '';
-    if ($path) return $path;
-    $conf = _SERVER('conf');
-    $path = $conf['url_rewrite_on'] > 1 ? '' : '../';
-    return $path;
+    return $cache[$key];
 }
 
 // 设置token

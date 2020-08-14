@@ -408,8 +408,8 @@ switch ($action) {
 
             // hook admin_content_update_get_start.php
 
+            $thread_data['message'] = str_replace('="upload/', '="'.admin_attach_path().'upload/', $thread_data['message']);
             $thread_data['message'] = htmlspecialchars($thread_data['message']);
-
             ($uid != $thread['uid']) AND $thread_data['message'] = xn_html_safe($thread_data['message']);
 
             $forum = array_value($forumlist, $fid);
@@ -423,7 +423,7 @@ switch ($action) {
             // hook admin_content_update_get_flag_after.php
 
             // 获取主图
-            $thread['icon_text'] = $thread['icon'] ? $thread['icon_text'] : url_path() . $thread['icon_text'];
+            $thread['icon_fmt'] = admin_attach_path() . $thread['icon_fmt'];
 
             // 初始化附件
             $_SESSION['tmp_thumbnail'] = $_SESSION['tmp_website_files'] = array();
@@ -442,7 +442,7 @@ switch ($action) {
             $filelist = array();
             $thread['files'] AND list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($tid, $thread['files']);
 
-            $tagstr = $thread['tag_text'] ? implode(',', $thread['tag_text']) . ',' : '';
+            $tagstr = $thread['tag_fmt'] ? implode(',', $thread['tag_fmt']) . ',' : '';
 
             // hook admin_content_update_get_files_after.php
 
@@ -450,7 +450,7 @@ switch ($action) {
             $form_action = url('content-update', $extra, TRUE);
             $form_submit_txt = lang('submit');
             $form_subject = $thread['subject'];
-            $form_message = FALSE !== strpos($thread_data['message'], '="upload/') ? str_replace('="upload/', '="../upload/', $thread_data['message']) : $thread_data['message'];
+            $form_message = $thread_data['message'];
             $form_brief = $thread['brief'];
             $form_doctype = $thread_data['doctype'];
             $form_link = 10 == $thread['type'] ? 'checked="checked"' : '';
@@ -458,7 +458,7 @@ switch ($action) {
             $form_keyword = $thread['keyword'];
             $form_description = $thread['description'];
             empty($filelist) || $filelist += (array)_SESSION('tmp_website_files');
-            $thumbnail = $thread['icon_text'];
+            $thumbnail = $thread['icon_fmt'];
 
             $setting = array_value($config, 'setting');
             $thumbnail_on = '';
@@ -683,7 +683,7 @@ switch ($action) {
             // 过滤标签 关键词
             // hook admin_content_update_post_tag_center.php
 
-            $tag_json = well_tag_post_update($tid, $fid, $tags, $thread['tag_text']);
+            $tag_json = well_tag_post_update($tid, $fid, $tags, $thread['tag_fmt']);
             if (xn_strlen($subject) >= 120) {
                 $s = xn_substr($tag_json, -1, NULL);
                 if ('}' != $s) {
@@ -691,7 +691,7 @@ switch ($action) {
                     $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
                 }
             }
-            $arr['tag'] = $tag_json != $thread['tag_text'] ? $tag_json : $thread['tag_text'];
+            $arr['tag'] = $tag_json != $thread['tag_fmt'] ? $tag_json : $thread['tag_fmt'];
 
             // hook admin_content_update_post_tag_after.php
 

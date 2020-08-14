@@ -277,7 +277,7 @@ switch ($action) {
             $input['display'] = form_radio_yes_no('display', $read['display']);
             $input['number'] = form_text('number', $read['number'], FALSE, lang('display_number'));
 
-            $thumbnail = $read['icon'] ? admin_file_path() . 'flag/' . $flagid . '.png' : admin_view_path() . 'img/nopic.png';
+            $thumbnail = admin_access_file($read['icon'], $read['icon_fmt']);
 
             // hook admin_flag_update_get_before.php
 

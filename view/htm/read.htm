@@ -53,7 +53,7 @@
 								</span>
                                 <!--{hook read_date_before.htm}-->
 								<span class="date text-grey ml-2">
-                                    <?php echo $thread['create_date_text'];?>
+                                    <?php echo $thread['create_date_fmt_ymd'];?>
                                 </span>
                                 <!--{hook read_date_after.htm}-->
 								<span class="text-grey ml-2"><i class="icon-eye"></i>&nbsp;
@@ -90,7 +90,7 @@
 				<?php if(1 == $page) { ?>
 					<!--需要 主图 文字环绕 删除下面的注释代码即可-->
                     <!--<div class="clearfix float-left mx-2">
-                        <img src="<?php echo $thread['icon_text'];?>" alt="<?php echo $thread['subject'];?>" />
+                        <img src="<?php echo $thread['icon_fmt'];?>" alt="<?php echo $thread['subject'];?>" />
                     </div>-->
 					<!--{hook read_message_before.htm}-->
 					<?php echo $data['message'];?>
@@ -118,7 +118,7 @@
 				<div class="row">
 					<div class="col-lg-12 text-muted mt-2">
 						<i class="icon-tags mr-2"></i>
-						<?php foreach($thread['tag_text'] as $_tag => $_tagname) { ?>
+						<?php foreach($thread['tag_fmt'] as $_tag => $_tagname) { ?>
 						<span class="badge border border-secondary mr-2">
                             <h2 class="h6 mb-0 small">
                                 <a class="text-secondary" href="<?php echo url('tag-' . $_tag);?>">

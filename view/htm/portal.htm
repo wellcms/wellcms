@@ -16,7 +16,7 @@
                     <?php $i =0;foreach($slide as &$_thread) {++$i;?>
                     <div class="carousel-item <?php if (1 == $i) {echo 'active';} ?>">
                         <a href="<?php echo $_thread['url'];?>">
-                            <img class="d-block w-100" src="<?php echo $_thread['icon_text']; ?>" alt='<?php echo $_thread['subject'];?>'>
+                            <img class="d-block w-100" src="<?php echo $_thread['icon_fmt']; ?>" alt='<?php echo $_thread['subject'];?>'>
                             <!--<div class="carousel-caption d-none d-md-block">
                                 <h2 class="h6">
                                     <?php echo $_thread['subject'];?>
@@ -110,10 +110,10 @@
             <div class="row">
                 <div class="col-md-4">
                     <ul class="row list-unstyled threadlist nowrap pl-2 mb-0">
-                        <?php if (!empty($_forum['news'])) {$i=0; foreach ($_forum['news'] as $_thread) {if ($_thread['icon_text'] && ++$i <= 2) { ?>
+                        <?php if (!empty($_forum['news'])) {$i=0; foreach ($_forum['news'] as $_thread) {if ($_thread['icon_fmt'] && ++$i <= 2) { ?>
                         <li class="col-6 col-md-12 mt-3">
                             <a href="<?php echo $_thread['url'];?>">
-                                <img class="d-block w-100" src="<?php echo $_thread['icon_text']; ?>" alt='<?php echo $_thread['subject'];?>'>
+                                <img class="d-block w-100" src="<?php echo $_thread['icon_fmt']; ?>" alt='<?php echo $_thread['subject'];?>'>
 
                                 <div class="ellipsis">
                                     <?php echo $_thread['subject'];?>

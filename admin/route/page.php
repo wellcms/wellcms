@@ -270,7 +270,7 @@ switch ($action) {
             $form_action = url('page-update', $extra, TRUE);
             $form_submit_txt = lang('submit');
             $form_subject = $thread['subject'];
-            $form_message = FALSE !== strpos($thread_data['message'], '="upload/') ? str_replace('="upload/', '="../upload/', $thread_data['message']) : $thread_data['message'];
+            $form_message = str_replace('="upload/', '="'.admin_attach_path().'upload/', $thread_data['message']);
             $form_doctype = $thread_data['doctype'];
 
             // hook admin_page_update_get_center.php

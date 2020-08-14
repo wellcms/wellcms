@@ -246,6 +246,8 @@ function data_file_list_html($filelist, $include_delete = FALSE, $access = FALSE
         $path = '';
     }
 
+    // hook model_data_file_list_html_before.php
+
     $s = '<fieldset class="fieldset m-0 p-0">' . "\r\n";
     $s .= '<legend>' . lang('uploaded_attach') . '：</legend>' . "\r\n";
     $s .= '<ul class="list-unstyled attachlist nowrap">' . "\r\n";
