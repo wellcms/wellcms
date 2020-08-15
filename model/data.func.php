@@ -99,7 +99,8 @@ function data_update($tid, $update)
 
     // hook model_data_update_after.php
 
-    $r AND 'mysql' != $conf['cache']['type'] AND cache_delete('website_data_' . $tid);
+    $r AND 'mysql' != $conf['cache']['type'] AND cache_update('website_data_' . $tid, $update, 1800);
+    
     // hook model_data_update_end.php
 
     return $r;

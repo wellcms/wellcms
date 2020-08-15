@@ -290,9 +290,9 @@ function well_thread_update($tid, $update)
 
     if ('mysql' != $conf['cache']['type']) {
         if (is_array($tid)) {
-            foreach ($tid as $_tid) cache_delete('website_thread_' . $_tid);
+            foreach ($tid as $_tid) cache_update('website_thread_' . $_tid, $update, 1800);
         } else {
-            cache_delete('website_thread_' . $tid);
+            cache_update('website_thread_' . $tid, $update, 1800);
         }
     }
 
@@ -527,7 +527,7 @@ function well_thread_delete($tid)
     $r = well_thread__delete($tid);
     if (FALSE === $r) return FALSE;
 
-    if (is_array($tid) && 'mysql' != $conf['cache']['type']) {
+    if ('mysql' != $conf['cache']['type']) {
         if (is_array($tid)) {
             foreach ($tid as $_tid) cache_delete('website_thread_' . $_tid);
         } else {
