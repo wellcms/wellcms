@@ -70,6 +70,7 @@ switch ($action) {
                 $commentlist = comment_find_by_pid($pids, $pagesize);
 
                 foreach ($commentlist as &$val) {
+                    data_format($val);
                     comment_filter($val);
                     $val['subject'] = $threadlist[$val['tid']]['subject'];
                     $val['url'] = $threadlist[$val['tid']]['url'];

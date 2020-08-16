@@ -72,7 +72,7 @@
                                     <!--{hook admin_comment_list_inc_subject_after.htm}-->
 
                                     <!--{hook admin_comment_list_inc_message_before.htm}-->
-                                    <?php echo str_replace('="upload/', '="'.admin_attach_path().'upload/', $_post['message']);?>
+                                    <?php echo $_post['message'];?>
                                     <!--{hook admin_comment_list_inc_message_after.htm}-->
 
                                 </div>

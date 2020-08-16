@@ -82,6 +82,8 @@ switch ($action) {
                 $message = strip_tags($message);
             }
 
+            $message = data_message_replace_url($tid, $message);
+            
             // hook comment_create_post_before.php
 
             xn_strlen($message) > 524288 AND message('message', lang('message_too_long'));

@@ -202,6 +202,7 @@ function comment_find_by_tid($tid, $page = 1, $pagesize = 20)
         ++$i;
         $post['i'] = $i;
         $post['floor'] = $floor++;
+        data_format($post);
         comment_format($post);
         comment_format_message($post); // 云储存
         // hook model_comment_find_by_tid_after.php
@@ -228,6 +229,7 @@ function comment_find($pidarr, $pagesize = 20, $desc = TRUE)
     foreach ($postlist as &$post) {
         ++$i;
         $post['i'] = $i;
+        data_format($post);
         comment_format($post);
         comment_format_message($post); // 云储存
     }
@@ -277,6 +279,7 @@ function comment_find_all($page = 1, $pagesize = 20)
         ++$i;
         $post['i'] = $i;
         $post['floor'] = $floor++;
+        data_format($post);
         comment_format($post);
         comment_format_message($post); // 云储存
         // hook model_comment_find_all_foreach.php
@@ -292,6 +295,7 @@ function comment_read($pid)
     // hook model_comment_read_start.php
     $r = comment__read(array('pid' => $pid));
     if ($r) {
+        data_format($r);
         comment_format($r);
         comment_format_message($r); // 云储存
     }
