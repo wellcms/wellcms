@@ -39,7 +39,7 @@ if (1 == $forum['type']) {
             // 从默认的地方读取主题列表
             $thread_list_from_default = 1;
 
-            // hook list_from_default_before.php
+            // hook list_from_default_after.php
 
             if (1 == $thread_list_from_default) {
 
