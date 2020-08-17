@@ -43,16 +43,24 @@ $access_menu = array(
     'setting' => array()
 );
 // hook admin_index_inc_access_after.php
-foreach ($access_menu as $key => $val) {
-    if (FALSE === group_access($gid, 'manage' . $key)) {
-        unset($menu[$key]);
-    } else {
-        if (empty($val)) continue;
-        foreach ($val as $_key => $_menu) {
-            if (FALSE === group_access($gid, $_menu)) unset($menu[$key]['tab'][$_key]);
+if (3 == DEBUG) {
+    $menu = array('user' => $menu['user']);
+    foreach ($menu['user']['tab'] as $k => $v) {
+        if ('user' != $k) unset($menu['user']['tab'][$k]);
+    }
+} else {
+    foreach ($access_menu as $key => $val) {
+        if (FALSE === group_access($gid, 'manage' . $key)) {
+            unset($menu[$key]);
+        } else {
+            if (empty($val)) continue;
+            foreach ($val as $_key => $_menu) {
+                if (FALSE === group_access($gid, $_menu)) unset($menu[$key]['tab'][$_key]);
+            }
         }
     }
 }
+
 unset($access_menu);
 
 // hook admin_index_inc_center.php

@@ -70,7 +70,7 @@ $static_version = $conf['static_version'];
 
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="avatar-2" src="<?php echo admin_access_file($user['avatar'], $user['avatar_url']);?>">
+                        <img class="avatar-2" src="<?php echo isset($user['avatar'])?admin_access_file($user['avatar'], $user['avatar_url']):'';?>">
                     </a>
                     <div class="dropdown-menu dropdown-menu-right animated--fade-in-up shadow border-0 border-left-primary">
                         <div class="dropdown-header d-flex justify-content-between">
