@@ -105,7 +105,7 @@ function thread_tid_update($tid, $fid)
 // 主键更新lastpid
 function thread_tid_update_lastpid($tid, $lastpid)
 {
-    if (empty($tid) || empty($fid)) return FALSE;
+    if (empty($tid) || empty($lastpid)) return FALSE;
     // hook model_thread_tid_update_start.php
     $r = thread_tid__update(array('tid' => $tid), array('lastpid' => $lastpid));
     // hook model_thread_tid_update_end.php

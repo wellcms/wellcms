@@ -41,7 +41,7 @@ if (1 == $forum['type']) {
 
             // hook list_from_default_before.php
 
-            if ($thread_list_from_default) {
+            if (1 == $thread_list_from_default) {
 
                 // hook list_thread_start.php
 

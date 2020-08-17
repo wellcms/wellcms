@@ -150,7 +150,7 @@ if (0 == $website_mode) {
 
     // hook index_flat_after.php
 
-    if ($thread_list_from_default) {
+    if (1 == $thread_list_from_default) {
 
         // hook index_flat_thread_find_start.php
 

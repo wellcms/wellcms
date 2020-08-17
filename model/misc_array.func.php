@@ -12,6 +12,7 @@ function array_multisort_key($arrlist, $col, $asc = TRUE, $key = NULL)
 
     $colarr = array();
     foreach ($arrlist as $k => $v) {
+        if (!isset($v[$col])) continue;
         $colarr[$k] = $v[$col];
     }
     $asc = $asc ? SORT_ASC : SORT_DESC;

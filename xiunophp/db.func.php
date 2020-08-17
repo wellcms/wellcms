@@ -207,34 +207,48 @@ function db_big_replace($table, $arr, $d = NULL)
 // 大数据量一次更新拼接sql字串 建议一次5000-10000再大需要调整php配置
 /*
  * 格式
-$cond = array('uid' => array(1, 2, 3, 4));
-$update = array('更新条件uid值' => array('k' => 1, 'k1+' => 1, '更新字段+' => '更新的数据'))
+更新条件限主键，不支持多条件
+$cond = array('tid' => array(1,2,3,4));
+$update = array('更新条件tid值' => array('更新字段，可+或-' => '更新数据'))
 $update = array(
-    // 更新条件 仅限主键
-    '更新条件' => array(
-        'k' => 1, // 更新键值
-        'k1+' => 1, // 更新键值+或-
-    ),
-    '2' => array(
-        'k' => 2, // 更新键值
-        'k2+' => 2, // 更新键值+或-
-    ),
-    '3' => array(
-        'k' => 3, // 更新键值
-    ),
-    '5' => array(
-        'k' => 4, // 更新键值
-        'k4' => 4, // 更新键值+或-
-    )
-);*/
+    '1' => array('views' => 10),
+    '2' => array('views' => 100),
+    '3' => array('views+' => 200, 'mods' => 20),
+    '4' => array('views+' => 1000, 'mods+' => 50)
+);
+*/
 function db_big_update($table, $cond, $update, $d = NULL)
 {
     $db = $_SERVER['db'];
     $d = $d ? $d : $db;
     if (!$d || empty($cond) || empty($update)) return FALSE;
 
-    $sqladd = db_big_array_update_to_sqladd($cond, $update);
-    if (!$sqladd) return FALSE;
+    reset($cond);
+    $cond_key = key($cond);
+
+    $arr = array();
+    foreach ($update as $_cond => $_arr) {
+        foreach ($_arr as $field => $val) {
+            $val = (is_int($val) || is_float($val)) ? $val : "'$val'";
+            $op = substr($field, -1);
+            if ($op == '+' || $op == '-') {
+                $then = $field.$val.' ';
+                $field = str_replace(array('+','-'), '', $field);
+            } else {
+                $then = $val.' ';
+            }
+            $s = 'WHEN '.$_cond.' THEN '.$then;
+            $arr[$field] = isset($arr[$field]) ? $arr[$field].$s : "`$field` = CASE `$cond_key` $s";
+        }
+    }
+
+    $sqlstr = '';
+    foreach ($arr as $val) {
+        $sqlstr .= $val . ' END,';
+    }
+
+    $sqladd = rtrim($sqlstr, ',') . db_cond_to_sqladd($cond);
+
     return db_exec("UPDATE {$d->tablepre}$table SET $sqladd", $d);
 }
 
@@ -334,19 +348,25 @@ function db_cond_to_sqladd($cond)
                 $s .= "`$k`=$v AND ";
             } elseif (isset($v[0])) {
                 // OR 效率比 IN 高
-                $s .= '(';
-                //$v = array_reverse($v);
+                /*$s .= '(';
                 foreach ($v as $v1) {
                     $v1 = (is_int($v1) || is_float($v1)) ? $v1 : "'" . addslashes($v1) . "'";
                     $s .= "`$k`=$v1 OR ";
                 }
                 $s = substr($s, 0, -4);
+                $s .= ') AND ';*/
+
+                $s .= "`$k` IN (";
+                foreach ($v as $v1) {
+                    $v1 = (is_int($v1) || is_float($v1)) ? $v1 : "'" . addslashes($v1) . "'";
+                    $s .= $v1.',';
+                }
+                $s = substr($s, 0, -1);
                 $s .= ') AND ';
 
-                /*
-                $ids = implode(',', $v);
-                $s .= "$k IN ($ids) AND ";
-                */
+                /*$ids = implode(',', $v);
+                $s .= "$k IN ($ids) AND ";*/
+
             } else {
                 foreach ($v as $k1 => $v1) {
                     if ('LIKE' == $k1) {
@@ -444,69 +464,12 @@ function db_big_array_to_insert_sqladd($arr)
             $values[] = $v1;
         }
 
-        // 把数组变成逗号连接字符串
         $valstr .= '(' . implode(',', $values) . '),';
     }
 
-    $keystr = implode(',', $keys);
-
-    $sqladd = '(' . $keystr . ') VALUES ' . rtrim($valstr, ',');
+    $sqladd = '(' . implode(',', $keys) . ') VALUES ' . rtrim($valstr, ',');
 
     return $sqladd;
-}
-
-function db_big_array_update_to_sqladd($cond, $update)
-{
-    // 格式化
-    $arr = db_big_update_array_to_str($update);
-
-    $sqlstr = '';
-    foreach ($arr as $key => $value) {
-
-        $sqlstr .= db_big_update_cond_to_str($key, $cond);
-
-        $str = '';
-        foreach ($value as $k => $v) {
-            $str .= $v;
-        }
-
-        $sqlstr .= rtrim($str, ' ') . ' END,';
-    }
-
-    return rtrim($sqlstr, ',') . db_cond_to_sqladd($cond);
-}
-
-// 格式化拼接字串
-function db_big_update_array_to_str($update)
-{
-    $arr = array();
-    foreach ($update as $key => $val) {
-        foreach ($val as $k => $v) {
-            $v = (is_int($v) || is_float($v)) ? $v : "'$v'";
-            $arr[$k][$key] = "WHEN $key THEN $v ";
-        }
-    }
-
-    return $arr;
-}
-
-// 拼接key
-function db_big_update_cond_to_str($key, $cond)
-{
-    $sqlstr = '';
-    $op = substr($key, -1);
-    if ($op == '+' || $op == '-') {
-        $key = substr($key, 0, -1);
-        foreach ($cond as $cond_key => $cond_val) {
-            $sqlstr .= "$key = $key$op CASE $cond_key ";
-        }
-    } else {
-        foreach ($cond as $cond_key => $cond_val) {
-            $sqlstr .= "$key = CASE $cond_key ";
-        }
-    }
-
-    return $sqlstr;
 }
 
 ?>
