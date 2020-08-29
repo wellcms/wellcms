@@ -405,6 +405,7 @@ return array(
     'brief' => '簡介',
     'content' => '內容',
     'list' => '列表',
+    'list_pagination' => '列表分頁',
     'increase' => '增加',
     'thumbnail' => '縮略圖',
     'article' => '文章',

@@ -23,8 +23,12 @@
             <!--登录图标-->
 				<a class="navbar-brand d-block d-lg-none" rel="nofollow" href="<?php echo url('user-login');?>" aria-label="<?php echo lang('login');?>"> <i class="icon-user"></i></a>
 			<?php } else { ?>
+            <?php if (group_access($gid, 'allowthread')) { ?>
+            <!--{hook header_nav_create.htm}-->
+            <?php } else { ?>
             <!--搜索图标-->
 				<a class="navbar-brand d-block d-lg-none" href="<?php echo url('operate-search');?>"><i class="icon-search"></i></a>
+            <?php } ?>
 			<?php } ?>
 			
 			<!--{hook header_nav_user_icon_after.htm}-->

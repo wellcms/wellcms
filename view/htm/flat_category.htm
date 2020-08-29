@@ -60,38 +60,28 @@
                             </span>
                             <br>
                             <b>
-                                <?php echo $runtime['articles'];?>
+                                <?php echo $forum['threads'];?>
                             </b>
                         </td>
                         <td>
                             <span class="text-muted">
-                                <?php echo lang('comments');?>
+                                <?php echo lang('today_comment');?>
                             </span>
                             <br>
                             <b>
-                                <?php echo $runtime['comments'];?>
+                                <?php echo $forum['todayposts'];?>
                             </b>
                         </td>
                         <td>
                             <span class="text-muted">
-                                <?php echo lang('users');?>
+                                <?php echo lang('today_threads');?>
                             </span>
                             <br>
                             <b>
-                                <?php echo $runtime['users'];?>
+                                <?php echo $forum['todaythreads'];?>
                             </b>
                         </td>
-                        <?php if($runtime['onlines'] > 0) { ?>
-                        <td>
-                            <span class="text-muted">
-                                <?php echo lang('online');?>
-                            </span>
-                            <br>
-                            <b>
-                                <?php echo $runtime['onlines'];?>
-                            </b>
-                        </td>
-                        <?php } ?>
+                        <!--{hook index_flat_todaythreads_after.htm}-->
                     </tr>
                 </table>
             </div>

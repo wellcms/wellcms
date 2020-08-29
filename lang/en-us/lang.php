@@ -405,6 +405,7 @@ return array(
     'brief' => 'brief',
     'content' => 'content',
     'list' => 'list',
+	'list_pagination' => 'list pagination',
     'increase' => 'increase',
     'thumbnail' => 'thumbnail',
     'article' => 'article',
