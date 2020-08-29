@@ -101,5 +101,10 @@
 <!--{hook user_common_end.htm}-->
 
 <?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
-
+<script>
+    if ($(document.body).width() < 992) {
+        $('#nav-show').css({"position": "fixed", "top": "0", "bottom": "0", "right": "0", "z-index": "1032"});
+        $('.nav-block,.button-hide').css("top","45%");
+    }
+</script>
 <!--{hook user_common_js.htm}-->

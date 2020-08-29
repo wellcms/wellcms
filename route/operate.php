@@ -227,62 +227,15 @@ switch ($action) {
 
             if ($tid) {
                 // 单条删除
-
                 // hook operate_delete_content_before.php
-
-                well_thread_delete_content($tid);
-
+                well_thread_delete_all($tid);
                 // hook operate_delete_content_after.php
-
             } else {
-
                 // 选择框批量删除
-
-                // hook operate_delete_param_before.php
-
                 $tidarr = param('tidarr', array(0));
                 empty($tidarr) AND message(1, lang('please_choose_thread'));
-
-                // hook operate_delete_center.php
-
-                $threadlist = well_thread_find_by_tids($tidarr);
-
-                // hook operate_delete_middle.php
-
-                foreach ($threadlist as &$thread) {
-                    $tid = $thread['tid'];
-                    $fid = $thread['fid'];
-                    // hook operate_delete_thread_start.php
-
-                    $forum = array_value($forumlist, $fid);
-                    //if (empty($forum)) continue;
-
-                    // hook operate_delete_thread_before.php
-
-                    if (forum_access_mod($fid, $gid, 'allowdelete')) {
-                        // hook operate_delete_thread_center.php
-
-                        switch ($forum['model']) {
-                            case '0': // 删除文章
-                                well_thread_delete_all($tid);
-                                break;
-                            // hook operate_delete_foreach_case.php
-                        }
-
-                        // hook operate_delete_thread_middle.php
-
-                        $arr = array('type' => 1, 'uid' => $uid, 'tid' => $tid, 'subject' => $thread['subject'], 'comment' => '', 'create_date' => $time);
-
-                        // hook operate_delete_operate_before.php
-
-                        $r = operate_create($arr);
-
-                        // hook operate_delete_operate_after.php
-                    }
-
-                    // hook operate_delete_thread_end.php
-                }
-
+                // hook operate_delete_tidarr.php
+                well_thread_delete_all($tidarr);
                 // hook operate_delete_after.php
             }
 

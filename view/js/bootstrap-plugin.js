@@ -34,7 +34,7 @@ $.alert = function (subject, timeout, options) {
 $.confirm = function (subject, ok_callback, options) {
     var options = options || {size: "md"};
     options.body = options.body || '';
-    var title = options.body ? subject : lang.confirm_title + ':';
+    var title = options.body ? subject : lang.confirm_title;
     var subject = options.body ? '' : '<p>' + subject + '</p>';
     var s = '\
 	<div class="modal fade" tabindex="-1" role="dialog">\

@@ -181,6 +181,30 @@ function well_attach_delete_by_tid($tid)
     return count($attachlist);
 }
 
+/*
+ * @param $tids 数组array(1,2,3)
+ * @param $n 图片和附件总数量
+ * @return int 返回清理数量
+ */
+function well_attach_delete_by_tids($tids, $n)
+{
+    global $conf;
+
+    $attachlist = well_attach__find(array('tid' => $tids), array('aid' => 1), 1, $n);
+    if (!$attachlist) return 0;
+
+    $aids = array();
+    foreach ($attachlist as $attach) {
+        $path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
+        is_file($path) AND unlink($path);
+        $aids[] = $attach['aid'];
+    }
+
+    well_attach__delete($aids);
+
+    return count($aids);
+}
+
 // 获取 $filelist $imagelist
 function well_attach_find_by_pid($pid)
 {

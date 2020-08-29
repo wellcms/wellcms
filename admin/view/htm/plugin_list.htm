@@ -19,14 +19,14 @@
 
             <article class="d-flex thread" dir="<?php echo $dir; ?>">
                 <div class="d-none d-md-block mx-3">
-                    <a data-modal-title="<?php echo $plugin['name']; ?>" data-modal-size="lg" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
+                    <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
                         <img src="<?php echo $plugin['icon_url']; ?>" width="54" height="54" />
                     </a>
                 </div>
                 <div class="col row p-0 m-0">
                     <div class="col-lg-3">
                         <p class="text-break font-weight-bold d-inline m-0">
-                            <a data-modal-title="<?php echo $plugin['name']; ?>" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>" data-modal-size="lg">
+                            <a href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>">
                                 <?php echo $plugin['name']; ?>
                             </a>
                             <i class="icon-rmb mx-1"></i>
@@ -46,7 +46,7 @@
                         <div class="d-flex justify-content-start mb-3">
                             <!-- 付费查看详情 -->
                             <?php if('official_fee' == $action && !$plugin['downloaded']) { ?>
-                            <a role="button" data-modal-title="<?php echo $plugin['name']; ?>" data-modal-size="lg" class="btn btn-primary btn-sm buy mx-1" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>"><?php echo lang('buy');?></a>
+                            <a role="button" class="btn btn-primary btn-sm buy mx-1" href="<?php echo url('plugin-read', array('dir'=>$dir), TRUE);?>"><?php echo lang('buy');?></a>
                             <?php } ?>
 
                             <?php if('official_free' == $action && !$plugin['downloaded']) { ?>

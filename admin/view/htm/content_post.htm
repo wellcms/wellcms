@@ -161,23 +161,24 @@
         var files = xn.get_files_from_event(e);
         if (!files) return;
 
-        var fid = jfid.val();
+        var fid = jfid.checked();
         var forum = forumlist[fid];
         var picture_size = forum.thumbnail;
 
         $.each_sync(files, function (i, callback) {
             var file = files[i];
             xn.upload_file(file, xn.url('attach-create-1', '', 2), {
-                is_image: 1,
-                convert: 1, /*转码*/
-                filetype: 'jpeg',   /*压缩类型*/
-                qulity: '0.7',  /*压缩比例*/
-                width: picture_size.width || "<?php echo $pic_width; ?>",
-                height: picture_size.height || "<?php echo $pic_height; ?>",
-                action: "<?php echo array_value($conf, 'upload_resize', 'clip'); ?>",
-                n: n,
-                mode: 1, /*缩略图*/
-                safe_token: safe_token
+                'fid': fid,
+                'is_image': 1,
+                'convert': 1, /*转码*/
+                'filetype': 'jpeg',   /*压缩类型*/
+                'qulity': '0.7',  /*压缩比例*/
+                'width': picture_size.width || "<?php echo $pic_width; ?>",
+                'height': picture_size.height || "<?php echo $pic_height; ?>",
+                'action': "<?php echo array_value($conf, 'upload_resize', 'clip'); ?>",
+                'n': n,
+                'mode': 1, /*缩略图*/
+                'safe_token': safe_token
             }, function (code, message) {
                 if (code != 0) return $.alert(message);
                 jassoc.attr('src', message.url);
@@ -300,6 +301,10 @@
     }
 
     jform.find('[name="fid"]').checked(fid);
+
+    if ($(document.body).width() < 992) {
+        $('#nav-show').css({"position": "fixed", "top": "0", "bottom": "0", "right": "0", "margin-top": "3.625rem", "z-index": "1032"});
+    }
 
     $('#content').addClass('show');
     $('li.<?php echo $route;?>').addClass('active');

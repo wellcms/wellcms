@@ -25,14 +25,23 @@ switch ($action) {
 
         // hook home_article_start.php
 
-        $threadlist = well_thread_find_by_uid($uid, $page, $pagesize);
+        // 从默认的地方读取主题列表
+        $thread_list_from_default = 1;
 
+        // hook home_article_pagination_before.php
+
+        if (1 == $thread_list_from_default) {
+            $threadlist = well_thread_find_by_uid($uid, $page, $pagesize);
+        }
+
+        // hook home_article_pagination_center.php
+        
         $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || 1 == $gid;
 
         $page_url = url('home-article-{page}', $extra);
         $num = $user['articles'];
 
-        // hook home_article_pagination_before.php
+        // hook home_article_pagination_after.php
 
         $pagination = pagination($page_url, $num, $page, $pagesize);
 
@@ -48,14 +57,23 @@ switch ($action) {
         if ('GET' == $method) {
 
             $page = param(2, 1);
-            $pagesize = $conf['pagesize'];
+            $pagesize = 25;
             $extra = array(); // 插件预留
 
             // hook home_comment_before.php
 
-            $postlist = comment_pid_find_by_uid($uid, $page, $pagesize);
+            // 从默认的地方读取主题列表
+            $post_list_from_default = 1;
 
-            if ($postlist) {
+            // hook home_comment_post_default_before.php
+
+            if (1 == $post_list_from_default) {
+                $postlist = comment_pid_find_by_uid($uid, $page, $pagesize);
+            }
+
+            // hook home_comment_post_default_after.php
+            
+            if (!empty($postlist)) {
                 $pids = array();
                 $tids = array();
                 foreach ($postlist as &$_pid) {

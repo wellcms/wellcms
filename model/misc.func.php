@@ -392,8 +392,14 @@ function well_token_set($uid = 0)
     return $token;
 }
 
-// 验证token 返回 FALSE 验证失败 $life token 生命期
-function well_token_verify($uid, $token, $life = 1800)
+/*
+ * @param $uid 当前用户UID
+ * @param $token 获取的token
+ * @param int $verify cookie中的token 0不比对 / 1比对
+ * @param int $life token 生命期
+ * @return bool|mixed|string 返回 token 验证成功 / FALSE 验证失败
+ */
+function well_token_verify($uid, $token, $verify = 0, $life = 1800)
 {
     global $conf, $useragent;
     if (empty($token)) return FALSE;
@@ -402,11 +408,16 @@ function well_token_verify($uid, $token, $life = 1800)
         if (empty($user)) return FALSE;
         $pwd = md5($user['password']);
     } else {
+        if (empty($useragent)) return FALSE;
         $pwd = md5($useragent);
     }
-    $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
-    $_token = _COOKIE($key);
-    if (empty($_token) || $_token != $token) return FALSE;
+
+    if (1 == $verify) {
+        $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
+        $_token = _COOKIE($key);
+        if (empty($_token) || $_token != $token) return FALSE;
+    }
+
     $r = well_token_decrypt($token, $uid, $pwd, $life);
     return $r;
 }

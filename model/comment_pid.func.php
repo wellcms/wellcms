@@ -105,7 +105,7 @@ function comment_pid_count()
 }
 
 // 海量数据的情况下禁止使用非主键的统计函数
-// 统计主题回复数 可直接调用website_thread表该主题回复数
+// 统计主题回复数 可直接调用website_thread表该主题回复数posts
 function comment_pid_count_by_tid($tid)
 {
     // hook model_comment_pid_count_by_tid_start.php
@@ -115,7 +115,7 @@ function comment_pid_count_by_tid($tid)
 }
 
 // 海量数据的情况下禁止使用非主键的统计函数
-// 统计用户回复数 可直接调用user表该主题回复数posts
+// 统计用户回复数 可直接调用user表该主题回复数comments
 function comment_pid_count_by_uid($uid)
 {
     // hook model_comment_pid_count_by_uid_start.php

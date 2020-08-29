@@ -360,9 +360,9 @@ function pager($url, $totalnum, $page, $pagesize = 20)
     $page = min($totalpage, $page);
 
     $s = '';
-    $page > 1 AND $s .= '<li><a href="' . str_replace('{page}', $page - 1, $url) . '">Prev</a></li>';
-    $s .= " $page / $totalpage ";
-    $totalnum >= $pagesize AND $page != $totalpage AND $s .= '<li><a href="' . str_replace('{page}', $page + 1, $url) . '">Next</a></li>';
+    $page > 1 AND $s .= '<li class="page-item"><a class="page-link" href="' . str_replace('{page}', $page - 1, $url) . '">Prev</a></li>';
+    $s .= "<li class=\"page-item page-link\">$page / $totalpage</li>";
+    $totalnum >= $pagesize AND $page != $totalpage AND $s .= '<li class="page-item"><a class="page-link" href="' . str_replace('{page}', $page + 1, $url) . '">Next</a></li>';
     return $s;
 }
 

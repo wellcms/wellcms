@@ -15,6 +15,7 @@ class cache_redis
             return $this->error(-1, ' Redis 扩展没有加载');
         }
         $this->conf = $conf;
+        $this->cachepre = isset($conf['cachepre']) ? $conf['cachepre'] : 'pre_';
     }
 
     public function connect()

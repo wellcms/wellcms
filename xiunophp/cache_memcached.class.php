@@ -13,6 +13,8 @@ class cache_memcached {
                 if(!extension_loaded('Memcache') && !extension_loaded('Memcached') ) {
                         return $this->error(1, ' Memcached 扩展没有加载，请检查您的 PHP 版本');
                 }
+                $this->conf = $conf;
+                $this->cachepre = isset($conf['cachepre']) ? $conf['cachepre'] : 'pre_';
         }
         public function connect() {
                 $conf = $this->conf;

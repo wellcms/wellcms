@@ -9,6 +9,7 @@ class cache_yac {
                 if(!class_exists('Yac')) {
                         return $this->error(1, 'yac 扩展没有加载，请检查您的 PHP 版本');
                 }
+                $this->cachepre = isset($conf['cachepre']) ? $conf['cachepre'] : 'pre_';
 		$this->yac = new Yac();
         }
         public function connect() {

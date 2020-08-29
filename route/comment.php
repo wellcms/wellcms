@@ -29,7 +29,7 @@ switch ($action) {
         // hook comment_create_center.php
 
         // 用户组权限不足
-        forum_access_user($fid, $gid, 'allowpost') || message(1, lang('user_group_insufficient_privilege'));
+        0 != $thread['status'] || forum_access_user($fid, $gid, 'allowpost') || message(1, lang('user_group_insufficient_privilege'));
 
         // hook comment_create_after.php
 
@@ -83,7 +83,7 @@ switch ($action) {
             }
 
             $message = data_message_replace_url($tid, $message);
-            
+
             // hook comment_create_post_before.php
 
             xn_strlen($message) > 524288 AND message('message', lang('message_too_long'));
@@ -237,7 +237,9 @@ switch ($action) {
 
                 // hook comment_update_post_assoc_after.php
 
-                FALSE === comment_update($pid, array('doctype' => $doctype, 'images' => $images, 'files' => $files, 'message' => $message)) AND message(-1, lang('update_post_failed'));
+                $update = array('doctype' => $doctype, 'images' => $images, 'files' => $files, 'message' => $message);
+                // hook comment_update_post_after.php
+                FALSE === comment_update($pid, $update) AND message(-1, lang('update_post_failed'));
             }
 
             // hook post_update_post_end.php
@@ -261,7 +263,7 @@ switch ($action) {
 
         include _include(APP_PATH . 'model/operate.func.php');
 
-        $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || 1 == $gid;
+        $allowdelete = 1 == $gid || group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete');
 
         empty($allowdelete) AND message(-1, lang('user_group_insufficient_privilege'));
 
@@ -337,8 +339,6 @@ switch ($action) {
             empty($forum['type']) AND message(1, lang('user_group_insufficient_privilege'));
 
             // hook comment_delete_center.php
-
-            forum_access_user($post['fid'], $gid, 'allowpost') || message(1, lang('user_group_insufficient_privilege'));
 
             $allowdelete = forum_access_mod($post['fid'], $gid, 'allowdelete');
             empty($allowdelete) && empty($post['allowdelete']) AND message(1, lang('insufficient_delete_privilege'));

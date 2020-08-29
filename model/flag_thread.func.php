@@ -125,6 +125,37 @@ function flag_thread_delete($id)
     return $r;
 }
 
+/*
+ * @param $tids 删除的tid集合 array(1,2,3)
+ * @param $n 删除总数量
+ * @return int 返回删除数量
+ */
+function flag_thread_delete_by_tids($tids, $n)
+{
+    $arrlist = flag_thread__find(array('tid' => $tids), array('id' => 1), 1, $n);
+    if (!$arrlist) return 0;
+
+    $idarr = array();
+    $flagarr = array();
+    foreach ($arrlist as $val) {
+        $idarr[] = $val['id']; // 删除
+        isset($flagarr[$val['flagid']]) ? $flagarr[$val['flagid']] += 1 : $flagarr[$val['flagid']] = 1; // 更新
+    }
+
+    flag_thread_delete($idarr);
+
+    $flagids = array();
+    $update = array();
+    foreach ($flagarr as $flagid => $n) {
+        $flagids[] = $flagid;
+        $update[$flagid] = array('count-' => $n);
+    }
+
+    flag_big_update(array('flagid' => $flagids), $update);
+
+    return count($idarr);
+}
+
 //--------------------------其他方法--------------------------
 // 获取版块下属性设置为显示的主题tid $fid = 0 为首页
 function flag_thread_by_fid($fid)

@@ -80,16 +80,16 @@ $(function () {
     var remove = 'd-lg-none position-fixed rounded-left bg-secondary d-flex align-items-center';
     var remove1 = 'd-none d-lg-block';
     var remove2 = 'sticky-top pt-2';
-    var add = 'shadow position-fixed col-9 h-100 bg-white p-0';
+    var add = 'shadow col-8 col-md-4 bg-white px-0';
     var add1 = 'px-2';
     /*菜单侧边滑出 .nav-block 控制在左右 */
     $('.button-show').click(function () {
         var jthis = $(this);
         var left = jthis.offset().left;
-        add += left ? ' offset-3' : '';
+        add += left ? ' offset-4 offset-md-8' : '';
         jthis.css('display', 'none');
         jthis.removeClass(remove);
-        nav.css({"top": "0", "bottom": "0", "right": "0", "z-index": "1030"});
+        /*nav.css({"position": "fixed", "top": "0", "bottom": "0", "right": "0", "margin-top": "3.625rem", "z-index": "1032"});*/
         nav.removeClass(remove1).addClass(add);
         nav.find('.post-sticky-top').removeClass(remove2).addClass(add1);
         /*nav.animate({right: ''}, 500);*/
@@ -105,7 +105,7 @@ $(function () {
         var button_show = $('.button-show');
         button_show.addClass(remove);
         button_show.css('display', 'block');
-        nav.removeAttr('style');
+        /*nav.removeAttr('style');*/
         nav.removeClass(add).addClass(remove1);
         nav.find('.post-sticky-top').removeClass(add1).addClass(remove2);
         /*nav.animate({left: ''}, 500);*/

@@ -93,11 +93,11 @@ function forum_read($fid)
     // hook model_forum_read_end.php
 }
 
-// 关联数据删除
+// 关联数据删除 把板块下所有的内容都查找出来，此处数据量大可能会超时，所以不要删除帖子特别多的板块
 function forum_delete($fid)
 {
     global $forumlist;
-    //  把板块下所有的内容都查找出来，此处数据量大可能会超时，所以不要删除帖子特别多的板块
+    
     if (empty($fid)) return FALSE;
 
     $forum = $forumlist[$fid];
@@ -108,10 +108,19 @@ function forum_delete($fid)
     $cond = array('fid' => $fid);
     // 分类 0论坛 1cms
     if (1 == $forum['type']) {
-        $threadlist = thread_tid__find($cond, array(), 1, 1000000, 'tid', array('tid', 'uid'));
-        if ($threadlist) {
-            foreach ($threadlist as $thread) {
-                well_thread_delete_all($thread['tid']);
+        $pagesize = 5000;
+        if ($forum['threads'] > 5000) {
+            $totalpage = ceil($forum['threads'] / $pagesize);
+        } else {
+            $totalpage = 1;
+        }
+
+        for ($i = 1; $i <=$totalpage; ++$i) {
+            $threadlist = thread_tid__find($cond, array(), $i, $pagesize, 'tid', array('tid'));
+            if ($threadlist) {
+                $tids = array();
+                foreach ($threadlist as $thread) $tids[] = $thread['tid'];
+                !empty($tids) AND well_thread_delete_all($tids);
             }
         }
     }

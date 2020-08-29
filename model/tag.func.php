@@ -418,11 +418,11 @@ function well_tag_process($tid = 0, $fid, $new_tags = array(), $tagarr = array()
 
     // hook model_tag_process_after.php
 
-    $tagarr = empty($tagarr) ? '' : xn_json_encode($tagarr);
+    $json = empty($tagarr) ? '' : xn_json_encode($tagarr);
 
     // hook model_tag_process_end.php
 
-    return $tagarr;
+    return $json;
 }
 
 // hook model__tag_end.php

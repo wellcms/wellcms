@@ -30,6 +30,7 @@ class cache_mysql
             $this->conf = $dbconf;
             $this->db = db_new($dbconf);
         }
+        $this->cachepre = isset($dbconf['cachepre']) ? $dbconf['cachepre'] : 'pre_';
     }
 
     public function connect()

@@ -1,5 +1,4 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
-
 <!--{hook admin_other_cache_start.htm}-->
 <div class="container-fluid">
 <div class="row">
@@ -8,20 +7,22 @@
 			<div class="card-body">
 				<form action="<?php echo url('other-cache', '', TRUE);?>" method="post" id="form">
 					<?php echo $input['safe_token'];?>
-					<div class="form-group row">
-						<label class="col-sm-6 form-control-label"><?php echo lang('admin_clear_tmp');?>：</label>
-						<div class="col-sm-6">
-							<?php echo $input['clear_tmp'];?>
-						</div>
-					</div>
-
-					<div class="form-group row">
-						<label class="col-sm-6 form-control-label"><?php echo lang('admin_clear_cache');?>：</label>
-						<div class="col-sm-6">
-							<?php echo $input['clear_cache'];?>
-						</div>
-					</div>
-
+					<div class="row">
+                        <div class="col-6 col-md-3 mx-auto">
+                            <div class="form-group d-flex justify-content-between">
+                                <label class="form-control-label"><?php echo lang('admin_clear_tmp');?>：</label>
+                                <div>
+                                    <?php echo $input['clear_tmp'];?>
+                                </div>
+                            </div>
+                            <div class="form-group d-flex d-flex justify-content-between">
+                                <label class="form-control-label"><?php echo lang('admin_clear_cache');?>：</label>
+                                <div>
+                                    <?php echo $input['clear_cache'];?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 					<div class="form-group row">
 						<div class="col-sm-12">
 							<button type="submit" class="btn btn-danger btn-block col-md-3 mx-auto" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
@@ -33,10 +34,8 @@
 	</div>
 </div>
 </div>
-<!--{hook admin_other_cache_end.htm}-->
-	
+<!--{hook admin_other_cache_end.htm}-->	
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
-
 <script>
 var jform = $('#form');
 jform.on('submit', function() {

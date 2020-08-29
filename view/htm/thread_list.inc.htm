@@ -1,7 +1,7 @@
 <!--{hook thread__list_inc_start.htm}-->
 
 <?php if($threadlist) { foreach($threadlist as &$_thread) { ?>
-<li class="media thread tap bg-white" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
+<li class="media thread tap" data-href="<?php echo $_thread['url']; ?>" tid="<?php echo $_thread['tid'];?>">
 
     <?php if($_thread['allowtop']) { ?>
     <div class="custom-control custom-checkbox ml-2">
@@ -81,38 +81,39 @@
 
                 <!--{hook thread__list_inc_brief_after.htm}-->
 
-                <div class="col-lg-12 text-grey mt-2">
-                    <!--{hook thread__list_inc_avatar_before.htm}-->
-                    <a href="<?php echo url('user-' . $_thread['uid']);?>" tabindex="-1" class="mr-2">
-                        <img class="avatar-1" src="<?php echo $_thread['user_avatar_url'];?>">
-                    </a>
-                    <!--{hook thread__list_inc_avatar_after.htm}-->
+                <div class="col-lg-12 d-flex justify-content-between text-grey mt-2">
+                    <div class="d-flex">
+                        <!--{hook thread__list_inc_avatar_before.htm}-->
+                        <a href="<?php echo url('user-' . $_thread['uid']);?>" tabindex="-1" class="mr-2">
+                            <img class="avatar-1" src="<?php echo $_thread['user_avatar_url'];?>">
+                        </a>
+                        <!--{hook thread__list_inc_avatar_after.htm}-->
 
-                    <span class="username mr-1" uid="<?php echo $_thread['uid'];?>">
-                        <?php echo $_thread['username'];?>
-                    </span>
-                    <span class="date hidden-sm">
-                        <?php echo $_thread['create_date_fmt'];?>
-                    </span>
-                    <!--{hook thread__list_inc_username_after.htm}-->
+                        <span class="username mr-1" uid="<?php echo $_thread['uid'];?>">
+                            <?php echo $_thread['username'];?>
+                        </span>
+                        <span class="date d-none d-md-block">
+                            <?php echo $_thread['create_date_fmt'];?>
+                        </span>
+                        <!--{hook thread__list_inc_username_after.htm}-->
 
-                    <!--{hook thread__list_inc_lastuid_before.htm}-->
-                    <?php if($_thread['lastuid']) { ?>
-                    <span class="hidden-sm">
-                        <span class="mx-1">←</span>
-                        <span class="username mr-1" uid="<?php echo $_thread['lastuid'];?>">
+                        <!--{hook thread__list_inc_lastuid_before.htm}-->
+                        <?php if($_thread['lastuid']) { ?>
+                        <span class="d-none d-md-block">
+                            <span class="mx-1">←</span>
+                            <span class="username mr-1" uid="<?php echo $_thread['lastuid'];?>">
                             <?php echo $_thread['lastusername'];?>
+                            </span>
+                            <span>
+                                <?php echo $_thread['last_date_fmt'];?>
+                            </span>
                         </span>
-                        <span>
-                            <?php echo $_thread['last_date_fmt'];?>
-                        </span>
-                    </span>
-                    <?php } ?>
-                    <!--{hook thread__list_inc_lastuid_after.htm}-->
-
-                    <div class="float-right text-muted small">
+                        <?php } ?>
+                        <!--{hook thread__list_inc_lastuid_after.htm}-->
+                    </div>
+                    <div class="d-flex text-muted small">
                         <!--{hook thread__list_inc_views_before.htm}-->
-                        <span class="mr-2 hidden-sm">
+                        <span class="mr-2 d-none d-md-block">
 							<i class="icon-eye mr-1"></i>
                             <?php echo format_number($_thread['views']);?>
 						</span>
@@ -124,11 +125,15 @@
                         <!--{hook thread__list_inc_posts_after.htm}-->
 
                         <?php if($_thread['allowupdate']) { ?>
-                        <!--<span data-href="<?php echo url('content-update-' . $_thread['tid']); ?>" class="text-grey update-thread"><i class="icon-edit"></i> <?php echo lang('edit');?></span>-->
+                        <!--<span class="mr-2">
+                            <a href="<?php echo url('content-update', array('tid' => $_thread['tid']), TRUE); ?>" title="<?php echo lang('edit');?>"><i class="icon-edit text-muted"></i></a>
+                        </span>-->
                         <!--{hook thread__list_inc_update.htm}-->
                         <?php } ?>
                         <?php if($_thread['allowdelete']) { ?>
-                        <!--<span data-href="<?php echo url('operate-delete-' . $_thread['tid']);?>" class="text-grey delete-thread"><i class="icon-remove"></i> <?php echo lang('delete');?></span>-->
+                        <!--<span class="mr-2">
+                            <a href="<?php echo url('operate-delete-' . $_thread['tid']);?>" title="<?php echo lang('delete');?>"><i class="icon-remove text-muted"></i></a>
+                        </span>-->
                         <!--{hook thread__list_inc_delete.htm}-->
                         <?php } ?>
 
@@ -141,7 +146,7 @@
     </div>
 </li>
 <?php }} else { ?>
-<li class="list-group-item">
+<li class="thread mx-3">
     <div><?php echo lang('none');?></div>
 </li>
 <?php } ?>

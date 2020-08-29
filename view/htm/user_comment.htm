@@ -1,6 +1,6 @@
 <template include="./view/htm/user_common.header.htm">
 	<slot name="body">
-        <ul class="threadlist list-group list-group-flush shadow">
+        <ul class="threadlist list-unstyled bg-white shadow">
             <!--{hook home_comment_threadlist_before.htm}-->
             <?php if(!empty($arrlist)) { foreach($arrlist as $_post) { ?>
             <li class="media thread bg-white" data-pid="<?php echo $_post['pid'];?>" data-uid="<?php echo $_post['uid'];?>">

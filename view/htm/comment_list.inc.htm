@@ -2,7 +2,7 @@
 
 				<?php if($postlist) { foreach($postlist as $_post) { ?>
 					<li class="row <?php echo $_post['classname'];?>" data-pid="<?php echo $_post['pid'];?>" data-uid="<?php echo $_post['uid'];?>">
-                        <div class="col-lg-12 d-flex justify-content-between text-muted">
+                        <div class="col-lg-12 d-flex justify-content-between text-muted my-2">
                             <div>
                                 <!--{hook comment_list_inc_avatar_before.htm}-->
                                 <a href="<?php echo url('user-' . $_post['uid']);?>" class="mr-2" tabindex="-1">
@@ -22,7 +22,7 @@
                                 </span>
                                 <!--{hook comment_list_inc_create_date_after.htm}-->
                             </div>
-                            <div class="text-right text-grey">
+                            <div>
                                 <!--{hook comment_list_inc_quote_before.htm}-->
                                 <?php if($allowpost) { ?>
                                 <a href="javascript:void(0)" data-tid="<?php echo $_post['tid'];?>" data-pid="<?php echo $_post['pid'];?>" class="text-grey well_reply mr-2">
@@ -68,11 +68,11 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-12 message mt-2 text-break">
+                        <div class="col-lg-12 message my-2 text-break">
 
                             <!--{hook comment_list_inc_subject_before.htm}-->
                             <?php if('read' != $route && !empty($_post['subject'])) {?>
-                            <h6 class="post-subject">
+                            <h6 class="h6 text-break font-weight-bold">
                                 <a href="<?php echo $_post['url'];?>" target="_blank">
                                     <?php echo $_post['subject'];?>
                                 </a>

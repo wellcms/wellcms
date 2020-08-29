@@ -272,7 +272,7 @@ switch ($action) {
                 empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
 
                 // 过滤所有html标签
-                $_message = filter_all_html($message);
+                $_message = htmlspecialchars(filter_all_html($message), ENT_QUOTES);
 
                 // 过滤内容 关键词
 
@@ -541,7 +541,7 @@ switch ($action) {
                 $message = trim($message);
                 empty($message) ? message('message', lang('please_input_message')) : xn_strlen($message) > 2028000 AND message('message', lang('message_too_long'));
 
-                $_message = filter_all_html($message);
+                $_message = htmlspecialchars(filter_all_html($message), ENT_QUOTES);
                 // 过滤内容 关键词
 
                 // hook admin_content_update_post_message_center.php
@@ -691,7 +691,8 @@ switch ($action) {
                     $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
                 }
             }
-            $arr['tag'] = $tag_json != $thread['tag_fmt'] ? $tag_json : $thread['tag_fmt'];
+
+            $tag_json != $thread['tag'] AND $arr['tag'] = $tag_json;
 
             // hook admin_content_update_post_tag_after.php
 
@@ -721,10 +722,8 @@ switch ($action) {
 
             // hook admin_content_update_post_arr_after.php
 
-            if (!empty($arr)) {
-                FALSE === well_thread_update($tid, $arr) AND message(-1, lang('update_thread_failed'));
-                unset($arr);
-            }
+            !empty($arr) && FALSE === well_thread_update($tid, $arr) AND message(-1, lang('update_thread_failed'));
+            unset($arr);
 
             // hook admin_content_update_post_before.php
 

@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.0.11","official_version":"2.0.11","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.0.12","official_version":"2.0.12","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;
@@ -261,7 +261,7 @@ CREATE TABLE `wellcms_website_flag_thread` (
 DROP TABLE IF EXISTS `wellcms_website_operate`;
 CREATE TABLE `wellcms_website_operate` (
   `logid` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `type` tinyint(3) NOT NULL DEFAULT '0', # 1删除 2移动 3置顶 4取消置顶 5禁止回复 6关闭 7打开 8操作人民币 9操作金币 10操作积分 11删除节点 12删除节点分类 13审核专题 14删除专题 15归类专题主题 16删除专题主题 17删除用户 18禁止用户 19编辑用户
+  `type` tinyint(3) NOT NULL DEFAULT '0', # 1删除 2移动 3置顶 4取消置顶 5禁止回复 6关闭 7打开 8操作人民币 9操作金币 10操作积分 11删除节点 12删除节点分类 13审核专题 14删除专题 15归类专题主题 16删除专题主题 17删除用户 18禁止用户 19编辑用户 20删除待审核主题 21删除退稿 22删除草稿 23删除待审核评论 24审核主题 25退稿 26审核评论
   `uid` int(11) unsigned NOT NULL DEFAULT '0', # 版主 uid
   `tid` int(11) unsigned NOT NULL DEFAULT '0', # 主题tid
   `pid` int(11) unsigned NOT NULL DEFAULT '0', # 评论pid

@@ -7,9 +7,9 @@
             <div class="form-group">
                 <!--{hook admin_thread_post_inc_fid_select_before.htm}-->
                 <select class="custom-select mr-1 w-auto" name="fid">
-                    <?php foreach ($columnlist as $forum) { ?>
-                    <option value="<?php echo $forum['fid']; ?>">
-                        <?php echo $forum['name']; ?>
+                    <?php foreach ($columnlist as $_column) { ?>
+                    <option value="<?php echo $_column['fid']; ?>">
+                        <?php echo $_column['name']; ?>
                     </option>
                     <?php } ?>
                 </select>

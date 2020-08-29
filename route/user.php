@@ -100,7 +100,7 @@ switch ($action) {
             if (1 == array_value($conf, 'login_token', 0)) {
                 $safe_token = param('safe_token');
                 well_token_set(0);
-                FALSE === well_token_verify(0, $safe_token) AND message(1, lang('illegal_operation'));
+                FALSE === well_token_verify(0, $safe_token, 1) AND message(1, lang('illegal_operation'));
             }
 
             // hook user_login_post_start.php
@@ -150,6 +150,7 @@ switch ($action) {
             // hook user_create_get_start.php
 
             $referer = user_http_referer();
+            $safe_token = well_token_set(0);
             $header['title'] = lang('create_user');
 
             // hook user_create_get_end.php
@@ -158,6 +159,13 @@ switch ($action) {
 
         } else if ('POST' == $method) {
 
+            // 验证token
+            if (1 == array_value($conf, 'login_token', 0)) {
+                $safe_token = param('safe_token');
+                well_token_set(0);
+                FALSE === well_token_verify(0, $safe_token, 1) AND message(1, lang('illegal_operation'));
+            }
+            
             // hook user_create_post_start.php
 
             $email = param('email');

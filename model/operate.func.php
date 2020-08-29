@@ -46,6 +46,14 @@ function operate__find($cond = array(), $orderby = array(), $page = 1, $pagesize
     return $operatelist;
 }
 
+function operate_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_operate_big_insert_start.php
+    $r = db_big_insert('website_operate', $arr, $d);
+    // hook model_operate_big_insert_end.php
+    return $r;
+}
+
 // ------------> 关联 CURD，主要是强相关的数据，比如缓存。弱相关的大量数据需要另外处理。
 
 function operate_create($arr)

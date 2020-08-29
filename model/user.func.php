@@ -327,10 +327,10 @@ function user_token_get()
     return $_uid;
 }
 
-// 用户 可增加验证UA+IP
+// 用户
 function user_token_get_do()
 {
-    global $conf, $time, $ip;
+    global $conf, $time, $ip, $useragent;
     $token = param($conf['cookie_pre'] . 'token');
     // hook model_user_token_get_do_start.php
     if (empty($token)) return FALSE;
@@ -338,16 +338,15 @@ function user_token_get_do()
     $s = xn_decrypt($token, $tokenkey);
     if (empty($s)) return FALSE;
     $arr = explode("\t", $s);
-    if (count($arr) != 4) return FALSE;
-    list($_ip, $_time, $_uid, $_pwd) = $arr;
+    if (count($arr) != 5) return FALSE;
+    list($_ip, $_time, $_uid, $_pwd, $ua_md5) = $arr;
     //if($ip != $_ip) return FALSE;
-    //if($time > $_time) return FALSE;
-    // 检查密码是否被修改
-    if ($time - $_time > 1800) {
-        $_user = user_read($_uid);
-        if (empty($_user)) return FALSE;
-        if (md5($_user['password']) != $_pwd) return FALSE;
-    }
+    //if(md5($useragent) != $ua_md5) return FALSE;
+    $_user = user_read($_uid);
+    if (empty($_user)) return FALSE;
+    if ($_user['login_date'] != $_time) return FALSE;
+    // 密码是否被修改
+    if (md5($_user['password']) != $_pwd) return FALSE;
     // hook model_user_token_get_do_end.php
     return $_uid;
 }
@@ -371,12 +370,13 @@ function user_token_clear()
 
 function user_token_gen($uid)
 {
-    global $conf, $time, $ip;
+    global $conf, $time, $ip, $useragent;
     // hook model_user_token_gen_start.php
     $user = user_read($uid);
     $pwd = md5($user['password']);
+    $ua_md5 = md5($useragent);
     $tokenkey = md5(xn_key());
-    $token = xn_encrypt("$ip	$time	$uid	$pwd", $tokenkey);
+    $token = xn_encrypt("$ip	$time	$uid	$pwd	$ua_md5", $tokenkey);
     // hook model_user_token_gen_end.php
     return $token;
 }

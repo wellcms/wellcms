@@ -40,12 +40,16 @@ html, body {
 @media (min-width: 992px) {
     #wrapper #content-wrapper::-webkit-scrollbar {
         display: block;
-        width: .3rem;
+        width: .4rem;
     }
 
     #wrapper #content-wrapper::-webkit-scrollbar-thumb {
-        border-radius: 0.3rem;
+        border-radius: 0.4rem;
         background-color: #b7b9cc !important; /* gray-500 */
+    }
+
+    #wrapper #content-wrapper::-webkit-scrollbar-thumb:hover {
+        background-color: #19926f !important;
     }
 }
 
@@ -390,7 +394,7 @@ html, body {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    border: 2px solid #fe7708;
+    border: 2px solid #ef473a;
     background: #fff;
     z-index: 10;
 }
@@ -885,7 +889,7 @@ select option {
 
 .nav-block {
     right: 0;
-    top: 45%;
+    top: calc((100vh - 3.625rem)/2);
     width: 20px;
     height: 60px;
     z-index: 999;
@@ -893,6 +897,7 @@ select option {
 
 .button-hide {
     left: -20px;
+    top: calc((100vh - 10.875rem)/2);
 }
 
 .dropdown-menu{min-width: inherit;}

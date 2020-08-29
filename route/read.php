@@ -17,7 +17,7 @@ empty($thread) AND message(-1, lang('thread_not_exists'));
 
 // hook read_status_before.php
 
-0 != $thread['status'] && $uid != $thread['uid'] && !group_access($gid, 'allowuserdelete') AND http_location($conf['path']);
+0 != $thread['status'] && $uid != $thread['uid'] && !group_access($gid, 'allowdelete') AND http_location($conf['path']);
 
 // hook read_before.php
 

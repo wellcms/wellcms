@@ -70,6 +70,7 @@ function comment_big_update($cond = array(), $update = array(), $d = NULL)
     // hook model_comment_big_update_end.php
     return $r;
 }
+
 //--------------------------强相关--------------------------
 // 评论回复不支持html标签，不支持附件和图片
 // array('tid' => $tid, 'fid' => $fid, 'doctype' => $doctype, 'message' => $message);
@@ -77,6 +78,9 @@ function comment_create($post)
 {
     global $time, $uid, $gid;
     if (empty($post)) return FALSE;
+
+    // 是否审核 TRUE无需审核 FALSE需要审核
+    $commentverify = group_access($gid, 'allowdelete') || !group_access($gid, 'commentverify');
 
     // hook model_comment_create_start.php
 
@@ -86,49 +90,50 @@ function comment_create($post)
     if (empty($post['message'])) return FALSE;
 
     // hook model_comment_create_before.php
-    
+
     $pid = comment__create($post);
     if (FALSE === $pid) return FALSE;
 
     // 关联附件
-    $attach = array('tid' => $post['tid'], 'pid' => $pid, 'uid' => $uid, 'assoc' => 'post', 'post_create' => 1, 'images' => 0, 'files' => 0, 'message' => $post['message']);
-    well_attach_assoc_post($attach);
-    unset($attach);
+    well_attach_assoc_post(array('tid' => $post['tid'], 'pid' => $pid, 'uid' => $uid, 'assoc' => 'post', 'post_create' => 1, 'images' => 0, 'files' => 0, 'message' => $post['message']));
 
     // hook model_comment_create_center.php
 
-    $forum_update = array('todayposts+' => 1);
-    // hook model_comment_create_forum_update_before.php
-    forum_update($post['fid'], $forum_update);
-    unset($forum_update);
-
-    // hook model_comment_create_after.php
-
     // 我的回复 审核成功写入website_post_pid
-    if (1 == $gid || !group_access($gid, 'commentverify')) {
+    if (TRUE === $commentverify) {
+
+        $forum_update = array('todayposts+' => 1);
+        // hook model_comment_create_forum_update_before.php
+        forum_update($post['fid'], $forum_update);
+        unset($forum_update);
+
+        // hook model_comment_create_middle.php
+
         // 不需要审核 插入回复小表
         $arr = array('pid' => $pid, 'fid' => $post['fid'], 'tid' => $post['tid'], 'uid' => $uid);
-        // hook model_comment_create_post_pid.php
+        // hook model_comment_create_post.php
         comment_pid_create($arr);
 
         // 更新最后回复lastuid
         $arr = array('posts+' => 1, 'last_date' => $time, 'lastuid' => $uid);
         // hook model_comment_create_thread_update.php
-
         well_thread_update($post['tid'], $arr);
 
-        user_update($uid, array('comments+' => 1));
+        $user_update = array('comments+' => 1);
+        // hook model_comment_create_user_update.php
+        user_update($uid, $user_update);
 
-        // hook model_comment_create_update_lastpid.php
+        // hook model_comment_create_after.php
+
+        runtime_set('comments+', 1);
+        runtime_set('todaycomments+', 1);
+
+        // hook model_comment_create_runtime_after.php
+
     } else {
         // 评论需要审核
         // hook model_comment_create_verify.php
     }
-
-    // hook model_comment_create_end.php
-
-    runtime_set('comments+', 1);
-    runtime_set('todaycomments+', 1);
 
     // hook model_comment_create_end.php
 
@@ -192,7 +197,6 @@ function comment_find_by_tid($tid, $page = 1, $pagesize = 20)
     $pidarr = arrlist_values($arr, 'pid');
 
     $postlist = comment__find(array('pid' => $pidarr), array('pid' => 1), 1, $pagesize);
-    if (empty($postlist)) return NULL;
 
     // hook model_comment_find_by_tid_center.php
 
@@ -222,8 +226,6 @@ function comment_find($pidarr, $pagesize = 20, $desc = TRUE)
 
     $orderby = TRUE == $desc ? -1 : 1;
     $postlist = comment__find(array('pid' => $pidarr), array('pid' => $orderby), 1, $pagesize);
-
-    if (empty($postlist)) return NULL;
 
     $i = 0;
     foreach ($postlist as &$post) {
@@ -269,7 +271,6 @@ function comment_find_all($page = 1, $pagesize = 20)
 
     // 遍历主题和回复
     $postlist = comment__find(array('pid' => $pidarr), array('pid' => -1), 1, $pagesize);
-    if (empty($postlist)) return NULL;
 
     // hook model_comment_find_all_after.php
 
@@ -366,6 +367,100 @@ function comment_delete_by_tid($tid)
     return $posts;
 }
 
+/*
+ * @param $tids 数组array(1,2,3)
+ * @param $n 删除的总评论数量
+ * @return int 返回删除的数量
+ */
+function comment_delete_by_tids($tids, $n)
+{
+    $arrlist = comment_pid__find(array('tid' => $tids), array('pid' => 1), 1, $n);
+    if (!$arrlist) return 0;
+
+    $pids = array();
+    $uidarr = array();
+    foreach ($arrlist as $val) {
+        $pids[] = $val['pid'];
+        isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
+    }
+
+    comment_pid_delete($pids);
+
+    comment__delete(array('pid' => $pids));
+
+    // 删除附件
+    well_attach_delete_by_pid($pids);
+
+    $uids = array();
+    $update = array();
+    foreach ($uidarr as $_uid => $n) {
+        $uids[] = $_uid;
+        $update[$_uid] = array('comments-' => $n);
+    }
+
+    // 更新用户评论数
+    user_big_update(array('uid' => $uids), $update);
+
+    return count($pids);
+}
+
+function comment_delete_by_pids($pids)
+{
+    $commentlist = comment__find(array('pid' => $pids), array('pid' => -1), 1, count($pids));
+
+    $pidarr = array();
+    $uidarr = array();
+    $tidarr = array();
+    foreach ($commentlist as $comment) {
+        // 每个栏目下的回复数
+        $pidarr[] = $comment['pid'];
+
+        // uid
+        isset($uidarr[$comment['uid']]) ? $uidarr[$comment['uid']] += 1 : $uidarr[$comment['uid']] = 1;
+
+        // tid
+        isset($tidarr[$comment['tid']]) ? $tidarr[$comment['tid']] += 1 : $tidarr[$comment['tid']] = 1;
+    }
+    unset($postist);
+
+    if (!empty($pidarr)) {
+        // 删除附件
+        well_attach_delete_by_pid($pidarr);
+
+        // 删除主表
+        comment__delete(array('pid' => $pidarr));
+
+        // 删除小表
+        comment_pid_delete($pidarr);
+
+        runtime_set('comments-', count($pidarr));
+    }
+
+    // 更新用户评论数
+    if (!empty($uidarr)) {
+        $uids = array();
+        $update = array();
+        foreach ($uidarr as $_uid => $n) {
+            $uids[] = $_uid;
+            $update[$_uid] = array('credits-' => $n);
+        }
+
+        user_big_update(array('uid' => $uids), $update);
+    }
+
+    // 更新主题回复数
+    if (!empty($tidarr)) {
+        $tids = array();
+        $update = array();
+        foreach ($tidarr as $_tid => $n) {
+            $tids[] = $_tid;
+            $update[$_tid] = array('posts-' => $n);
+        }
+
+        thread_big_update(array('tid' => $tids), $update);
+    }
+}
+
 function comment_format_by_tid(&$post)
 {
     global $conf, $uid, $gid;
@@ -395,7 +490,7 @@ function comment_format_by_tid(&$post)
 
     $post['user_url'] = url('user-' . $post['uid'] . ($post['uid'] ? '' : '-' . $post['pid']));
 
-    if($post['files'] > 0) {
+    if ($post['files'] > 0) {
         list($attachlist, $imagelist, $post['filelist']) = well_attach_find_by_pid($post['pid']);
 
         // 使用图床 评论使用图床，mysql会过多，写死链接到内容是减轻mysql的过多的方法
@@ -418,13 +513,13 @@ function comment_format_by_tid(&$post)
 
 function comment_format(&$post)
 {
-    global $conf, $uid, $gid;
+    global $conf, $uid, $gid, $forumlist;
     // hook model_comment_format_start.php
 
     if (empty($post)) return;
 
     // hook model_comment_format_before.php
-
+    $forum = $post['fid'] ? forum_read($post['fid']) : '';
     $thread = well_thread_read_cache($post['tid']);
     //$post['fid'] = $thread['fid'];
     $post['closed'] = $thread['closed'];
@@ -446,12 +541,12 @@ function comment_format(&$post)
     // hook model_comment_format_after.php
 
     // 权限判断
-    $post['allowupdate'] = ($uid == $post['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
+    $post['allowupdate'] = 2 == array_value($forum, 'comment', 0) && ($uid == $post['uid'] || forum_access_mod($thread['fid'], $gid, 'allowupdate'));
     $post['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $post['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
 
     $post['user_url'] = url('user-' . $post['uid'] . ($post['uid'] ? '' : '-' . $post['pid']));
 
-    if($post['files'] > 0) {
+    if ($post['files'] > 0) {
         list($attachlist, $imagelist, $filelist) = well_attach_find_by_pid($post['pid']);
 
         // 使用图床 评论使用图床，mysql会过多，写死链接到内容是减轻mysql的过多的方法

@@ -136,7 +136,7 @@
 			</div>
 		</div>
 
-        <?php if ($forum['comment'] && $thread['closed'] < 2) { ?>
+        <?php if ($forum['comment'] && $thread['closed'] < 2 && 0 == $thread['status']) { ?>
 		<!--{hook read_comment_before.htm}-->
 		<div class="card card-postlist border-white shadow">
 			<div class="card-body">
@@ -154,7 +154,7 @@
 					</div>
 				</div>
 				<!--<ul class="list-unstyled postlist">-->
-				<ul class="postlist list-group list-group-flush">
+				<ul class="postlist list-unstyled">
 					<?php include _include(APP_PATH.'view/htm/comment_list.inc.htm'); ?>
 					
 					<?php if(!empty($user) && 0 == $thread['closed']) { ?>
@@ -243,9 +243,9 @@
                     </a>
 				</h3>
 			</div>
-            <ul class="list-unstyled threadlist list-group list-group-flush nowrap">
+            <ul class="threadlist list-unstyled bg-white nowrap">
 				<?php if(isset($_flag['list'])){foreach($_flag['list'] as $_thread) { ?>
-                <li class="thread bg-white">
+                <li class="thread">
                     <h4 class="h6 my-0 mx-3">
 						<a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                             <?php echo $_thread['subject'];?>

@@ -29,7 +29,7 @@
                                 </label>
                             </div>
                             <?php } ?>
-                            <!--{hook reply_list_inc_avatar_after.htm}-->
+                            <!--{hook admin_comment__list_inc_avatar_after.htm}-->
                             <div class="media-body">
                                 <div class="d-flex justify-content-between small text-muted">
                                     <div>
@@ -47,7 +47,7 @@
                                         <span class="date text-grey ml-2"><?php echo $_post['create_date_fmt'];?></span>
                                         <!--{hook admin_comment_list_inc_create_date_after.htm}-->
                                     </div>
-                                    <div class="text-right text-grey">
+                                    <div class="text-grey">
 
                                         <!--{hook admin_comment_list_inc_update_before.htm}-->
                                         <?php if($_post['allowupdate']) { ?>
@@ -63,11 +63,11 @@
 
                                     </div>
                                 </div>
-                                <div class="message mt-1 text-break">
+                                <div class="message mt-2 text-break">
 
                                     <!--{hook admin_comment_list_inc_subject_before.htm}-->
                                     <?php if('read' != $route && !empty($_post['subject'])) { ?>
-                                    <h6><a href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('read-' . $_post['tid'], '', 2);?>" target="_blank"><?php echo $_post['subject'];?></a></h6>
+                                    <h6 class="h6 text-break font-weight-bold"><a href="<?php echo ($conf['url_rewrite_on'] < 2 ? '../' : ''),url('read-' . $_post['tid'], '', 2);?>" target="_blank"><?php echo $_post['subject'];?></a></h6>
                                     <?php } ?>
                                     <!--{hook admin_comment_list_inc_subject_after.htm}-->
 

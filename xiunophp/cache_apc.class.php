@@ -12,6 +12,8 @@ class cache_apc {
                 if(!function_exists('apc_fetch')) {
 			return $this->error(-1, 'APC 扩展没有加载，请检查您的 PHP 版本');
                 }
+                $this->conf = $conf;
+                $this->cachepre = isset($conf['cachepre']) ? $conf['cachepre'] : 'pre_';
         }
         public function connect() {
         }

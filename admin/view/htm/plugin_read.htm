@@ -135,19 +135,20 @@
 					<?php } ?>
 
 					<?php if($plugin['installed'] && !$plugin['enable'] && 1 != $plugin['type']) { ?>
-					<a role="button" class="btn btn-secondary mx-1" href="<?php echo url('plugin-enable', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('enable');?></a>
+					<a role="button" class="install btn btn-secondary mx-1" data-href="<?php echo url('plugin-enable', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>" href="javascript:void(0);"><?php echo lang('enable');?></a>
 					<?php } ?>
 
 					<?php if($plugin['installed'] && 1 != $plugin['type']) { ?>
-					<a role="button" class="btn btn-danger mx-1 confirm" data-method="post" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url('plugin-uninstall', array('dir'=>$dir,'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('uninstall');?></a>
+                    <a role="button" class="uninstall btn btn-danger confirm mx-1" data-method="post" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url('plugin-uninstall', array('dir'=> $dir, 'safe_token' => $safe_token), TRUE); ?>"><?php echo lang('uninstall');?></a>
 					<?php } ?>
 
                     <?php if($islocal && !$plugin['installed'] && 1 == $plugin['type']) { ?>
                     <a role="button" class="btn btn-primary mx-1 install" data-href="<?php echo url('plugin-theme', array('dir'=>$dir,'type'=>1,'safe_token' => $safe_token), TRUE);?>" href="javascript:void(0);"><?php echo lang('install');?></a>
+
                     <?php } ?>
 
                     <?php if($plugin['installed'] && 1 == $plugin['type']) { ?>
-                    <a role="button" class="btn btn-danger mx-1 uninstall" data-href="<?php echo url('plugin-theme', array('dir'=>$dir,'type'=>0,'safe_token' => $safe_token), TRUE);?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
+                    <a role="button" class="uninstall btn btn-danger confirm mx-1" data-method="post" data-confirm-text="<?php echo lang('plugin_uninstall_confirm_tips', array('name'=>$plugin['name']));?>" data-href="<?php echo url('plugin-theme', array('dir'=>$dir,'type'=>0), TRUE);?>" href="javascript:void(0);"><?php echo lang('uninstall');?></a>
                     <?php } ?>
 
 					<?php if($plugin['have_upgrade']) { ?>
