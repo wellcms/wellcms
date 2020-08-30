@@ -71,7 +71,7 @@
                                 </a>
                                 <span class="dropdown-menu dropdown-menu-right animated--fade-in-up shadow border-left-primary py-0">
                                     <!--{hook read_dropdown_menu_start.htm}-->
-									<?php if($allowdelete) { ?>
+                                    <?php if($allowdelete) { ?>
 									<a data-href="<?php echo url('operate-delete-'.$tid);?>" href="javascript:void(0);" class="dropdown-item post_delete">
                                     <?php echo lang('delete');?>
                                     </a>
@@ -136,7 +136,7 @@
 			</div>
 		</div>
 
-        <?php if ($forum['comment'] && $thread['closed'] < 2 && 0 == $thread['status']) { ?>
+        <?php if ($allowpost) { ?>
 		<!--{hook read_comment_before.htm}-->
 		<div class="card card-postlist border-white shadow">
 			<div class="card-body">
@@ -197,9 +197,7 @@
                                     </button>
                                     <!--{hook read_quick_comment_submit_after.htm}-->
                                     <?php if(2 == array_value($forum, 'comment', 0)) { ?>
-                                    <?php if($allowupdate || $allowpost) { ?>
-                                    <a class="icon-mail-forward text-muted" href="<?php echo url('comment-create-'.$tid);?>" id="advanced_reply"><?php echo lang('advanced_reply');?></a>
-                                    <?php } ?>
+									<a class="icon-mail-forward text-muted" href="<?php echo url('comment-create-'.$tid);?>" id="advanced_reply"><?php echo lang('advanced_reply');?></a>
                                     <?php } ?>
                                 </div>
                             </form>

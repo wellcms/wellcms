@@ -77,7 +77,7 @@ switch ($thread['type']) {
 
             // hook read_article_default_middle.php
 
-            $allowpost = forum_access_user($fid, $gid, 'allowpost');
+            $allowpost = $forum['comment'] && $thread['closed'] < 2 && 0 == $thread['status'] && forum_access_user($fid, $gid, 'allowpost');
             $allowupdate = $uid == $thread['uid'] || forum_access_mod($thread['fid'], $gid, 'allowupdate');
             $allowdelete = ($uid == $thread['uid'] AND forum_access_mod($fid, $gid, 'allowuserdelete')) || forum_access_mod($fid, $gid, 'allowdelete');
 
