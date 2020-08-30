@@ -197,7 +197,7 @@
                                     </button>
                                     <!--{hook read_quick_comment_submit_after.htm}-->
                                     <?php if(2 == array_value($forum, 'comment', 0)) { ?>
-                                    <?php if($allowupdate || $_post['allowupdate']) { ?>
+                                    <?php if($allowupdate || $allowpost) { ?>
                                     <a class="icon-mail-forward text-muted" href="<?php echo url('comment-create-'.$tid);?>" id="advanced_reply"><?php echo lang('advanced_reply');?></a>
                                     <?php } ?>
                                     <?php } ?>
