@@ -650,6 +650,7 @@ function well_thread_delete_all($tid)
 
         // hook model_thread_delete_all_cache_before.php
 
+        flag_thread_delete_by_tid($thread['tid']);
         cache_delete('website_thread_' . $thread['tid']);
     }
 
@@ -689,6 +690,7 @@ function well_thread_delete_all($tid)
     // hook model_thread_delete_all_sticky_before.php
 
     if (!empty($sticky_tids)) {
+        cache_delete('sticky_thread_list');
         // hook model_thread_delete_all_sticky.php
         sticky_thread__delete($sticky_tids);
     }
@@ -751,6 +753,7 @@ function well_thread_delete_all($tid)
         foreach ($uidarr as $_uid => $n) {
             $uids[] = $_uid;
             $update[$_uid] = array('articles-' => $n);
+            'mysql' != $conf['cache']['type'] AND cache_update('website_thread_' . $tid, array('articles-' => $n));
             // hook model_thread_delete_all_user_center.php
         }
 
