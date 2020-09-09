@@ -753,7 +753,7 @@ function well_thread_delete_all($tid)
         foreach ($uidarr as $_uid => $n) {
             $uids[] = $_uid;
             $update[$_uid] = array('articles-' => $n);
-            'mysql' != $conf['cache']['type'] AND cache_update('website_thread_' . $tid, array('articles-' => $n));
+            'mysql' != $conf['cache']['type'] AND cache_update('user-' . $_uid, array('articles-' => $n));
             // hook model_thread_delete_all_user_center.php
         }
 
