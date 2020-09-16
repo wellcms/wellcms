@@ -100,7 +100,7 @@ function theme_load($type = '', $id = 0, $dir = '')
             // 我的首页评论
             $pre .= $default_pre .= 'user_comment.htm';
             break;
-        case 'article':
+        case 'home_article':
             // 我的文章
             $pre .= $default_pre .= 'home_article.htm';
             break;

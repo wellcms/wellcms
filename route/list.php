@@ -99,15 +99,7 @@ if (1 == $forum['type']) {
             // hook list_header_after.php
 
             if ($ajax) {
-
-                empty($conf['api_on']) AND message(0, lang('closed'));
-
-                if (isset($arrlist['threadlist'])) {
-                    foreach ($arrlist['threadlist'] as &$val) {
-                        well_thread_filter($val);
-                    }
-                }
-                message(0, $arrlist);
+                $conf['api_on'] ? message(0, $arrlist) : message(0, lang('closed'));
             } else {
                 // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
                 switch ($forum['model']) {

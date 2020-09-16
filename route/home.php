@@ -49,7 +49,7 @@ switch ($action) {
 
         // hook home_article_end.php
 
-        include _include(theme_load('article'));
+        include _include(theme_load('home_article'));
         break;
     case 'comment':
         // hook home_comment_start.php

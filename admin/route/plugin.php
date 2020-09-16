@@ -101,7 +101,7 @@ switch ($action) {
             // 0 所有插件 1主题风格 2功能增强 3大型插件 4接口整合
             $extra = array();
             $page = param('page', 1);
-            $pagesize = 10;
+            $pagesize = 12;
             $type = param('type', 0);
             $extra += array('type' => $type);
             $cond = $type ? array('type' => $type) : array();

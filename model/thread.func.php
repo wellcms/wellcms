@@ -228,8 +228,9 @@ function well_thread_create($arr)
         switch (array_value($forum, 'model')) {
             // hook model__thread_create_case_start.php
             case '0':
+                $thread_tid_create = array('tid' => $tid, 'fid' => $fid, 'uid' => $uid);
                 // hook model__thread_create_tid_before.php
-                thread_tid_create(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid));
+                thread_tid_create($thread_tid_create);
                 // hook model__thread_create_tid_center.php
                 $user_update += array('articles+' => 1);
                 // hook model__thread_create_tid_middle.php
@@ -1070,6 +1071,9 @@ function thread_unified_pull($arr)
 
     $threadlist = array();
     foreach ($arrlist as $_tid => &$_thread) {
+
+        $_thread = well_thread_safe_info($_thread);
+        
         // 归类列表数据
         isset($tidlist[$_thread['tid']]) AND $threadlist[$_tid] = $_thread;
 
