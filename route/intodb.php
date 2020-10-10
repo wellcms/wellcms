@@ -37,8 +37,7 @@ if ('GET' == $method) {
     $forum = array_value($forumlist, $fid);
     empty($forum) AND exit(lang('forum_not_exists'));
 
-    $r = forum_access_user($fid, $user['gid'], 'allowthread');
-    empty($r) AND exit(lang('user_group_insufficient_privilege'));
+    FALSE === group_access($gid, 'managecreatethread') AND exit(lang('user_group_insufficient_privilege'));
 
     $subject = param('subject');
     $subject = filter_all_html($subject);

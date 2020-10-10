@@ -74,7 +74,6 @@ function data_create($arr)
 
     // hook model_data_create_after.php
 
-    isset($arr['message']) AND $arr['message'] = preg_replace(array("#> *([^ ]*) *<#", "#[\s]+#", "#<!--[\\w\\W\r\\n]*?-->#", "# \"#", "#/\*[^*]*\*/#", "//", '#>\s+<#', '#\/\*(\s|.)*?\*\/#'), array(">\\1<", ' ', '', "\"", '', '', '><', ''), $arr['message']);
     $r = data__create($arr);
 
     // hook model_data_create_end.php
@@ -96,7 +95,6 @@ function data_update($tid, $update)
 
     // hook model_data_update_center.php
 
-    isset($update['message']) AND $update['message'] = preg_replace(array("#> *([^ ]*) *<#", "#[\s]+#", "#<!--[\\w\\W\r\\n]*?-->#", "# \"#", "#/\*[^*]*\*/#", "//", '#>\s+<#', '#\/\*(\s|.)*?\*\/#'), array(">\\1<", ' ', '', "\"", '', '', '><', ''), $update['message']);
     $r = data__update($tid, $update);
 
     // hook model_data_update_after.php

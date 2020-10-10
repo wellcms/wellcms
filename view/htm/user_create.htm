@@ -269,22 +269,19 @@
     var jsend = $('#sendcode');
     var referer = '<?php echo http_referer();?>';
     jsend.on('click', function() {
-        var jthis = $(this);
-        var jsubmit = jthis.find('#submit');
         jform.reset();
         jsend.button('loading');
         var postdata = jform.serializeObject();
         postdata.safe_token = safe_token;
         $.xpost(jsend.attr('action'), postdata, function(code, message) {
-            if(code == 0) {
+            if(0 == code) {
                 $('#code').focus();
-                var t = 60;
                 jsend.button('<?php echo lang('user_send_successfully');?> 60 ');
-                jsubmit.button('reset');
-                /*倒计时，重新发送*/
+                $('#submit').button('reset');
+                var t = 60; /*倒计时，重新发送*/
                 var handler = setInterval(function() {
                     jsend.button('<?php echo lang('user_send_successfully');?> '+(--t)+' ');
-                    if(t == 0) {
+                    if(0 == t) {
                         clearInterval(handler);
                         jsend.button('reset');
                     }
@@ -308,7 +305,7 @@
         postdata.password = $.md5(postdata.password);
         postdata.safe_token = safe_token;
         $.xpost(jform.attr('action'), postdata, function(code, message) {
-            if(code == 0) {
+            if(0 == code) {
                 jsubmit.button(message).delay(1000).location(referer);
             } else if(xn.is_number(code)) {
                 $.alert(message);

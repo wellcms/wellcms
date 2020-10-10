@@ -208,7 +208,7 @@ function forum_format(&$forum)
                     unset($val['i']);
                     unset($val['tpl']);
                 }
-                $forum['flagstr_fmt'] = $forum['flagstr_text'] = array_multisort_key($flaglist, 'rank', FALSE, 'flagid');
+                $forum['flagstr_fmt'] = array_multisort_key($flaglist, 'rank', FALSE, 'flagid');
             }
         }
 

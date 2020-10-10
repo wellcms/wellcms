@@ -899,6 +899,7 @@ function file_name($path)
 // 获取 http://xxx.com/path/
 function http_url_path()
 {
+    $conf = _SERVER('conf');
     $port = _SERVER('SERVER_PORT');
     $host = _SERVER('HTTP_HOST');
     $https = strtolower(_SERVER('HTTPS', 'off'));
@@ -906,8 +907,10 @@ function http_url_path()
     $len = strrpos($_SERVER['PHP_SELF'], '//');
     FALSE === $len AND $len = strrpos($_SERVER['PHP_SELF'], '/');
     $path = substr($_SERVER['PHP_SELF'], 0, $len);
+    !isset($conf['url_rewrite_on']) AND $conf['url_rewrite_on'] = 0;
+    $conf['url_rewrite_on'] < 2 AND $path = $path . '/';
     $http = ((443 == $port) || 'https' == $proto || ($https && 'off' != $https)) ? 'https' : 'http';
-    return "$http://$host$path/";
+    return "$http://$host$path";
 }
 
 // 将参数添加到 URL

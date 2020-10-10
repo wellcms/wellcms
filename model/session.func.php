@@ -314,7 +314,7 @@ function online_list_cache()
 {
     $onlinelist = cache_get('online_list');
     if (NULL === $onlinelist) {
-        $onlinelist = session_find(array('uid' => array('>' => 0)), array('last_date' => -1), 1, 500);
+        $onlinelist = session_find(array('uid' => array('>' => 0)), array('last_date' => -1), 1, 1000);
         foreach ($onlinelist as &$online) {
             $user = user_read_cache($online['uid']);
             $online['username'] = $user['username'];
@@ -325,6 +325,16 @@ function online_list_cache()
         cache_set('online_list', $onlinelist, 300);
     }
     return $onlinelist;
+}
+
+function online_user_list_cache()
+{
+    $online_user_list = cache_get('online_user_list');
+    if (NULL === $online_user_list) {
+        $online_user_list = session_find(array('uid' => array('>' => 0)), array(), 1, 1000, 'uid', array('uid'));
+        cache_set('online_user_list', $online_user_list, 300);
+    }
+    return $online_user_list;
 }
 
 // hook model_session_end.php

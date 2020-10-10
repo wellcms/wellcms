@@ -216,7 +216,8 @@ function user_format(&$user)
     $user['avatar_url'] = $user['avatar'] ? file_path() . "avatar/$dir/$user[uid].png?" . $user['avatar'] : view_path() . 'img/avatar.png';
     $user['avatar_path'] = $user['avatar'] ? $conf['upload_path'] . "avatar/$dir/$user[uid].png?" . $user['avatar'] : '';
 
-    $user['online_status'] = 1;
+    $onlinelist = online_user_list_cache();
+    $user['online_status'] = isset($onlinelist[$user['uid']]) ? 1 : 0;
     // hook model_user_format_end.php
 }
 

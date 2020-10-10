@@ -328,7 +328,7 @@ body.on('click', '.install, .uninstall', function () {
     return false;
 });
 
-(function ($) {
+$(function () {
     var body = $('body');
     body.on('click', '#but-sidebar-toggle', function () {
         var toggle = $('#sidebar-toggle');
@@ -371,4 +371,4 @@ body.on('click', '.install, .uninstall', function () {
         $('html, body, #content-wrapper').animate({scrollTop: height}, 500);
         e.preventDefault();
     });
-})(jQuery);
+});

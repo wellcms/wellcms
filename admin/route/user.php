@@ -98,8 +98,10 @@ switch ($action) {
             $_user = user_read_by_username($username);
             $_user AND message('username', lang('user_already_exists'));
 
+            // hook admin_user_create_post_before.php
+
             $salt = xn_rand(16);
-            $r = user_create(array(
+            $arr = array(
                 'username' => $username,
                 'password' => md5(md5($password) . $salt),
                 'salt' => $salt,
@@ -107,7 +109,9 @@ switch ($action) {
                 'email' => $email,
                 'create_ip' => $longip,
                 'create_date' => $time
-            ));
+            );
+            // hook admin_user_create_post_after.php
+            $r = user_create($arr);
             FALSE === $r AND message(-1, lang('create_failed'));
 
             // hook admin_user_create_post_end.php

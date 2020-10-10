@@ -888,8 +888,8 @@ function well_thread_format(&$thread)
 
     $thread['create_date_fmt'] = humandate($thread['create_date']);
     $thread['last_date_fmt'] = humandate($thread['last_date']);
-    $thread['create_date_fmt_ymd'] = $thread['create_date_text'] = date('Y-m-d', $thread['create_date']);
-    $thread['last_date_fmt_ymd'] = $thread['last_date_text'] = date('Y-m-d', $thread['last_date']);
+    $thread['create_date_fmt_ymd'] = date('Y-m-d', $thread['create_date']);
+    $thread['last_date_fmt_ymd'] = date('Y-m-d', $thread['last_date']);
 
     $user = user_read_cache($thread['uid']);
     $thread['username'] = $user['username'];

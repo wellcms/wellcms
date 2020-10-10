@@ -393,14 +393,13 @@ function plugin_official_store($type = 0)
 
     if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return NULL;
 
+    $s = '';
     if ($type) {
-        $r = param($conf['cookie_pre'] . 'plugin_official_list');
-        if ($r) return kv_cache_get('plugin_official_list');
+        $cookie = _COOKIE($conf['cookie_pre'] . 'plugin_official_list');
+        if ($cookie) $s = cache_get('plugin_official_list');
     }
 
-    $s = 3 == DEBUG ? NULL : cache_get('plugin_official_list');
-    if (NULL === $s || $type) {
-
+    if (empty($s)) {
         $arr = plugin_data_verify();
         if (FALSE === $arr) {
             setting_delete('plugin_data');
@@ -416,8 +415,8 @@ function plugin_official_store($type = 0)
         $s = xn_json_decode($s);
         if (empty($s)) return xn_error(-1, lang('plugin_get_data_fmt_failed'));
 
-        kv_cache_set('plugin_official_list', $s);
-        cookie_set('plugin_official_list', 1, 600);
+        cache_set('plugin_official_list', $s);
+        cookie_set('plugin_official_list', 1, 120);
     }
 
     return $s;

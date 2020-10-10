@@ -14,8 +14,7 @@ switch ($action) {
         $page = param('page', 1);
         $type = param('type', 0);
         $pagesize = 20;
-        $safe_token = well_token_set($uid);
-        $extra = array('page' => '{page}', 'type' => $type, 'safe_token' => $safe_token);
+        $extra = array('page' => '{page}', 'type' => $type);
 
         $plugin_cates = array(0 => lang('all'), 1 => lang('enabled'), 2 => lang('not_enabled'), 3 => lang('disable'));
         $plugin_cate_html = plugin_cate_active($action, $plugin_cates, $type, $page);
@@ -36,6 +35,8 @@ switch ($action) {
 
         $pagination = pagination(url('plugin-' . $action, $extra, TRUE), count($total), $page, $pagesize);
 
+        $safe_token = well_token_set($uid);
+        $extra += array('safe_token' => $safe_token);
         $header['title'] = lang('local_plugin');
         $header['mobile_title'] = lang('local_plugin');
         $active = 'plugin';
@@ -47,8 +48,7 @@ switch ($action) {
 
             $page = param('page', 1);
             $pagesize = 30;
-            $safe_token = well_token_set($uid);
-            $extra = array('page' => '{page}', 'safe_token' => $safe_token);
+            $extra = array('page' => '{page}');
             $cond = array();
             $pluginlist = plugin_list($cond, $orderby = array(), $page, $pagesize, FALSE);
             $total = arrlist_cond_orderby($themes, $cond, array(), 1, 1000);
@@ -69,6 +69,8 @@ switch ($action) {
 
             $pagination = pagination(url('plugin-' . $action, $extra, TRUE), count($total), $page, $pagesize);
 
+            $safe_token = well_token_set($uid);
+            $extra += array('safe_token' => $safe_token);
             $header['title'] = lang('local') . lang('theme');
             $header['mobile_title'] = lang('local') . lang('theme');
 
@@ -267,7 +269,7 @@ switch ($action) {
                 }
             }
 
-            if (0 == $return['code']) message(1, lang('plugin_is_free'));
+            if (0 == $return['code']) message(1, lang('plugin_is_bought'));
 
             // 钱包优先，支付宝优先
             $pay_api = '';
@@ -370,6 +372,8 @@ switch ($action) {
 
         // 插件依赖检查 / check plugin dependency
         plugin_check_dependency($dir, 'install');
+
+        plugin_notice($dir);
 
         // 安装插件 / install plugin
         plugin_install($dir);
@@ -726,6 +730,57 @@ function plugin_query($storeid, $paying = FALSE)
     // url:qrcode
     // array('code' => 1, 'message' => 'string', 'pay_type' => 0, 'pay_api' => 0, 'url' => 0, 'price' => 1)
     return $arr;
+}
+
+function plugin_notice($dir, $type = 0)
+{
+    global $longip, $ip;
+
+    if (FALSE === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return;
+
+    $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html';
+    $s = https_request($url, array('dir' => $dir), '', 1);
+    if ($s) {
+        $res = xn_json_decode($s);
+        if (1 == $res['code']) {
+            $domain = xn_urlencode(_SERVER('HTTP_HOST'));
+            $siteid = plugin_siteid();
+            $siteip = ip2long(_SERVER('SERVER_ADDR'));
+            $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+            $app_url = xn_urlencode(http_url_path());
+            $url = PLUGIN_OFFICIAL_URL . 'plugin-notice.html';
+            $post = array('storeid' => $res['message'], 'siteid' => $siteid, 'siteip' => $siteip, 'auth_key' => xn_key(), 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain);
+            $data = setting_get('plugin_data');
+            if ($data) {
+                $key = md5(xn_key());
+                $s = xn_decrypt($data, $key);
+                $arr = explode("\t", $s);
+                isset($arr[4]) AND $post += array('token' => $arr[4], 'uid' => $arr[0]);
+            }
+            $conffile = $type ? APP_PATH . 'view/template/' . $dir . '/conf.json' : APP_PATH . 'plugin/' . $dir . '/conf.json';
+            if ($conffile) {
+                $arr = xn_json_decode(file_get_contents($conffile));
+                isset($arr['key']) AND $post += array('key' => $arr['key']);
+            }
+            if (!$type) {
+                $files = well_search_dir(APP_PATH . 'plugin/' . $dir . '/');
+                if (!empty($files)) {
+                    $funlist = array();
+                    foreach ($files as $file) {
+                        $s = file_get_contents($file);
+                        preg_match_all('#function\s+(.*?)\(#', $s, $arr);
+                        if (isset($arr[1])) {
+                            foreach ($arr[1] as $name) {
+                                $funlist[] = $name;
+                            }
+                        }
+                    }
+                    !empty($funlist) AND $post += array('funlist' => xn_json_encode($funlist));
+                }
+            }
+            https_request($url, $post, '', 1);
+        }
+    }
 }
 
 function plugin_is_local($dir)

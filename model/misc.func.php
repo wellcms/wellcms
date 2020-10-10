@@ -1135,6 +1135,29 @@ function well_import_total($file, $key = 'well_import_total')
     return $cache[$key] = $count;
 }
 
+$g_dir_file = FALSE;
+function well_search_dir($path)
+{
+    global $g_dir_file;
+    FALSE === $g_dir_file AND $g_dir_file = array();
+    if (is_dir($path)) {
+        $paths = scandir($path);
+        foreach ($paths as $val) {
+            $sub_path = $path . '/' . $val;
+            if ('.' == $val || '..' == $val) {
+                continue;
+            } else if (is_dir($sub_path)) {
+                well_search_dir($sub_path);
+            } else {
+                $g_dir_file[] = $sub_path;
+            }
+
+        }
+    }
+
+    return $g_dir_file;
+}
+
 // hook model_misc_end.php
 
 ?>

@@ -345,9 +345,8 @@ switch ($action) {
 
         $action2 = param(2);
 
-        // 创建用户
         if ('user_create' == $action2) {
-
+            // 创建用户
             $email = param('email');
 
             empty($email) AND message('email', lang('please_input_email'));
@@ -362,10 +361,8 @@ switch ($action) {
             $_SESSION['user_create_email'] = $email;
             $_SESSION['user_create_code'] = $code;
 
-
-            // 重置密码，往老地址发送
         } elseif ('user_resetpw' == $action2) {
-
+            // 重置密码，往老地址发送
             $email = param('email');
 
             empty($email) AND message('email', lang('please_input_email'));
@@ -377,7 +374,7 @@ switch ($action) {
             empty($conf['user_resetpw_on']) AND message(-1, lang('resetpw_not_on'));
 
             $code = rand(100000, 999999);
-            $_SESSION['user_create_email'] = $email;
+            $_SESSION['user_resetpw_email'] = $email;
             $_SESSION['user_resetpw_code'] = $code;
 
         } else {

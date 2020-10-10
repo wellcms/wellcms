@@ -606,6 +606,11 @@ li.quote {
     transition: height 0.2s;
 }
 
+/*解决 bootstrap 对umeditor输入框无法计算高度出现输入滚动条问题*/
+.form-control {
+    height: auto;
+}
+
 .nowrap {
     white-space: nowrap;
 }
