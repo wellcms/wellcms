@@ -818,15 +818,19 @@ function well_thread_delete_all_by_uid($uid)
 }
 
 // 搜索标题
-function well_thread_find_by_keyword($keyword)
+function well_thread_find_by_keyword($keyword, $d = NULL)
 {
-    global $db;
     if (empty($keyword)) return NULL;
 
-    $tablepre = $db->tablepre;
     // hook model__thread_find_by_keyword_start.php
+    
+    $db = $_SERVER['db'];
+    $d = $d ? $d : $db;
+    if (!$d) return FALSE;
+    
+    // hook model__thread_find_by_keyword_before.php
 
-    $threadlist = db_sql_find("SELECT * FROM `{$tablepre}website_thread` WHERE subject LIKE '%$keyword%' LIMIT 60;");
+    $threadlist = db_sql_find("SELECT * FROM `{$d->tablepre}website_thread` WHERE subject LIKE '%$keyword%' LIMIT 60;", 'tid', $d);
 
     // hook model__thread_find_by_keyword_before.php
 
