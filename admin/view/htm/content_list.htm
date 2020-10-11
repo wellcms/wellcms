@@ -27,9 +27,9 @@
                                 <!--{hook admin_content_select_strat.htm}-->
                                 <option value="0"><?php echo 'sticky'==$route?lang('top_3'):lang('select'); ?></option>
                                 <!--{hook admin_content_select_before.htm}-->
-                                <?php foreach ($columnlist as $v) { ?>
+                                <?php if(!empty($columnlist)){foreach ($columnlist as $v) { ?>
                                 <option value="<?php echo $v['fid']; ?>"><?php echo $v['name']; ?></option>
-                                <?php } ?>
+                                <?php }} ?>
                                 <!--{hook admin_content_select_end.htm}-->
                             </select>
                         </div>
