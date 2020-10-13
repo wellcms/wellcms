@@ -88,6 +88,7 @@ $(function () {
         var left = jthis.offset().left;
         add += left ? ' offset-4 offset-md-8' : '';
         jthis.css('display', 'none');
+        $('#menu-wrap').css({'overflow-x':'hidden','overflow-y':'auto','position':'fixed','top':'0','left':'0','width':'100%','height':'100%','z-index':'1050','background-color':'rgb(58, 59, 69, .3)'});
         jthis.removeClass(remove);
         /*nav.css({"position": "fixed", "top": "0", "bottom": "0", "right": "0", "margin-top": "3.625rem", "z-index": "1032"});*/
         nav.removeClass(remove1).addClass(add);
@@ -105,7 +106,7 @@ $(function () {
         var button_show = $('.button-show');
         button_show.addClass(remove);
         button_show.css('display', 'block');
-        /*nav.removeAttr('style');*/
+        $('#menu-wrap').removeAttr('style');
         nav.removeClass(add).addClass(remove1);
         nav.find('.post-sticky-top').removeClass(add1).addClass(remove2);
         /*nav.animate({left: ''}, 500);*/
