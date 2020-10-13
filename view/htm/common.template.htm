@@ -38,70 +38,68 @@
     <div class="button-show d-lg-none position-fixed bg-secondary d-flex align-items-center rounded-left nav-block">
         <i class="icon-chevron-left text-white mx-auto"></i>
     </div>
-    <div id="menu-wrap">
-        <div id="nav-show" class="col-lg-3 d-none d-lg-block">
-            <!--移动端-->
-            <div class="button-hide d-lg-none position-absolute bg-secondary d-flex align-items-center rounded-left nav-block">
-                <i class="icon-chevron-right text-white mx-auto"></i>
+    <div id="nav-show" class="col-lg-3 d-none d-lg-block">
+        <!--移动端-->
+        <div class="button-hide d-lg-none position-absolute bg-secondary d-flex align-items-center rounded-left nav-block">
+            <i class="icon-chevron-right text-white mx-auto"></i>
+        </div>
+        <!--右侧头部-->
+        <!--{hook common_header_start.htm}-->
+        <div class="card-site-info bg-white shadow">
+            <!--{hook common_site_start.htm}-->
+            <div class="mx-3 pt-3">
+                <h5 class="line-height-2 text-center">
+                    <?php echo $user['username'];?>
+                </h5>
+                <!--{hook common_sitename_after.htm}-->
             </div>
-            <!--右侧头部-->
-            <!--{hook common_header_start.htm}-->
-            <div class="card-site-info bg-white shadow">
-                <!--{hook common_site_start.htm}-->
-                <div class="mx-3 pt-3">
-                    <h5 class="line-height-2 text-center">
-                        <?php echo $user['username'];?>
-                    </h5>
-                    <!--{hook common_sitename_after.htm}-->
-                </div>
-                <!--{hook common_site_before.htm}-->
-                <div class="card-footer p-2">
-                    <table class="w-100 small text-muted text-center">
-                        <!--{hook common_count_start.htm}-->
-                        <tr>
-                            <!--{hook common_count_article_before.htm}-->
-                            <td>
+            <!--{hook common_site_before.htm}-->
+            <div class="card-footer p-2">
+                <table class="w-100 small text-muted text-center">
+                    <!--{hook common_count_start.htm}-->
+                    <tr>
+                        <!--{hook common_count_article_before.htm}-->
+                        <td>
                                     <span>
                                         <?php echo lang('thread');?>
                                     </span>
-                                <br>
-                                <b>
-                                    <?php echo $user['articles'];?>
-                                </b>
-                            </td>
-                            <!--{hook common_count_article_after.htm}-->
-                            <td>
+                            <br>
+                            <b>
+                                <?php echo $user['articles'];?>
+                            </b>
+                        </td>
+                        <!--{hook common_count_article_after.htm}-->
+                        <td>
                                     <span>
                                         <?php echo lang('comment');?>
                                     </span>
-                                <br>
-                                <b>
-                                    <?php echo $user['comments'];?>
-                                </b>
-                            </td>
-                            <!--{hook common_count_comment_after.htm}-->
-                        </tr>
-                        <!--{hook common_count_end.htm}-->
-                    </table>
-                </div>
-                <!--{hook common_site_end.htm}-->
+                            <br>
+                            <b>
+                                <?php echo $user['comments'];?>
+                            </b>
+                        </td>
+                        <!--{hook common_count_comment_after.htm}-->
+                    </tr>
+                    <!--{hook common_count_end.htm}-->
+                </table>
             </div>
-            <!--{hook common_header_end.htm}-->
-            <!-- 右侧菜单 -->
-            <!--{hook common_nav_start.htm}-->
-            <div class="shadow mt-3">
-                <div class="list-group text-center">
-                    <?php if(!empty($member_navs)){ ?>
-                    <?php foreach ($member_navs as $_member_nav) { ?>
-                    <a href="<?php echo $_member_nav['url'];?>" class="list-group-item list-group-item-action" data-active="<?php echo $_member_nav['active'];?>">
-                        <?php echo $_member_nav['name'];?>
-                    </a>
-                    <?php } ?>
-                    <?php } ?>
-                </div>
-            </div>
-            <!--{hook common_nav_end.htm}-->
+            <!--{hook common_site_end.htm}-->
         </div>
+        <!--{hook common_header_end.htm}-->
+        <!-- 右侧菜单 -->
+        <!--{hook common_nav_start.htm}-->
+        <div class="shadow mt-3">
+            <div class="list-group text-center">
+                <?php if(!empty($member_navs)){ ?>
+                <?php foreach ($member_navs as $_member_nav) { ?>
+                <a href="<?php echo $_member_nav['url'];?>" class="list-group-item list-group-item-action" data-active="<?php echo $_member_nav['active'];?>">
+                    <?php echo $_member_nav['name'];?>
+                </a>
+                <?php } ?>
+                <?php } ?>
+            </div>
+        </div>
+        <!--{hook common_nav_end.htm}-->
     </div>
 </div>
 <!--{hook common_end.htm}-->
