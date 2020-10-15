@@ -365,7 +365,7 @@ switch ($action) {
             if ($delete) {
                 $update['icon'] = 0;
                 $iconfile = $conf['upload_path'] . 'flag/' . $flagid . '.png';
-                file_exists($iconfile) AND unlink($iconfile);
+                fis_file($iconfile) AND unlink($iconfile);
             }
 
             $icon = param('icon');

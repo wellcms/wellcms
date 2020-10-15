@@ -17,7 +17,7 @@ body.on('click', '#user-logout', function () {
 });
 
 /* 搜索使用 */
-$('#form-search').on('submit', function () {
+body.on('submit', '#form-search', function () {
     var jthis = $(this);
     var range = jthis.find('input[name="range"]').val();
     var keyword = jthis.find('input[name="keyword"]').val();
@@ -26,7 +26,7 @@ $('#form-search').on('submit', function () {
 });
 
 /*表单快捷键提交 CTRL+ENTER   / form quick submit*/
-$('form').keyup(function (e) {
+body.on('keyup', 'form', function(e) {
     var jthis = $(this);
     if ((e.ctrlKey && (e.which == 13 || e.which == 10)) || (e.altKey && e.which == 83)) {
         jthis.trigger('submit');
@@ -35,7 +35,7 @@ $('form').keyup(function (e) {
 });
 
 /*点击响应整行：方便手机浏览  / check response line*/
-$('.tap').on('click', function (e) {
+body.on('click', '.tap', function (e) {
     var href = $(this).attr('href') || $(this).data('href');
     if (e.target.nodeName == 'LABEL' || e.target.nodeName == 'INPUT') return true;
     if ($(window).width() > 992) return;
@@ -53,7 +53,7 @@ $('.thread input[type="checkbox"]').parents('td').on('click', function (e) {
 });
 
 /*点击响应整行：导航栏下拉菜单   / check response line*/
-$('ul.nav > li').on('click', function (e) {
+body.on('click', 'ul.nav > li', function (e) {
     var jthis = $(this);
     var href = jthis.children('a').attr('href');
     if (e.ctrlKey) {
@@ -63,7 +63,7 @@ $('ul.nav > li').on('click', function (e) {
 });
 
 /*管理用户组*/
-$('.admin-manage-user').on('click', function () {
+body.on('click', '.admin-manage-user', function () {
     var href = $(this).data('href');
     $.xpost(href, function (code, message) {
         if (code == 0) {
@@ -83,7 +83,7 @@ $(function () {
     var add = 'shadow col-8 col-md-4 bg-white px-0';
     var add1 = 'px-2';
     /*菜单侧边滑出 .nav-block 控制在左右 */
-    $('.button-show').click(function () {
+    body.on('click', '.button-show', function () {
         var jthis = $(this);
         var left = jthis.offset().left;
         add += left ? ' offset-4 offset-md-8' : '';
@@ -98,7 +98,7 @@ $(function () {
     });
 
     /*菜单侧边收起弹出菜单*/
-    $('.button-hide').click(function () {
+    body.on('click', '.button-hide', function () {
         var jthis = $(this);
         var left = jthis.offset().left;
         add += left ? ' offset-3' : '';
@@ -200,15 +200,15 @@ $(function () {
  <a href="1.php" data-confirm-text="确定删除？" class="confirm">删除</a>
  <a href="1.php" data-method="post" data-confirm-text="确定删除？" class="confirm">删除</a>
  */
-$('a.confirm').on('click', function () {
+body.on('click', 'a.confirm', function () {
     var jthis = $(this);
     var text = jthis.data('confirm-text');
     $.confirm(text, function () {
         var method = xn.strtolower(jthis.data('method'));
         var href = jthis.data('href') || jthis.attr('href');
-        if (method == 'post') {
+        if ('post' == method) {
             $.xpost(href, function (code, message) {
-                if (code == 0) {
+                if (0 == code) {
                     window.location.reload();
                 } else {
                     $.alert(message);
@@ -221,9 +221,33 @@ $('a.confirm').on('click', function () {
     return false;
 });
 
+/*
+ <a class="ajax" rel="nofollow" href="<?php echo url('comment-create'); ?>" data-method="get" aria-label="评论提交">提交</a>
+
+ <a class="ajax" rel="nofollow" href="<?php echo url('comment-create'); ?>" data-method="post" data-json="{data:1}" aria-label="评论提交">提交</a>
+ */
+body.on('click', 'a.ajax', function () {
+    var jthis = $(this);
+    var method = xn.strtolower(jthis.data('method'));
+    var href = jthis.data('href') || jthis.attr('href');
+    if ('post' == method) {
+        var postdata = jthis.data('json');
+        $.xpost(href, postdata, function (code, message) {
+            if (0 == code) {
+                window.location.reload();
+            } else {
+                $.alert(message);
+            }
+        });
+    } else {
+        window.location = jthis.attr('href');
+    }
+    return false;
+});
+
 /*选中所有 / check all
  <input class="checkall" data-target=".tid" />*/
-$('input.checkall').on('click', function () {
+body.on('click', 'input.checkall', function () {
     var jthis = $(this);
     var target = jthis.data('target');
     jtarget = $(target);
