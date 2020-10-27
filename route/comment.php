@@ -4,8 +4,6 @@
 */
 !defined('DEBUG') AND exit('Access Denied.');
 
-user_login_check();
-
 // hook comment_start.php
 
 $action = param(1);
@@ -15,6 +13,8 @@ $action = param(1);
 switch ($action) {
     // hook comment_case_start.php
     case 'create':
+
+        user_login_check();
 
         // hook comment_create_start.php
 
@@ -131,6 +131,8 @@ switch ($action) {
 
         break;
     case 'update':
+
+        user_login_check();
 
         // hook comment_update_start.php
 
@@ -255,6 +257,7 @@ switch ($action) {
         break;
     case 'delete':
         // 删除回复 type = 1支持批量删除，直接传pid一维数组pid = array(1,2,3)
+        user_login_check();
 
         $safe_token = param('safe_token');
         FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
@@ -376,9 +379,6 @@ switch ($action) {
         message(0, lang('delete_successfully'));
         break;
     // hook comment_case_end.php
-    default:
-        message(-1, lang('data_malformation'));
-        break;
 }
 
 // hook comment_end.php
