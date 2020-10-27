@@ -552,9 +552,9 @@ function well_thread_delete_all($tid)
     // hook model_thread_delete_all_start.php
 
     set_time_limit(0);
-    $threadlist = well_thread__find(array('tid' => $tid), array('tid' => 1), 1, count($tid), 'tid');
-
-    if (empty($threadlist)) return NULL;
+    $n = is_array($tid) ? count($tid) : 1;
+    $threadlist = well_thread__find(array('tid' => $tid), array('tid' => 1), 1, $n, 'tid');
+    if (empty($threadlist)) return FALSE;
 
     $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
 

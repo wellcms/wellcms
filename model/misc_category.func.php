@@ -212,6 +212,7 @@ function forum_list($forumlist)
     if (empty($forumlist)) return array();
     static $cache = array();
     if (isset($cache['bbs_forum_list'])) return $cache['bbs_forum_list'];
+    $cache['bbs_forum_list'] = array();
     foreach ($forumlist as $_fid => $_forum) {
         if ($_forum['type']) continue;
         // hook model_forum_list_before.php

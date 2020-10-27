@@ -4,9 +4,14 @@
 */
 !defined('DEBUG') AND exit('Access Denied.');
 
+user_login_check();
+
 // hook comment_start.php
+
 $action = param(1);
+
 // hook comment_before.php
+
 switch ($action) {
     // hook comment_case_start.php
     case 'create':
@@ -29,7 +34,7 @@ switch ($action) {
         // hook comment_create_center.php
 
         // 用户组权限不足
-        0 != $thread['status'] || forum_access_user($fid, $gid, 'allowpost') || message(1, lang('user_group_insufficient_privilege'));
+        0 != $thread['status'] || forum_access_user($fid, $gid, 'allowpost') AND message(1, lang('user_group_insufficient_privilege'));
 
         // hook comment_create_after.php
 
@@ -64,7 +69,7 @@ switch ($action) {
             // 验证token
             if (1 == array_value($conf, 'comment_token', 0)) {
                 $safe_token = param('safe_token');
-                FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+                FALSE === well_token_verify($uid, $safe_token, 3) AND message(1, lang('illegal_operation'));
             }
 
             // hook comment_create_post_start.php

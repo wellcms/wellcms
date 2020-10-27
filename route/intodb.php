@@ -10,6 +10,8 @@ $user = user_read_cache($uid);
 if (empty($uid) || empty($user)) exit(lang('user_not_exists'));
 $gid = $user['gid'];
 
+// hook intodb_start.php
+
 $password = param(2);
 empty($password) AND exit(lang('password_incorrect'));
 
@@ -18,27 +20,37 @@ empty($check) AND exit(lang('password_incorrect'));
 
 $_fid = param(3, 0);
 
+// hook intodb_after.php
+
 if ('GET' == $method) {
 
+    // hook intodb_get_after.php
+    
     // 返回CMS栏目数据(仅列表)
     $columnlist = category_list($forumlist);
 
+    // hook intodb_get_after.php
+    
     $s = '';
     foreach ($columnlist as $_forum) {
         $s .= "<option value=\"$_forum[fid]\">$_forum[name]</option>";
     }
+
+    // hook intodb_get_end.php
 
     header('Content-Type:text/html;charset=utf-8');
     echo "<select class=\"custom-select mr-1 w-auto\" name=\"fid\">$s</select>";
 
 } elseif ('POST' == $method) {
 
+    // hook intodb_post_start.php
+    
     $fid = param('fid', $_fid);
     $forum = array_value($forumlist, $fid);
     empty($forum) AND exit(lang('forum_not_exists'));
 
     FALSE === group_access($gid, 'managecreatethread') AND exit(lang('user_group_insufficient_privilege'));
-
+    
     $subject = param('subject');
     $subject = filter_all_html($subject);
     empty($subject) AND exit(lang('please_input_subject'));
@@ -58,6 +70,8 @@ if ('GET' == $method) {
     $doctype = param('doctype', 0);
     $doctype > 10 AND exit(lang('doc_type_not_supported'));
 
+    // hook intodb_post_before.php
+    
     $message = $_message = '';
     if (0 == $link) {
         $message = param('message', '', FALSE);
@@ -72,7 +86,9 @@ if ('GET' == $method) {
     } else {
         $brief = ($brief_auto AND $_message) ? xn_html_safe(xn_substr($_message, 0, 120)) : '';
     }
-
+    
+    // hook intodb_post_center.php
+    
     $keyword = param('keyword');
     // 超出则截取
     xn_strlen($keyword) > 64 AND $keyword = xn_substr($keyword, 0, 64);
@@ -83,6 +99,8 @@ if ('GET' == $method) {
 
     $tags = param('tags', '', FALSE);
     $tags = xn_html_safe(filter_all_html($tags));
+
+    // hook intodb_post_middle.php
 
     // 首页flag
     $flag_index = param('index');
@@ -98,6 +116,8 @@ if ('GET' == $method) {
     $flag_forum_arr = array_filter($flag_forum_arr);
     // 统计主题绑定flag数量
     $flags = count($flag_index_arr) + count($flag_cate_arr) + count($flag_forum_arr);
+
+    // hook intodb_post_after.php
 
     $thread = array('fid' => $fid, 'type' => $type, 'doctype' => $doctype, 'subject' => $subject, 'brief' => $brief, 'keyword' => $keyword, 'description' => $description, 'closed' => $closed, 'flags' => $flags, 'thumbnail' => $thumbnail, 'save_image' => $save_image, 'delete_pic' => $delete_pic, 'message' => $message);
 
@@ -115,6 +135,8 @@ if ('GET' == $method) {
     }
     $tag_json AND well_thread_update($tid, array('tag' => $tag_json));
 
+    // hook intodb_post_end.php
+    
     // 首页flag
     !empty($flag_index_arr) AND FALSE === flag_create_thread(0, 1, $tid, $flag_index_arr) AND exit(lang('create_failed'));
 

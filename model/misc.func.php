@@ -388,20 +388,20 @@ function well_token_set($uid = 0)
     }
     $token = well_token_gen($uid, $pwd);
     $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
-    setcookie($key, $token, $time + 36800, '/', $conf['cookie_domain'], '', TRUE);
+    setcookie($key, $token, $time + 3600, '/', $conf['cookie_domain'], '', TRUE);
     return $token;
 }
 
 /*
  * @param $uid 当前用户UID
  * @param $token 获取的token
- * @param int $verify cookie中的token 0不比对 / 1比对
+ * @param int $verify cookie中的token 0不比对 / 1比对 2,3比对使用次数
  * @param int $life token 生命期
  * @return bool|mixed|string 返回 token 验证成功 / FALSE 验证失败
  */
-function well_token_verify($uid, $token, $verify = 0, $life = 1800)
+function well_token_verify($uid, $token, $verify = 0, $life = 3600)
 {
-    global $conf, $useragent;
+    global $conf, $time, $useragent;
     if (empty($token)) return FALSE;
     if ($uid) {
         $user = user_read_cache($uid);
@@ -414,50 +414,61 @@ function well_token_verify($uid, $token, $verify = 0, $life = 1800)
 
     if (1 == $verify) {
         $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
-        $_token = _COOKIE($key);
-        if (empty($_token) || $_token != $token) return FALSE;
+        $_token = _COOKIE($key, 0);
+        if ($_token != $token) return FALSE;
+        well_token_clear();
+    } elseif (2 == $verify) {
+        $num = _COOKIE(md5($token), 0);
+        if ($num) return FALSE; // 发表主题仅限使用1次
+        well_token_clear();
+        setcookie(md5($token), $num + 1, $time + 600, '/', $conf['cookie_domain'], '', TRUE);
+    } elseif (3 == $verify) {
+        $num = _COOKIE(md5($token), 0);
+        if ($num >= 10) return FALSE; // 评论仅限使用10次
+        setcookie(md5($token), $num + 1, $time + 600, '/', $conf['cookie_domain'], '', TRUE);
     }
 
-    $r = well_token_decrypt($token, $uid, $pwd, $life);
-    return $r;
+    return well_token_decrypt($token, $uid, $pwd, $life);
 }
 
 // 生成token / salt 混淆码用于加解密
 function well_token_gen($uid, $salt = '')
 {
-    global $time, $ip;
+    global $time, $ip, $useragent;
     $token_key = md5(xn_key() . $salt);
-    $token = xn_encrypt("$ip	$uid	$time", $token_key);
+    $ua_md5 = md5($useragent);
+    $token = xn_encrypt("$ip	$uid	$time	$ua_md5", $token_key);
     return $token;
 }
 
 // 解密token 正确则返回新token 错误返回FALSE
-function well_token_decrypt($token, $uid, $salt = '', $life = 1800)
+function well_token_decrypt($token, $uid, $salt = '', $life = 3600)
 {
-    global $time, $ip;
+    global $time, $ip, $useragent;
     $token_key = md5(xn_key() . $salt);
     $s = xn_decrypt($token, $token_key);
     if (empty($s)) return FALSE;
     $arr = explode("\t", $s);
-    if (count($arr) != 3) return FALSE;
-    list($_ip, $_uid, $_time) = $arr;
-    if ($uid != $_uid || $ip != $_ip) return FALSE;
-    if ($time - $_time > $life) return FALSE;
+    if (count($arr) != 4) return FALSE;
+    list($_ip, $_uid, $_time, $ua_md5) = $arr;
+    if ($ua_md5 != md5($useragent) || $time - $_time > $life || $uid != $_uid || $ip != $_ip) return FALSE;
     return well_token_gen($uid, $salt);
 }
 
 // 清理token
-function well_token_clear()
+function well_token_clear($token = 0)
 {
-    global $conf, $time;
-    setcookie('well_safe_token', '', $time - 86400, '/', $conf['cookie_domain'], '', TRUE);
+    global $uid, $conf, $time;
+    $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
+    setcookie($key, '', $time - 1, '/', $conf['cookie_domain'], '', TRUE);
+    $token AND setcookie(md5($token), 0, $time - 1, '/', $conf['cookie_domain'], '', TRUE);
 }
 
 // 格式化数字 1k
 function format_number($number)
 {
     $number = intval($number);
-    return $number > 1000 ? ($number > 1100 ? number_format(($number / 1000), 1) : intval($number / 1000)) . 'k+' : $number;
+    return $number > 1000 ? ($number > 1100 ? number_format(($number / 1000), 1) : intval($number / 1000)) . 'K+' : $number;
 }
 
 //---------------表单安全过滤---------------

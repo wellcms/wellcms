@@ -26,7 +26,7 @@ body.on('submit', '#form-search', function () {
 });
 
 /*表单快捷键提交 CTRL+ENTER   / form quick submit*/
-body.on('keyup', 'form', function(e) {
+body.on('keyup', 'form', function (e) {
     var jthis = $(this);
     if ((e.ctrlKey && (e.which == 13 || e.which == 10)) || (e.altKey && e.which == 83)) {
         jthis.trigger('submit');
@@ -397,3 +397,121 @@ $(function () {
         e.preventDefault();
     });
 });
+
+/* post 数组格式化为 get 请求参数 */
+function well_params_fmt(data) {
+    var arr = [];
+    for (var name in data) {
+        arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
+    }
+    arr.push(("v=" + Math.random()).replace(".", ""));
+    return arr.join("&");
+}
+
+//基本的使用实例
+/*$.well_ajax({
+    url:"http://server-name/login",
+    type:'POST',
+    data:{
+        username:'username',
+        password:'password'
+    },
+    dataType:'json',
+    timeout:10000,
+    contentType:"application/json",
+    success:function(data){
+        /!*服务器返回响应*!/
+    },
+    /!*异常处理*!/
+    error:function(e){
+        console.log(e);
+    }
+});*/
+
+/*
+$.well_post = function (url, postdata, callback, progress_callback) {
+    postdata = postdata || null;
+    $.well_ajax({
+        type: 'POST',
+        url: url,
+        data: postdata,
+        dataType: 'text',
+        timeout: 6000000,
+        progress: function (e) {
+            if (e.lengthComputable) {
+                if (progress_callback) progress_callback(e.loaded / e.total * 100);
+            }
+        },
+        success: function (r) {
+            if (!r) return callback(-1, 'Server Response Empty!');
+            var s = xn.json_decode(r);
+            if (!s || s.code === undefined) return callback(-1, 'Server Response Not JSON：' + r);
+            if (s.code == 0) {
+                return callback(0, s.message);
+            } else if (s.code < 0) {
+                return callback(s.code, s.message);
+            } else {
+                return callback(s.code, s.message);
+            }
+        },
+        error: function (xhr, type) {
+            if (type != 'abort' && type != 'error' || xhr.status == 403) {
+                return callback(-1000, "xhr.responseText:" + xhr.responseText + ', type:' + type);
+            } else {
+                return callback(-1001, "xhr.responseText:" + xhr.responseText + ', type:' + type);
+                console.log("xhr.responseText:" + xhr.responseText + ', type:' + type);
+            }
+        }
+    });
+};
+
+$.well_ajax = function (options) {
+    options = options ||{};
+    options.type=(options.type || 'GET').toUpperCase();
+    /!* 响应数据格式，默认json *!/
+    options.dataType = options.dataType || 'json';
+    /!* options.data请求的数据 *!/
+    options.postdata = well_params_fmt(options.postdata);
+    options.timeout = options.timeout || 6000000;
+    options.contentType = options.contentType || 'application/json';
+    var xhr;
+
+    if (window.XMLHttpRequest) {
+        xhr = new XMLHttpRequest();
+    } else if (window.ActiveObject) {
+        /!*兼容IE6以下版本*!/
+        xhr = new ActiveXobject('Microsoft.XMLHTTP');
+    }
+
+    if ('GET' == options.type) {
+        xhr.open('GET', options.url + "?" + options.postdata, true);
+        xhr.send(null);
+    } else if ('POST' == options.type) {
+        xhr.open('POST', options.url, true);
+        /!*设置表单提交时的内容类型Content-type数据请求的格式*!/
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send(options.postdata);
+    }
+
+    /!* 设置有效时间 *!/
+    setTimeout(function () {
+        if (xhr.readySate != 4) {
+            xhr.abort();
+        }
+    }, options.timeout);
+
+    /!*
+    options.success成功之后的回调函数  options.error失败后的回调函数
+    xhr.responseText,xhr.responseXML  获得字符串形式的响应数据或者XML形式的响应数据
+    *!/
+    xhr.onreadystatechange = function () {
+        if (4 == xhr.readyState) {
+            var status = xhr.status;
+            if (status >= 200 && status < 300 ||  304 == status) {
+                options.success && options.success(xhr.responseText, xhr.responseXML);
+            } else {
+                options.error && options.error(status);
+            }
+        }
+    }
+};*/
