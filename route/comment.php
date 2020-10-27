@@ -34,7 +34,7 @@ switch ($action) {
         // hook comment_create_center.php
 
         // 用户组权限不足
-        0 != $thread['status'] || forum_access_user($fid, $gid, 'allowpost') AND message(1, lang('user_group_insufficient_privilege'));
+        0 != $thread['status'] || !forum_access_user($fid, $gid, 'allowpost') AND message(1, lang('user_group_insufficient_privilege'));
 
         // hook comment_create_after.php
 
