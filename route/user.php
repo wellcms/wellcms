@@ -57,7 +57,7 @@ switch ($action) {
 
             $allowdelete = group_access($gid, 'allowdelete') || 1 == $gid;
 
-            $page_url = url('user-comment-' . $_user['uid'] . '{page}', $extra);
+            $page_url = url('user-comment-' . $_user['uid'] . '-{page}', $extra);
             $num = $_user['comments'];
 
             // hook user_comment_pagination_before.php
