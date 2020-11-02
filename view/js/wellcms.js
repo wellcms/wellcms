@@ -83,7 +83,7 @@ $(function () {
     var add = 'shadow col-8 col-md-4 bg-white px-0';
     var add1 = 'px-2';
     /*菜单侧边滑出 .nav-block 控制在左右 */
-    body.on('click', '.button-show', function () {
+    $('.button-show').click(function () {
         var jthis = $(this);
         var left = jthis.offset().left;
         add += left ? ' offset-4 offset-md-8' : '';
@@ -98,7 +98,7 @@ $(function () {
     });
 
     /*菜单侧边收起弹出菜单*/
-    body.on('click', '.button-hide', function () {
+    $('.button-hide').click(function () {
         var jthis = $(this);
         var left = jthis.offset().left;
         add += left ? ' offset-3' : '';
