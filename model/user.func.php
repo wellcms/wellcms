@@ -82,7 +82,7 @@ function user_update($uid, $arr)
     // hook model_user_update_start.php
     if (empty($uid)) return FALSE;
     $r = user__update($uid, $arr);
-    'mysql' != $conf['cache']['type'] AND cache_update('user-' . $uid, $arr, 7200);
+    'mysql' != $conf['cache']['type'] AND cache_delete('user-' . $uid);
     isset($g_static_users[$uid]) AND $g_static_users[$uid] = array_merge($g_static_users[$uid], $arr);
     // hook model_user_update_end.php
     return $r;
