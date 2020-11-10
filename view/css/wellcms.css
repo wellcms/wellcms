@@ -892,6 +892,21 @@ select option {
     padding: .25rem 0.5rem;
 }
 
+/* 大屏+: big screen */
+@media (min-width: 767px) {
+    .nav-scroller {
+        white-space:nowrap;
+        height: 2.1rem!important;
+    }
+    .nav-scroller .nav::-webkit-scrollbar-thumb {
+        background-color: #19926f !important;
+    }
+    .nav-scroller .nav .nav-link {
+        padding: .15rem 0.2rem;
+        margin: .2rem 0.2rem;
+    }
+}
+
 .nav-block {
     right: 0;
     top: calc((100vh - 3.625rem)/2);

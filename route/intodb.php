@@ -43,14 +43,21 @@ if ('GET' == $method) {
 
 } elseif ('POST' == $method) {
 
+    FALSE === group_access($gid, 'managecreatethread') AND exit(lang('user_group_insufficient_privilege'));
+
     // hook intodb_post_start.php
+
+    // 统一更新主题数据
+    $thread_update = array();
+    // 统一更新用户数据
+    $user_update = array();
+
+    // hook intodb_post_forum_before.php
     
     $fid = param('fid', $_fid);
     $forum = array_value($forumlist, $fid);
     empty($forum) AND exit(lang('forum_not_exists'));
 
-    FALSE === group_access($gid, 'managecreatethread') AND exit(lang('user_group_insufficient_privilege'));
-    
     $subject = param('subject');
     $subject = filter_all_html($subject);
     empty($subject) AND exit(lang('please_input_subject'));
@@ -133,9 +140,9 @@ if ('GET' == $method) {
             $tag_json = $len ? xn_substr($tag_json, 0, $len) . '}' : '';
         }
     }
-    $tag_json AND well_thread_update($tid, array('tag' => $tag_json));
+    !empty($tag_json) AND $thread_update['tag'] = $tag_json;
 
-    // hook intodb_post_end.php
+    // hook intodb_post_tag_after.php
     
     // 首页flag
     !empty($flag_index_arr) AND FALSE === flag_create_thread(0, 1, $tid, $flag_index_arr) AND exit(lang('create_failed'));
@@ -145,6 +152,14 @@ if ('GET' == $method) {
 
     // 栏目flag
     !empty($flag_forum_arr) AND FALSE === flag_create_thread($fid, 3, $tid, $flag_forum_arr) AND exit(lang('create_failed'));
+
+    // hook intodb_post_flag_after.php
+
+    !empty($thread_update) && FALSE === well_thread_update($tid, $thread_update) AND message(-1, lang('update_thread_failed'));
+
+    !empty($user_update) && FALSE === user_update($uid, $user_update) AND message(-1, lang('update_failed'));
+
+    // hook intodb_post_end.php
 
     exit('success');
 }
