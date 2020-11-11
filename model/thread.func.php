@@ -137,7 +137,7 @@ function well_thread_create($arr)
     // hook model__thread_create_thread_after.php
 
     $upload_thumbnail = well_attach_assoc_type('thumbnail'); // 缩略图主图
-    $upload_file = (well_attach_assoc_type('post') AND preg_match_all('#<img[^>]+src=".*?(.+\.(jpg|jpeg|gif|bmp|bnp|png))"#i', strtolower($message))); // 内容中上传的图片
+    $upload_file = (well_attach_assoc_type('post') and preg_match_all('#<img[^>]+src=".*?(.+\.(jpg|jpeg|gif|bmp|bnp|png))"#i', strtolower($message))); // 内容中上传的图片
 
     // hook model__thread_create_center.php
 
@@ -166,7 +166,7 @@ function well_thread_create($arr)
             // 获取内容第一张图为主图
             $arr = array('tid' => $tid, 'uid' => $uid, 'fid' => $fid);
             // hook model__thread_create_thumbnail_before.php
-            $thumbnail AND well_attach_create_thumbnail($arr);
+            $thumbnail and well_attach_create_thumbnail($arr);
         } elseif (!empty($upload_thumbnail)) {
             // 上传了主图
             // hook model__thread_create_thumbnail_center.php
@@ -183,7 +183,7 @@ function well_thread_create($arr)
     // hook model__thread_create_save_image_before.php
 
     // 图片本地化 并创建缩略图
-    ($save_image || $create_thumbnail) AND $message = well_save_remote_image(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid, 'message' => $message, 'thumbnail' => $thumbnail, 'save_image' => $save_image));
+    ($save_image || $create_thumbnail) and $message = well_save_remote_image(array('tid' => $tid, 'fid' => $fid, 'uid' => $uid, 'message' => $message, 'thumbnail' => $thumbnail, 'save_image' => $save_image));
 
     // hook model__thread_create_attach_before.php
 
@@ -194,7 +194,7 @@ function well_thread_create($arr)
         $message = well_attach_assoc_post($attach);
         unset($attach);
     }
-    
+
     // hook model__thread_create_data_before.php
 
     // 主题数据入库
@@ -219,7 +219,7 @@ function well_thread_create($arr)
 
         $forum_update = array('threads+' => 1, 'todaythreads+' => 1);
         // hook model__thread_create_forum_update_center.php
-        $fid AND forum_update($fid, $forum_update);
+        $fid and forum_update($fid, $forum_update);
         unset($forum_update);
 
         // hook model__thread_create_tid_start.php
@@ -246,7 +246,7 @@ function well_thread_create($arr)
         // 门户模式删除首页所有缓存
         if (1 == array_value($config, 'model')) {
             cache_delete('portal_index_thread');
-            $fid AND cache_delete('portal_channel_thread_' . $fid);
+            $fid and cache_delete('portal_channel_thread_' . $fid);
         }
 
         // hook model__thread_create_portal_after.php
@@ -266,7 +266,7 @@ function well_thread_create($arr)
     // hook model__thread_create_verify_after.php
 
     // 更新统计数据
-    !empty($user_update) AND user_update($uid, $user_update);
+    !empty($user_update) and user_update($uid, $user_update);
 
     // hook model__thread_create_end.php
 
@@ -333,9 +333,14 @@ function well_thread_update_all($tid, $update)
 // 遍历栏目tid 按照: 发布时间 倒序，不包含置顶
 function well_thread_find_tid($fid, $page = 1, $pagesize = 20)
 {
-    global $forumlist;
+    global $conf, $forumlist;
+
+    $key = 'well_thread_find_tid_' . $fid . '_' . $page . '_' . $pagesize;
+    static $cache = array();
+    if (isset($cache[$key])) return $cache[$key];
+
     // hook model__thread_find_tid_start.php
-    $conf = _SERVER('conf');
+
     $forum = array_value($forumlist, $fid);
     $threads = $forum['threads'];
 
@@ -361,7 +366,7 @@ function well_thread_find_tid($fid, $page = 1, $pagesize = 20)
 
     // hook model__thread_find_tid_middle.php
 
-    $desc AND $arr = thread_tid_find_by_fid($fid, $page, $pagesize, TRUE);
+    $desc and $arr = thread_tid_find_by_fid($fid, $page, $pagesize, TRUE);
 
     // hook model__thread_find_tid_after.php
 
@@ -376,6 +381,10 @@ function well_thread_find_tid($fid, $page = 1, $pagesize = 20)
 function well_thread_find_desc($fid, $page = 1, $pagesize = 20)
 {
     global $conf, $forumlist;
+
+    $key = 'well_thread_find_desc_' . $fid . '_' . $page . '_' . $pagesize;
+    static $cache = array();
+    if (isset($cache[$key])) return $cache[$key];
 
     // hook model_thread_find_desc_start.php
 
@@ -402,7 +411,7 @@ function well_thread_find_desc($fid, $page = 1, $pagesize = 20)
         }
     }
 
-    $desc AND $arr = thread_tid__find(array('fid' => $fid), array('rank' => -1), $page, $pagesize);
+    $desc and $arr = thread_tid__find(array('fid' => $fid), array('rank' => -1), $page, $pagesize);
 
     // hook model_thread_find_desc_after.php
 
@@ -416,6 +425,10 @@ function well_thread_find_desc($fid, $page = 1, $pagesize = 20)
 // 查询用户uid下tid 主题数据详情
 function well_thread_find_by_uid($uid, $page = 1, $pagesize = 20)
 {
+    $key = 'well_thread_find_by_uid_' . $uid . '_' . $page . '_' . $pagesize;
+    static $cache = array();
+    if (isset($cache[$key])) return $cache[$key];
+
     // hook model__thread_find_by_uid_start.php
 
     $arr = thread_tid_find_by_uid($uid, $page, $pagesize);
@@ -440,6 +453,7 @@ function well_thread_find_by_uid($uid, $page = 1, $pagesize = 20)
 function well_thread_find($tidarr, $pagesize = 20, $desc = TRUE)
 {
     // hook model__thread_find_start.php
+
     $orderby = TRUE == $desc ? -1 : 1;
     $threadlist = well_thread__find(array('tid' => $tidarr), array('tid' => $orderby), 1, $pagesize);
 
@@ -499,7 +513,7 @@ function well_thread_inc_views($tid, $n = 1)
     //if (!$conf['update_views_on']) return TRUE;
     $sqladd = in_array($conf['cache']['type'], array('mysql', 'pdo_mysql')) ? ' LOW_PRIORITY' : '';
     $r = db_exec("UPDATE$sqladd `{$tablepre}website_thread` SET views=views+$n WHERE tid='$tid'");
-    'mysql' != $conf['cache']['type'] AND cache_update('website_thread_' . $tid, array('views+' => $n), 1800);
+    'mysql' != $conf['cache']['type'] and cache_update('website_thread_' . $tid, array('views+' => $n), 1800);
     // hook model__thread_inc_views_end.php
     return $r;
 }
@@ -511,7 +525,7 @@ function well_thread_read($tid)
     if (isset($cache[$tid])) return $cache[$tid];
     // hook model__thread_read_start.php
     $cache[$tid] = well_thread__read(array('tid' => $tid));
-    $cache[$tid] AND well_thread_format($cache[$tid]);
+    $cache[$tid] and well_thread_format($cache[$tid]);
     // hook model__thread_read_end.php
     return $cache[$tid];
 }
@@ -598,7 +612,7 @@ function well_thread_delete_all($tid)
         if ($thread['icon']) {
             $day = date($attach_dir_save_rule, $thread['icon']);
             $file = $conf['upload_path'] . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
-            is_file($file) AND unlink($file);
+            is_file($file) and unlink($file);
         }
 
         $tids[] = $thread['tid'];
@@ -613,7 +627,7 @@ function well_thread_delete_all($tid)
             }
             // hook model_thread_delete_all_tag_after.php
             // 删除标签主题表
-            !empty($tagids) AND well_tag_thread_delete($tagids, $thread['tid']);
+            !empty($tagids) and well_tag_thread_delete($tagids, $thread['tid']);
         }
 
         if ($thread['images'] || $thread['files']) {
@@ -736,7 +750,7 @@ function well_thread_delete_all($tid)
         foreach ($fidarr as $_fid => $n) {
             $fids[] = $_fid;
             $update[$_fid] = array('threads-' => $n);
-            isset($fidstickys[$_fid]) AND $update[$_fid] += array('tops-' => $fidstickys[$_fid]);
+            isset($fidstickys[$_fid]) and $update[$_fid] += array('tops-' => $fidstickys[$_fid]);
             // hook model_thread_delete_all_forum_center.php
         }
 
@@ -754,7 +768,7 @@ function well_thread_delete_all($tid)
         foreach ($uidarr as $_uid => $n) {
             $uids[] = $_uid;
             $update[$_uid] = array('articles-' => $n);
-            'mysql' != $conf['cache']['type'] AND cache_delete('user-' . $_uid);
+            'mysql' != $conf['cache']['type'] and cache_delete('user-' . $_uid);
             // hook model_thread_delete_all_user_center.php
         }
 
@@ -765,7 +779,7 @@ function well_thread_delete_all($tid)
 
     // hook model_thread_delete_all_after.php
 
-    function_exists('operate_big_insert') AND operate_big_insert($operate_create);
+    function_exists('operate_big_insert') and operate_big_insert($operate_create);
 
     // hook model_thread_delete_all_end.php
 
@@ -794,7 +808,7 @@ function well_thread_delete_all_by_uid($uid)
         }
         unset($postist);
 
-        !empty($pidarr) AND comment_delete_by_pids($pidarr);
+        !empty($pidarr) and comment_delete_by_pids($pidarr);
     }
 
     // hook model__thread_delete_all_by_uid_middle.php
@@ -809,7 +823,7 @@ function well_thread_delete_all_by_uid($uid)
         }
         unset($tidlist);
 
-        !empty($tidarr) AND well_thread_delete_all($tidarr);
+        !empty($tidarr) and well_thread_delete_all($tidarr);
     }
 
     // hook model__thread_delete_all_by_uid_end.php
@@ -823,11 +837,11 @@ function well_thread_find_by_keyword($keyword, $d = NULL)
     if (empty($keyword)) return NULL;
 
     // hook model__thread_find_by_keyword_start.php
-    
+
     $db = $_SERVER['db'];
     $d = $d ? $d : $db;
     if (!$d) return FALSE;
-    
+
     // hook model__thread_find_by_keyword_before.php
 
     $threadlist = db_sql_find("SELECT * FROM `{$d->tablepre}website_thread` WHERE subject LIKE '%$keyword%' LIMIT 60;", 'tid', $d);
@@ -965,7 +979,7 @@ function well_thread_format(&$thread)
     // hook model__thread_format_after.php
     // 权限判断
     $thread['allowupdate'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
-    $thread['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
+    $thread['allowdelete'] = (group_access($gid, 'allowuserdelete') and $uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
     $thread['allowtop'] = forum_access_mod($thread['fid'], $gid, 'allowtop');
 
     // hook model__thread_format_end.php
@@ -1077,9 +1091,9 @@ function thread_unified_pull($arr)
     foreach ($arrlist as $_tid => &$_thread) {
 
         $_thread = well_thread_safe_info($_thread);
-        
+
         // 归类列表数据
-        isset($tidlist[$_thread['tid']]) AND $threadlist[$_tid] = $_thread;
+        isset($tidlist[$_thread['tid']]) and $threadlist[$_tid] = $_thread;
 
         // hook model_thread_unified_pull_threadlist.php
 
@@ -1212,7 +1226,7 @@ function well_thread_read_cache($tid)
         $r = cache_get($key);
         if (NULL === $r) {
             $r = well_thread_read($tid);
-            $r AND cache_set($key, $r, 1800);
+            $r and cache_set($key, $r, 1800);
         }
     }
     $cache[$key] = $r ? $r : NULL;

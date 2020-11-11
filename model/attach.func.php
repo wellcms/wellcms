@@ -69,6 +69,7 @@ function attach_big_update($cond = array(), $update = array(), $d = NULL)
     // hook model_attach_big_update_end.php
     return $r;
 }
+
 // ------------> 关联 CURD，主要是强相关的数据，比如缓存。弱相关的大量数据需要另外处理
 function well_attach_create($arr)
 {
@@ -94,7 +95,7 @@ function well_attach_read($aid)
 
     $attach = well_attach__read($aid);
 
-    $attach AND well_attach_format($attach);
+    $attach and well_attach_format($attach);
 
     // hook model__attach_read_end.php
 
@@ -111,7 +112,7 @@ function well_attach_delete($aid)
     if (empty($attach)) return FALSE;
 
     $path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
-    is_file($path) AND unlink($path);
+    is_file($path) and unlink($path);
 
     // hook model__attach_delete_after.php
 
@@ -136,7 +137,7 @@ function well_attach_find($cond = array(), $orderby = array(), $page = 1, $pages
     return $attachlist;
 }
 
-// 获取 $filelist $imagelist
+// 获取主题附件和图片 $filelist $imagelist
 function well_attach_find_by_tid($tid)
 {
     $imagelist = array();
@@ -170,11 +171,14 @@ function well_attach_delete_by_tid($tid)
     // hook model__attach_delete_by_tid_before.php
     if (empty($attachlist)) return FALSE;
 
+    $aids = array();
     foreach ($attachlist as $attach) {
         $path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
-        is_file($path) AND unlink($path);
-        well_attach__delete($attach['aid']);
+        is_file($path) and unlink($path);
+        $aids[] = $attach['aid'];
     }
+
+    well_attach__delete($aids);
 
     // hook model__attach_delete_by_tid_end.php
 
@@ -182,7 +186,7 @@ function well_attach_delete_by_tid($tid)
 }
 
 /*
- * @param $tids 数组array(1,2,3)
+ * @param $tids 主题tid 数组array(1,2,3)
  * @param $n 图片和附件总数量
  * @return int 返回清理数量
  */
@@ -196,7 +200,7 @@ function well_attach_delete_by_tids($tids, $n)
     $aids = array();
     foreach ($attachlist as $attach) {
         $path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
-        is_file($path) AND unlink($path);
+        is_file($path) and unlink($path);
         $aids[] = $attach['aid'];
     }
 
@@ -228,6 +232,7 @@ function well_attach_find_by_pid($pid)
     return array($attachlist, $imagelist, $filelist);
 }
 
+// 删除评论附件和图片
 function well_attach_delete_by_pid($pid)
 {
     global $conf;
@@ -238,11 +243,14 @@ function well_attach_delete_by_pid($pid)
     // hook model__attach_delete_by_pid_before.php
     if (empty($attachlist)) return FALSE;
 
+    $aids = array();
     foreach ($attachlist as $attach) {
         $path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
-        is_file($path) AND unlink($path);
-        well_attach__delete($attach['aid']);
+        is_file($path) and unlink($path);
+        $aids[] = $attach['aid'];
     }
+
+    well_attach__delete($aids);
 
     // hook model__attach_delete_by_pid_end.php
 
@@ -260,12 +268,15 @@ function well_attach_delete_by_uid($uid)
 
     // hook model__attach_delete_by_uid_before.php
 
+    $aids = array();
     foreach ($attachlist as $attach) {
         $path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
-        is_file($path) AND unlink($path);
-        well_attach__delete($attach['aid']);
+        is_file($path) and unlink($path);
+        $aids[] = $attach['aid'];
         // hook model__attach_delete_by_uid_after.php
     }
+
+    well_attach__delete($aids);
 
     // hook model__attach_delete_by_uid_end.php
 }
@@ -303,7 +314,7 @@ function attach_gc()
     if (is_array($tmpfiles)) {
         foreach ($tmpfiles as $file) {
             // 清理超过一天还没处理的临时文件
-            $time - filemtime($file) > 86400 AND unlink($file);
+            $time - filemtime($file) > 86400 and unlink($file);
         }
     }
     // hook model_attach_gc_end.php
@@ -464,8 +475,8 @@ function well_attach_assoc_file($arr = array())
             // hook model_attach_assoc_file_arr_before.php
 
             $attach = array(
-                'tid' => $tid,
-                'pid' => $pid,
+                /*'tid' => $tid,
+                'pid' => $pid,*/
                 'uid' => $uid,
                 'filesize' => $file['filesize'],
                 'width' => $file['width'],
@@ -479,12 +490,14 @@ function well_attach_assoc_file($arr = array())
                 'attach_on' => $conf['attach_on']
             );
 
+            $tid and $attach += $pid ? array('pid' => $pid) : array('tid' => $tid);
+
             // hook model_attach_assoc_file_create_before.php
 
             // 关联内容再入库
             $aid = well_attach_create($attach);
 
-            $file['backstage'] AND $arr['message'] = str_replace('../upload/', 'upload/', $arr['message']);
+            $file['backstage'] and $arr['message'] = str_replace('../upload/', 'upload/', $arr['message']);
             $arr['message'] = str_replace($file['url'], $desturl, $arr['message']);
 
             // hook model_attach_assoc_file_foreach_end.php
@@ -535,10 +548,10 @@ function well_attach_assoc_file($arr = array())
         }
 
         $_images = count($imagelist);
-        $images != $_images AND $update['images'] = $_images;
+        $images != $_images and $update['images'] = $_images;
 
         $_files = count($filelist);
-        $files != $_files AND $update['files'] = $_files;
+        $files != $_files and $update['files'] = $_files;
 
         // hook model_attach_assoc_file_filter_end.php
     }
@@ -735,7 +748,7 @@ function well_save_remote_image($arr)
                         well_thread_update($tid, array('icon' => $time));
                     }
                     if (empty($save_image)) {
-                        is_file($destpath) AND unlink($destpath);
+                        is_file($destpath) and unlink($destpath);
                         continue;
                     }
                 }
@@ -749,7 +762,7 @@ function well_save_remote_image($arr)
             $message = preg_replace('#(<img.*?)(class=.+?[\'|\"])|(data-src=.+?[\'|"])|(data-type=.+?[\'|"])|(data-ratio=.+?[\'|"])|(data-s=.+?[\'|"])|(data-fail=.+?[\'|"])|(crossorigin=.+?[\'|"])|((data-w)=[\'"]+[0-9]+[\'"]+)|(_width=.+?[\'|"]+)|(_height=.+?[\'|"]+)|(style=.+?[\'|"])|((width)=[\'"]+[0-9]+[\'"]+)|((height)=[\'"]+[0-9]+[\'"]+)#i', '$1', $_message);
         }
         // hook model_attach_save_remote_image_after.php
-        $n AND well_thread_update($tid, array('images+' => $n));
+        $n and well_thread_update($tid, array('images+' => $n));
     }
     // hook model_attach_save_remote_image_end.php
     return $message;
