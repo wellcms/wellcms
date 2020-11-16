@@ -74,7 +74,7 @@ function plugin_init()
     global $plugin_paths, $themes, $plugins, $official_plugins, $conf;
 
     $official_plugins = kv_cache_get('plugin_official_list');
-    empty($official_plugins) AND $official_plugins = array();
+    empty($official_plugins) and $official_plugins = array();
 
     $plugin_paths = glob(APP_PATH . 'plugin/*', GLOB_ONLYDIR);
     if (is_array($plugin_paths)) {
@@ -406,8 +406,8 @@ function plugin_official_store($type = 0)
             return NULL;
         }
 
-        $url = PLUGIN_OFFICIAL_URL . 'plugin-store.html';
         $post = array('siteid' => plugin_siteid(), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $arr[4], 'uid' => $arr[0]);
+        $url = PLUGIN_OFFICIAL_URL . 'plugin-store.html?' . http_build_query($post);
         $s = https_request($url, $post, '', 500, 1);
 
         // 检查返回值是否正确
@@ -514,7 +514,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
     }
 
     // 额外的判断
-    $plugin['icon_url'] = $icon ? $icon : ($official['storeid'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/'.date('Ym', $plugin['create_date']).'/'.$plugin['storeid'].'/icon.png' : '');
+    $plugin['icon_url'] = $icon ? $icon : ($official['storeid'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . date('Ym', $plugin['create_date']) . '/' . $plugin['storeid'] . '/icon.png' : '');
     $plugin['setting_url'] = $plugin['installed'] && is_file(APP_PATH . "plugin/$dir/setting.php") ? "plugin-setting-$dir.html" : "";
     $plugin['downloaded'] = isset($plugins[$dir]);
     // 10赞一星 100赞二星 1k赞三星 10k赞四星 100k+五星

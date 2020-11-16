@@ -1,7 +1,7 @@
 <?php
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
-FALSE === group_access($gid, 'manageplugin') AND message(1, lang('user_group_insufficient_privilege'));
+FALSE === group_access($gid, 'manageplugin') and message(1, lang('user_group_insufficient_privilege'));
 
 $action = param(1, 'list');
 
@@ -65,7 +65,7 @@ switch ($action) {
                 }
             }
 
-            !empty($read) AND $pluginlist = array($config['theme'] => $read) + $pluginlist;
+            !empty($read) and $pluginlist = array($config['theme'] => $read) + $pluginlist;
 
             $pagination = pagination(url('plugin-' . $action, $extra, TRUE), count($total), $page, $pagesize);
 
@@ -78,12 +78,12 @@ switch ($action) {
 
         } elseif ('POST' == $method) {
 
-            FALSE === group_access($gid, 'manageplugin') AND message(1, lang('user_group_insufficient_privilege'));
+            FALSE === group_access($gid, 'manageplugin') and message(1, lang('user_group_insufficient_privilege'));
 
             $dir = param_word('dir');
             $type = param('type', 0);
 
-            empty($dir) AND message(1, lang('data_malformation'));
+            empty($dir) and message(1, lang('data_malformation'));
 
             if (1 == $type) {
                 plugin_check_dependency($dir);
@@ -110,8 +110,8 @@ switch ($action) {
 
             $srchtype = param('srchtype', 'name');
             $keyword = trim(xn_urldecode(param('keyword')));
-            $keyword AND $cond['name'] = array('LIKE' => $keyword);
-            $keyword AND $cond['author'] = array('author' => $keyword);
+            $keyword and $cond['name'] = array('LIKE' => $keyword);
+            $keyword and $cond['author'] = array('author' => $keyword);
 
             // plugin category
             $plugin_cates = array(0 => lang('plugin_cate_0'), 1 => lang('plugin_cate_1'), 2 => lang('plugin_cate_2'), 3 => lang('plugin_cate_3'), 4 => lang('plugin_cate_4'));
@@ -136,7 +136,7 @@ switch ($action) {
         } elseif ('POST' == $method) {
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             plugin_official_store(1);
 
@@ -152,7 +152,7 @@ switch ($action) {
             $extra = array('dir' => $dir, 'safe_token' => $safe_token); // 插件预留
 
             $plugin = plugin_read_by_dir($dir);
-            empty($plugin) AND message(-1, lang('plugin_not_exists'));
+            empty($plugin) and message(-1, lang('plugin_not_exists'));
 
             $return = FALSE;
             $verify_token = TRUE;
@@ -207,21 +207,21 @@ switch ($action) {
         } elseif ('POST' == $method) {
 
             $email = param('email');
-            empty($email) AND message('email', lang('email_is_empty'));
+            empty($email) and message('email', lang('email_is_empty'));
 
             $password = param('password');
-            empty($password) AND message('password', lang('please_input_password'));
+            empty($password) and message('password', lang('please_input_password'));
 
             $siteip = ip2long(_SERVER('SERVER_ADDR'));
-            $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+            $siteip < 0 and $siteip = sprintf("%u", $siteip);
             $post = array('email' => $email, 'password' => md5($password), 'auth_key' => xn_key(), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ua' => md5($useragent), 'siteip' => $siteip, 'longip' => $longip);
-            $url = PLUGIN_OFFICIAL_URL . 'plugin-login.html';
+            $url = PLUGIN_OFFICIAL_URL . 'plugin-login.html?' . http_build_query($post);
             $json = https_request($url, $post, '', 800, 1);
-            empty($json) AND message(-1, lang('server_response_empty'));
+            empty($json) and message(-1, lang('server_response_empty'));
             $r = xn_json_decode($json);
             // -1用户不存在 -2用户被锁 0正常 1用户名错误 2密码错误
             if (0 == $r['code']) {
-                isset($r['data']) AND setting_set('plugin_data', $r['data']);
+                isset($r['data']) and setting_set('plugin_data', $r['data']);
                 message(0, lang('login_successfully'));
             }
 
@@ -245,17 +245,17 @@ switch ($action) {
         }
         break;
     case 'buy':
-        FALSE === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) AND message(1, lang('plugin_read_tips'));
+        FALSE === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) and message(1, lang('plugin_read_tips'));
 
         $data = plugin_data_verify();
-        FALSE === $data AND message(1, lang('please_login'));
+        FALSE === $data and message(1, lang('please_login'));
 
         if ('GET' == $method) {
 
             $dir = param_word('dir');
 
             $plugin = plugin_read_by_dir($dir);
-            empty($plugin) AND message(-1, lang('plugin_not_exists'));
+            empty($plugin) and message(-1, lang('plugin_not_exists'));
 
             $errno = '';
             $errstr = '';
@@ -275,11 +275,11 @@ switch ($action) {
             $pay_api = '';
             switch ($return['pay_api']) {
                 case 1:
-                    empty($return['url']) AND message(1, lang('server_response_error'));
+                    empty($return['url']) and message(1, lang('server_response_error'));
                     $payment_tips = lang('alipay') . ' RMB: ' . $return['price'];
                     break;
                 case 2:
-                    empty($return['url']) AND message(1, lang('server_response_error'));
+                    empty($return['url']) and message(1, lang('server_response_error'));
                     $payment_tips = lang('wxpay') . ' RMB: ' . $return['price'];
                     break;
                 case 3:
@@ -306,15 +306,14 @@ switch ($action) {
             $storeid = param('storeid', 0);
 
             $password = param('password');
-            empty($password) AND message('password', lang('please_input_password'));
+            empty($password) and message('password', lang('please_input_password'));
 
-            $url = PLUGIN_OFFICIAL_URL . 'plugin-payment.html';
             $siteip = ip2long(_SERVER('SERVER_ADDR'));
-            $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+            $siteip < 0 and $siteip = sprintf("%u", $siteip);
             $post = array('siteid' => plugin_siteid(), 'app_url' => xn_urlencode(http_url_path()), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $data[4], 'storeid' => $storeid, 'uid' => $data[0], 'ua' => md5($useragent), 'password' => $password, 'siteip' => $siteip, 'longip' => $longip);
-
+            $url = PLUGIN_OFFICIAL_URL . 'plugin-payment.html?' . http_build_query($post);
             $json = https_request($url, $post, '', 800, 1);
-            empty($json) AND message(-1, lang('server_response_empty'));
+            empty($json) and message(-1, lang('server_response_empty'));
             $arr = xn_json_decode($json);
 
             cache_delete('store-' . $storeid);
@@ -334,7 +333,7 @@ switch ($action) {
         plugin_check_exists($dir, FALSE);
         $plugin = plugin_read_by_dir($dir);
 
-        0 == $plugin['official']['price'] AND message(1, lang('plugin_is_free'));
+        0 == $plugin['official']['price'] and message(1, lang('plugin_is_free'));
 
         TRUE === plugin_bought($plugin['official']['storeid']) ? message(0, lang('plugin_is_bought')) : message($errno, $errstr);
         break;
@@ -342,16 +341,16 @@ switch ($action) {
         $dir = param_word('dir');
         plugin_check_exists($dir, FALSE);
 
-        'fail' == plugin_verify_token() AND message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 1));
+        'fail' == plugin_verify_token() and message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 1));
 
         // 下载官方插件 区分插件和主题 / download official plugin
         plugin_lock_start();
 
         $official = plugin_official_read($dir);
-        empty($official) AND message(-1, lang('plugin_not_exists'));
+        empty($official) and message(-1, lang('plugin_not_exists'));
 
         // 检查版本  / check version match
-        -1 == version_compare($conf['version'], $official['software_version']) AND message(-1, lang('plugin_version_not_match', array('software_version' => $official['software_version'], 'version' => $conf['version'])));
+        -1 == version_compare($conf['version'], $official['software_version']) and message(-1, lang('plugin_version_not_match', array('software_version' => $official['software_version'], 'version' => $conf['version'])));
 
         // 下载，解压 / download and zip
         plugin_download_unzip($dir, $official['storeid']);
@@ -362,7 +361,7 @@ switch ($action) {
         break;
     case 'install':
         $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
         plugin_lock_start();
 
@@ -379,7 +378,7 @@ switch ($action) {
         plugin_install($dir);
 
         $installfile = APP_PATH . 'plugin/' . $dir . '/install.php';
-        is_file($installfile) AND include _include($installfile);
+        is_file($installfile) and include _include($installfile);
 
         plugin_lock_end();
 
@@ -387,7 +386,7 @@ switch ($action) {
         if (FALSE !== strpos($dir, '_theme_')) {
             foreach ($plugins as $_dir => $_plugin) {
                 if ($dir == $_dir) continue;
-                FALSE !== strpos($_dir, '_theme_') AND plugin_uninstall($_dir);
+                FALSE !== strpos($_dir, '_theme_') and plugin_uninstall($_dir);
             }
         } else {
             // 卸载掉同类插件
@@ -395,7 +394,7 @@ switch ($action) {
             foreach ($plugins as $_dir => $_plugin) {
                 if ($dir == $_dir) continue;
                 $_suffix = substr($_dir, strpos($_dir, '_'));
-                $suffix == $_suffix AND plugin_uninstall($_dir);
+                $suffix == $_suffix and plugin_uninstall($_dir);
             }
         }
 
@@ -407,7 +406,7 @@ switch ($action) {
         if ('POST' != $method) message(1, lang('method_error'));
 
         $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
         plugin_lock_start();
 
@@ -422,7 +421,7 @@ switch ($action) {
         plugin_uninstall($dir);
 
         $uninstallfile = APP_PATH . 'plugin/' . $dir . '/uninstall.php';
-        is_file($uninstallfile) AND include _include($uninstallfile);
+        is_file($uninstallfile) and include _include($uninstallfile);
 
         // 删除插件
         //!DEBUG && rmdir_recusive(APP_PATH . "plugin/$dir");
@@ -434,7 +433,7 @@ switch ($action) {
         break;
     case 'enable':
         $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
         plugin_lock_start();
 
@@ -455,7 +454,7 @@ switch ($action) {
         break;
     case 'disable':
         $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
         plugin_lock_start();
 
@@ -503,7 +502,7 @@ switch ($action) {
             $upgradefile = APP_PATH . 'view/template/' . $dir . '/upgrade.php';
         }
 
-        is_file($upgradefile) AND include _include($upgradefile);
+        is_file($upgradefile) and include _include($upgradefile);
 
         plugin_lock_end();
 
@@ -512,7 +511,7 @@ switch ($action) {
         break;
     case 'setting':
         $dir = param_word('dir');
-        empty($dir) AND $dir = param_word(2); // 兼容旧插件
+        empty($dir) and $dir = param_word(2); // 兼容旧插件
         plugin_check_exists($dir);
         $name = $plugins[$dir]['name'];
 
@@ -563,10 +562,11 @@ function plugin_verify_token()
         return FALSE;
     }
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
-    $url = PLUGIN_OFFICIAL_URL . 'plugin-verify.html';
+
     $siteip = ip2long(_SERVER('SERVER_ADDR'));
-    $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+    $siteip < 0 and $siteip = sprintf("%u", $siteip);
     $post = array('siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'domain' => $domain, 'token' => $arr[4], 'uid' => $arr[0]);
+    $url = PLUGIN_OFFICIAL_URL . 'plugin-verify.html?' . http_build_query($post);
     // return 'success' or 'fail'
     return https_request($url, $post, '', 800, 1);
 }
@@ -594,27 +594,27 @@ function plugin_download_unzip($dir, $storeid, $upgrade = 0)
     global $conf, $longip;
 
     $data = plugin_data_verify();
-    empty($data) AND message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE)));
+    empty($data) and message(-1, jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE)));
 
     $app_url = xn_urlencode(http_url_path());
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
-    $url = PLUGIN_OFFICIAL_URL . 'plugin-download.html';
-    $siteip = ip2long(_SERVER('SERVER_ADDR'));
-    $siteip < 0 AND $siteip = sprintf("%u", $siteip);
-    $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'upgrade' => $upgrade, 'domain' => $domain, 'auth_key' => xn_key(), 'token' => $data[4], 'uid' => $data[0]);
 
+    $siteip = ip2long(_SERVER('SERVER_ADDR'));
+    $siteip < 0 and $siteip = sprintf("%u", $siteip);
+    $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'upgrade' => $upgrade, 'domain' => $domain, 'auth_key' => xn_key(), 'token' => $data[4], 'uid' => $data[0]);
+    $url = PLUGIN_OFFICIAL_URL . 'plugin-download.html?' . http_build_query($post);
     set_time_limit(0);
     // 服务端获取下载地址开始下载
     $s = https_request($url, $post, '', 120);
-    empty($s) AND message(-1, $url . lang('plugin_return_data_error') . lang('server_response_empty'));
+    empty($s) and message(-1, $url . lang('plugin_return_data_error') . lang('server_response_empty'));
     if ('PK' != substr($s, 0, 2)) {
         $res = xn_json_decode($s);
 
-        empty($res) AND message(-1, $url . lang('plugin_return_data_error') . $s);
+        empty($res) and message(-1, $url . lang('plugin_return_data_error') . $s);
 
-        -2 == $res['code'] AND message($res['code'], jump(lang('plugin_is_not_free'), url('plugin-read', array('dir' => $dir), TRUE), 3));
+        -2 == $res['code'] and message($res['code'], jump(lang('plugin_is_not_free'), url('plugin-read', array('dir' => $dir), TRUE), 3));
 
-        -1 == $res['code'] AND message($res['code'], jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 3));
+        -1 == $res['code'] and message($res['code'], jump(lang('plugin_token_error'), url('plugin-read', array('dir' => $dir), TRUE), 3));
 
         message($res['code'], $res['message']);
     } else {
@@ -648,16 +648,16 @@ function plugin_download_unzip($dir, $storeid, $upgrade = 0)
     // 检查解压是否成功 / check the zip if success
     if (is_dir($destpath . $dir)) {
         $post += array('res' => $arr[1]);
-        https_request(PLUGIN_OFFICIAL_URL . 'plugin-notice.html', $post, '', 800, 1);
+        https_request(PLUGIN_OFFICIAL_URL . 'plugin-notice.html?' . http_build_query($post), $post, '', 800, 1);
     } else {
         message(-1, lang('plugin_maybe_download_failed'));
     }
 
     // 检查配置文件
     $conffile = $destpath . $dir . '/conf.json';
-    !is_file($conffile) AND message(-1, 'conf.json ' . lang('not_exists'));
+    !is_file($conffile) and message(-1, 'conf.json ' . lang('not_exists'));
     $arr = xn_json_decode(file_get_contents($conffile));
-    empty($arr['name']) AND message(-1, 'conf.json ' . lang('format_maybe_error'));
+    empty($arr['name']) and message(-1, 'conf.json ' . lang('format_maybe_error'));
 
     return TRUE;
 }
@@ -671,13 +671,14 @@ function plugin_bought($storeid)
 
     $domain = xn_urlencode(_SERVER('HTTP_HOST'));
     $app_url = xn_urlencode(http_url_path());
-    $url = PLUGIN_OFFICIAL_URL . 'plugin-bought.html';
+
     $siteip = ip2long(_SERVER('SERVER_ADDR'));
-    $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+    $siteip < 0 and $siteip = sprintf("%u", $siteip);
     $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
+    $url = PLUGIN_OFFICIAL_URL . 'plugin-bought.html?' . http_build_query($post);
     $s = https_request($url, $post, '', 800, 1);
     $arr = xn_json_decode($s);
-    empty($arr) AND message(-1, $url . lang('plugin_return_data_error') . $s);
+    empty($arr) and message(-1, $url . lang('plugin_return_data_error') . $s);
     if (0 == $arr['code']) {
         return TRUE;
     } else {
@@ -700,11 +701,12 @@ function plugin_query($storeid, $paying = FALSE)
         $domain = xn_urlencode(_SERVER('HTTP_HOST'));
         $siteid = plugin_siteid();
         $siteip = ip2long(_SERVER('SERVER_ADDR'));
-        $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+        $siteip < 0 and $siteip = sprintf("%u", $siteip);
         $app_url = xn_urlencode(http_url_path());
-        $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html';
+
         $post = array('storeid' => $storeid, 'siteid' => $siteid, 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
-        FALSE !== $paying AND $post['paying'] = 1;
+        FALSE !== $paying and $post['paying'] = 1;
+        $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html?' . http_build_query($post);
         $s = https_request($url, $post, '', 1);
         if (empty($s)) {
             xn_error(-4, lang('server_response_empty'));
@@ -717,7 +719,7 @@ function plugin_query($storeid, $paying = FALSE)
             return FALSE;
         }
 
-        FALSE !== $paying AND cache_set('store-' . $storeid, $arr, 7200);
+        FALSE !== $paying and cache_set('store-' . $storeid, $arr, 7200);
     }
 
     if (!in_array($arr['code'], array(0, 1))) {
@@ -738,7 +740,7 @@ function plugin_notice($dir, $type = 0)
 
     if (FALSE === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return;
 
-    $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html';
+    $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html?dir=' . $dir;
     $s = https_request($url, array('dir' => $dir), '', 1);
     if ($s) {
         $res = xn_json_decode($s);
@@ -746,21 +748,21 @@ function plugin_notice($dir, $type = 0)
             $domain = xn_urlencode(_SERVER('HTTP_HOST'));
             $siteid = plugin_siteid();
             $siteip = ip2long(_SERVER('SERVER_ADDR'));
-            $siteip < 0 AND $siteip = sprintf("%u", $siteip);
+            $siteip < 0 and $siteip = sprintf("%u", $siteip);
             $app_url = xn_urlencode(http_url_path());
-            $url = PLUGIN_OFFICIAL_URL . 'plugin-notice.html';
+
             $post = array('storeid' => $res['message'], 'siteid' => $siteid, 'siteip' => $siteip, 'auth_key' => xn_key(), 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain);
             $data = setting_get('plugin_data');
             if ($data) {
                 $key = md5(xn_key());
                 $s = xn_decrypt($data, $key);
                 $arr = explode("\t", $s);
-                isset($arr[4]) AND $post += array('token' => $arr[4], 'uid' => $arr[0]);
+                isset($arr[4]) and $post += array('token' => $arr[4], 'uid' => $arr[0]);
             }
             $conffile = $type ? APP_PATH . 'view/template/' . $dir . '/conf.json' : APP_PATH . 'plugin/' . $dir . '/conf.json';
             if ($conffile) {
                 $arr = xn_json_decode(file_get_contents($conffile));
-                isset($arr['key']) AND $post += array('key' => $arr['key']);
+                isset($arr['key']) and $post += array('key' => $arr['key']);
             }
             if (!$type) {
                 $files = well_search_dir(APP_PATH . 'plugin/' . $dir . '/');
@@ -775,9 +777,10 @@ function plugin_notice($dir, $type = 0)
                             }
                         }
                     }
-                    !empty($funlist) AND $post += array('funlist' => xn_json_encode($funlist));
+                    !empty($funlist) and $post += array('funlist' => xn_json_encode($funlist));
                 }
             }
+            $url = PLUGIN_OFFICIAL_URL . 'plugin-notice.html?' . http_build_query($post);
             https_request($url, $post, '', 1);
         }
     }
@@ -796,11 +799,11 @@ function plugin_is_local($dir)
 function plugin_check_exists($dir, $local = TRUE)
 {
     global $plugins, $official_plugins, $themes;
-    !is_word($dir) AND message(-1, lang('plugin_name_error'));
+    !is_word($dir) and message(-1, lang('plugin_name_error'));
     if ($local) {
-        empty($plugins[$dir]) AND !isset($themes[$dir]) AND message(-1, lang('plugin_not_exists'));
+        empty($plugins[$dir]) and !isset($themes[$dir]) and message(-1, lang('plugin_not_exists'));
     } else {
-        !isset($official_plugins[$dir]) AND message(-1, lang('plugin_not_exists'));
+        !isset($official_plugins[$dir]) and message(-1, lang('plugin_not_exists'));
     }
 }
 
@@ -817,7 +820,7 @@ function plugin_cate_active($action, $arr, $type, $page)
 function plugin_lock_start()
 {
     global $route, $action;
-    !xn_lock_start($route . '_' . $action) AND message(-1, lang('plugin_task_locked'));
+    !xn_lock_start($route . '_' . $action) and message(-1, lang('plugin_task_locked'));
 }
 
 function plugin_lock_end()
@@ -831,15 +834,15 @@ function theme_install($dir)
     global $conf, $config;
 
     $dir = trim($dir);
-    !empty($config['theme']) AND $config['theme'] != $dir AND theme_uninstall($config['theme']);
+    !empty($config['theme']) and $config['theme'] != $dir and theme_uninstall($config['theme']);
 
     $path = APP_PATH . 'view/template/' . $dir;
 
     $conffile = $path . '/conf.json';
-    !is_file($conffile) AND message(1, lang('not_exists'));
+    !is_file($conffile) and message(1, lang('not_exists'));
 
     $arr = xn_json_decode(file_get_contents($conffile));
-    empty($arr) AND message(1, lang('data_malformation'));
+    empty($arr) and message(1, lang('data_malformation'));
 
     $arr['installed'] = 1;
     // 写入配置文件
@@ -849,7 +852,7 @@ function theme_install($dir)
     setting_set('conf', $config);
 
     $installfile = $path . '/install.php';
-    is_file($installfile) AND include _include($installfile);
+    is_file($installfile) and include _include($installfile);
 
     rmdir_recusive($conf['tmp_path'], 1);
 
@@ -863,10 +866,10 @@ function theme_uninstall($dir)
     $path = APP_PATH . 'view/template/' . $dir;
 
     $conffile = $path . '/conf.json';
-    FALSE === is_file($conffile) AND message(1, lang('not_exists'));
+    FALSE === is_file($conffile) and message(1, lang('not_exists'));
 
     $arr = xn_json_decode(file_get_contents($conffile));
-    empty($arr) AND message(1, lang('data_malformation'));
+    empty($arr) and message(1, lang('data_malformation'));
 
     $arr['installed'] = 0;
     // 写入配置文件
@@ -876,7 +879,7 @@ function theme_uninstall($dir)
     setting_set('conf', $config);
 
     $uninstallfile = $path . '/uninstall.php';
-    is_file($uninstallfile) AND include _include($uninstallfile);
+    is_file($uninstallfile) and include _include($uninstallfile);
 
     rmdir_recusive($conf['tmp_path'], 1);
 

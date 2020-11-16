@@ -109,7 +109,7 @@ function get_last_version($stat)
     if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || $time < array_value($config, 'last_version', 0)) return;
 
     $post = array('type' => 1, 'sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode($domain), 'app_url' => xn_urlencode(http_url_path()), 'users' => $stat['users'], 'articles' => $stat['articles'], 'comments' => $stat['comments'], 'threads' => $stat['threads'], 'posts' => $stat['posts'], 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
-    $json = https_request(OFFICIAL_URL . 'version.html', $post, '', 500, 1);
+    $json = https_request(OFFICIAL_URL . 'version.html?' . http_build_query($post), $post, '', 500, 1);
     if (isset($json) && !in_array($json, array('1', '2', 'fail'))) {
         $official = xn_json_decode($json);
         if (is_array($official)) {
