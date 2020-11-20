@@ -117,8 +117,8 @@ return array(
     'url_rewrite_on' => 0,
     // 禁止插件
     'disabled_plugin' => 0,
-    'version' => '2.0.08',
-    'static_version' => '?2.0.08',
+    'version' => '2.0.14',
+    'static_version' => '?2.0.14',
     'installed' => 0,
     'compress' => 1, // 代码压缩 0关闭 1仅压缩php、html代码(不压缩js代码) 2压缩全部代码 如果启用压缩出现错误，请关闭，删除html中的所有注释，并且js代码按照英文分号结束的地方加上分号;
     // token验证，开启后内容提交和上传都需要token，没有token无法操作，app建议开启，有效阻止抓包伪造提交等。开启后相当于单线程，仅限当前页有效。
