@@ -202,6 +202,7 @@ switch ($action) {
 
             $header['title'] = lang('increase') . lang('content');
             $header['mobile_title'] = lang('increase') . lang('content');
+            $referer = http_referer();
 
             // 过滤版块相关数据
             $forumlist = forum_filter($forumlist);
@@ -471,6 +472,7 @@ switch ($action) {
 
             $header['title'] = lang('edit');
             $header['mobile_title'] = lang('edit');
+            $referer = http_referer();
 
             // 过滤版块相关数据
             $forumlist = forum_filter($forumlist);

@@ -141,7 +141,7 @@ switch ($action) {
 
             if (0 == $type && $last_version < $time) {
 
-                $json = https_request(OFFICIAL_URL . 'version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 500, 1);
+                $json = https_request(OFFICIAL_URL . 'version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 1000, 1);
 
                 if (isset($json) && !in_array($json, array('1', '2', 'fail'))) {
                     $official = xn_json_decode($json);
@@ -169,7 +169,7 @@ switch ($action) {
                 // 获取更新包
                 $post = array('sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ip' => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE), 'users' => $runtime['users'], 'articles' => $runtime['articles'], 'comments' => $runtime['comments'], 'threads' => array_value($runtime, 'threads'), 'posts' => array_value($runtime, 'posts'), 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
                 $url = OFFICIAL_URL . 'version-upgrade.html?' . http_build_query($post);
-                $json = https_request($url, $post, '', 500, 1);
+                $json = https_request($url, $post, '', 1000, 1);
 
                 if (empty($json) || 'fail' == $json) {
                     message(0, jump(lang('upgrade_failed'), url('other-upgrade', '', TRUE), 2));
@@ -181,7 +181,7 @@ switch ($action) {
                     $res = xn_json_decode($json);
                     // 服务端开始下载升级包
                     set_time_limit(0);
-                    $s = https_request($res['url'], '', '', 90);
+                    $s = https_request($res['url'], '', '', 120);
                     empty($s) AND message(-1, jump(lang('plugin_return_data_error') . lang('server_response_empty'), url('other-upgrade', '', TRUE), 2));
 
                     if (substr($s, 0, 2) != 'PK') message(-1, jump(lang('plugin_return_data_error') . $s, url('other-upgrade', '', TRUE), 2));
@@ -197,7 +197,7 @@ switch ($action) {
                     $upgradefile = APP_PATH . 'tmp/upgrade.php';
                     if (!empty($res['upgrade_db']) && is_file($upgradefile)) include _include($upgradefile);
 
-                    https_request(OFFICIAL_URL . 'version-upgrade.html?upgrade=1&id=' . $res['id'], '', '', 500, 1);
+                    https_request(OFFICIAL_URL . 'version-upgrade.html?upgrade=1&id=' . $res['id'], '', '', 1000, 1);
 
                     // 更新完成
                     $config['version'] = $config['official_version'];

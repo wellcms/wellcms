@@ -27,6 +27,11 @@ $group = isset($grouplist[$gid]) ? $grouplist[$gid] : $grouplist[0];
 
 // hook index_inc_center.php
 
+// 配置数据
+$config = setting_get('conf');
+
+// hook index_inc_config_after.php
+
 // 频道 栏目 版块 / Category List Forum
 $fid = 0;
 $forumlist = forum_list_cache();
@@ -61,8 +66,6 @@ check_runlevel();
 $forum_nav = nav_list($forumlist_show);
 // 二叉树导航 需要的时候自行启用
 //$forum_nav = category_tree($forumlist_show);
-// 配置数据
-$config = setting_get('conf');
 
 // hook index_inc_after.php
 

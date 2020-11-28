@@ -12,9 +12,9 @@ function xn_log_post_data()
     $method = $_SERVER['method'];
     if ('POST' != $method) return;
     $post = $_POST;
-    isset($post['password']) AND $post['password'] = '******';        // 干掉密码信息
-    isset($post['password_new']) AND $post['password_new'] = '******';    // 干掉密码信息
-    isset($post['password_old']) AND $post['password_old'] = '******';    // 干掉密码信息
+    isset($post['password']) and $post['password'] = '******';        // 干掉密码信息
+    isset($post['password_new']) and $post['password_new'] = '******';    // 干掉密码信息
+    isset($post['password_old']) and $post['password_old'] = '******';    // 干掉密码信息
 
     xn_log(xn_json_encode($post), 'post_data');
 }
@@ -29,7 +29,7 @@ function exception_handler($exception)
     $html = $s = "<fieldset class=\"fieldset small notice\"><div>" . $message . "</div></fieldset>";
     echo ($ajax || IN_CMD) ? $message : $html;
 
-    2 == DEBUG AND xn_log($exception, 'debug_error');
+    2 == DEBUG and xn_log($exception, 'debug_error');
 }
 
 // 中断流程很危险！可能会导致数据问题，线上模式不允许中断流程！
@@ -43,7 +43,7 @@ function error_handle($errno, $errstr, $errfile, $errline)
     // if(FALSE !== strpos($s, 'error_log(')) return TRUE;
     $time = $_SERVER['time'];
     $ajax = $_SERVER['ajax'];
-    IN_CMD AND $errstr = str_replace('<br>', "\n", $errstr);
+    IN_CMD and $errstr = str_replace('<br>', "\n", $errstr);
 
     $subject = "Error[$errno]: $errstr, File: $errfile, Line: $errline";
     $message = array();
@@ -54,8 +54,8 @@ function error_handle($errno, $errstr, $errfile, $errline)
     foreach ($arr as $v) {
         $args = '';
         if (!empty($v['args']) && is_array($v['args'])) foreach ($v['args'] as $v2) $args .= ($args ? ' , ' : '') . (is_array($v2) ? 'array(' . count($v2) . ')' : (is_object($v2) ? 'object' : $v2));
-        !isset($v['file']) AND $v['file'] = '';
-        !isset($v['line']) AND $v['line'] = '';
+        !isset($v['file']) and $v['file'] = '';
+        !isset($v['line']) and $v['line'] = '';
         $message [] = "File: $v[file], Line: $v[line], $v[function]($args) ";
     }
     $txt = $subject . "\r\n" . implode("\r\n", $message);
@@ -64,7 +64,7 @@ function error_handle($errno, $errstr, $errfile, $errline)
 			<div>" . implode("<br>\r\n", $message) . "</div>
 		</fieldset>";
     echo ($ajax || IN_CMD) ? $txt : $html;
-    2 == DEBUG AND xn_log($txt, 'debug_error');
+    2 == DEBUG and xn_log($txt, 'debug_error');
     return TRUE;
 }
 
@@ -113,7 +113,7 @@ function param_base64($key, $len = 0)
     if (empty($s)) return '';
     $s = substr($s, strpos($s, ',') + 1);
     $s = base64_decode($s);
-    $len AND $s = substr($s, 0, $len);
+    $len and $s = substr($s, 0, $len);
     return $s;
 }
 
@@ -161,9 +161,9 @@ function param_force($val, $defval, $htmlspecialchars = TRUE, $addslashes = FALS
                 } else {
                     if (is_string($defval)) {
                         //$v = trim($v);
-                        $addslashes AND !$get_magic_quotes_gpc && $v = addslashes($v);
-                        !$addslashes AND $get_magic_quotes_gpc && $v = stripslashes($v);
-                        $htmlspecialchars AND $v = htmlspecialchars($v, ENT_QUOTES);
+                        $addslashes and !$get_magic_quotes_gpc && $v = addslashes($v);
+                        !$addslashes and $get_magic_quotes_gpc && $v = stripslashes($v);
+                        $htmlspecialchars and $v = htmlspecialchars($v, ENT_QUOTES);
                     } else {
                         $v = intval($v);
                     }
@@ -178,9 +178,9 @@ function param_force($val, $defval, $htmlspecialchars = TRUE, $addslashes = FALS
         } else {
             if (is_string($defval)) {
                 //$val = trim($val);
-                $addslashes AND !$get_magic_quotes_gpc && $val = addslashes($val);
-                !$addslashes AND $get_magic_quotes_gpc && $val = stripslashes($val);
-                $htmlspecialchars AND $val = htmlspecialchars($val, ENT_QUOTES);
+                $addslashes and !$get_magic_quotes_gpc && $val = addslashes($val);
+                !$addslashes and $get_magic_quotes_gpc && $val = stripslashes($val);
+                $htmlspecialchars and $val = htmlspecialchars($val, ENT_QUOTES);
             } else {
                 $val = intval($val);
             }
@@ -211,7 +211,7 @@ function jump($message, $url = '', $delay = 3)
     $ajax = $_SERVER['ajax'];
     if ($ajax) return $message;
     if (!$url) return $message;
-    'back' == $url AND $url = 'javascript:history.back()';
+    'back' == $url and $url = 'javascript:history.back()';
     $htmladd = '<script>setTimeout(function() {window.location=\'' . $url . '\'}, ' . ($delay * 1000) . ');</script>';
     return '<a href="' . $url . '">' . $message . '</a>' . $htmladd;
 }
@@ -317,7 +317,7 @@ function xn_json_decode($json)
 function pagination_tpl($url, $text, $active = '')
 {
     global $g_pagination_tpl;
-    empty($g_pagination_tpl) AND $g_pagination_tpl = '<li class="page-item{active}"><a href="{url}" class="page-link">{text}</a></li>';
+    empty($g_pagination_tpl) and $g_pagination_tpl = '<li class="page-item{active}"><a href="{url}" class="page-link">{text}</a></li>';
     return str_replace(array('{url}', '{text}', '{active}'), array($url, $text, $active), $g_pagination_tpl);
 }
 
@@ -360,9 +360,9 @@ function pager($url, $totalnum, $page, $pagesize = 20)
     $page = min($totalpage, $page);
 
     $s = '';
-    $page > 1 AND $s .= '<li class="page-item"><a class="page-link" href="' . str_replace('{page}', $page - 1, $url) . '">Prev</a></li>';
+    $page > 1 and $s .= '<li class="page-item"><a class="page-link" href="' . str_replace('{page}', $page - 1, $url) . '">Prev</a></li>';
     $s .= "<li class=\"page-item page-link\">$page / $totalpage</li>";
-    $totalnum >= $pagesize AND $page != $totalpage AND $s .= '<li class="page-item"><a class="page-link" href="' . str_replace('{page}', $page + 1, $url) . '">Next</a></li>';
+    $totalnum >= $pagesize and $page != $totalpage and $s .= '<li class="page-item"><a class="page-link" href="' . str_replace('{page}', $page + 1, $url) . '">Next</a></li>';
     return $s;
 }
 
@@ -384,7 +384,7 @@ function humandate($timestamp, $lan = array())
 
     $seconds = $time - $timestamp;
     $lan = empty($lang) ? $lan : $lang;
-    empty($lan) AND $lan = array(
+    empty($lan) and $lan = array(
         'month_ago' => '月前',
         'day_ago' => '天前',
         'hour_ago' => '小时前',
@@ -499,7 +499,7 @@ function xn_log($s, $file = 'error')
     $mtime = date('Y-m-d H:i:s'); // 默认值为 time()
     $url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
     $logpath = $conf['log_path'] . $day;
-    !is_dir($logpath) AND mkdir($logpath, 0777, true);
+    !is_dir($logpath) and mkdir($logpath, 0777, true);
 
     $s = str_replace(array("\r\n", "\n", "\t"), ' ', $s);
     $s = "<?php exit;?>\t$mtime\t$ip\t$url\t$uid\t$s\r\n";
@@ -532,9 +532,9 @@ function get__browser()
             preg_match('#Trident/([\d\.]+)#is', $agent, $m);
             if (!empty($m[1])) {
                 $trident = intval($m[1]);
-                4 == $trident AND $browser['version'] = 8;
-                5 == $trident AND $browser['version'] = 9;
-                $trident > 5 AND $browser['version'] = 10;
+                4 == $trident and $browser['version'] = 8;
+                5 == $trident and $browser['version'] = 9;
+                $trident > 5 and $browser['version'] = 10;
             }
         }
     }
@@ -629,8 +629,8 @@ function http_post($url, $post = '', $cookie = '', $timeout = 30, $times = 3)
     if ('https://' == substr($url, 0, 8)) {
         return https_post($url, $post, $cookie, $timeout, $times);
     }
-    is_array($post) AND $post = http_build_query($post);
-    is_array($cookie) AND $cookie = http_build_query($cookie);
+    is_array($post) and $post = http_build_query($post);
+    is_array($cookie) and $cookie = http_build_query($cookie);
     $stream = stream_context_create(array('http' => array('header' => "Content-type: application/x-www-form-urlencoded\r\nx-requested-with: XMLHttpRequest\r\nCookie: $cookie\r\n", 'method' => 'POST', 'content' => $post, 'timeout' => $timeout)));
     while ($times-- > 0) {
         $s = file_get_contents($url, NULL, $stream, 0, 4096000);
@@ -652,8 +652,8 @@ function https_post($url, $post = '', $cookie = '', $timeout = 30, $times = 1, $
     if ('http://' == substr($url, 0, 7)) {
         return http_post($url, $post, $cookie, $timeout, $times);
     }
-    is_array($post) AND $post = http_build_query($post);
-    is_array($cookie) AND $cookie = http_build_query($cookie);
+    is_array($post) and $post = http_build_query($post);
+    is_array($cookie) and $cookie = http_build_query($cookie);
     $w = stream_get_wrappers();
     $allow_url_fopen = strtolower(ini_get('allow_url_fopen'));
     $allow_url_fopen = (empty($allow_url_fopen) || 'off' == $allow_url_fopen) ? 0 : 1;
@@ -839,9 +839,9 @@ function file_put_contents_try($file, $s, $times = 3)
 {
     while ($times-- > 0) {
         $fp = fopen($file, 'wb');
-        if ($fp AND flock($fp, LOCK_EX)) {
+        if ($fp and flock($fp, LOCK_EX)) {
             $n = fwrite($fp, $s);
-            version_compare(PHP_VERSION, '5.3.2', '>=') AND flock($fp, LOCK_UN);
+            version_compare(PHP_VERSION, '5.3.2', '>=') and flock($fp, LOCK_UN);
             fclose($fp);
             clearstatcache();
             return $n;
@@ -873,7 +873,7 @@ function file_ext($filename, $max = 16)
 {
     $ext = strtolower(substr(strrchr($filename, '.'), 1));
     $ext = xn_urlencode($ext);
-    strlen($ext) > $max AND $ext = substr($ext, 0, $max);
+    strlen($ext) > $max and $ext = substr($ext, 0, $max);
     if (!preg_match('#^\w+$#', $ext)) $ext = 'attach';
     return $ext;
 }
@@ -905,10 +905,10 @@ function http_url_path()
     $https = strtolower(_SERVER('HTTPS', 'off'));
     $proto = strtolower(_SERVER('HTTP_X_FORWARDED_PROTO'));
     $len = strrpos($_SERVER['PHP_SELF'], '//');
-    FALSE === $len AND $len = strrpos($_SERVER['PHP_SELF'], '/');
+    FALSE === $len and $len = strrpos($_SERVER['PHP_SELF'], '/');
     $path = substr($_SERVER['PHP_SELF'], 0, $len);
-    !isset($conf['url_rewrite_on']) AND $conf['url_rewrite_on'] = 0;
-    $conf['url_rewrite_on'] < 2 AND $path = $path . '/';
+    !isset($conf['url_rewrite_on']) and $conf['url_rewrite_on'] = 0;
+    $conf['url_rewrite_on'] < 2 and $path = $path . '/';
     $http = ((443 == $port) || 'https' == $proto || ($https && 'off' != $https)) ? 'https' : 'http';
     return "$http://$host$path";
 }
@@ -939,11 +939,11 @@ function xn_url_add_arg($url, $k, $v)
 function xn_url_parse($request_url)
 {
     $conf = _SERVER('conf');
-    !isset($conf['url_rewrite_on']) AND $conf['url_rewrite_on'] = 0;
+    !isset($conf['url_rewrite_on']) and $conf['url_rewrite_on'] = 0;
 
     if ($conf['url_rewrite_on'] < 2) {
 
-        0 == $conf['url_rewrite_on'] AND $request_url = str_replace('/?', '/', $request_url);
+        0 == $conf['url_rewrite_on'] and $request_url = str_replace('/?', '/', $request_url);
 
         $arr = parse_url($request_url);
         $q = array_value($arr, 'path');
@@ -966,27 +966,27 @@ function xn_url_parse($request_url)
 
         // 将后半部分合并
         $arr1 = $arr2 = $arr3 = array();
-        $behind AND parse_str($behind, $arr1);
+        $behind and parse_str($behind, $arr1);
 
         // 将 xxx.htm?a=b&c=d 放到后面，并且修正 $_GET
         if (!empty($arr['query'])) {
             parse_str($arr['query'], $arr2);
         } else {
-            !empty($_GET) AND $_GET = array();
+            !empty($_GET) and $_GET = array();
         }
         $arr3 = $arr1 + $arr2;
         if ($arr3) {
             //array_diff_key($arr3, $_GET) || array_diff_key($_GET, $arr3);
-            count($arr3) != count($_GET) AND $_GET = $arr3;
+            count($arr3) != count($_GET) and $_GET = $arr3;
         } else {
-            !empty($_GET) AND $_GET = array();
+            !empty($_GET) and $_GET = array();
         }
         $r += $arr3;
     } else {
         $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']);
     }
 
-    isset($r[0]) AND 'index.php' == $r[0] AND $r[0] = 'index';
+    isset($r[0]) and 'index.php' == $r[0] and $r[0] = 'index';
 
     return $r;
 }
@@ -1029,7 +1029,7 @@ function rmdir_recusive($dir, $keepdir = 0)
     if ('/' == $dir || './' == $dir || '../' == $dir) return FALSE;// 不允许删除根目录，避免程序意外删除数据。
     if (!is_dir($dir)) return FALSE;
 
-    '/' != substr($dir, -1) AND $dir .= '/';
+    '/' != substr($dir, -1) and $dir .= '/';
 
     $files = glob($dir . '*'); // +glob($dir.'.*')
     foreach (glob($dir . '.*') as $v) {
@@ -1126,10 +1126,10 @@ function xn_get_dir($id)
 // 递归拷贝目录
 function copy_recusive($src, $dst)
 {
-    '/' == substr($src, -1) AND $src = substr($src, 0, -1);
-    '/' == substr($dst, -1) AND $dst = substr($dst, 0, -1);
+    '/' == substr($src, -1) and $src = substr($src, 0, -1);
+    '/' == substr($dst, -1) and $dst = substr($dst, 0, -1);
     $dir = opendir($src);
-    !is_dir($dst) AND mkdir($dst);
+    !is_dir($dst) and mkdir($dst);
     while (FALSE !== ($file = readdir($dir))) {
         if (($file != '.') && ($file != '..')) {
             if (is_dir($src . '/' . $file)) {
@@ -1248,18 +1248,20 @@ function http_location($url)
 // 获取 referer
 function http_referer()
 {
-    $len = strlen(http_url_path());
     $referer = param('referer');
-    empty($referer) AND $referer = _SERVER('HTTP_REFERER');
-    $referer2 = substr($referer, $len);
+    empty($referer) and $referer = _SERVER('HTTP_REFERER');
+    //$len = strlen(http_url_path());
+    //$referer2 = substr($referer, $len);
     if (FALSE !== strpos($referer, url('user-login')) || FALSE !== strpos($referer, url('user-logout')) || FALSE !== strpos($referer, url('user-create'))) {
         $referer = http_url_path();
     }
     // 安全过滤，只支持站内跳转，不允许跳到外部，否则可能会被 XSS
     // $referer = str_replace('\'', '', $referer);
-    if (!preg_match('#^\\??[\w\-/]+\.html$#', $referer2) && !preg_match('#^[\w\/]*$#', $referer2)) {
+    /*if (!preg_match('#^\\??[\w\-/]+\.html$#', $referer2) && !preg_match('#^[\w\/]*$#', $referer2)) {
         $referer = './';
-    }
+    }*/
+    $parse_url = parse_url($referer);
+    if ($parse_url['host'] != $_SERVER['HTTP_HOST']) $referer = './';
     return $referer;
 }
 

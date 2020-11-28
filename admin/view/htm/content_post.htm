@@ -32,6 +32,7 @@
 <script>
     /* 模型 */
     var model = <?php echo $model;?>;
+    var referer = '<?php echo $referer;?>'
     /* 主题 */
     var tid = '<?php echo GLOBALS('tid');?>';
     var forumlist = <?php echo xn_json_encode($forumlist);?>;
@@ -133,15 +134,14 @@
         var jthis = $(this);
         var jsubmit = jthis.find('#submit');
         jsubmit.button('loading');
-        var fid = '<?php echo $_fid;?>';
         var action = '<?php echo $action;?>';
-        var page = '<?php echo $page;?>';
         var postdata = jform.serialize();
         if(action == 'create') var fid = jfid.val();
         $.xpost(jform.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 $.alert(message);
-                jsubmit.button(message).delay(1000).location(xn.url('content-list', {page:page,fid:fid}, true));
+                var referer = referer || xn.url('content-list');
+                jsubmit.button(message).delay(1000).location(referer);
             } else if(xn.is_number(code)) {
                 $.alert(message);
                 jsubmit.button('reset');
