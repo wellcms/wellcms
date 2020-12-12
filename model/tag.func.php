@@ -67,6 +67,7 @@ function tag_big_update($cond = array(), $update = array(), $d = NULL)
     // hook model_tag_big_update_end.php
     return $r;
 }
+
 //--------------------------强相关--------------------------
 function well_tag_create($arr)
 {
@@ -82,7 +83,7 @@ function well_tag_read_name($name)
 {
     // hook model__tag_read_name_start.php
     $r = well_tag__read(array('name' => $name));
-    $r AND well_tag_format($r);
+    $r and well_tag_format($r);
     // hook model__tag_read_name_end.php
     return $r;
 }
@@ -92,7 +93,7 @@ function well_tag_read_tagid($tagid)
 {
     // hook model__tag_read_tagid_start.php
     $r = well_tag__read(array('tagid' => $tagid));
-    $r AND well_tag_format($r);
+    $r and well_tag_format($r);
     // hook model__tag_read_tagid_end.php
     return $r;
 }
@@ -220,7 +221,7 @@ function well_tag_read_by_tagid_cache($tagid)
         $r = cache_get($key);
         if (NULL === $r) {
             $r = well_tag_read_tagid($tagid);
-            $r AND cache_set($key, $r, 1800);
+            $r and cache_set($key, $r, 1800);
         }
     }
     $cache[$key] = $r ? $r : NULL;
@@ -243,7 +244,7 @@ function well_tag_read_by_name_cache($name)
         $r = cache_get($key);
         if (NULL === $r) {
             $r = well_tag_read_name($name);
-            $r AND cache_set($key, $r, 1800);
+            $r and cache_set($key, $r, 1800);
         }
     }
     $cache[$key] = $r ? $r : NULL;
@@ -333,7 +334,7 @@ function well_tag_post_update($tid, $fid, $newtag, $oldtag)
     return $r;
 }
 
-// 删除标签
+// 删除标签和绑定的主题
 function well_oldtag_delete($tagids, $tid)
 {
     // hook model_tag_oldtag_delete_start.php
@@ -343,41 +344,58 @@ function well_oldtag_delete($tagids, $tid)
 
     // hook model_tag_oldtag_delete_before.php
 
+    $delete_tagids = array(); // 删除
     $tagids = array();
-    $ids = array();
+    $n = 0;
     foreach ($arrlist as $val) {
+        ++$n;
         // hook model_tag_oldtag_delete_foreach_start.php
         if (1 == $val['count']) {
             // 只有一个主题
-            well_tag_delete($val['tagid']);
+            $delete_tagids[] = $val['tagid'];
             // hook model_tag_oldtag_delete_foreach_after.php
         } else {
             $tagids[] = $val['tagid'];
         }
-        $ids[] = $val['tagid'];
         // hook model_tag_oldtag_delete_foreach_end.php
     }
 
     // hook model_tag_oldtag_delete_after.php
 
-    empty($ids) || well_tag_thread_delete($ids, $tid);
+    !empty($delete_tagids) and well_tag_delete($delete_tagids);
 
-    empty($tagids) || well_tag_update($tagids, array('count-' => 1));
+    $arlist = well_tag_thread_find_by_tid($tid, 1, $n);
+    if ($arlist) {
+        $ids = array();
+        foreach ($arlist as $val) $ids[] = $val['id'];
+
+        well_tag_thread_delete($ids);
+    }
+
+    !empty($tagids) and well_tag_update($tagids, array('count-' => 1));
 
     // hook model_tag_oldtag_delete_end.php
 }
 
 // 标签数据处理 $arr=新提交的数组 $tagarr=保留的旧标签
-function well_tag_process($tid = 0, $fid, $new_tags = array(), $tagarr = array())
+function well_tag_process($tid, $fid, $new_tags = array(), $tagarr = array())
 {
     if (empty($tid)) return '';
+
     // hook model_tag_process_start.php
 
     // 新标签处理入库
-    if($new_tags) {
+    if ($new_tags) {
+
+        // hook model_tag_process_foreach_start.php
+
+        $arr = array();
         $tagids = array();
         $i = 0;
         $n = 5 - count($tagarr);
+
+        // hook model_tag_process_foreach_before.php
+
         foreach ($new_tags as $name) {
             ++$i;
             $name = strip_tags(trim($name));
@@ -396,14 +414,16 @@ function well_tag_process($tid = 0, $fid, $new_tags = array(), $tagarr = array()
                     $arr = array('name' => $name, 'count' => 1);
                     // hook model_tag_process_create.php
                     $tagid = well_tag_create($arr);
-                    FALSE === $tagid AND message(-1, lang('create_failed'));
+                    FALSE === $tagid and message(-1, lang('create_failed'));
                     $read = array('tagid' => $tagid, 'name' => $name);
                     // hook model_tag_process_create_after.php
                 }
 
-                $arr = array('tagid' => $read['tagid'], 'tid' => $tid);
+                $tag_thread = array('tagid' => $read['tagid'], 'tid' => $tid);
+
                 // hook model_tag_process_before.php
-                well_tag_thread_create($arr);
+
+                $arr[] = $tag_thread;
 
                 // hook model_tag_process_center.php
 
@@ -413,7 +433,9 @@ function well_tag_process($tid = 0, $fid, $new_tags = array(), $tagarr = array()
 
         // hook model_tag_process_middle.php
 
-        empty($tagids) || well_tag_update($tagids, array('count+' => 1));
+        !empty($arr) and tag_thread_big_insert($arr);
+
+        !empty($tagids) and well_tag_update($tagids, array('count+' => 1));
     }
 
     // hook model_tag_process_after.php

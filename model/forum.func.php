@@ -59,6 +59,7 @@ function forum_big_update($cond = array(), $update = array(), $d = NULL)
     // hook model_forum_big_update_end.php
     return $r;
 }
+
 // ------------> 关联 CURD，主要是强相关的数据，比如缓存。弱相关的大量数据需要另外处理。
 
 function forum_create($arr)
@@ -87,7 +88,7 @@ function forum_read($fid)
         return empty($forumlist[$fid]) ? array() : $forumlist[$fid];
     } else {
         $forum = forum__read($fid);
-        $forum AND forum_format($forum);
+        $forum and forum_format($forum);
         return $forum;
     }
     // hook model_forum_read_end.php
@@ -97,7 +98,7 @@ function forum_read($fid)
 function forum_delete($fid)
 {
     global $forumlist;
-    
+
     if (empty($fid)) return FALSE;
 
     $forum = $forumlist[$fid];
@@ -115,19 +116,19 @@ function forum_delete($fid)
             $totalpage = 1;
         }
 
-        for ($i = 1; $i <=$totalpage; ++$i) {
+        for ($i = 1; $i <= $totalpage; ++$i) {
             $threadlist = thread_tid__find($cond, array(), $i, $pagesize, 'tid', array('tid'));
             if ($threadlist) {
                 $tids = array();
                 foreach ($threadlist as $thread) $tids[] = $thread['tid'];
-                !empty($tids) AND well_thread_delete_all($tids);
+                !empty($tids) and well_thread_delete_all($tids);
             }
         }
     }
 
     // hook model_forum_delete_before.php
 
-    $forum['fup'] AND forum_update($forum['fup'], array('son-' => 1));
+    $forum['fup'] and forum_update($forum['fup'], array('son-' => 1));
 
     $r = forum__delete($fid);
 
@@ -173,7 +174,7 @@ function forum_format(&$forum)
 
     // hook model_forum_format_start.php
     $forum['create_date_fmt'] = date('Y-n-j', $forum['create_date']);
-    $forum['icon_url'] = $forum['icon'] ? file_path() . 'forum/'.$forum['fid'].'.png' : view_path() . 'img/forum.png';
+    $forum['icon_url'] = $forum['icon'] ? file_path() . 'forum/' . $forum['fid'] . '.png' : view_path() . 'img/forum.png';
     $forum['accesslist'] = $forum['accesson'] ? forum_access_find_by_fid($forum['fid']) : array();
 
     $forum['modlist'] = array();
@@ -192,21 +193,7 @@ function forum_format(&$forum)
             $flaglist = flag_forum_show($forum['fid']);
             if ($flaglist) {
                 foreach ($flaglist as $key => $val) {
-                    unset($val['fid']);
-                    unset($val['rank']);
-                    unset($val['count']);
-                    unset($val['number']);
-                    unset($val['display']);
-                    unset($val['create_date']);
-                    unset($val['create_date_fmt']);
-                    unset($val['display_fmt']);
-                    unset($val['forum_name']);
-                    unset($val['title']);
-                    unset($val['keywords']);
-                    unset($val['description']);
-                    unset($val['forum_url']);
-                    unset($val['i']);
-                    unset($val['tpl']);
+                    unset($val['fid'], $val['rank'], $val['count'], $val['number'], $val['display'], $val['create_date'], $val['create_date_fmt'], $val['display_fmt'], $val['forum_name'], $val['title'], $val['keywords'], $val['description'], $val['forum_url'], $val['i'], $val['tpl']);
                 }
                 $forum['flagstr_fmt'] = array_multisort_key($flaglist, 'rank', FALSE, 'flagid');
             }
@@ -322,8 +309,7 @@ function forum_list_access_filter($forumlist, $gid, $allow = 'allowread')
             // hook model_forum_list_access_filter_foreach_before.php
 
             unset($forumlist_filter[$fid]);
-            unset($forumlist_filter[$fid]['modlist']);
-
+            
             // hook model_forum_list_access_filter_foreach_after.php
         }
         unset($forumlist_filter[$fid]['accesslist']);
@@ -361,18 +347,7 @@ function forum_filter($forumlist)
 {
     // hook model_forum_filter_start.php
     foreach ($forumlist as &$val) {
-        unset($val['brief']);
-        unset($val['moduids']);
-        unset($val['announcement']);
-        unset($val['threads']);
-        unset($val['tops']);
-        unset($val['seo_title']);
-        unset($val['seo_keywords']);
-        unset($val['create_date_fmt']);
-        unset($val['accesslist']);
-        unset($val['icon_url']);
-        unset($val['modlist']);
-        unset($val['create_date_fmt']);
+        unset($val['brief'], $val['moduids'], $val['announcement'], $val['threads'], $val['tops'], $val['seo_title'], $val['seo_keywords'], $val['create_date_fmt'], $val['accesslist'], $val['icon_url'], $val['modlist'], $val['create_date_fmt']);
         // hook model_forum_filter_after.php
     }
     // hook model_forum_filter_end.php

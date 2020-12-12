@@ -19,9 +19,9 @@ CREATE TABLE `wellcms_user` (
   `credits` int(11) NOT NULL DEFAULT '0' COMMENT '积分',		# 预留，供二次开发扩展
   `golds` int(11) NOT NULL DEFAULT '0' COMMENT '金币',		# 预留，虚拟币
   `money` decimal(11,2) NOT NULL DEFAULT '0.00' COMMENT '钱包',		# 预留，账户资金
-  `create_ip` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时IP',
+  `create_ip` decimal(39,0) unsigned NOT NULL DEFAULT '0' COMMENT '创建时IP',
   `create_date` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `login_ip` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '登录时IP',
+  `login_ip` decimal(39,0) unsigned NOT NULL DEFAULT '0' COMMENT '登录时IP',
   `login_date` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '登录时间',
   `logins` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '登录次数',
   `avatar` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户最后更新图像时间',
@@ -107,7 +107,7 @@ CREATE TABLE `wellcms_session` (
   `uid` int(11) unsigned NOT NULL default '0',  # 用户id 未登录为 0，可以重复
   `fid` int(11) unsigned NOT NULL default '0', # 所在的版块
   `url` char(32) NOT NULL default '', # 当前访问 url
-  `ip` int(11) unsigned NOT NULL default '0',		# 用户ip
+  `ip` decimal(39,0) unsigned NOT NULL default '0',		# 用户ip
   `useragent` char(128) NOT NULL default '',		# 用户浏览器信息
   `data` char(255) NOT NULL default '', # session 数据，超大数据存入大表。
   `bigdata` tinyint(1) NOT NULL default '0',  # 是否有大数据。
@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.0.14","official_version":"2.0.14","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.1.0","official_version":"2.1.0","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;
@@ -282,7 +282,7 @@ CREATE TABLE `wellcms_website_comment` (
   `uid` int(11) unsigned NOT NULL DEFAULT '0',
   `status` tinyint(2) NOT NULL DEFAULT '0',
   `create_date` int(11) unsigned NOT NULL DEFAULT '0',
-  `userip` int(11) unsigned NOT NULL DEFAULT '0',
+  `userip` decimal(39,0) unsigned NOT NULL DEFAULT '0',
   `doctype` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `quotepid` int(11) unsigned NOT NULL DEFAULT '0',
   `images` tinyint(2) NOT NULL DEFAULT '0', # 附件中包含的图片数
@@ -310,7 +310,7 @@ CREATE TABLE `wellcms_website_thread` (
   `sticky` tinyint(1) unsigned NOT NULL DEFAULT '0',  # 置顶级别: 0: 普通主题, 1-3 置顶顺序
   `uid` int(11) unsigned NOT NULL DEFAULT '0',   # 用户uid
   `icon` int(11) unsigned NOT NULL DEFAULT '0',  # 缩略图 写入时间戳 图片名tid
-  `userip` int(11) unsigned NOT NULL DEFAULT '0',# 发表ip ip2long()用来清理
+  `userip` decimal(39,0) unsigned NOT NULL DEFAULT '0',# 发表ip ip2long()用来清理
   `create_date` int(11) unsigned NOT NULL DEFAULT '0', # 发帖时间
   `views` int(11) NOT NULL DEFAULT '0', # 查看次数, 剥离出去，单独的服务，避免 cache 失效
   `posts` int(11) NOT NULL DEFAULT '0',     # 回复数
@@ -380,9 +380,12 @@ CREATE TABLE `wellcms_website_tag` (
 
 DROP TABLE IF EXISTS `wellcms_website_tag_thread`;
 CREATE TABLE `wellcms_website_tag_thread` (
-  `tagid` int(11) unsigned NOT NULL,  # tagid
-  `tid` int(11) unsigned NOT NULL DEFAULT '0',  # 主题tid
-  PRIMARY KEY (`tagid`,`tid`)
+`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+`tagid` int(11) unsigned NOT NULL DEFAULT '0',
+`tid` int(11) unsigned NOT NULL DEFAULT '0',
+PRIMARY KEY (`id`),
+KEY `tid` (`tid`),
+KEY `tagid_id` (`tagid`,`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 # 友情链接

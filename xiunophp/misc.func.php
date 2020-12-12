@@ -260,7 +260,6 @@ function xn_urldecode($s)
 function xn_json_encode($data, $pretty = FALSE, $level = 0)
 {
     if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-        //return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         return $pretty ? json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
@@ -309,7 +308,7 @@ function xn_json_decode($json)
 {
     $json = trim($json, "\xEF\xBB\xBF");
     $json = trim($json, "\xFE\xFF");
-    return json_decode($json, 1);
+    return json_decode($json, TRUE);
 }
 
 // ---------------------> encrypt function end
@@ -408,22 +407,12 @@ function humandate($timestamp, $lan = array())
 
 function humannumber($num)
 {
-
-    static $custom_humannumber = NULL;
-    if (NULL === $custom_humannumber) $custom_humannumber = function_exists('custom_humannumber');
-    if ($custom_humannumber) return custom_humannumber($num);
-
     $num > 100000 && $num = ceil($num / 10000) . '万';
     return $num;
 }
 
 function humansize($num)
 {
-
-    static $custom_humansize = NULL;
-    if (NULL === $custom_humansize) $custom_humansize = function_exists('custom_humansize');
-    if ($custom_humansize) return custom_humansize($num);
-
     if ($num > 1073741824) {
         return number_format($num / 1073741824, 2, '.', '') . 'G';
     } elseif ($num > 1048576) {
@@ -439,7 +428,6 @@ function humansize($num)
 function ip()
 {
     $conf = _SERVER('conf');
-    $ip = '127.0.0.1';
     if (empty($conf['cdn_on'])) {
         $ip = _SERVER('REMOTE_ADDR');
     } else {
@@ -457,7 +445,76 @@ function ip()
             $ip = _SERVER('REMOTE_ADDR');
         }
     }
-    return long2ip(ip2long($ip));
+    return $ip;
+}
+
+// 转IP格式，支持IPV4 IPV6
+function safe_long2ip($longip)
+{
+    if (!is_numeric($longip)) return htmlspecialchars($longip, ENT_QUOTES);
+
+    // IPV6
+    if (strlen($longip) > 10) return long2ip_v6($longip);
+
+    $longip = intval(4294967295 - ($longip - 1));
+    return long2ip(-$longip);
+
+    // IPV4转换32位
+    /*$str = sprintf("%032s", decbin((float)$longip));
+    $arr = array();
+    for ($i = 0; $i < 4; ++$i) {
+        $arr[] = bindec(substr($str, $i * 8, 8));
+    }
+
+    return implode('.', $arr);*/
+}
+
+// IPV6转数字
+function ip2long_v6($ip)
+{
+    $ip_n = inet_pton($ip);
+    $bin = '';
+    for ($bit = strlen($ip_n) - 1; $bit >= 0; $bit--) {
+        $bin = sprintf('%08b', ord($ip_n[$bit])) . $bin;
+    }
+
+    if (function_exists('gmp_init')) {
+        return gmp_strval(gmp_init($bin, 2), 10);
+    } elseif (function_exists('bcadd')) {
+        $dec = '0';
+        for ($i = 0; $i < strlen($bin); $i++) {
+            $dec = bcmul($dec, '2', 0);
+            $dec = bcadd($dec, $bin[$i], 0);
+        }
+        return $dec;
+    } else {
+        trigger_error('GMP or BCMATH extension not installed!', E_USER_ERROR);
+    }
+}
+
+// 转IPV6
+function long2ip_v6($dec)
+{
+    if (function_exists('gmp_init')) {
+        $bin = gmp_strval(gmp_init($dec, 10), 2);
+    } elseif (function_exists('bcadd')) {
+        $bin = '';
+        do {
+            $bin = bcmod($dec, '2') . $bin;
+            $dec = bcdiv($dec, '2', 0);
+        } while (bccomp($dec, '0'));
+    } else {
+        trigger_error('GMP or BCMATH extension not installed!', E_USER_ERROR);
+    }
+
+    $bin = str_pad($bin, 128, '0', STR_PAD_LEFT);
+    $ip = array();
+    for ($bit = 0; $bit <= 7; $bit++) {
+        $bin_part = substr($bin, $bit * 16, 16);
+        $ip[] = dechex(bindec($bin_part));
+    }
+    $ip = implode(':', $ip);
+    return inet_ntop(inet_pton($ip));
 }
 
 // 安全获取用户IP，信任 CDN 发过来的 X-FORWARDED-FOR
@@ -776,9 +833,6 @@ function file_replace_var($filepath, $replace = array(), $pretty = FALSE)
 
 function file_backname($filepath)
 {
-
-    $dirname = dirname($filepath);
-    //$filename = file_name($filepath);
     $filepre = file_pre($filepath);
     $fileext = file_ext($filepath);
     $s = "$filepre.backup.$fileext";
@@ -1250,18 +1304,12 @@ function http_referer()
 {
     $referer = param('referer');
     empty($referer) and $referer = _SERVER('HTTP_REFERER');
-    //$len = strlen(http_url_path());
-    //$referer2 = substr($referer, $len);
     if (FALSE !== strpos($referer, url('user-login')) || FALSE !== strpos($referer, url('user-logout')) || FALSE !== strpos($referer, url('user-create'))) {
         $referer = http_url_path();
     }
     // 安全过滤，只支持站内跳转，不允许跳到外部，否则可能会被 XSS
-    // $referer = str_replace('\'', '', $referer);
-    /*if (!preg_match('#^\\??[\w\-/]+\.html$#', $referer2) && !preg_match('#^[\w\/]*$#', $referer2)) {
-        $referer = './';
-    }*/
     $parse_url = parse_url($referer);
-    if ($parse_url['host'] != $_SERVER['HTTP_HOST']) $referer = './';
+    if (isset($parse_url['host']) && $parse_url['host'] != $_SERVER['HTTP_HOST']) $referer = './';
     return $referer;
 }
 

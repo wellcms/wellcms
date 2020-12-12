@@ -2,7 +2,7 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 // 检查是否登录
 user_login_check();
@@ -28,14 +28,16 @@ switch ($action) {
         // 从默认的地方读取主题列表
         $thread_list_from_default = 1;
 
-        // hook home_article_pagination_before.php
+        // hook home_article_before.php
 
         if (1 == $thread_list_from_default) {
+            // hook home_article_find_before.php
             $threadlist = well_thread_find_by_uid($uid, $page, $pagesize);
+            // hook home_article_find_after.php
         }
 
-        // hook home_article_pagination_center.php
-        
+        // hook home_article_center.php
+
         $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || 1 == $gid;
 
         $page_url = url('home-article-{page}', $extra);
@@ -68,11 +70,13 @@ switch ($action) {
             // hook home_comment_post_default_before.php
 
             if (1 == $post_list_from_default) {
+                // hook home_comment_post_find_before.php
                 $postlist = comment_pid_find_by_uid($uid, $page, $pagesize);
+                // hook home_comment_post_find_after.php
             }
 
             // hook home_comment_post_default_after.php
-            
+
             if (!empty($postlist)) {
                 $pids = array();
                 $tids = array();
@@ -92,7 +96,7 @@ switch ($action) {
                     comment_filter($val);
                     $val['subject'] = $threadlist[$val['tid']]['subject'];
                     $val['url'] = $threadlist[$val['tid']]['url'];
-                    $val['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
+                    $val['allowdelete'] = (group_access($gid, 'allowuserdelete') and $uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
                 }
             }
 

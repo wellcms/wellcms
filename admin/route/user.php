@@ -2,9 +2,9 @@
 /*
  * Copyright (C) www.wellcms.cn
  */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
-3 != DEBUG && FALSE === group_access($gid, 'manageuser') AND message(1, lang('user_group_insufficient_privilege'));
+3 != DEBUG && FALSE === group_access($gid, 'manageuser') and message(1, lang('user_group_insufficient_privilege'));
 
 $action = param(1, 'list');
 
@@ -22,7 +22,7 @@ switch ($action) {
 
         $srchtype = param('srchtype');
         $keyword = trim(xn_urldecode(param('keyword')));
-        $srchtype AND $keyword AND $extra += array('srchtype' => $srchtype, 'keyword' => urlencode($keyword));
+        $srchtype and $keyword and $extra += array('srchtype' => $srchtype, 'keyword' => urlencode($keyword));
 
         // hook admin_user_list_start.php
 
@@ -32,7 +32,7 @@ switch ($action) {
         // hook admin_user_list_allow_type_after.php
 
         if ($keyword) {
-            !in_array($srchtype, $allowtype) AND $srchtype = 'uid';
+            !in_array($srchtype, $allowtype, TRUE) and $srchtype = 'uid';
             $cond[$srchtype] = 'create_ip' == $srchtype ? sprintf('%u', ip2long($keyword)) : $keyword;
         }
 
@@ -76,10 +76,10 @@ switch ($action) {
 
         } elseif ('POST' == $method) {
 
-            FALSE === group_access($gid, 'managecreateuser') AND message(1, lang('user_group_insufficient_privilege'));
+            FALSE === group_access($gid, 'managecreateuser') and message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             $email = param('email');
             $username = param('username');
@@ -88,15 +88,15 @@ switch ($action) {
 
             // hook admin_user_create_post_start.php
 
-            empty($email) AND message('email', lang('please_input_email'));
-            $email AND !is_email($email, $err) AND message('email', $err);
-            $username AND !is_username($username, $err) AND message('username', $err);
+            empty($email) and message('email', lang('please_input_email'));
+            $email && !is_email($email, $err) and message('email', $err);
+            $username && !is_username($username, $err) and message('username', $err);
 
             $_user = user_read_by_email($email);
-            $_user AND message('email', lang('email_is_in_use'));
+            $_user and message('email', lang('email_is_in_use'));
 
             $_user = user_read_by_username($username);
-            $_user AND message('username', lang('user_already_exists'));
+            $_user and message('username', lang('user_already_exists'));
 
             // hook admin_user_create_post_before.php
 
@@ -112,7 +112,7 @@ switch ($action) {
             );
             // hook admin_user_create_post_after.php
             $r = user_create($arr);
-            FALSE === $r AND message(-1, lang('create_failed'));
+            FALSE === $r and message(-1, lang('create_failed'));
 
             // hook admin_user_create_post_end.php
 
@@ -151,10 +151,10 @@ switch ($action) {
 
         } elseif ('POST' == $method) {
 
-            3 != DEBUG && FALSE === group_access($gid, 'manageupdateuser') AND message(1, lang('user_group_insufficient_privilege'));
+            3 != DEBUG && FALSE === group_access($gid, 'manageupdateuser') and message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             $email = param('email');
             $username = param('username');
@@ -164,16 +164,16 @@ switch ($action) {
             // hook admin_user_update_post_start.php
 
             $old = user_read($_uid);
-            empty($old) AND message('username', lang('uid_not_exists'));
+            empty($old) and message('username', lang('uid_not_exists'));
 
-            $email AND !is_email($email, $err) AND message(2, $err);
-            if ($email AND $old['email'] != $email) {
+            $email && !is_email($email, $err) and message(2, $err);
+            if ($email and $old['email'] != $email) {
                 $_user = user_read_by_email($email);
-                $_user AND $_user['uid'] != $_uid AND message('email', lang('email_already_exists'));
+                $_user && $_user['uid'] != $_uid and message('email', lang('email_already_exists'));
             }
-            if ($username AND $old['username'] != $username) {
+            if ($username and $old['username'] != $username) {
                 $_user = user_read_by_username($username);
-                $_user AND $_user['uid'] != $_uid AND message('username', lang('user_already_exists'));
+                $_user && $_user['uid'] != $_uid and message('username', lang('user_already_exists'));
             }
 
             $arr = array();
@@ -191,9 +191,9 @@ switch ($action) {
 
             // 仅仅更新发生变化的部分 / only update changed field
             $update = array_diff_value($arr, $old);
-            empty($update) AND message(-1, lang('data_not_changed'));
+            empty($update) and message(-1, lang('data_not_changed'));
 
-            FALSE === user_update($_uid, $update) AND message(-1, lang('update_failed'));
+            FALSE === user_update($_uid, $update) and message(-1, lang('update_failed'));
 
             // hook admin_user_update_post_end.php
 
@@ -203,20 +203,20 @@ switch ($action) {
     case 'delete':
         if ('POST' != $method) message(-1, lang('method_error'));
 
-        FALSE === group_access($gid, 'managedeleteuser') AND message(1, lang('user_group_insufficient_privilege'));
+        FALSE === group_access($gid, 'managedeleteuser') and message(1, lang('user_group_insufficient_privilege'));
 
         $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
         $_uid = param('uid', 0);
 
         // hook admin_user_delete_start.php
 
         $_user = user_read($_uid);
-        empty($_user) AND message(-1, lang('user_not_exists'));
-        (1 == $_user['gid']) AND message(-1, 'admin_cant_be_deleted');
+        empty($_user) and message(-1, lang('user_not_exists'));
+        (1 == $_user['gid']) and message(-1, 'admin_cant_be_deleted');
 
-        FALSE === user_delete($_uid) AND message(-1, lang('delete_failed'));
+        FALSE === user_delete($_uid) and message(-1, lang('delete_failed'));
 
         // hook admin_user_delete_end.php
 

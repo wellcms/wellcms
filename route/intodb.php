@@ -83,6 +83,9 @@ if ('GET' == $method) {
     if (0 == $link) {
         $message = param('message', '', FALSE);
         $message = trim($message);
+
+        // hook intodb_post_message.php
+        
         empty($message) ? exit(lang('please_input_message')) : xn_strlen($message) > 2028000 AND exit(lang('message_too_long'));
         $_message = filter_all_html($message);
     }
@@ -127,6 +130,8 @@ if ('GET' == $method) {
     // hook intodb_post_after.php
 
     $thread = array('fid' => $fid, 'type' => $type, 'doctype' => $doctype, 'subject' => $subject, 'brief' => $brief, 'keyword' => $keyword, 'description' => $description, 'closed' => $closed, 'flags' => $flags, 'thumbnail' => $thumbnail, 'save_image' => $save_image, 'delete_pic' => $delete_pic, 'message' => $message);
+
+    // hook intodb_post_thread_create.php
 
     $tid = well_thread_create($thread);
     FALSE === $tid AND exit(lang('create_failed'));

@@ -140,7 +140,7 @@
         $.xpost(jform.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 $.alert(message);
-                var referer = referer || xn.url('content-list');
+                var referer = referer || xn.url('content-list', '', true);
                 jsubmit.button(message).delay(1000).location(referer);
             } else if(xn.is_number(code)) {
                 $.alert(message);

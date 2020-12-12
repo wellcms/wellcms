@@ -3,9 +3,9 @@
  * Copyright (C) www.wellcms.cn
  */
 
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
-FALSE === group_access($gid, 'managecategory') AND message(1, lang('user_group_insufficient_privilege'));
+FALSE === group_access($gid, 'managecategory') and message(1, lang('user_group_insufficient_privilege'));
 
 $action = param(1, 'list');
 
@@ -36,7 +36,7 @@ switch ($action) {
 
             $n = $fid ? $forum['flags'] : flag_count($fid);
 
-            $n AND $arrlist = flag_find($fid, $page, $pagesize);
+            $n and $arrlist = flag_find($fid, $page, $pagesize);
 
             // hook admin_flag_list_get_before.php
 
@@ -58,7 +58,7 @@ switch ($action) {
         } elseif ('POST' == $method) {
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             $type = param('type', 0);
 
@@ -68,14 +68,14 @@ switch ($action) {
                 // 排序
                 $arr = _POST('data');
 
-                empty($arr) AND message(1, lang('data_malformation'));
+                empty($arr) and message(1, lang('data_malformation'));
 
                 // hook admin_flag_list_rank_post_start.php
 
                 foreach ($arr as &$val) {
                     $rank = intval($val['rank']);
                     $flagid = intval($val['flagid']);
-                    intval($val['oldrank']) != $rank && $flagid AND $r = flag_update($flagid, array('rank' => $rank));
+                    intval($val['oldrank']) != $rank && $flagid and $r = flag_update($flagid, array('rank' => $rank));
                     // hook admin_flag_list_rank_post_before.php
                 }
 
@@ -88,7 +88,7 @@ switch ($action) {
                 // 删除
                 $fid = param('fid', 0);
                 $flagid = param('flagid', 0);
-                empty($flagid) AND message(1, lang('data_malformation'));
+                empty($flagid) and message(1, lang('data_malformation'));
 
                 // hook admin_flag_list_post_before.php
 
@@ -114,12 +114,12 @@ switch ($action) {
                 // hook admin_flag_list_post_after.php
 
                 // 清空主题 大数据量超时 暂时这样处理，以后优化再改成遍历主键删除
-                FALSE === flag_thread_delete_by_flagid($flagid) AND message(-1, lang('delete_failed'));
+                FALSE === flag_thread_delete_by_flagid($flagid) and message(-1, lang('delete_failed'));
 
-                FALSE === flag_delete($flagid) AND message(-1, lang('delete_failed'));
+                FALSE === flag_delete($flagid) and message(-1, lang('delete_failed'));
 
                 $iconfile = $conf['upload_path'] . 'flag/' . $flagid . '.png';
-                file_exists($iconfile) AND unlink($iconfile);
+                file_exists($iconfile) and unlink($iconfile);
 
                 // hook admin_flag_list_post_end.php
 
@@ -166,19 +166,19 @@ switch ($action) {
         } elseif ('POST' == $method) {
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             // hook admin_flag_create_post_start.php
 
             $fid = param('fid', 0);
             $name = param('name');
             $name = filter_all_html($name);
-            empty($name) AND message('name', lang('flag_empty'));
+            empty($name) and message('name', lang('flag_empty'));
 
             $name = htmlspecialchars($name);
             // 查询该属性是否存在
             $read = flag_read_by_name_and_fid($name, $fid);
-            $read AND message('name', lang('flag_existed'));
+            $read and message('name', lang('flag_existed'));
 
             // hook admin_flag_create_post_before.php
 
@@ -190,14 +190,14 @@ switch ($action) {
                 $forum = array_value($forumlist, $fid);
                 $flagarr = explode(',', $forum['flagstr']);
                 // 显示最大限制20个属性
-                count($flagarr) >= 20 AND message(1, lang('display_limit_number', array('n' => 20)));
+                count($flagarr) >= 20 and message(1, lang('display_limit_number', array('n' => 20)));
             }
 
             // 首页
             if ($display && empty($fid)) {
                 $flagarr = explode(',', $config['index_flagstr']);
                 // 显示最大限制20个属性
-                count($flagarr) >= 20 AND message(1, lang('display_limit_number', array('n' => 20)));
+                count($flagarr) >= 20 and message(1, lang('display_limit_number', array('n' => 20)));
             }
 
             $delete = param('delete', 0);
@@ -208,18 +208,18 @@ switch ($action) {
             $number = $display ? $number : 0;
             $arr = array('name' => $name, 'fid' => $fid, 'display' => $display, 'number' => $number, 'create_date' => $time);
 
-            empty($delete) AND $icon AND $arr['icon'] = $time;
+            empty($delete) and $icon and $arr['icon'] = $time;
 
             // hook admin_flag_create_post_array.php
 
             $flagid = flag_create($arr);
-            FALSE === $flagid AND message(-1, lang('create_failed'));
+            FALSE === $flagid and message(-1, lang('create_failed'));
 
             if (0 == $delete && $icon) {
                 $data = substr($icon, strpos($icon, ',') + 1);
                 $data = base64_decode($data);
                 $path = $conf['upload_path'] . 'flag/';
-                !is_dir($path) AND mkdir($path, 0777, TRUE);
+                !is_dir($path) and mkdir($path, 0777, TRUE);
                 $iconfile = $path . $flagid . '.png';
                 file_put_contents($iconfile, $data);
             }
@@ -262,7 +262,7 @@ switch ($action) {
         $flagid = param('flagid', 0);
 
         $read = flag_read_cache($flagid);
-        empty($read) AND message(-1, lang('flag_empty'));
+        empty($read) and message(-1, lang('flag_empty'));
 
         // hook admin_flag_update_end.php
 
@@ -299,7 +299,7 @@ switch ($action) {
         } elseif ('POST' == $method) {
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             // hook admin_flag_update_post_start.php
 
@@ -308,7 +308,7 @@ switch ($action) {
             $name = filter_all_html($name);
             if ($name && $name != $read['name']) {
                 // 查询该属性是否存在
-                flag_read_by_name_and_fid($name, $read['fid']) AND message('name', lang('flag_existed'));
+                flag_read_by_name_and_fid($name, $read['fid']) and message('name', lang('flag_existed'));
 
                 $update['name'] = $name;
             }
@@ -329,7 +329,7 @@ switch ($action) {
                         unset($flagarr[$key]);
                     } else {
                         // 改为显示 追加
-                        count($flagarr) >= 20 AND message(1, lang('display_limit_number', array('n' => 20)));
+                        count($flagarr) >= 20 and message(1, lang('display_limit_number', array('n' => 20)));
                         $flagarr[] = $read['flagid'];
                     }
 
@@ -343,7 +343,7 @@ switch ($action) {
                         unset($flagarr[$key]);
                     } else {
                         // 改为显示 追加
-                        count($flagarr) >= 20 AND message(1, lang('display_limit_number', array('n' => 20)));
+                        count($flagarr) >= 20 and message(1, lang('display_limit_number', array('n' => 20)));
                         $flagarr[] = $read['flagid'];
                     }
                     $flagarr = array_unique($flagarr);
@@ -365,7 +365,7 @@ switch ($action) {
             if ($delete) {
                 $update['icon'] = 0;
                 $iconfile = $conf['upload_path'] . 'flag/' . $flagid . '.png';
-                fis_file($iconfile) AND unlink($iconfile);
+                is_file($iconfile) and unlink($iconfile);
             }
 
             $icon = param('icon');
@@ -374,14 +374,14 @@ switch ($action) {
                 $data = substr($icon, strpos($icon, ',') + 1);
                 $data = base64_decode($data);
                 $path = $conf['upload_path'] . 'flag/';
-                !is_dir($path) AND mkdir($path, 0777, TRUE);
+                !is_dir($path) and mkdir($path, 0777, TRUE);
 
                 file_put_contents($path . $flagid . '.png', $data);
             }
 
             // hook admin_flag_update_post_after.php
 
-            !empty($update) AND FALSE === flag_update($read['flagid'], $update) AND message(-1, lang('update_failed'));
+            !empty($update) and flag_update($read['flagid'], $update);
 
             // hook admin_flag_update_post_end.php
 
@@ -393,7 +393,7 @@ switch ($action) {
 
         $flagid = param('flagid', 0);
         $read = flag_read_cache($flagid);
-        empty($read) AND message(-1, lang('flag_empty'));
+        empty($read) and message(-1, lang('flag_empty'));
 
         // hook admin_flag_read_end.php
 
@@ -450,7 +450,7 @@ switch ($action) {
             if ($type) {
                 // 一维数组
                 $id = param('id', array());
-                empty($id) AND message(1, lang('data_malformation'));
+                empty($id) and message(1, lang('data_malformation'));
 
                 // 删除的同一个flag下的主题
                 flag_update($flagid, array('count-' => count($id)));
@@ -466,7 +466,7 @@ switch ($action) {
 
             } else {
                 $id = param('id', 0);
-                empty($id) AND message(1, lang('data_malformation'));
+                empty($id) and message(1, lang('data_malformation'));
 
                 $thread = flag_thread__read($id);
                 well_thread_update($thread['tid'], array('flags-' => 1));
@@ -475,8 +475,8 @@ switch ($action) {
 
             // hook admin_flag_read_post_after.php
 
-            FALSE === flag_thread_delete($id) AND message(-1, lang('delete_failed'));
-            
+            FALSE === flag_thread_delete($id) and message(-1, lang('delete_failed'));
+
             // hook admin_flag_read_post_end.php
 
             message(0, lang('delete_successfully'));

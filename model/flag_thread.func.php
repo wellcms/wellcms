@@ -175,7 +175,7 @@ function flag_thread_by_fid($fid)
 
     $flagtids = array();
     foreach ($flaglist as $key => $val) {
-        if($val['count']) {
+        if ($val['count']) {
             $flaglist[$key]['tids'] = arrlist_values(flag_thread_get($val['flagid']), 'tid');
             $flagtids += flag_thread_get($val['flagid']);
         }
@@ -207,9 +207,9 @@ function flag_forum_by_tid($tid)
 
             // hook model_flag_forum_by_tid_center.php
 
-            1 == $val['type'] AND $indexarr[] = $val['flagid'];
-            2 == $val['type'] AND $catearr[] = $val['flagid'];
-            3 == $val['type'] AND $forumarr[] = $val['flagid'];
+            1 == $val['type'] and $indexarr[] = $val['flagid'];
+            2 == $val['type'] and $catearr[] = $val['flagid'];
+            3 == $val['type'] and $forumarr[] = $val['flagid'];
             $flagarr[$val['flagid']] = $val['id'];
             // hook model_flag_forum_by_tid_after.php
         }
@@ -248,11 +248,7 @@ function flag_thread_delete_by_ids($flagids, $ids)
 function flag_thread_filter(&$val)
 {
     // hook flag_thread_filter_start.php
-    unset($val['id']);
-    unset($val['fid']);
-    unset($val['flagid']);
-    unset($val['type']);
-    unset($val['create_date']);
+    unset($val['id'], $val['fid'], $val['flagid'], $val['type'], $val['create_date']);
     // hook flag_thread_filter_end.php
 }
 
@@ -262,10 +258,10 @@ $g_flag_thread = FALSE;
 function flag_thread_get($flagid)
 {
     global $g_flag_thread;
-    FALSE === $g_flag_thread AND $g_flag_thread = website_get('flag_thread');
+    FALSE === $g_flag_thread and $g_flag_thread = website_get('flag_thread');
     if (isset($g_flag_thread[$flagid])) return $g_flag_thread[$flagid];
 
-    empty($g_flag_thread) AND $g_flag_thread = array();
+    empty($g_flag_thread) and $g_flag_thread = array();
 
     if (empty($g_flag_thread[$flagid])) {
         $read = flag_read_cache($flagid);
@@ -284,8 +280,8 @@ function flag_thread_get($flagid)
 function flag_thread_set($key, $val)
 {
     global $g_flag_thread;
-    FALSE === $g_flag_thread AND $g_flag_thread = website_get('flag_thread');
-    empty($g_flag_thread) AND $g_flag_thread = array();
+    FALSE === $g_flag_thread and $g_flag_thread = website_get('flag_thread');
+    empty($g_flag_thread) and $g_flag_thread = array();
     $g_flag_thread[$key] = $val;
     return website_set('flag_thread', $g_flag_thread);
 }
@@ -294,8 +290,8 @@ function flag_thread_set($key, $val)
 function flag_thread_delete_cache($flagid)
 {
     global $g_flag_thread;
-    FALSE === $g_flag_thread AND $g_flag_thread = website_get('flag_thread');
-    empty($g_flag_thread) AND $g_flag_thread = array();
+    FALSE === $g_flag_thread and $g_flag_thread = website_get('flag_thread');
+    empty($g_flag_thread) and $g_flag_thread = array();
     if (isset($g_flag_thread[$flagid])) {
         unset($g_flag_thread[$flagid]);
         website_set('flag_thread', $g_flag_thread);
@@ -307,7 +303,7 @@ function flag_thread_delete_cache($flagid)
 function flag_thread_delete_by_tid($tid)
 {
     global $g_flag_thread;
-    FALSE === $g_flag_thread AND $g_flag_thread = website_get('flag_thread');
+    FALSE === $g_flag_thread and $g_flag_thread = website_get('flag_thread');
 
     if (empty($g_flag_thread)) {
         $g_flag_thread = array();
@@ -343,7 +339,7 @@ function flag_thread_delete_by_flagid($flagid)
 
     // hook model_flag_thread_delete_by_flagid_start.php
 
-    FALSE === $g_flag_thread AND $g_flag_thread = website_get('flag_thread');
+    FALSE === $g_flag_thread and $g_flag_thread = website_get('flag_thread');
 
     // hook model_flag_thread_delete_by_flagid_before.php
 

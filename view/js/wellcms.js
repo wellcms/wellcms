@@ -235,6 +235,8 @@ body.on('click', 'a.ajax', function () {
         $.xpost(href, postdata, function (code, message) {
             if (0 == code) {
                 window.location.reload();
+            } else if ('url' == code) {
+                window.location = message;
             } else {
                 $.alert(message);
             }

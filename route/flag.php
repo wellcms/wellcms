@@ -3,7 +3,6 @@
  * Copyright (C) www.wellcms.cn
 */
 !defined('DEBUG') AND exit('Access Denied.');
-// 属性
 
 // hook flag_start.php
 
@@ -46,7 +45,6 @@ $header['mobile_title'] = '';
 $header['mobile_link'] = url('flag-' . $flagid);
 $header['keywords'] = empty($read['keywords']) ? $read['name'] : $read['keywords'];
 $header['description'] = empty($read['description']) ? $read['name'] : $read['description'];
-$_SESSION['fid'] = 0;
 $flag_link = '';
 
 // hook flag_end.php

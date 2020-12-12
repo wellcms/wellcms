@@ -262,7 +262,7 @@ function well_attach_delete_by_uid($uid)
     global $conf;
     // hook model__attach_delete_by_uid_start.php
 
-    $attachlist = well_attach__find(array('uid' => $uid), array(), 1, 9000);
+    $attachlist = well_attach__find(array('uid' => $uid), array(), 1, 2000);
 
     if (empty($attachlist)) return;
 
@@ -370,8 +370,9 @@ function well_attach_assoc_thumbnail($arr = array())
     // hook model_attach_assoc_thumbnail_before.php
 
     // 获取文件后缀
-    $ext = file_ext($sess_tmp_files['url']);
-    if (!in_array($ext, array('gif', 'jpg', 'jpeg', 'png'))) {
+    $ext = strtolower(file_ext($sess_tmp_files['url']));
+    
+    if (!in_array($ext, array('gif', 'jpg', 'jpeg', 'png'), TRUE)) {
         unlink($sess_tmp_files['path']);
         return TRUE;
     }

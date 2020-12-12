@@ -34,11 +34,11 @@ switch ($action) {
 
         // hook tag_list_after.php
 
-        $header['title'] = lang('well_tag') . '-' . $conf['sitename'];
+        $header['title'] = lang('tag') . '-' . $conf['sitename'];
         $header['mobile_title'] = '';
         $header['mobile_link'] = url('tag-list', $extra);
-        $header['keywords'] = lang('well_tag') . ',' . $conf['sitename'];
-        $header['description'] = lang('well_tag') . ',' . $conf['sitename'];
+        $header['keywords'] = lang('tag') . ',' . $conf['sitename'];
+        $header['description'] = lang('tag') . ',' . $conf['sitename'];
         $_SESSION['fid'] = 0;
 
         // hook tag_list_end.php

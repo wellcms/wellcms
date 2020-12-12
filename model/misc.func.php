@@ -20,9 +20,9 @@
 function url($url, $extra = array(), $url_access = NULL)
 {
     $conf = _SERVER('conf');
-    NULL === $url_access AND $url_access = GLOBALS('url_access');
+    NULL === $url_access and $url_access = GLOBALS('url_access');
 
-    !isset($conf['url_rewrite_on']) AND $conf['url_rewrite_on'] = 0;
+    !isset($conf['url_rewrite_on']) and $conf['url_rewrite_on'] = 0;
 
     // hook model_url_start.php
 
@@ -49,7 +49,7 @@ function url($url, $extra = array(), $url_access = NULL)
         // hook model_url_center.php
 
         // 后台链接
-        if ((TRUE === $url_access && !in_array($arr[0], $filter)) || 3 === $url_access) {
+        if ((TRUE === $url_access && !in_array($arr[0], $filter, TRUE)) || 3 === $url_access) {
             $r = 'index.php?' . http_build_query($arr);
         } else {
             $r = $conf['path'] . str_replace('-', '/', $query) . (2 == $conf['url_rewrite_on'] ? '.html' : '');
@@ -94,13 +94,13 @@ function check_runlevel()
             message(-1, lang('runlevel_reson_1'));
             break;
         case 2:
-            (0 == $gid || 'GET' != $method) AND message(-1, lang('runlevel_reson_2'));
+            (0 == $gid || 'GET' != $method) and message(-1, lang('runlevel_reson_2'));
             break;
         case 3:
-            0 == $gid AND message(-1, lang('runlevel_reson_3'));
+            0 == $gid and message(-1, lang('runlevel_reson_3'));
             break;
         case 4:
-            'GET' != $method AND message(-1, lang('runlevel_reson_4'));
+            'GET' != $method and message(-1, lang('runlevel_reson_4'));
             break;
         //case 5: break;
     }
@@ -123,7 +123,7 @@ function message($code, $message, $extra = array())
     global $ajax, $header, $conf;
 
     $arr = $extra;
-    $arr['code'] = $code . '';
+    $arr['code'] = $code;
     $arr['message'] = $message;
     $header['title'] = $conf['sitename'];
 
@@ -190,7 +190,7 @@ function xn_html_safe($doc, $arg = array())
 
     // hook model_xn_html_safe_start.php
 
-    empty($arg['table_max_width']) AND $arg['table_max_width'] = 746; // 这个宽度为 回帖宽度
+    empty($arg['table_max_width']) and $arg['table_max_width'] = 746; // 这个宽度为 回帖宽度
 
     $pattern = array(
         //'img_url'=>'#^(https?://[^\'"\\\\<>:\s]+(:\d+)?)?([^\'"\\\\<>:\s]+?)*$#is',
@@ -227,14 +227,13 @@ function xn_html_safe($doc, $arg = array())
         'title' => array('pcre', '', array($pattern['safe'])),
         'target' => array('list', '_self', array('_blank', '_self')),
         'type' => array('pcre', '', array('#^[\w/\-]+$#')),
-        'allowfullscreen' => array('list', 'true', array('true', '1', 'on')),
         'wmode' => array('list', 'transparent', array('transparent', '')),
         'allowscriptaccess' => array('list', 'never', array('never')),
         'value' => array('list', '', array('#^[\w+/\-]$#')),
         'cellspacing' => array('range', 0, array(0, 10)),
         'cellpadding' => array('range', 0, array(0, 10)),
         'frameborder' => array('range', 0, array(0, 10)),
-        'allowfullscreen' => array('range', 0, array(0, 10)),
+        'allowfullscreen' => array('list', 'true', array('true', '1', 'on'), 'range', 0, array(0, 10)),
         'align' => array('list', 'left', array('left', 'center', 'right')),
         'valign' => array('list', 'middle', array('middle', 'top', 'bottom')),
         'name' => array('pcre', '', array($pattern['word'])),
@@ -461,7 +460,7 @@ function well_token_clear($token = 0)
     global $uid, $conf, $time;
     $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
     setcookie($key, '', $time - 1, '/', $conf['cookie_domain'], '', TRUE);
-    $token AND setcookie(md5($token), 0, $time - 1, '/', $conf['cookie_domain'], '', TRUE);
+    $token and setcookie(md5($token), 0, $time - 1, '/', $conf['cookie_domain'], '', TRUE);
 }
 
 // 格式化数字 1k
@@ -511,7 +510,7 @@ function well_param_force($val, $filter, $htmlspecialchars, $addslashes)
 }
 
 // 遍历多维数组安全过滤 $filter一维数组中能找到的一律按照字符处理
-function well_mulit_array_safe($array, $arr = array(), $filter, $htmlspecialchars, $addslashes)
+function well_mulit_array_safe($array, $arr, $filter, $htmlspecialchars, $addslashes)
 {
     if (is_array($array)) {
         foreach ($array as $key => $value) {
@@ -544,9 +543,9 @@ function well_safe($val, $defval, $htmlspecialchars, $addslashes)
     // 处理字符串
     if (1 == $defval) {
         //$val = trim($val);
-        $addslashes AND empty($get_magic_quotes_gpc) && $val = addslashes($val);
-        empty($addslashes) AND $get_magic_quotes_gpc && $val = stripslashes($val);
-        $htmlspecialchars AND $val = htmlspecialchars($val, ENT_QUOTES);
+        $addslashes and empty($get_magic_quotes_gpc) && $val = addslashes($val);
+        empty($addslashes) and $get_magic_quotes_gpc && $val = stripslashes($val);
+        $htmlspecialchars and $val = htmlspecialchars($val, ENT_QUOTES);
     } else {
         $val = intval($val);
     }
@@ -578,7 +577,7 @@ function well_mulit_array_int($array = array(), $filter = array())
  */
 function code_conversion($str, $charset = 'utf-8', $original = '')
 {
-    if ($original) return iconv($original, $charset . "//IGNORE", $str);
+    if ($original) return iconv($original, $charset . '//IGNORE', $str);
 
     $list = array('gb2312', 'big5', 'ascii', 'gbk', 'utf-16', 'ucs-2', 'utf-8');
     $encoding_list = $charset == 'utf-8' ? $list : array('utf-8', 'utf-16', 'ascii', 'gb2312', 'gbk');
@@ -890,7 +889,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
         $timeout = 30;
     }
 
-    is_array($post) AND $post = http_build_query($post);
+    is_array($post) and $post = http_build_query($post);
 
     // 没有安装curl 使用http的形式，支持post
     if (!function_exists('curl_init')) {
@@ -902,7 +901,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
         }
     }
 
-    is_array($cookie) AND $cookie = http_build_query($cookie);
+    is_array($cookie) and $cookie = http_build_query($cookie);
     $curl = curl_init();
     // 返回执行结果，不输出
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -910,7 +909,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     if (class_exists('\CURLFile')) {
         curl_setopt($curl, CURLOPT_SAFE_UPLOAD, true);
     } else {
-        defined('CURLOPT_SAFE_UPLOAD') AND curl_setopt($curl, CURLOPT_SAFE_UPLOAD, false);
+        defined('CURLOPT_SAFE_UPLOAD') and curl_setopt($curl, CURLOPT_SAFE_UPLOAD, false);
     }
     // 设定请求的RUL
     curl_setopt($curl, CURLOPT_URL, $url);
@@ -941,7 +940,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     }
 
     $header = array('Content-type: application/x-www-form-urlencoded;charset=UTF-8', 'X-Requested-With: XMLHttpRequest');
-    $cookie AND $header[] = "Cookie: $cookie";
+    $cookie and $header[] = "Cookie: $cookie";
     curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
 
     if ($post) {
@@ -964,7 +963,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     // 返回执行结果
     $output = curl_exec($curl);
     // 有效URL，输出URL非URL页面内容 CURLOPT_RETURNTRANSFER 必须为false
-    'GET' == $post AND $output = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
+    'GET' == $post and $output = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
     curl_close($curl);
     return $output;
 }
@@ -1011,8 +1010,8 @@ function search_directory($path)
                 search_directory($sub_path);
             } else {
                 //echo ' 最底层文件: ' . $path . '/' . $val . ' <hr/>';
-                $ext = file_ext($sub_path);
-                if (in_array($ext, array('php', 'asp', 'jsp', 'cgi', 'exe', 'dll'))) {
+                $ext = strtolower(file_ext($sub_path));
+                if (in_array($ext, array('php', 'asp', 'jsp', 'cgi', 'exe', 'dll'), TRUE)) {
                     echo '异常文件：' . $sub_path . ' <hr/>';
                 }
             }
@@ -1140,7 +1139,7 @@ function well_import_total($file, $key = 'well_import_total')
             ++$count;
             $globs->next(); // 指向下一个
         }
-        $count AND cache_set($key, $count, 300);
+        $count and cache_set($key, $count, 300);
     }
 
     return $cache[$key] = $count;
@@ -1150,7 +1149,7 @@ $g_dir_file = FALSE;
 function well_search_dir($path)
 {
     global $g_dir_file;
-    FALSE === $g_dir_file AND $g_dir_file = array();
+    FALSE === $g_dir_file and $g_dir_file = array();
     if (is_dir($path)) {
         $paths = scandir($path);
         foreach ($paths as $val) {

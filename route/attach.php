@@ -2,7 +2,7 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 $action = param(1);
 $t = param('t', 0); // 0 CMS上传/1 BBS上传
@@ -23,20 +23,21 @@ $t = param('t', 0); // 0 CMS上传/1 BBS上传
 switch ($action) {
     // hook attach_case_start.php
     case 'create':
+
+        user_login_check();
+
         // 验证token
         if (array_value($conf, 'upload_token', 0)) {
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
         }
 
-        user_login_check();
-        
         $fid = param('fid', 0);
         if ($fid) {
             $allowattach = forum_access_user($fid, $gid, 'allowattach');
-            empty($allowattach) && $gid != 1 AND message(-1, lang('user_group_insufficient_privilege'));
+            empty($allowattach) && $gid != 1 and message(-1, lang('user_group_insufficient_privilege'));
         } else {
-            empty($group['allowattach']) && $gid != 1 AND message(-1, lang('user_group_insufficient_privilege'));
+            empty($group['allowattach']) && $gid != 1 and message(-1, lang('user_group_insufficient_privilege'));
         }
 
         // hook attach_create_start.php
@@ -65,27 +66,27 @@ switch ($action) {
 
         // 超过30则删除之前上传的所有附件
         if (count(_SESSION($key)) > 30) {
-            foreach (_SESSION($key) as $_file) is_file($_file['path']) AND unlink($_file['path']);
+            foreach (_SESSION($key) as $_file) is_file($_file['path']) and unlink($_file['path']);
             $_SESSION[$key] = array();
         }
 
         // hook attach_create_before.php
 
-        empty($data) AND message(1, lang('data_is_empty'));
+        empty($data) and message(1, lang('data_is_empty'));
         $size = strlen($data);
-        $size > 20480000 AND message(1, lang('filesize_too_large', array('maxsize' => '20M', 'size' => $size)));
+        $size > 20480000 and message(1, lang('filesize_too_large', array('maxsize' => '20M', 'size' => $size)));
 
         // hook attach_create_center.php
 
-        $ext = file_ext($name, 7);
+        $ext = strtolower(file_ext($name, 7));
         $filetypes = include APP_PATH . 'conf/attach.conf.php';
 
-        if (1 == $mode && !in_array($ext, $filetypes['image'])) message(1, lang('data_malformation'));
+        if (1 == $mode && !in_array($ext, $filetypes['image'], TRUE)) message(1, lang('data_malformation'));
 
         // hook attach_create_file_ext_before.php
 
         // 主图为图片 附件文件后缀不在规定范围内 改变后缀名
-        1 == $mode ? $ext = 'jpeg' : (!in_array($ext, $filetypes['all']) AND $ext = '_' . $ext);
+        1 == $mode ? $ext = 'jpeg' : (!in_array($ext, $filetypes['all'], TRUE) and $ext = '_' . $ext);
 
         // hook attach_create_file_ext_after.php
 
@@ -99,16 +100,16 @@ switch ($action) {
 
         // hook attach_create_save_before.php
 
-        file_put_contents($tmpfile, $data) OR message(1, lang('write_to_file_failed'));
+        file_put_contents($tmpfile, $data) or message(1, lang('write_to_file_failed'));
 
         // hook attach_create_save_after.php
 
         sess_restart();
 
-        empty($_SESSION[$key]) AND $_SESSION[$key] = array();
+        empty($_SESSION[$key]) and $_SESSION[$key] = array();
 
         // $mode = 0内容图片和附件按照SESSION数组附件数量统计，1主图按照传入的n数值
-        empty($mode) AND $n = count(_SESSION($key));
+        empty($mode) and $n = count(_SESSION($key));
 
         $attach = array(
             'backstage' => $backstage, // 0前台 1后台
@@ -134,7 +135,7 @@ switch ($action) {
         } elseif (1 == $mode) {
             // 缩略图 / 主图
             $thumbnail = _SESSION($key);
-            isset($thumbnail['path']) AND is_file($thumbnail['path']) AND unlink($thumbnail['path']);
+            isset($thumbnail['path']) and is_file($thumbnail['path']) and unlink($thumbnail['path']);
             // hook attach_create_thumbnail_beofre.php
             $_SESSION[$key] = $attach;
             // hook attach_create_thumbnail_after.php
@@ -180,13 +181,13 @@ switch ($action) {
                 $thread = well_thread_read($attach['tid']);
             }
             // hook attach_delete_middle.php
-            empty($attach) AND message(-1, lang('attach_not_exists'));
-            empty($thread) AND message(-1, lang('thread_not_exists'));
+            empty($attach) and message(-1, lang('attach_not_exists'));
+            empty($thread) and message(-1, lang('thread_not_exists'));
             // hook attach_delete_thread_after.php
             $allowdelete = forum_access_mod($thread['fid'], $gid, 'allowdelete');
-            $attach['uid'] != $uid && !$allowdelete AND message(0, lang('insufficient_privilege'));
+            $attach['uid'] != $uid && !$allowdelete and message(0, lang('insufficient_privilege'));
             if (empty($t)) {
-                FALSE === well_attach_delete($aid) AND message(-1, lang('delete_failed'));
+                FALSE === well_attach_delete($aid) and message(-1, lang('delete_failed'));
                 well_thread_update($thread['tid'], array('files-' => 1));
             }
             // hook attach_delete_aid_after.php
@@ -204,13 +205,13 @@ switch ($action) {
 
         if (empty($t)) {
             $attach = well_attach_read($aid);
-            empty($attach) AND message(-1, lang('attach_not_exists'));
+            empty($attach) and message(-1, lang('attach_not_exists'));
             $thread = well_thread_read($attach['tid']);
             $path = 'website_attach/';
         }
         // hook attach_download_before.php
         $allowdown = forum_access_user($thread['fid'], $gid, 'allowdown');
-        empty($allowdown) AND message(2, lang('insufficient_privilege_to_download'));
+        empty($allowdown) and message(2, lang('insufficient_privilege_to_download'));
 
         // hook attach_output_before.php
 

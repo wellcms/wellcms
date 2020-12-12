@@ -432,8 +432,7 @@ function well_thread_find_by_uid($uid, $page = 1, $pagesize = 20)
     // hook model__thread_find_by_uid_start.php
 
     $arr = thread_tid_find_by_uid($uid, $page, $pagesize);
-
-    if (empty($arr)) return NULL;
+    if (!$arr) return NULL;
 
     // hook model__thread_find_by_uid_before.php
 
@@ -456,17 +455,16 @@ function well_thread_find($tidarr, $pagesize = 20, $desc = TRUE)
 
     $orderby = TRUE == $desc ? -1 : 1;
     $threadlist = well_thread__find(array('tid' => $tidarr), array('tid' => $orderby), 1, $pagesize);
+    if (!$threadlist) return NULL;
 
     // hook model__thread_find_before.php
 
-    if ($threadlist) {
-        $i = 0;
-        foreach ($threadlist as &$thread) {
-            ++$i;
-            $thread['i'] = $i;
-            well_thread_format($thread);
-            // hook model__thread_find_format_after.php
-        }
+    $i = 0;
+    foreach ($threadlist as &$thread) {
+        ++$i;
+        $thread['i'] = $i;
+        well_thread_format($thread);
+        // hook model__thread_find_format_after.php
     }
 
     // hook model__thread_find_end.php
@@ -481,14 +479,13 @@ function well_thread_find_asc($tidarr, $pagesize = 20)
     // hook model__thread_find_start.php
 
     $threadlist = well_thread__find(array('tid' => $tidarr), array('tid' => 1), 1, $pagesize);
+    if (!$threadlist) return NULL;
 
     // hook model__thread_find_before.php
 
-    if ($threadlist) {
-        foreach ($threadlist as $_tid => &$thread) {
-            well_thread_format($thread);
-            // hook model__thread_find_format_after.php
-        }
+    foreach ($threadlist as $_tid => &$thread) {
+        well_thread_format($thread);
+        // hook model__thread_find_format_after.php
     }
 
     // hook model__thread_find_end.php
@@ -597,6 +594,7 @@ function well_thread_delete_all($tid)
     $index_stickys = 0; // 统计全局置顶数量
     $flags = 0; // 统计属性数量
     $operate_create = array();
+    $tagtids = array();
     foreach ($threadlist as $thread) {
 
         if ($uid != $thread['uid'] && !forum_access_mod($thread['fid'], $gid, 'allowdelete')) continue;
@@ -618,16 +616,17 @@ function well_thread_delete_all($tid)
         $tids[] = $thread['tid'];
 
         if ($thread['tag']) {
+
+            $tagtids[] = $thread['tid'];
+
             $_tagarr = xn_json_decode($thread['tag']);
             // hook model_thread_delete_all_tag_before.php
             foreach ($_tagarr as $_tagid => $tagname) {
-                $tagids[] = $_tagid;
                 isset($tagarr[$_tagid]) ? $tagarr[$_tagid] += 1 : $tagarr[$_tagid] = 1;
                 // hook model_thread_delete_all_tag_center.php
             }
+
             // hook model_thread_delete_all_tag_after.php
-            // 删除标签主题表
-            !empty($tagids) and well_tag_thread_delete($tagids, $thread['tid']);
         }
 
         if ($thread['images'] || $thread['files']) {
@@ -670,6 +669,17 @@ function well_thread_delete_all($tid)
     }
 
     // hook model_thread_delete_all_center.php
+
+    // 删除标签主题表
+    if (!empty($tagtids)) {
+        $arlist = well_tag_thread_find_by_tid($tagtids, 1, count($tagtids) * 10);
+        if ($arlist) {
+            $ids = array();
+            foreach ($arlist as $val) $ids[] = $val['id'];
+
+            well_tag_thread_delete($ids);
+        }
+    }
 
     // 更新tag统计
     if (!empty($tagids)) {
@@ -910,6 +920,8 @@ function well_thread_format(&$thread)
     $thread['last_date_fmt_ymd'] = date('Y-m-d', $thread['last_date']);
 
     $user = user_read_cache($thread['uid']);
+    $onlinelist = online_user_list_cache();
+    $user['online_status'] = isset($onlinelist[$user['uid']]) ? 1 : 0;
     $thread['username'] = $user['username'];
     $thread['user_avatar_url'] = $user['avatar_url'];
     $thread['user'] = user_safe_info($user);
@@ -1021,12 +1033,7 @@ function well_thread_safe_info($thread)
 {
     // hook model__thread_safe_info_start.php
 
-    unset($thread['userip']);
-    unset($thread['user']['threads']);
-    unset($thread['user']['posts']);
-    unset($thread['user']['credits']);
-    unset($thread['user']['golds']);
-    unset($thread['user']['money']);
+    unset($thread['userip'], $thread['user']['threads'], $thread['user']['posts'], $thread['user']['credits'], $thread['user']['golds'], $thread['user']['money']);
 
     empty($thread['user']) || $thread['user'] = user_safe_info($thread['user']);
 
@@ -1039,12 +1046,7 @@ function well_thread_safe_info($thread)
 function well_thread_filter(&$val)
 {
     // hook well_thread_filter_start.php
-    unset($val['userip']);
-    unset($val['fid']);
-    unset($val['flagid']);
-    unset($val['type']);
-    unset($val['user']);
-    unset($val['create_date']);
+    unset($val['userip'], $val['fid'], $val['flagid'], $val['type'], $val['user'], $val['create_date']);
     // hook well_thread_filter_end.php
 }
 
@@ -1111,12 +1113,10 @@ function thread_unified_pull($arr)
         // hook model_thread_unified_pull_flaglist.php
     }
 
-    unset($arrlist);
-
     // hook model_thread_unified_pull_middle.php
     // 按之前tidlist排序
     $threadlist = array2_sort_key($threadlist, $tidlist, 'tid');
-    unset($tidlist);
+    unset($arrlist, $tidlist);
 
     // hook model_thread_unified_pull_after.php
 

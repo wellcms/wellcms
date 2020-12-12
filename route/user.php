@@ -162,7 +162,6 @@ switch ($action) {
             // 验证token
             if (1 == array_value($conf, 'login_token', 0)) {
                 $safe_token = param('safe_token');
-                well_token_set(0);
                 FALSE === well_token_verify(0, $safe_token, 1) AND message(1, lang('illegal_operation'));
             }
             
@@ -224,8 +223,7 @@ switch ($action) {
 
             // 更新 session
 
-            unset($_SESSION['user_create_email']);
-            unset($_SESSION['user_create_code']);
+            unset($_SESSION['user_create_email'], $_SESSION['user_create_code']);
             $_SESSION['uid'] = $uid;
             user_token_set($uid);
 
@@ -233,6 +231,7 @@ switch ($action) {
 
             // hook user_create_post_end.php
 
+            well_token_set(0);
             message(0, lang('user_create_successfully'), $extra);
         }
         break;
@@ -329,9 +328,8 @@ switch ($action) {
 
             user_update($_uid, array('password' => $password));
 
-            unset($_SESSION['user_resetpw_email']);
-            unset($_SESSION['user_resetpw_code']);
-
+            unset($_SESSION['user_resetpw_email'], $_SESSION['user_resetpw_code']);
+            
             // hook user_resetpw_post_end.php
 
             message(0, lang('modify_successfully'));

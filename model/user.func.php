@@ -62,6 +62,7 @@ function user_big_update($cond = array(), $update = array(), $d = NULL)
     // hook model_user_big_update_end.php
     return $r;
 }
+
 // ------------> 关联 CURD，主要是强相关的数据，比如缓存。弱相关的大量数据需要另外处理。
 
 function user_create($arr)
@@ -82,8 +83,8 @@ function user_update($uid, $arr)
     // hook model_user_update_start.php
     if (empty($uid)) return FALSE;
     $r = user__update($uid, $arr);
-    'mysql' != $conf['cache']['type'] AND cache_delete('user-' . $uid);
-    isset($g_static_users[$uid]) AND $g_static_users[$uid] = array_merge($g_static_users[$uid], $arr);
+    'mysql' != $conf['cache']['type'] and cache_delete('user-' . $uid);
+    isset($g_static_users[$uid]) and $g_static_users[$uid] = array_merge($g_static_users[$uid], $arr);
     // hook model_user_update_end.php
     return $r;
 }
@@ -118,7 +119,7 @@ function user_read_cache($uid)
         $r = cache_get('user-' . $uid);
         if (NULL === $r) {
             $r = user_read($uid);
-            $r AND cache_set('user-' . $uid, $r, 7200);
+            $r and cache_set('user-' . $uid, $r, 7200);
         }
     }
     $g_static_users[$uid] = $r ? $r : user_guest();
@@ -135,7 +136,7 @@ function user_delete($uid)
     // hook model_user_delete_before.php
     well_attach_delete_by_uid($uid);
     // 删除头像
-    $user['avatar_path'] AND xn_unlink($user['avatar_path']);
+    $user['avatar_path'] and xn_unlink($user['avatar_path']);
     $r = user__delete($uid);
     // hook model_user_delete_center.php
     'mysql' == $conf['cache']['type'] || cache_delete('user-' . $uid);
@@ -204,9 +205,9 @@ function user_format(&$user)
 
     // hook model_user_format_start.php
 
-    $user['create_ip_fmt'] = long2ip(intval($user['create_ip']));
+    $user['create_ip_fmt'] = safe_long2ip($user['create_ip']);
     $user['create_date_fmt'] = empty($user['create_date']) ? '0000-00-00' : date('Y-m-d', $user['create_date']);
-    $user['login_ip_fmt'] = long2ip(intval($user['login_ip']));
+    $user['login_ip_fmt'] = safe_long2ip($user['login_ip']);
     $user['login_date_fmt'] = empty($user['login_date']) ? '0000-00-00' : date('Y-m-d', $user['login_date']);
 
     $user['groupname'] = group_name($user['gid']);
@@ -257,7 +258,7 @@ function user_update_group($uid)
     // 遍历 credits 范围，调整用户组
     foreach ($grouplist as $group) {
         if ($group['gid'] < 100) continue;
-        // 根据发文章和评论 砍掉根据需要咨询hook
+        // 根据发文章和评论 需要时 hook
         //$n = $user['articles'] + $user['comments'];
 
         // hook model_user_update_group_policy_start.php
@@ -294,24 +295,7 @@ function user_find_by_uids($uids)
 function user_safe_info($user)
 {
     // hook model_user_safe_info_start.php
-    unset($user['password']);
-    unset($user['email']);
-    unset($user['salt']);
-    unset($user['password_sms']);
-    unset($user['idnumber']);
-    unset($user['realname']);
-    unset($user['qq']);
-    unset($user['mobile']);
-    unset($user['create_ip']);
-    unset($user['create_ip_fmt']);
-    unset($user['create_date']);
-    unset($user['create_date_fmt']);
-    unset($user['login_ip']);
-    unset($user['login_date']);
-    unset($user['login_ip_fmt']);
-    unset($user['login_date_fmt']);
-    unset($user['logins']);
-    unset($user['avatar_path']);
+    unset($user['password'], $user['email'], $user['salt'], $user['password_sms'], $user['idnumber'], $user['realname'], $user['qq'], $user['mobile'], $user['create_ip'], $user['create_ip_fmt'], $user['create_date'], $user['create_date_fmt'], $user['login_ip'], $user['login_date'], $user['login_ip_fmt'], $user['login_date_fmt'], $user['logins'], $user['avatar_path']);
     // hook model_user_safe_info_end.php
     return $user;
 }
@@ -323,7 +307,7 @@ function user_token_get()
     // hook model_user_token_get_start.php
     $_uid = user_token_get_do();
     // hook model_user_token_get_before.php
-    empty($_uid) AND user_token_clear(); // 退出登录
+    empty($_uid) and user_token_clear(); // 退出登录
     // hook model_user_token_get_end.php
     return $_uid;
 }
@@ -387,7 +371,7 @@ function user_login_check()
 {
     global $user;
     // hook model_user_login_check_start.php
-    empty($user) AND http_location(url('user-login'));
+    empty($user) and http_location(url('user-login'));
     // hook model_user_login_check_end.php
 }
 
@@ -396,7 +380,7 @@ function user_http_referer()
 {
     // hook user_http_referer_start.php
     $referer = param('referer'); // 优先从参数获取 | GET is priority
-    empty($referer) AND $referer = array_value($_SERVER, 'HTTP_REFERER', '');
+    empty($referer) and $referer = array_value($_SERVER, 'HTTP_REFERER', '');
     $referer = str_replace(array('\"', '"', '<', '>', ' ', '*', "\t", "\r", "\n"), '', $referer); // 干掉特殊字符 strip special chars
     if (
         !preg_match('#^(http|https)://[\w\-=/\.]+/[\w\-=.%\#?]*$#is', $referer)
@@ -418,13 +402,13 @@ function user_auth_check($token)
     // hook user_auth_check_start.php
     $auth = param(2);
     $s = xn_decrypt($auth);
-    empty($s) AND message(-1, lang('decrypt_failed'));
+    empty($s) and message(-1, lang('decrypt_failed'));
     $arr = explode('-', $s);
-    count($arr) != 4 AND message(-1, lang('encrypt_failed'));
+    count($arr) != 4 and message(-1, lang('encrypt_failed'));
     list($_ip, $_time, $_uid, $_pwd) = $arr;
     $_user = user_read($_uid);
-    empty($_user) AND message(-1, lang('user_not_exists'));
-    $time - $_time > 3600 AND message(-1, lang('link_has_expired'));
+    empty($_user) and message(-1, lang('user_not_exists'));
+    $time - $_time > 3600 and message(-1, lang('link_has_expired'));
     // hook user_auth_check_end.php
     return $_user;
 }

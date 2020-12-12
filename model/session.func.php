@@ -312,29 +312,37 @@ function online_count()
 
 function online_list_cache()
 {
-    $onlinelist = cache_get('online_list');
-    if (NULL === $onlinelist) {
-        $onlinelist = session_find(array('uid' => array('>' => 0)), array('last_date' => -1), 1, 1000);
-        foreach ($onlinelist as &$online) {
+    static $cache = array();
+    $key = 'online_list';
+    if (isset($cache[$key])) return $cache[$key];
+
+    $cache[$key] = cache_get($key);
+    if (NULL === $cache[$key]) {
+        $cache[$key] = session_find(array('uid' => array('>' => 0)), array('last_date' => -1), 1, 1000);
+        foreach ($cache[$key] as &$online) {
             $user = user_read_cache($online['uid']);
             $online['username'] = $user['username'];
             $online['gid'] = $user['gid'];
-            $online['ip_fmt'] = long2ip($online['ip']);
+            $online['ip_fmt'] = safe_long2ip($online['ip']);
             $online['last_date_fmt'] = date('Y-n-j H:i', $online['last_date']);
         }
-        cache_set('online_list', $onlinelist, 300);
+        cache_set('online_list', $cache[$key], 300);
     }
-    return $onlinelist;
+    return $cache[$key];
 }
 
 function online_user_list_cache()
 {
-    $online_user_list = cache_get('online_user_list');
-    if (NULL === $online_user_list) {
-        $online_user_list = session_find(array('uid' => array('>' => 0)), array(), 1, 1000, 'uid', array('uid'));
-        cache_set('online_user_list', $online_user_list, 300);
+    static $cache = array();
+    $key = 'online_user_list';
+    if (isset($cache[$key])) return $cache[$key];
+
+    $cache[$key] = cache_get($key);
+    if (NULL === $cache[$key]) {
+        $cache[$key] = session_find(array('uid' => array('>' => 0)), array(), 1, 1000, 'uid', array('uid'));
+        cache_set('online_user_list', $cache[$key], 300);
     }
-    return $online_user_list;
+    return $cache[$key];
 }
 
 // hook model_session_end.php
