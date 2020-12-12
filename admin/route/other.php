@@ -147,7 +147,15 @@ switch ($action) {
                 // 可更新
                 if (0 == $official['code']) {
                     if (-1 == version_compare($config['official_version'], $official['version']) || array_value($config, 'version_date', 0) < $official['version_date']) {
-                        $upgrade = $config['upgrade'] = 1; // 有更新
+                        $upgrade = $config['upgrade'] = 1;
+                    } else {
+                        $upgrade = $config['upgrade'] = 0;
+                    }
+                } elseif (2 == $official['code']) {
+                    if (-1 == version_compare($config['official_version'], $config['version'])) {
+                        $upgrade = $config['upgrade'] = 2;
+                    } else {
+                        $upgrade = $config['upgrade'] = 0;
                     }
                 }
 
@@ -170,7 +178,7 @@ switch ($action) {
 
         } elseif (1 == $type) {
 
-            if (0 == version_compare($config['version'], $config['official_version']) && 0 == $upgrade) message(0, jump(lang('no_upgrade_required'), url('other-upgrade', '', TRUE), 2));
+            if (0 == version_compare($config['version'], $config['official_version']) && !$upgrade) message(0, jump(lang('no_upgrade_required'), url('other-upgrade', '', TRUE), 2));
 
             // 获取更新包
             $post = array('sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ip' => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE), 'users' => $runtime['users'], 'articles' => $runtime['articles'], 'comments' => $runtime['comments'], 'threads' => array_value($runtime, 'threads'), 'posts' => array_value($runtime, 'posts'), 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));

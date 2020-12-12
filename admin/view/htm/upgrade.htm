@@ -19,24 +19,26 @@
                             <hr>
                             <p class="text-center font-weight-bold">
                                 <?php if (0 == $type) { ?>
+
                                 <?php if (0 == $upgrade) { ?>
-
-                                <?php if ($official_version-$version > 2) { ?>
-
-                                <strong>
-                                    <a class="text-danger h2" href="http://www.wellcms.cn/" target="_blank">Cross-version, please download the upgrade package from the official website and upgrade manually / 跨版本，请到官方下载升级包，手动升级</a>
-                                </strong>
-
-                                <?php } elseif (1 == $upgrade)  { ?>
-                                <button class="btn btn-danger btn-lock col-md-2 mx-auto" id="upgrade"><?php echo lang('online_upgrade');?></button>
-                                <?php } else {echo lang('no_upgrade_required');} ?>
+                                <?php echo lang('no_upgrade_required'); ?>
+                                <?php } ?>
                                 
-                                <!---->
-
-                                <?php } else {echo lang('no_upgrade_required');} ?>
+                                <?php if (1 == $upgrade) { ?>
+                                <button class="btn btn-danger btn-lock col-md-2 mx-auto" id="upgrade"><?php echo lang('online_upgrade');?></button>
                                 <?php } ?>
 
+                                <?php if (2 == $upgrade) { ?>
+                                <strong>
+                                    <a class="text-danger h2" href="http://www.wellcms.cn/" target="_blank">please download the upgrade package from the official website and upgrade manually / 请到官方下载升级包，手动升级</a>
+                                </strong>
+                                <?php } ?>
+
+                                <?php } ?>
+
+
                                 <?php if (2 == $type) {echo lang('upgrade_successfully');} ?>
+
                             </p>
                         </div>
                     </div>
