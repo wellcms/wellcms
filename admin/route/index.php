@@ -110,20 +110,30 @@ function get_last_version($stat)
 
     $post = array('type' => 1, 'sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode($domain), 'app_url' => xn_urlencode(http_url_path()), 'users' => $stat['users'], 'articles' => $stat['articles'], 'comments' => $stat['comments'], 'threads' => $stat['threads'], 'posts' => $stat['posts'], 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
     $json = https_request(OFFICIAL_URL . 'version.html?' . http_build_query($post), $post, '', 800, 1);
-    if (isset($json) && !in_array($json, array('1', '2', 'fail'))) {
-        $official = xn_json_decode($json);
-        if (is_array($official)) {
-            if (-1 == version_compare($config['official_version'], $official['version']) || $official['version_date'] > array_value($config, 'version_date', 0)) {
-                $config['official_version'] = $official['version'];
-                $config['version_date'] = array_value($official, 'version_date', 0);
-                $config['upgrade'] = 1; // 有更新
-            }
+
+    $official = xn_json_decode($json);
+
+    // 可更新
+    if (0 == $official['code']) {
+        if (-1 == version_compare($config['official_version'], $official['version']) || array_value($config, 'version_date', 0) < $official['version_date']) {
+            $upgrade = $config['upgrade'] = 1;
+        } else {
+            $upgrade = $config['upgrade'] = 0;
+        }
+    } elseif (2 == $official['code']) {
+        if (-1 == version_compare($config['official_version'], $config['version'])) {
+            $upgrade = $config['upgrade'] = 2;
+        } else {
+            $upgrade = $config['upgrade'] = 0;
         }
     }
 
-    //$config['last_version'] = clock_twenty_four();
     $config['last_version'] = $time + 7200;
+
+    isset($official['version']) and $config['official_version'] = $official['version'];
     setting_set('conf', $config);
+
+    isset($official['message']) and cache_set('official-message', $official['message'], 7200);
 }
 
 // hook admin_index_function.php
