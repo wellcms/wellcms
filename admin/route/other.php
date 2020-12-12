@@ -137,26 +137,27 @@ switch ($action) {
         $last_version = array_value($config, 'last_version', 0);
         $official = array();
 
-        if (0 == $type && $last_version < $time) {
+        if (0 == $type) {
 
-            $json = https_request(OFFICIAL_URL . 'version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 1000, 1);
-
-            if (isset($json) && !in_array($json, array('1', '2', 'fail'))) {
+            if ($last_version < $time) {
+                $json = https_request(OFFICIAL_URL . 'version.html?type=2&version=' . array_value($config, 'version') . '&version_date=' . array_value($config, 'version_date', 0), '', '', 1000, 1);
 
                 $official = xn_json_decode($json);
 
-                if (isset($official['version'], $official['version_date'])) {
+                // 可更新
+                if (0 == $official['code']) {
                     if (-1 == version_compare($config['official_version'], $official['version']) || array_value($config, 'version_date', 0) < $official['version_date']) {
-                        $upgrade = 1; // 可更新
-                        $config['official_version'] = $official['version'];
-                        $config['upgrade'] = 1; // 有更新
+                        $upgrade = $config['upgrade'] = 1; // 有更新
                     }
-
-                    isset($official['message']) and cache_set('official-message', $official['message'], 7200);
-                    //$config['last_version'] = clock_twenty_four();
-                    $config['last_version'] = $time + 7200;
-                    setting_set('conf', $config);
                 }
+
+                $config['last_version'] = $time + 7200;
+
+                isset($official['version']) and $config['official_version'] = $official['version'];
+                setting_set('conf', $config);
+
+                isset($official['message']) and cache_set('official-message', $official['message'], 7200);
+
             } else {
                 $message = cache_get('official-message');
                 $official = array('message' => $message);
@@ -169,18 +170,18 @@ switch ($action) {
 
         } elseif (1 == $type) {
 
-            if (0 == version_compare($config['version'], $config['official_version']) && 0 == $config['upgrade']) message(0, jump(lang('no_upgrade_required'), url('other-upgrade', '', TRUE), 2));
+            if (0 == version_compare($config['version'], $config['official_version']) && 0 == $upgrade) message(0, jump(lang('no_upgrade_required'), url('other-upgrade', '', TRUE), 2));
 
             // 获取更新包
             $post = array('sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ip' => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE), 'users' => $runtime['users'], 'articles' => $runtime['articles'], 'comments' => $runtime['comments'], 'threads' => array_value($runtime, 'threads'), 'posts' => array_value($runtime, 'posts'), 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
             $url = OFFICIAL_URL . 'version-upgrade.html?' . http_build_query($post);
             $json = https_request($url, $post, '', 1000, 1);
-
-            if (empty($json) || 'fail' == $json) {
+            $official = xn_json_decode($json);
+            if ('fail' == $official['code']) {
                 message(0, jump(lang('upgrade_failed'), url('other-upgrade', '', TRUE), 2));
-            } elseif (1 == $json) {
+            } elseif ('1' == $official['code']) {
                 message(0, jump('No upgrade package', url('other-upgrade', '', TRUE), 2));
-            } elseif (2 == $json) {
+            } elseif ('2' == $official['code']) {
                 message(0, jump('Updates available, no downloads available', url('other-upgrade', '', TRUE), 2));
             } else {
                 $res = xn_json_decode($json);
@@ -214,6 +215,7 @@ switch ($action) {
 
                 http_location(url('other-upgrade', array('type' => 2), TRUE));
             }
+
         } elseif (2 == $type) {
             $official = array('message' => lang('upgrade_successfully'));
         } else {

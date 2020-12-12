@@ -19,7 +19,7 @@
                             <hr>
                             <p class="text-center font-weight-bold">
                                 <?php if (0 == $type) { ?>
-                                <?php if (!$upgrade) { ?>
+                                <?php if (0 == $upgrade) { ?>
 
                                 <?php if ($official_version-$version > 2) { ?>
 
@@ -27,9 +27,11 @@
                                     <a class="text-danger h2" href="http://www.wellcms.cn/" target="_blank">Cross-version, please download the upgrade package from the official website and upgrade manually / 跨版本，请到官方下载升级包，手动升级</a>
                                 </strong>
 
-                                <?php } else { ?>
+                                <?php } elseif (1 == $upgrade)  { ?>
                                 <button class="btn btn-danger btn-lock col-md-2 mx-auto" id="upgrade"><?php echo lang('online_upgrade');?></button>
-                                <?php } ?>
+                                <?php } else {echo lang('no_upgrade_required');} ?>
+                                
+                                <!---->
 
                                 <?php } else {echo lang('no_upgrade_required');} ?>
                                 <?php } ?>
