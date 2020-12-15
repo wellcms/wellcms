@@ -1,8 +1,6 @@
 <?php
 !defined('DEBUG') AND exit('Access Denied.');
 
-include _include(XIUNOPHP_PATH . 'xn_send_mail.func.php');
-
 $action = param(1);
 
 // hook user_start.php
@@ -336,6 +334,7 @@ switch ($action) {
         }
         break;
     case 'send_code':
+        include _include(XIUNOPHP_PATH . 'xn_send_mail.func.php');
         // 发送验证码
         'POST' != $method AND message(-1, lang('method_error'));
 

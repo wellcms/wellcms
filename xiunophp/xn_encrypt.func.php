@@ -13,9 +13,9 @@
 */
 
 // 获取配置文件中的 key，优先从扩展中获取（比较安全）。 
-function xn_key($fromso = TRUE) {
+function xn_key() {
 	$conf = _SERVER('conf');
-	return ($fromso && function_exists('xiuno_key')) ? xiuno_key() : (isset($conf['auth_key']) ? $conf['auth_key'] : '');
+	return isset($conf['auth_key']) ? $conf['auth_key'] : '';
 }
 
 // 安全的加密 key，过期时间 100 秒，如果最后 2 位 大于 90，则
