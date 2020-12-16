@@ -653,20 +653,8 @@ function browser_lang()
 // ini_set('default_socket_timeout', 60);
 function http_get($url, $cookie = '', $timeout = 30, $times = 3)
 {
-    //return '';
-//	$arr = array(
-//			'ssl' => array (
-//			'verify_peer'   => TRUE,
-//			'cafile'        => './cacert.pem',
-//			'verify_depth'  => 5,
-//			'method'  	=> 'GET',
-//			'timeout'  	=> $timeout,
-//			'CN_match'      => 'secure.example.com'
-//		)
-//	);
-    if ('https://' == substr($url, 0, 8)) {
-        return https_get($url, $cookie, $timeout, $times);
-    }
+    if (extension_loaded('curl')) return https_post($url, '', $cookie, $timeout, 'GET');
+
     $arr = array(
         'http' => array(
             'method' => 'GET',
@@ -683,9 +671,8 @@ function http_get($url, $cookie = '', $timeout = 30, $times = 3)
 
 function http_post($url, $post = '', $cookie = '', $timeout = 30, $times = 3)
 {
-    if ('https://' == substr($url, 0, 8)) {
-        return https_post($url, $post, $cookie, $timeout, $times);
-    }
+    if (extension_loaded('curl')) return https_post($url, $post, $cookie, $timeout);
+
     is_array($post) and $post = http_build_query($post);
     is_array($cookie) and $cookie = http_build_query($cookie);
     $stream = stream_context_create(array('http' => array('header' => "Content-type: application/x-www-form-urlencoded\r\nx-requested-with: XMLHttpRequest\r\nCookie: $cookie\r\n", 'method' => 'POST', 'content' => $post, 'timeout' => $timeout)));
@@ -698,49 +685,73 @@ function http_post($url, $post = '', $cookie = '', $timeout = 30, $times = 3)
 
 function https_get($url, $cookie = '', $timeout = 30, $times = 1)
 {
-    if ('http://' == substr($url, 0, 7)) {
-        return http_get($url, $cookie, $timeout, $times);
-    }
-    return https_post($url, '', $cookie, $timeout, $times, 'GET');
+    return https_post($url, '', $cookie, $timeout, 'GET');
 }
 
-function https_post($url, $post = '', $cookie = '', $timeout = 30, $times = 1, $method = 'POST')
+function https_post($url, $post = '', $cookie = '', $timeout = 30, $method = 'POST')
 {
-    if ('http://' == substr($url, 0, 7)) {
-        return http_post($url, $post, $cookie, $timeout, $times);
-    }
-    is_array($post) and $post = http_build_query($post);
-    is_array($cookie) and $cookie = http_build_query($cookie);
-    $w = stream_get_wrappers();
     $allow_url_fopen = strtolower(ini_get('allow_url_fopen'));
     $allow_url_fopen = (empty($allow_url_fopen) || 'off' == $allow_url_fopen) ? 0 : 1;
-    if (extension_loaded('openssl') && in_array('https', $w) && $allow_url_fopen) {
+    $allow_get_contents = $allow_url_fopen && strtolower(ini_get('user_agent'));
+    $allow_curl = extension_loaded('curl');
+
+    if (!$allow_curl && !$allow_get_contents) return xn_error(-1, 'CURL and OpenSSL are not installed on the server.');
+
+    is_array($post) and $post = http_build_query($post);
+    is_array($cookie) and $cookie = http_build_query($cookie);
+
+    //$w = stream_get_wrappers(); //  && in_array('https', $w)
+    if (!$allow_curl) {
+        if ('https://' == substr($url, 0, 8) && !extension_loaded('openssl')) return xn_error(-1, 'CURL and OpenSSL are not installed on the server.');
+
         $stream = stream_context_create(array('http' => array('header' => "Content-type: application/x-www-form-urlencoded\r\nx-requested-with: XMLHttpRequest\r\nCookie: $cookie\r\n", 'method' => $method, 'content' => $post, 'timeout' => $timeout)));
         $s = file_get_contents($url, NULL, $stream, 0, 4096000);
         return $s;
-    } elseif (!function_exists('curl_init')) {
-        return xn_error(-1, 'server not installed curl.');
     }
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //php5.5跟php5.6中的CURLOPT_SAFE_UPLOAD的默认值不同
+    if (class_exists('\CURLFile')) {
+        curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
+    } else {
+        defined('CURLOPT_SAFE_UPLOAD') and curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
+    }
     curl_setopt($ch, CURLOPT_HEADER, 2); // 1/2
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/x-www-form-urlencoded', 'x-requested-with: XMLHttpRequest'));
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_USERAGENT, _SERVER('HTTP_USER_AGENT'));
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
+
+    // 兼容HTTPS
+    if (false !== stripos($url, 'https://')) {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        //ssl版本控制
+        //curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+        curl_setopt($ch, CURLOPT_SSLVERSION, true);
+    }
+
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // 对认证证书来源的检查
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 从证书中检查SSL加密算法是否存在，默认可以省略
+
     if ('POST' == $method) {
-        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POST, true);
+        // 自动设置Referer
+        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
     }
+
     $header = array('Content-type: application/x-www-form-urlencoded', 'X-Requested-With: XMLHttpRequest');
-    if ($cookie) {
-        $header[] = "Cookie: $cookie";
-    }
+    $cookie and $header[] = "Cookie: $cookie";
     curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 
-    (!ini_get('safe_mode') && !ini_get('open_basedir')) && curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转, 安全模式不允许
+    // 使用自动跳转, 安全模式不允许
+    (!ini_get('safe_mode') && !ini_get('open_basedir')) && curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+
     curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+    //优先解析 IPv6 超时后IPv4
+    //curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
     $data = curl_exec($ch);
     if (curl_errno($ch)) {
         return xn_error(-1, 'Errno' . curl_error($ch));

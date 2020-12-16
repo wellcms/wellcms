@@ -895,7 +895,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     if (!function_exists('curl_init')) {
         //throw new Exception('server not install curl');
         if ($post) {
-            return http_post($url, $post, $cookie, $timeout);
+            return https_post($url, $post, $cookie, $timeout);
         } else {
             return http_get($url, $cookie, $timeout);
         }

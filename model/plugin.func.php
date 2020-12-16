@@ -407,8 +407,8 @@ function plugin_official_store($type = 0)
         }
 
         $post = array('siteid' => plugin_siteid(), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $arr[4], 'uid' => $arr[0]);
-        $url = PLUGIN_OFFICIAL_URL . 'plugin-store.html?' . http_build_query($post);
-        $s = https_request($url, $post, '', 1000, 1);
+        $url = PLUGIN_OFFICIAL_URL . 'plugin-store.html';
+        $s = https_post($url, $post);
 
         // 检查返回值是否正确
         if (empty($s)) return xn_error(-1, lang('plugin_get_data_failed'));
