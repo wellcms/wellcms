@@ -75,14 +75,15 @@
 <script>
 var path = '<?php echo $conf['path'];?>';
 var safe_token = '<?php echo $safe_token;?>';
+var body = $('body');
 var jform = $('#form');
-jform.on('submit', function() {
-	jform.reset();
-    var jthis = $(this);
+body.on('submit', '#form', function() {
+	var jthis = $(this);
     var jsubmit = jthis.find('#submit');
 	jsubmit.button('loading');
-	var postdata = jform.serialize();
-	$.xpost(jform.attr('action'), postdata, function(code, message) {
+	jthis.reset();
+	var postdata = jthis.serialize();
+	$.xpost(jthis.attr('action'), postdata, function(code, message) {
 		if(code == 0) {
 			$.alert(message);
 			jsubmit.button(message).delay(1000).location('<?php echo $location;?>');

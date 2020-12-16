@@ -227,19 +227,17 @@
 
 <script ajax-eval="true">
     var safe_token = '<?php echo GLOBALS('safe_token');?>';
-    var jform = $('#form');
-    var jemail = $('#email');
-    var jpassword = $('#password');
+    var body = $('body');
     var referer = '<?php echo $referer;?>';
-    jform.on('submit', function() {
+    body.on('submit', '#form', function() {
         var jthis = $(this);
         var jsubmit = jthis.find('#submit');
-        jform.reset();
+        jthis.reset();
         jsubmit.button('loading');
-        var postdata = jform.serializeObject();
+        var postdata = jthis.serializeObject();
         postdata.password = $.md5(postdata.password);
         postdata.safe_token = safe_token;
-        $.xpost(jform.attr('action'), postdata, function(code, message) {
+        $.xpost(jthis.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 jsubmit.button(message);
                 setTimeout(function () {
@@ -249,7 +247,7 @@
                 $.alert(message);
                 jsubmit.button('reset');
             } else {
-                jform.find('[name="'+code+'"]').alert(message).focus();
+                jthis.find('[name="'+code+'"]').alert(message).focus();
                 jsubmit.button('reset');
             }
         });

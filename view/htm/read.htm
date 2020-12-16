@@ -269,15 +269,15 @@
 <script>
 var forum_url = '<?php echo array_value($forum, 'url');?>';
 var safe_token = '<?php echo GLOBALS('safe_token');?>';
-var jform = $('#quick_reply_form');
-jform.on('submit', function() {
-	jform.reset();
-    var jthis = $(this);
+var body = $('body');
+body.on('submit', '#quick_reply_form', function() {
+	var jthis = $(this);
     var jsubmit = jthis.find('#submit');
+	jthis.reset();
 	jsubmit.button('loading');
-	var postdata = jform.serializeObject();
+	var postdata = jthis.serializeObject();
     postdata.safe_token = safe_token;
-	$.xpost(jform.attr('action'), postdata, function(code, message) {
+	$.xpost(jthis.attr('action'), postdata, function(code, message) {
 		if(code == 0) {
 			var s = '<ul>'+message+'</ul>';
 			var jli = $(s).find('li');
@@ -294,7 +294,7 @@ jform.on('submit', function() {
 			var jposts = $('.posts');
 			jposts.html(xn.intval(jposts.html()) + 1);
 			
-			var quotepid = jform.find('input[name="quotepid"]');
+			var quotepid = jthis.find('input[name="quotepid"]');
             $('[data-pid="'+quotepid.val()+'"]').removeClass('quote');
             quotepid.val(0);
 		} else {
