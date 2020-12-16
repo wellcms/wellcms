@@ -23,7 +23,15 @@
                                 <?php if (0 == $upgrade) { ?>
                                 <?php echo lang('no_upgrade_required'); ?>
                                 <?php } ?>
-                                
+
+                                <?php if ($upgrade) { ?>
+
+                                <?php if ($downzip) { ?>
+                                <strong>
+                                    <a class="text-danger h2" href="http://www.wellcms.cn/" target="_blank">please download the upgrade package from the official website and upgrade manually / 请到官方下载升级包，手动升级</a>
+                                </strong>
+                                <?php } else { ?>
+
                                 <?php if (1 == $upgrade) { ?>
                                 <button class="btn btn-danger btn-lock col-md-2 mx-auto" id="upgrade"><?php echo lang('online_upgrade');?></button>
                                 <?php } ?>
@@ -35,7 +43,8 @@
                                 <?php } ?>
 
                                 <?php } ?>
-
+                                <?php } ?>
+                                <?php } ?>
 
                                 <?php if (2 == $type) {echo lang('upgrade_successfully');} ?>
 

@@ -141,7 +141,7 @@ switch ($action) {
 
             if ($last_version < $time) {
 
-                $post = array('type'=>2,'version'=>array_value($config, 'version',0),'version_date'=>array_value($config, 'version_date', 0));
+                $post = array('type' => 2, 'version' => array_value($config, 'version', 0), 'version_date' => array_value($config, 'version_date', 0));
                 $json = https_post(OFFICIAL_URL . 'version.html', $post);
 
                 $official = xn_json_decode($json);
@@ -173,10 +173,10 @@ switch ($action) {
                 $official = array('message' => $message);
             }
 
-            // 本地版本
-            $version = intval(str_replace('.', '', $config['version']));
-            // 官方版本
-            $official_version = intval(str_replace('.', '', $config['official_version']));
+            $local = explode('.', $config['version']);
+            $official = explode('.', $config['official_version']);
+
+            $downzip = $local[0] != $official[0] || $local[1] != $official[1] ? TRUE : FALSE;
 
         } elseif (1 == $type) {
 
