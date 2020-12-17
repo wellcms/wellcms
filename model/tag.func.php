@@ -389,7 +389,7 @@ function well_tag_process($tid, $fid, $new_tags = array(), $tagarr = array())
 
         // hook model_tag_process_foreach_start.php
 
-        $arr = array();
+        $threadarr = array();
         $tagids = array();
         $i = 0;
         $n = 5 - count($tagarr);
@@ -423,7 +423,7 @@ function well_tag_process($tid, $fid, $new_tags = array(), $tagarr = array())
 
                 // hook model_tag_process_before.php
 
-                $arr[] = $tag_thread;
+                $threadarr[] = $tag_thread;
 
                 // hook model_tag_process_center.php
 
@@ -433,7 +433,7 @@ function well_tag_process($tid, $fid, $new_tags = array(), $tagarr = array())
 
         // hook model_tag_process_middle.php
 
-        !empty($arr) and tag_thread_big_insert($arr);
+        !empty($threadarr) and tag_thread_big_insert($threadarr);
 
         !empty($tagids) and well_tag_update($tagids, array('count+' => 1));
     }
