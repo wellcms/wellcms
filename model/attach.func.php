@@ -678,7 +678,9 @@ function well_save_remote_image($arr)
 
     //$save_image_quality = array_value($conf, 'save_image_quality', 0);
     $save_image_quality = 0;
-
+    
+    $message = urldecode($message);
+    $message = str_replace('&amp;', '&', $message);
     preg_match_all('#<img[^>]+src="(http.*?)"#i', $message, $match);
 
     if (!empty($match[1])) {
