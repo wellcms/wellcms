@@ -378,19 +378,20 @@ function user_login_check()
 // 获取用户来路
 function user_http_referer()
 {
+    global $conf;
     // hook user_http_referer_start.php
     $referer = param('referer'); // 优先从参数获取 | GET is priority
     empty($referer) and $referer = array_value($_SERVER, 'HTTP_REFERER', '');
     $referer = str_replace(array('\"', '"', '<', '>', ' ', '*', "\t", "\r", "\n"), '', $referer); // 干掉特殊字符 strip special chars
     if (
         !preg_match('#^(http|https)://[\w\-=/\.]+/[\w\-=.%\#?]*$#is', $referer)
-        || FALSE !== strpos($referer, 'user-login.html')
-        || FALSE !== strpos($referer, 'user-logout.html')
-        || FALSE !== strpos($referer, 'user-create.html')
-        || FALSE !== strpos($referer, 'user-setpw.html')
-        || FALSE !== strpos($referer, 'user-resetpw_complete.html')
+        || FALSE !== strpos($referer, url('user-login'))
+        || FALSE !== strpos($referer, url('user-logout'))
+        || FALSE !== strpos($referer, url('user-create'))
+        || FALSE !== strpos($referer, url('user-setpw'))
+        || FALSE !== strpos($referer, url('user-resetpw_complete'))
     ) {
-        $referer = './';
+        $referer = $conf['path'];
     }
     // hook user_http_referer_end.php
     return $referer;
