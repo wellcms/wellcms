@@ -515,7 +515,7 @@ function plugin_read_by_dir($dir, $local_first = TRUE)
 
     // 额外的判断
     $plugin['icon_url'] = $icon ? $icon : ($official['storeid'] ? PLUGIN_OFFICIAL_URL . 'upload/plugin/' . date('Ym', $plugin['create_date']) . '/' . $plugin['storeid'] . '/icon.png' : '');
-    $plugin['setting_url'] = $plugin['installed'] && is_file(APP_PATH . "plugin/$dir/setting.php") ? "plugin-setting-$dir.html" : "";
+    $plugin['setting_url'] = $plugin['installed'] && is_file(APP_PATH . "plugin/$dir/setting.php") ? url('plugin-setting', array('dir' => $dir), TRUE) : '';
     $plugin['downloaded'] = isset($plugins[$dir]);
     // 10赞一星 100赞二星 1k赞三星 10k赞四星 100k+五星
     $plugin['stars_fmt'] = $official['storeid'] ? str_repeat('<span class="icon-star"></span>', $official['stars']) : '';

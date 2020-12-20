@@ -325,11 +325,14 @@ function user_token_get_do()
     $arr = explode("\t", $s);
     if (count($arr) != 5) return FALSE;
     list($_ip, $_time, $_uid, $_pwd, $ua_md5) = $arr;
-    //if($ip != $_ip) return FALSE;
-    //if(md5($useragent) != $ua_md5) return FALSE;
+    // check IP
+    if (array_value($conf, 'login_ip') && $ip != $_ip) return FALSE;
+    // check UA
+    if (array_value($conf, 'login_ua') && md5($useragent) != $ua_md5) return FALSE;
     $_user = user_read($_uid);
     if (empty($_user)) return FALSE;
-    if ($_user['login_date'] != $_time) return FALSE;
+    // check time
+    if (array_value($conf, 'login_only') && $_user['login_date'] != $_time) return FALSE;
     // 密码是否被修改
     if (md5($_user['password']) != $_pwd) return FALSE;
     // hook model_user_token_get_do_end.php

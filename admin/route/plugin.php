@@ -215,7 +215,7 @@ switch ($action) {
             $siteip = ip2long(_SERVER('SERVER_ADDR'));
             $siteip < 0 and $siteip = sprintf("%u", $siteip);
             $post = array('email' => $email, 'password' => md5($password), 'auth_key' => xn_key(), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ua' => md5($useragent), 'siteip' => $siteip, 'longip' => $longip);
-            $url = PLUGIN_OFFICIAL_URL . 'plugin-login.html?' . http_build_query($post);
+            $url = PLUGIN_OFFICIAL_URL . 'plugin-login.html';
             $json = https_post($url, $post);
             empty($json) and message(-1, lang('server_response_empty'));
             $r = xn_json_decode($json);
@@ -399,7 +399,8 @@ switch ($action) {
         }
 
         $msg = lang('plugin_install_successfully', array('name' => $name));
-        message(0, jump($msg, url('plugin-list', array('type' => 1), TRUE), 2));
+        $url = is_file(APP_PATH . "plugin/$dir/setting.php") ? url('plugin-setting', array('dir' => $dir), TRUE) : url('plugin-list', array('type' => 1), TRUE);
+        message(0, jump($msg, $url, 2));
         break;
     case 'uninstall':
 
