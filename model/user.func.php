@@ -55,6 +55,14 @@ function user_count($cond = array(), $d = NULL)
     return $n;
 }
 
+function user_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_user_big_insert_start.php
+    $r = db_big_insert('user', $arr, $d);
+    // hook model_user_big_insert_end.php
+    return $r;
+}
+
 function user_big_update($cond = array(), $update = array(), $d = NULL)
 {
     // hook model_user_big_update_start.php
@@ -325,13 +333,10 @@ function user_token_get_do()
     $arr = explode("\t", $s);
     if (count($arr) != 5) return FALSE;
     list($_ip, $_time, $_uid, $_pwd, $ua_md5) = $arr;
-    // check IP
     if (array_value($conf, 'login_ip') && $ip != $_ip) return FALSE;
-    // check UA
     if (array_value($conf, 'login_ua') && md5($useragent) != $ua_md5) return FALSE;
     $_user = user_read($_uid);
     if (empty($_user)) return FALSE;
-    // check time
     if (array_value($conf, 'login_only') && $_user['login_date'] != $_time) return FALSE;
     // 密码是否被修改
     if (md5($_user['password']) != $_pwd) return FALSE;
