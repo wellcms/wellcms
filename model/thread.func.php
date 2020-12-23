@@ -37,7 +37,7 @@ function well_thread__read($cond = array(), $orderby = array(), $col = array(), 
  * @param null $d 实例
  * @return bool 返回最大tid
  */
-function well_thread_max_tid($col = array('tid'), $cond = array(), $d = NULL)
+function well_thread_max_tid($col = 'tid', $cond = array(), $d = NULL)
 {
     // hook model__thread_max_tid_start.php
     $tid = db_maxid('website_thread', $col, $cond, $d);
