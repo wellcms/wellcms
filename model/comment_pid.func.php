@@ -46,6 +46,21 @@ function comment_pid__count($cond = array(), $d = NULL)
     return $n;
 }
 
+function comment_pid_big_insert($arr = array(), $d = NULL)
+{
+    // hook model_comment_pid_big_insert_start.php
+    $r = db_big_insert('website_comment_pid', $arr, $d);
+    // hook model_comment_pid_big_insert_end.php
+    return $r;
+}
+
+function comment_pid_big_update($cond = array(), $update = array(), $d = NULL)
+{
+    // hook model_comment_pid_big_update_start.php
+    $r = db_big_update('website_comment_pid', $cond, $update, $d);
+    // hook model_comment_pid_big_update_end.php
+    return $r;
+}
 //--------------------------强相关--------------------------
 
 function comment_pid_read($pid)
