@@ -35,7 +35,6 @@ switch ($action) {
         // hook tag_list_after.php
 
         $header['title'] = lang('tag') . '-' . $conf['sitename'];
-        $header['mobile_title'] = '';
         $header['mobile_link'] = url('tag-list', $extra);
         $header['keywords'] = lang('tag') . ',' . $conf['sitename'];
         $header['description'] = lang('tag') . ',' . $conf['sitename'];
@@ -86,7 +85,6 @@ switch ($action) {
         // hook tag_after.php
 
         $header['title'] = empty($read['title']) ? $read['name'] : $read['title'];
-        $header['mobile_title'] = '';
         $header['mobile_link'] = url('tag-' . $tagid, $extra);
         $header['keywords'] = empty($read['keywords']) ? $read['name'] : $read['keywords'];
         $header['description'] = empty($read['description']) ? $read['name'] : $read['description'];

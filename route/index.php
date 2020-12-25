@@ -215,8 +215,6 @@ if (0 == $website_mode) {
 
 // SEO
 $header['title'] = $conf['sitename'];
-$header['mobile_title'] = '';
-$header['mobile_link'] = './';
 $header['keywords'] = $conf['sitename'];
 $header['description'] = strip_tags($conf['sitebrief']);
 $_SESSION['fid'] = $fid;

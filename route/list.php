@@ -86,7 +86,6 @@ if (1 == $forum['type']) {
 
             $seo_title = $forum['seo_title'] ? $forum['seo_title'] : $forum['name'] . '-' . $conf['sitename'];
             $header['title'] = strip_tags($seo_title);
-            $header['mobile_title'] = '';
             $header['mobile_link'] = $forum['url'];
             $seo_keywords = $forum['seo_keywords'] ? $forum['seo_keywords'] : $forum['name'];
             $header['keywords'] = strip_tags($seo_keywords);

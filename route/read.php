@@ -117,7 +117,6 @@ switch ($thread['type']) {
         // hook read_article_after.php
 
         $header['title'] = $thread['subject'];
-        $header['mobile_title'] = '';
         $header['mobile_link'] = $thread['url'];
         $header['keywords'] = $thread['keyword'] ? $thread['keyword'] : $thread['subject'];
         $header['description'] = $thread['description'] ? $thread['description'] : $thread['brief'];
@@ -188,7 +187,6 @@ switch ($thread['type']) {
         // hook read_single_page_after.php
 
         $header['title'] = $thread['subject'];
-        $header['mobile_title'] = '';
         $header['mobile_link'] = $thread['url'];
         $header['keywords'] = $thread['keyword'] ? $thread['keyword'] : $thread['subject'];
         $header['description'] = $thread['description'] ? $thread['description'] : $thread['brief'];
