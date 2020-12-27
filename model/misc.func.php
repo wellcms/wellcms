@@ -411,19 +411,24 @@ function well_token_verify($uid, $token, $verify = 0, $life = 3600)
         $pwd = md5($useragent);
     }
 
+    $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
     if (1 == $verify) {
-        $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
         $_token = _COOKIE($key, 0);
         if ($_token != $token) return FALSE;
         well_token_clear();
     } elseif (2 == $verify) {
+        if (!_COOKIE($key, 0)) return FALSE;
         $num = _COOKIE(md5($token), 0);
         if ($num) return FALSE; // 发表主题仅限使用1次
         well_token_clear();
         setcookie(md5($token), $num + 1, $time + 600, '/', $conf['cookie_domain'], '', TRUE);
     } elseif (3 == $verify) {
+        if (!_COOKIE($key, 0)) return FALSE;
         $num = _COOKIE(md5($token), 0);
-        if ($num >= 10) return FALSE; // 评论仅限使用10次
+        if ($num >= 10) {
+            well_token_clear();
+            return FALSE; // 评论仅限使用10次
+        }
         setcookie(md5($token), $num + 1, $time + 600, '/', $conf['cookie_domain'], '', TRUE);
     }
 
