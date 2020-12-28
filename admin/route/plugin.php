@@ -606,7 +606,7 @@ function plugin_download_unzip($dir, $storeid, $upgrade = 0)
     $url = PLUGIN_OFFICIAL_URL . 'plugin-download.html';
     set_time_limit(0);
     // 服务端获取下载地址开始下载
-    $s = https_post($url, $post, '', 180);
+    $s = https_request($url, $post, '', 180);
     empty($s) and message(-1, $url . lang('plugin_return_data_error') . lang('server_response_empty'));
     if ('PK' != substr($s, 0, 2)) {
         $res = xn_json_decode($s);

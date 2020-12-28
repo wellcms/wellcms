@@ -197,7 +197,7 @@ switch ($action) {
                 $res = xn_json_decode($json);
                 // 服务端开始下载升级包
                 set_time_limit(0);
-                $s = https_post($res['url']);
+                $s = https_request($res['url'], '', '', 300);
                 empty($s) and message(-1, jump(lang('plugin_return_data_error') . lang('server_response_empty'), url('other-upgrade', '', TRUE), 2));
 
                 if (substr($s, 0, 2) != 'PK') message(-1, jump(lang('plugin_return_data_error') . $s, url('other-upgrade', '', TRUE), 2));

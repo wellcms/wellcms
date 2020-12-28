@@ -897,8 +897,8 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
     is_array($post) and $post = http_build_query($post);
 
     // 没有安装curl 使用http的形式，支持post
-    if (!function_exists('curl_init')) {
-        //throw new Exception('server not install curl');
+    if (!extension_loaded('curl')) {
+        //throw new Exception('server not install CURL');
         if ($post) {
             return https_post($url, $post, $cookie, $timeout);
         } else {
@@ -960,7 +960,7 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
         curl_setopt($curl, CURLOPT_NOSIGNAL, true); // 设置毫秒超时
         curl_setopt($curl, CURLOPT_TIMEOUT_MS, intval($timeout)); // 超时毫秒
     } else {
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, intval($timeout)); // 秒超时
+        curl_setopt($curl, CURLOPT_TIMEOUT, intval($timeout)); // 秒超时
     }
     //优先解析 IPv6 超时后IPv4
     //curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);

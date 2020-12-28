@@ -718,7 +718,6 @@ function https_post($url, $post = '', $cookie = '', $timeout = 30, $method = 'PO
         defined('CURLOPT_SAFE_UPLOAD') and curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
     }
     curl_setopt($ch, CURLOPT_HEADER, 2); // 1/2
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/x-www-form-urlencoded', 'x-requested-with: XMLHttpRequest'));
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_USERAGENT, _SERVER('HTTP_USER_AGENT'));
 
@@ -730,9 +729,6 @@ function https_post($url, $post = '', $cookie = '', $timeout = 30, $method = 'PO
         //curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
         curl_setopt($ch, CURLOPT_SSLVERSION, true);
     }
-
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // 对认证证书来源的检查
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 从证书中检查SSL加密算法是否存在，默认可以省略
 
     if ('POST' == $method) {
         curl_setopt($ch, CURLOPT_POST, true);
