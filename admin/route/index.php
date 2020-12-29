@@ -109,22 +109,23 @@ function get_last_version($stat)
     if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || $time < array_value($config, 'last_version', 0)) return;
 
     $post = array('type' => 1, 'sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode($domain), 'app_url' => xn_urlencode(http_url_path()), 'users' => $stat['users'], 'articles' => $stat['articles'], 'comments' => $stat['comments'], 'threads' => $stat['threads'], 'posts' => $stat['posts'], 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
-    $json = https_post(OFFICIAL_URL . 'version.html', $post);
+
+    $json = https_request(OFFICIAL_URL . 'version.html', $post, '', 800, 1);
 
     $official = xn_json_decode($json);
 
     // 可更新
-    if (0 == $official['code']) {
-        if (-1 == version_compare($config['official_version'], $official['version']) || array_value($config, 'version_date', 0) < $official['version_date']) {
-            $upgrade = $config['upgrade'] = 1;
+    if (0 == $official['code'] && $version = array_value($official, 'version')) {
+        if (-1 == version_compare($config['official_version'], $version) || array_value($config, 'version_date', 0) < $official['version_date']) {
+            $config['upgrade'] = 1;
         } else {
-            $upgrade = $config['upgrade'] = 0;
+            $config['upgrade'] = 0;
         }
     } elseif (2 == $official['code']) {
         if (-1 == version_compare($config['official_version'], $config['version'])) {
-            $upgrade = $config['upgrade'] = 2;
+            $config['upgrade'] = 2;
         } else {
-            $upgrade = $config['upgrade'] = 0;
+            $config['upgrade'] = 0;
         }
     }
 
