@@ -126,5 +126,8 @@ return array(
     'message_token' => 0, // 0关闭 1开启发布内容验证 token
     'comment_token' => 0, // 0关闭 1开启评论验证 token
     'login_token' => 1, // 0关闭 1开启用户登陆 token
+    'login_only' => 0, // 单点登录 0关闭 1开启
+    'login_ip' => 0, // 验证IP 0关闭 1开启
+    'login_ua' => 0, // 验证UA 0关闭 1开启
 );
 ?>
