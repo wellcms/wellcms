@@ -371,9 +371,7 @@ switch ($action) {
 
         // 插件依赖检查 / check plugin dependency
         plugin_check_dependency($dir, 'install');
-
-        plugin_notice($dir);
-
+        
         // 安装插件 / install plugin
         plugin_install($dir);
 
@@ -398,6 +396,8 @@ switch ($action) {
             }
         }
 
+        plugin_notice($dir);
+        
         $msg = lang('plugin_install_successfully', array('name' => $name));
         $url = is_file(APP_PATH . "plugin/$dir/setting.php") ? url('plugin-setting', array('dir' => $dir), TRUE) : url('plugin-list', array('type' => 1), TRUE);
         message(0, jump($msg, $url, 2));
@@ -739,52 +739,36 @@ function plugin_notice($dir, $type = 0)
 {
     global $longip, $ip;
 
-    if (FALSE === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return;
+    if (FALSE === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return TRUE;
 
     $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html';
     $s = https_post($url, array('dir' => $dir));
-    if ($s) {
-        $res = xn_json_decode($s);
-        if (1 == $res['code']) {
-            $domain = xn_urlencode(_SERVER('HTTP_HOST'));
-            $siteid = plugin_siteid();
-            $siteip = ip2long(_SERVER('SERVER_ADDR'));
-            $siteip < 0 and $siteip = sprintf("%u", $siteip);
-            $app_url = xn_urlencode(http_url_path());
+    if (empty($s)) return TRUE;
+    $res = xn_json_decode($s);
+    if (isset($res['code']) && 1 == $res['code']) {
+        $domain = xn_urlencode(_SERVER('HTTP_HOST'));
+        $siteid = plugin_siteid();
+        $siteip = ip2long(_SERVER('SERVER_ADDR'));
+        $siteip < 0 and $siteip = sprintf("%u", $siteip);
+        $app_url = xn_urlencode(http_url_path());
 
-            $post = array('storeid' => $res['message'], 'siteid' => $siteid, 'siteip' => $siteip, 'auth_key' => xn_key(), 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain);
-            $data = setting_get('plugin_data');
-            if ($data) {
-                $key = md5(xn_key());
-                $s = xn_decrypt($data, $key);
-                $arr = explode("\t", $s);
-                isset($arr[4]) and $post += array('token' => $arr[4], 'uid' => $arr[0]);
-            }
-            $conffile = $type ? APP_PATH . 'view/template/' . $dir . '/conf.json' : APP_PATH . 'plugin/' . $dir . '/conf.json';
-            if ($conffile) {
-                $arr = xn_json_decode(file_get_contents($conffile));
-                isset($arr['key']) and $post += array('key' => $arr['key']);
-            }
-            if (!$type) {
-                $files = well_search_dir(APP_PATH . 'plugin/' . $dir . '/');
-                if (!empty($files)) {
-                    $funlist = array();
-                    foreach ($files as $file) {
-                        $s = file_get_contents($file);
-                        preg_match_all('#function\s+(.*?)\(#', $s, $arr);
-                        if (isset($arr[1])) {
-                            foreach ($arr[1] as $name) {
-                                $funlist[] = $name;
-                            }
-                        }
-                    }
-                    !empty($funlist) and $post += array('funlist' => xn_json_encode($funlist));
-                }
-            }
-            $url = PLUGIN_OFFICIAL_URL . 'plugin-notice.html?' . http_build_query($post);
-            https_post($url, $post);
+        $post = array('storeid' => $res['message'], 'siteid' => $siteid, 'siteip' => $siteip, 'auth_key' => xn_key(), 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain, 'cate' => 1);
+        $data = setting_get('plugin_data');
+        if ($data) {
+            $key = md5(xn_key());
+            $s = xn_decrypt($data, $key);
+            $arr = explode("\t", $s);
+            isset($arr[4]) and $post += array('token' => $arr[4], 'uid' => $arr[0]);
         }
+        $conffile = $type ? APP_PATH . 'view/template/' . $dir . '/conf.json' : APP_PATH . 'plugin/' . $dir . '/conf.json';
+        if ($conffile) {
+            $arr = xn_json_decode(file_get_contents($conffile));
+            isset($arr['key']) and $post += array('key' => $arr['key']);
+        }
+        $url = PLUGIN_OFFICIAL_URL . 'plugin-notice.html';
+        https_post($url, $post);
     }
+    return TRUE;
 }
 
 function plugin_is_local($dir)
