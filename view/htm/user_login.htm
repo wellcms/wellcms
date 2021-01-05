@@ -1,136 +1,8 @@
-<?php $conf = GLOBALS('conf');?>
-<?php $header = GLOBALS('header');?>
-<?php $user = GLOBALS('user');?>
-<?php $uid = GLOBALS('uid');?>
-<?php $gid = GLOBALS('gid');?>
-<?php $fid = GLOBALS('fid');?>
-<?php $tid = GLOBALS('tid');?>
-<?php $pid = GLOBALS('pid');?>
-<?php $route = GLOBALS('route');?>
-<?php $forumlist_show = GLOBALS('forumlist_show');?>
-<?php $forum_nav = GLOBALS('forum_nav');?>
-<?php $static_version = $conf['static_version'];?>
-<!--{hook header_start.htm}-->
-<!DOCTYPE html>
-<html lang="<?php echo $conf['lang'];?>">
-<head>
-	<?php echo defined('BASE_HREF') ? '<base href="'.BASE_HREF.'" />' : '' ;?>
-
-	<!--{hook header_meta_before.htm}-->
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
-	<meta http-equiv="Cache-Control" content="no-transform" />
-	<meta http-equiv="Cache-Control" content="no-siteapp" />
-	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-	<meta name="referrer" content="no-referrer">
-	<meta name="applicable-device" content="pc,mobile" />
-	<meta name="MobileOptimized" content="width" />
-	<meta name="HandheldFriendly" content="true" />
-	<meta name="renderer" content="webkit" />
-	<?php if(!empty($header['keywords'])) { ?>
-	<meta name="keywords" content="<?php echo $header['keywords'];?>" />
-	<?php } ?>
-
-	<meta name="description" content="<?php echo $header['description'];?>" />
-
-	<title>
-		<?php echo $header['title'];?>
-	</title>
-
-	<!--{hook header_link_before.htm}-->
-
-	<link rel="shortcut icon" href="<?php echo view_path();?>img/favicon.ico" />
-	<link rel="icon" sizes="32x32" href="<?php echo view_path();?>img/favicon.ico">
-	<link rel="Bookmark" href="<?php echo view_path();?>img/favicon.ico" />
-
-	<!--{hook header_bootstrap_before.htm}-->
-	<?php $bootstrap_css = empty($bootstrap_css) ? view_path()."css/bootstrap.min.css".$static_version : $bootstrap_css;?>
-	<link rel="stylesheet" href="<?php echo $bootstrap_css;?>">
-
-	<!--{hook header_bootstrap_after.htm}-->
-
-	<link rel="stylesheet" href="<?php echo view_path();?>css/font-awesome.min.css<?php echo $static_version;?>">
-
-	<link rel="stylesheet" href="<?php echo view_path();?>css/wellcms.css<?php echo $static_version;?>">
-	<!--{hook header_link_after.htm}-->
-
-</head>
-
-<body class="bg-dark">
-
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
 <!--{hook user_login_start.htm}-->
 <div class="container">
     <!-- Outer Row -->
-    <div class="row vh-100 justify-content-center align-items-center">
-        <!--{hook header_nav_start.htm}-->
-        <header class="navbar navbar-expand-lg navbar-dark bg-dark py-1 mb-3 w-100 fixed-top border-bottom" id="header">
-            <div class="container">
-                <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#nav" aria-controls="navbar_collapse" aria-expanded="false" aria-label="<?php echo lang('toggler_menu');?>">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!--{hook header_nav_logo_before.htm}-->
-                <a class="navbar-brand text-truncate" href="<?php echo $header['mobile_link'];?>">
-                    <img src="<?php echo view_path(),$conf['logo_mobile_url'];?>" class="logo-2" alt="<?php echo $conf['sitename'] ;?>-WellCMS">
-                    <?php if($header['mobile_title']) { ?>
-                    <span class="d-block d-lg-none"><?php echo $header['mobile_title'];?></span>
-                    <?php } ?>
-                </a>
-
-                <!--{hook header_nav_logo_after.htm}-->
-
-                <?php if(empty($uid)) { ?>
-                <!--登录图标-->
-                <a class="navbar-brand d-block d-lg-none" rel="nofollow" href="<?php echo url('user-login');?>" aria-label="<?php echo lang('login');?>"> <i class="icon-user"></i></a>
-                <?php } else { ?>
-                <!--搜索图标-->
-                <a class="navbar-brand d-block d-lg-none" href="<?php echo url('operate-search');?>"><i class="icon-search"></i></a>
-                <?php } ?>
-
-                <!--{hook header_nav_user_icon_after.htm}-->
-
-                <div class="collapse navbar-collapse pt-0" id="nav">
-                    <!-- 左侧：栏目 -->
-                    <ul class="navbar-nav mr-auto">
-                        <!--{hook header_nav_forum_start.htm}-->
-                        <li class="nav-item home" fid="0" data-active="fid-0"><a class="nav-link" href="<?php echo $conf['path'] ;?>"><i class="icon-home d-md-none"></i>&nbsp;<?php echo lang('index_page');?></a></li>
-                    </ul>
-                    <!-- 右侧：用户 -->
-                    <ul class="navbar-nav">
-                        <!-- 搜索 -->
-                        <li class="nav-item">
-                            <div class="form-group px-2 mb-0 mt-1">
-                                <form action="<?php echo url('operate-search'); ?>" id="form-search">
-                                    <div class="input-group input-group-sm mb-0">
-                                        <input type="text" class="form-control" placeholder="<?php echo lang('keyword'); ?>" name="keyword" value="">
-                                        <input type="hidden" name="range" value="1">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-secondary btn-search-sm" type="submit" id="submit">
-                                                <i class="icon-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-                        <!--{hook header_nav_user_start.htm}-->
-                        <?php if(empty($uid)) { ?>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo url('user-create');?>"><?php echo lang('register');?></a></li>
-                        <?php } else { ?>
-                        <li class="nav-item username"><a class="nav-link" rel="nofollow" href="<?php echo url('home');?>"><!--<img class="avatar-1" src="<?php echo $user['avatar_url'];?>">&nbsp;--><?php echo $user['username'];?></a></li>
-                        <!-- 管理员 -->
-                        <?php if(group_access($gid, 'intoadmin')) { ?>
-                        <li class="nav-item"><a class="nav-link" rel="nofollow" href="<?php echo $conf['path'];?>admin/"><i class="icon-home"></i>&nbsp;<?php echo lang('admin_page');?></a></li>
-                        <?php } ?>
-                        <!--{hook header_nav_admin_page_after.htm}-->
-                        <li class="nav-item"><a class="nav-link" rel="nofollow" id="user-logout" href="<?php echo url('user-logout');?>"><i class="icon-sign-out"></i>&nbsp;<?php echo lang('logout');?></a></li>
-                        <?php } ?>
-                        <!--{hook header_nav_user_end.htm}-->
-                    </ul>
-                </div>
-            </div>
-        </header>
-        <!--{hook header_nav_end.htm}-->
+    <div class="row vh-100 justify-content-center align-items-center m-n5">
         <div class="col-lg-7 mx-auto">
             <div class="card">
                 <div class="card-header h4 text-center p-3">
@@ -191,37 +63,7 @@
 </div>
 <!--{hook user_login_end.htm}-->
 
-<!--[if ltg IE 9]>
-<script>window.location = '<?php echo url('browser');?>';</script>
-<![endif]-->
-
-<!--{hook footer_js_before.htm}-->
-
-<?php $browser = get__browser();?>
-<?php if('ie' == $browser['name']) { ?>
-<script src="<?php echo view_path();?>js/es6-shim.js<?php echo $static_version;?>"></script>
-<?php } ?>
-<script src="<?php echo $conf['path'];?>lang/<?php echo $conf['lang'];?>/lang.js<?php echo $static_version;?>"></script>
-<script src="<?php echo view_path();?>js/jquery.min.js<?php echo $static_version;?>"></script>
-<script src="<?php echo view_path();?>js/popper.min.js<?php echo $static_version;?>"></script>
-<script src="<?php echo view_path();?>js/bootstrap.min.js<?php echo $static_version;?>"></script>
-<script src="<?php echo view_path();?>js/xiuno.js<?php echo $static_version;?>"></script>
-<script src="<?php echo view_path();?>js/bootstrap-plugin.js<?php echo $static_version;?>"></script>
-<script src="<?php echo view_path();?>js/async.min.js<?php echo $static_version;?>"></script>
-<script src="<?php echo view_path();?>js/form.js<?php echo $static_version;?>"></script>
-<script>
-    var debug = DEBUG = <?php echo DEBUG; ?>;
-    var url_rewrite_on = <?php echo $conf['url_rewrite_on'];?>;
-    var url_path = '<?php echo $conf['path'];?>';
-    var forumarr = <?php echo xn_json_encode($forumarr);?>;
-    var fid = <?php echo $fid;?>;
-    var uid = <?php echo intval($uid);?>;
-    var gid = <?php echo intval($gid);?>;
-    xn.options.water_image_url = '<?php echo view_path(),$conf['logo_water_url'];?>';	/*水印图片 / watermark image*/
-</script>
-<script src="<?php echo view_path();?>js/wellcms.js<?php echo $static_version;?>"></script>
-
-<!--{hook footer_js_after.htm}-->
+<?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
 
 <script src="<?php echo view_path();?>js/md5.js"></script>
 
@@ -256,10 +98,3 @@
 </script>
 
 <!--{hook user_login_js.htm}-->
-
-</body>
-<!--{hook footer_body_after.htm}-->
-</html>
-<!--{hook footer_end.htm}-->
-
-<?php echo cron_run();?>
