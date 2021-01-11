@@ -29,7 +29,7 @@
 							</div>
 						</div>
 						<div class="ml-1 mt-1">
-							<button type="submit" class="btn btn-primary btn-sm ml-3" id="send" data-loading-text="<?php echo lang('sending');?>..." action="<?php echo url('user-send_code-user_resetpw');?>">
+							<button type="submit" class="btn btn-primary btn-sm ml-3" id="send" data-loading-text="<?php echo lang('sending');?>...">
 								<?php echo lang('send_verify_code');?>
 							</button>
 						</div>
@@ -55,12 +55,12 @@ body.on('click', '#send', function() {
     jform.reset();
 	jthis.button('loading');
     var postdata = jform.serialize();
-    $.xpost(jthis.attr('action'), postdata, function(code, message) {
+    $.xpost(xn.url('user-send_code-user_resetpw'), postdata, function(code, message) {
         if(code == 0) {
             $.alert(message);
             $('#code').focus();
 			jthis.button('<?php echo lang('user_send_successfully');?> 60 ');
-            $('#submit').button('reset');
+			$('button#submit').button('reset');
             var t = 60; /*倒计时，重新发送*/
             var handler = setInterval(function() {
 				jthis.button('<?php echo lang('user_send_successfully');?> '+(--t)+' ');

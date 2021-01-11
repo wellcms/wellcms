@@ -729,6 +729,8 @@ switch ($action) {
 
             // hook admin_content_update_post_before.php
 
+            $update = array();
+
             // $link = 1 为站外链接 无需更新数据表
             if (0 == $link) {
                 $tmp_file = well_attach_assoc_type('post');
@@ -746,10 +748,13 @@ switch ($action) {
 
                     $update = array('tid' => $tid, 'gid' => $gid, 'doctype' => $doctype, 'message' => $message);
                     // hook admin_content_data_update_before.php
-                    FALSE === data_update($tid, $update) AND message(-1, lang('update_post_failed'));
-                    unset($update);
                 }
             }
+
+            // hook admin_content_data_update.php
+
+            !empty($update) && FALSE === data_update($tid, $update) AND message(-1, lang('update_post_failed'));
+            unset($update);
 
             // hook admin_content_update_post_center.php
 
