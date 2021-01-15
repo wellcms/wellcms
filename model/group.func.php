@@ -59,7 +59,6 @@ function group_create($arr)
 
 function group_update($gid, $arr)
 {
-    if (empty($gid)) return FALSE;
     // hook model_group_update_start.php
     $r = group__update($gid, $arr);
     group_list_cache_delete();
