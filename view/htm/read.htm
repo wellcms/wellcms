@@ -31,9 +31,13 @@
 			<div class="card-body">
 				<div class="media">
 					<!--{hook read_main_avatar_before.htm}-->
-					<a href="<?php echo url('user-'.$thread['uid']);?>" tabindex="-1">
-						<img class="avatar-3 mr-3" src="<?php echo $thread['user_avatar_url'];?>">
-					</a>
+					<div class="position-relative mr-3">
+						<a href="<?php echo url('user-'.$thread['uid']);?>" tabindex="-1">
+							<img class="avatar-3" src="<?php echo $thread['user_avatar_url'];?>">
+							<!--{hook read_avatar_after_after.htm}-->
+						</a>
+						<!--{hook read_avatar_after_end.htm}-->
+					</div>
 					<!--{hook read_main_after_before.htm}-->
 					<div class="media-body subject">
 						<!--{hook read_subject_before.htm}-->
