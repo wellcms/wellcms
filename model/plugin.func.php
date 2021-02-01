@@ -243,19 +243,19 @@ function plugin_uninstall($dir)
 function plugin_paths_enabled()
 {
     static $return_paths;
-    if (empty($return_paths)) {
-        $return_paths = array();
-        $plugin_paths = glob(APP_PATH . 'plugin/*', GLOB_ONLYDIR);
-        if (empty($plugin_paths)) return array();
-        foreach ($plugin_paths as $path) {
-            $conffile = $path . '/conf.json';
-            if (!is_file($conffile)) continue;
-            $pconf = xn_json_decode(file_get_contents($conffile));
-            if (empty($pconf)) continue;
-            if (empty($pconf['enable']) || empty($pconf['installed'])) continue;
-            $return_paths[$path] = $pconf;
-        }
+    if (isset($return_paths)) return $return_paths;
+
+    $return_paths = array();
+    $plugin_paths = glob(APP_PATH . 'plugin/*', GLOB_ONLYDIR);
+    foreach ($plugin_paths as $path) {
+        $conffile = $path . '/conf.json';
+        if (!is_file($conffile)) continue;
+        $pconf = xn_json_decode(file_get_contents($conffile));
+        if (empty($pconf)) continue;
+        if (empty($pconf['enable']) || empty($pconf['installed'])) continue;
+        $return_paths[$path] = $pconf;
     }
+    
     return $return_paths;
 }
 
@@ -273,11 +273,17 @@ function plugin_compile_srcfile($srcfile)
     $srcfile = plugin_find_overwrite($srcfile);
     $s = file_get_contents($srcfile);
 
+    $plugin_paths = plugin_paths_enabled();
+
     // 最多支持 10 层 合并html模板hook和php文件hook
     for ($i = 0; $i <= 10; ++$i) {
         if (FALSE !== strpos($s, '<!--{hook') || FALSE !== strpos($s, '// hook')) {
-            $s = preg_replace('#<!--{hook\s+(.*?)}-->#', '// hook \\1', $s);
-            $s = preg_replace_callback('#//\s*hook\s+(\S+)#is', 'plugin_compile_srcfile_callback', $s);
+            if (empty($plugin_paths)) {
+                $s = preg_replace('#<!--{hook\s+(.*?)}-->#', '', $s);
+            } else {
+                $s = preg_replace('#<!--{hook\s+(.*?)}-->#', '// hook \\1', $s);
+                $s = preg_replace_callback('#//\s*hook\s+(\S+)#is', 'plugin_compile_srcfile_callback', $s);
+            }
         } else {
             break;
         }
@@ -293,6 +299,7 @@ function plugin_find_overwrite($srcfile)
 {
     // 遍历所有开启的插件
     $plugin_paths = plugin_paths_enabled();
+    if (empty($plugin_paths)) return $srcfile;
     $len = strlen(APP_PATH);
     $returnfile = $srcfile;
     $maxrank = 0;
@@ -325,7 +332,7 @@ function plugin_compile_srcfile_callback($m)
     if (empty($hooks)) {
         $hooks = array();
         $plugin_paths = plugin_paths_enabled();
-
+        if (empty($plugin_paths)) return '';
         foreach ($plugin_paths as $path => $pconf) {
             $dir = file_name($path);
             $hookpaths = glob(APP_PATH . "plugin/$dir/hook/*.*"); // path

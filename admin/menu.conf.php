@@ -52,7 +52,7 @@ return array(
             // hook admin_menu_conf_user_start.php
             'user' => array('url' => url('user-list', '', TRUE), 'text' => lang('user_list')),
             // hook admin_menu_conf_user_center.php
-            'group' => array('url' => url('group-list'), 'text' => lang('admin_user_group')),
+            'group' => array('url' => url('group-list', '', TRUE), 'text' => lang('admin_user_group')),
             // hook admin_menu_conf_user_after.php
             'create' => array('url' => url('user-create', '', TRUE), 'text' => lang('admin_user_create')),
             // hook admin_menu_conf_user_end.php

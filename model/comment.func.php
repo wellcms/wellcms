@@ -55,6 +55,14 @@ function comment_count($cond = array(), $d = NULL)
     return $n;
 }
 
+function comment_max_pid($col = 'pid', $cond = array(), $d = NULL)
+{
+    // hook model_comment_max_pid_start.php
+    $pid = db_maxid('website_comment', $col, $cond, $d);
+    // hook model_comment_max_pid_end.php
+    return $pid;
+}
+
 function comment_big_insert($arr = array(), $d = NULL)
 {
     // hook model_comment_big_insert_start.php
@@ -613,11 +621,12 @@ function comment_message_replace_url($pid, $message)
     return $message;
 }
 
-function comment_filter(&$val)
+function comment_filter($val)
 {
     // hook comment_filter_start.php
     unset($val['userip']);
     // hook comment_filter_end.php
+    return $val;
 }
 
 function comment_highlight_keyword($str, $k)

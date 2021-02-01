@@ -64,9 +64,13 @@ switch ($action) {
                 break;
         }
 
+        sess_restart();
+
+        !isset($_SESSION[$key]) and $_SESSION[$key] = array();
+        
         // 超过30则删除之前上传的所有附件
-        if (count(_SESSION($key)) > 30) {
-            foreach (_SESSION($key) as $_file) is_file($_file['path']) and unlink($_file['path']);
+        if (count($_SESSION[$key]) > 50) {
+            foreach ($_SESSION[$key] as $_file) is_file($_file['path']) and unlink($_file['path']);
             $_SESSION[$key] = array();
         }
 
@@ -103,13 +107,9 @@ switch ($action) {
         file_put_contents($tmpfile, $data) or message(1, lang('write_to_file_failed'));
 
         // hook attach_create_save_after.php
-
-        sess_restart();
-
-        empty($_SESSION[$key]) and $_SESSION[$key] = array();
-
+    
         // $mode = 0内容图片和附件按照SESSION数组附件数量统计，1主图按照传入的n数值
-        empty($mode) and $n = count(_SESSION($key));
+        empty($mode) and $n = count($_SESSION[$key]);
 
         $attach = array(
             'backstage' => $backstage, // 0前台 1后台

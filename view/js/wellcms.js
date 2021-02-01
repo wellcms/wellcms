@@ -161,19 +161,18 @@ $(function () {
 
     function create_tag() {
         var tag_input = $('.tag-input');
-        var str = tag_input.val().replace(/\s+/g, '');
+        var tag = tag_input.val().replace(/\s+/g, '');
         var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？%]", 'g');
-        str = str.replace(reg, '');
-        if (str.length > 0) {
+        tag = tag.replace(reg, '');
+        if (tag.length > 0) {
             var tags = $('input[name="tags"]').val();
-            n = xn.strpos(tags, str);
-            if (n >= 0) {
+            var arr = tags.split(',');
+            if (arr.indexOf(tag) > -1) {
                 tag_input.val('');
                 return false;
             }
-            var tagarr = xn.explode(',', tags);
-            if (Object.count(tagarr) <= 5) {
-                $('<span class="border border-secondary tag btn-sm my-1 mr-3 tags-token">' + str + '</span>').insertBefore(tag_input.parents(".tags").find(".tag-wrap"));
+            if (Object.count(arr) <= 5) {
+                $('<span class="border border-secondary tag btn-sm my-1 mr-3 tags-token">' + tag + '</span>').insertBefore(tag_input.parents('.tags').find('.tag-wrap'));
             }
             tag_input.val('');
             get_tag_val(tag_input);
@@ -225,6 +224,23 @@ body.on('click', 'a.confirm', function () {
  <a class="ajax" rel="nofollow" href="<?php echo url('comment-create'); ?>" data-method="get" aria-label="评论提交">提交</a>
 
  <a class="ajax" rel="nofollow" href="<?php echo url('comment-create'); ?>" data-method="post" data-json="{data:1}" aria-label="评论提交">提交</a>
+
+ var list = document.getElementsByClassName('follow');
+    for (var i in list) {
+        list[i].onclick = function () {
+            var jthis = this;
+            var _uid = jthis.getAttribute('uid');
+            var href = jthis.getAttribute('href');
+            var method = jthis.getAttribute('data-method');
+            $.xpost(href, {'uid': _uid}, function (code, data) {
+
+            });
+            console.log(_uid);
+            return false;
+        };
+    }
+
+array('url' => url('my-follow', array('type' => 1,'followuid' => $followuid)), 'text' => lang('well_unfollow'), 'data-method' => 'post', 'data-modal-title' => '')
  */
 body.on('click', 'a.ajax', function () {
     var jthis = $(this);
@@ -234,7 +250,14 @@ body.on('click', 'a.ajax', function () {
         var postdata = jthis.data('json');
         $.xpost(href, postdata, function (code, message) {
             if (0 == code) {
-                window.location.reload();
+                if ('undefined' == message.text) {
+                    window.location.reload();
+                } else {
+                    jthis.html(message.text);
+                    if (message.url) jthis.attr('href', message.url); /*url*/
+                    if (message.method) jthis.attr('data-method', message.method); /*data-method*/
+                    if (message.modal) jthis.attr('data-method', message.modal); /*data-modal-title*/
+                }
             } else if ('url' == code) {
                 window.location = message;
             } else {

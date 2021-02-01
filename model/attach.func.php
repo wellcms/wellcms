@@ -54,6 +54,14 @@ function well_attach_count($cond = array(), $d = NULL)
     return $n;
 }
 
+function well_attach_max_aid($col = 'aid', $cond = array(), $d = NULL)
+{
+    // hook model_well_attach_max_aid_start.php
+    $id = db_maxid('website_attach', $col, $cond, $d);
+    // hook model_well_attach_max_aid_end.php
+    return $id;
+}
+
 function attach_big_insert($arr = array(), $d = NULL)
 {
     // hook model_attach_big_insert_start.php
@@ -328,7 +336,6 @@ function attach_gc()
 function well_attach_assoc_post($arr = array())
 {
     if (empty($arr)) return FALSE;
-    $message = TRUE;
     // hook model__attach_assoc_post_start.php
     $assoc = array_value($arr, 'assoc');
     // hook model__attach_assoc_post_before.php
@@ -344,7 +351,7 @@ function well_attach_assoc_post($arr = array())
             break;
         case 'post': // 内容附件和图片
             // hook model__attach_assoc_post_file_start.php
-            $message = well_attach_assoc_file($arr);
+            return well_attach_assoc_file($arr);
             // hook model__attach_assoc_post_file_end.php
             break;
         // hook model__attach_assoc_post_case.php
@@ -353,7 +360,7 @@ function well_attach_assoc_post($arr = array())
             break;
     }
     // hook model__attach_assoc_post_end.php
-    return $message;
+    return TRUE;
 }
 
 // 主题缩略图
@@ -559,7 +566,7 @@ function well_attach_assoc_file($arr = array())
 
     // hook model_attach_assoc_file_filter_end.php
 
-    if (empty($update)) return $arr['message'];
+    if (empty($update)) return $pid ? array($arr['message'], $_images, $_files) : $arr['message'];
 
     if ($pid) {
         if ($post_create) {
@@ -596,7 +603,7 @@ function well_attach_assoc_type($type)
     }
     $sess_tmp_files = _SESSION($k);
     // 如果session中没有，从数据库中获取储存的session
-    if (empty($sess_tmp_files) && preg_match('#' . $k . '\|(a\:1\:\{.*\})#', _SESSION('data'), $matches)) $sess_tmp_files = unserialize(str_replace(array('+', '='), array('_', '.'), $matches['1']));
+    //if (empty($sess_tmp_files) && preg_match('#' . $k . '\|(a\:1\:\{.*\})#', _SESSION('data'), $matches)) $sess_tmp_files = unserialize(str_replace(array('+', '='), array('_', '.'), $matches['1']));
     // hook model__attach_assoc_type_end.php
     return $sess_tmp_files;
 }

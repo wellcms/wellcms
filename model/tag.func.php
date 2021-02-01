@@ -52,6 +52,14 @@ function well_tag__count($cond = array(), $d = NULL)
     return $n;
 }
 
+function tag_max_tagid($col = 'tagid', $cond = array(), $d = NULL)
+{
+    // hook model_tag_max_tagid_start.php
+    $tagid = db_maxid('website_tag', $col, $cond, $d);
+    // hook model_tag_max_tagid_end.php
+    return $tagid;
+}
+
 function tag_big_insert($arr = array(), $d = NULL)
 {
     // hook model_tag_big_insert_start.php
@@ -392,7 +400,9 @@ function well_tag_process($tid, $fid, $new_tags = array(), $tagarr = array())
         $threadarr = array();
         $tagids = array();
         $i = 0;
-        $n = 5 - count($tagarr);
+        $size = 5;
+        $n = count($tagarr);
+        $n = $n > $size ? $size : $size - $n;
 
         // hook model_tag_process_foreach_before.php
 

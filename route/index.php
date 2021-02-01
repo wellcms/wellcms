@@ -3,10 +3,11 @@
  * Copyright (C) www.wellcms.cn
  * 扩展时可hook也可overwrite
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 // hook index_start.php
 
+$apilist = array();
 $arrlist = array();
 $extra = array(); // 插件预留
 $fid = 0;
@@ -38,12 +39,12 @@ if (0 == $website_mode) {
      * */
     // 栏目自定义 返回flag 和flag下主题tids
     list($flaglist, $flagtids) = flag_thread_by_fid($fid);
-    !empty($flagtids) AND $tidlist += $flagtids;
+    !empty($flagtids) and $tidlist += $flagtids;
     // hook index_custom_before.php
 
     // 查找置顶tid
     $stickylist = sticky_index_thread();
-    !empty($stickylist) AND $tidlist += $stickylist;
+    !empty($stickylist) and $tidlist += $stickylist;
 
     // hook index_custom_center.php
     /************ 在这之前合并所有tid 二维数组 *************/
@@ -62,7 +63,7 @@ if (0 == $website_mode) {
     $threadlist = array();
     foreach ($arrlist as $_tid => &$_thread) {
         // 归类列表数据
-        isset($tidlist[$_thread['tid']]) AND $threadlist[$_tid] = well_thread_safe_info($_thread);
+        isset($tidlist[$_thread['tid']]) and $threadlist[$_tid] = well_thread_safe_info($_thread);
 
         // hook index_custom_threadlist.php
 
@@ -143,7 +144,7 @@ if (0 == $website_mode) {
 
     // hook index_flat_start.php
 
-    $page = param(1, 1);
+    $apilist['page'] = $page = param(1, 1);
     $pagesize = $conf['pagesize'];
     $threadlist = $tidlist = NULL;
     $threads = 0;
@@ -199,10 +200,10 @@ if (0 == $website_mode) {
     // 友情链接
     $linklist = link_get(1, $conf['linksize']);
 
-    // hook index_flat_after.php
+    // hook index_flat_link_after.php
 
     $page_url = url($route . '-{page}', $extra);
-    $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
+    $apilist['num'] = $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
 
     // hook index_flat_pagination_before.php
 
@@ -223,7 +224,7 @@ $active = 'default';
 // hook index_end.php
 
 if ($ajax) {
-    $conf['api_on'] ? message(0, $arrlist) : message(0, lang('closed'));
+    $conf['api_on'] ? message(0, $apilist += array('arrlist' => $arrlist, 'header' => $header, 'active' => $active, 'extra' => $extra)) : message(0, lang('closed'));
 } else {
     include _include(theme_load('index'));
 }

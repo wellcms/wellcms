@@ -7,12 +7,15 @@
 <div class="media bg-white" style="height: 80px;">
     <div class="pb-4 pl-4">
         <img src="<?php echo $user['avatar_url'];?>" class="avatar-4 mt-n4 position-relative figure-img img-fluid rounded">
+        <!--{hook common_avatar_after.htm}-->
     </div>
     <div class="media-body h-100 ml-3">
         <div class="line-height-3">
             <span>
                 <?php echo $user['username'];?>
+                <!--{hook common_username.htm}-->
             </span>
+            <!--{hook common_username_after.htm}-->
             <span class="mx-2">
                 <?php echo $user['groupname'];?>
             </span>

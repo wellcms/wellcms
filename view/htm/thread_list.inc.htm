@@ -17,6 +17,7 @@
             <div class="col-4 col-md-3">
                 <a href="<?php echo $_thread['url']; ?>" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?>>
                     <img class="d-block w-100 rounded" src="<?php echo $_thread['icon_fmt'];?>" title='<?php echo $_thread['subject'];?>' alt='<?php echo $_thread['subject'];?>' />
+                    <!--{hook thread__list_inc_avatar_after.htm}-->
                 </a>
             </div>
             <?php } ?>

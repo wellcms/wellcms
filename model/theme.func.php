@@ -52,6 +52,17 @@ function theme_load($type = '', $id = 0, $dir = '')
             // 详情
             $pre .= $default_pre .= 'read.htm';
             break;
+        case 'comment':
+            // 高级评论
+            $pre .= $default_pre .= 'comment.htm';
+            break;
+        case 'comment_list.inc':
+            // 评论列表公用文件
+            $pre .= $default_pre .= 'comment_list.inc.htm';
+            break;
+        case 'message':
+            $pre .= $default_pre .= 'message.htm';
+            break;
         case 'tag_list':
             // tag 分类列表
             $pre .= $default_pre .= 'tag_list.htm';
@@ -75,6 +86,14 @@ function theme_load($type = '', $id = 0, $dir = '')
         case 'my_avatar':
             // 我的头像
             $pre .= $default_pre .= 'my_avatar.htm';
+            break;
+        case 'home_article':
+            // 我的文章
+            $pre .= $default_pre .= 'home_article.htm';
+            break;
+        case 'home_comment':
+            // 我的评论
+            $pre .= $default_pre .= 'home_comment.htm';
             break;
         case 'user':
             // user 用户中心
@@ -100,14 +119,6 @@ function theme_load($type = '', $id = 0, $dir = '')
             // 我的首页评论
             $pre .= $default_pre .= 'user_comment.htm';
             break;
-        case 'home_article':
-            // 我的文章
-            $pre .= $default_pre .= 'home_article.htm';
-            break;
-        case 'home_comment':
-            // 我的评论
-            $pre .= $default_pre .= 'home_comment.htm';
-            break;
         case 'single_page':
             // 单页
             $pre .= $default_pre .= 'single_page.htm';
@@ -116,13 +127,21 @@ function theme_load($type = '', $id = 0, $dir = '')
             // 搜索
             $pre .= $default_pre .= 'search.htm';
             break;
-        case 'comment':
-            // 高级评论
-            $pre .= $default_pre .= 'comment.htm';
+        case 'operate_sticky':
+            // 置顶
+            $pre .= $default_pre .= 'operate_sticky.htm';
             break;
-        case 'comment_list.inc':
-            // 评论列表公用文件
-            $pre .= $default_pre .= 'comment_list.inc.htm';
+        case 'operate_close':
+            // 关闭
+            $pre .= $default_pre .= 'operate_close.htm';
+            break;
+        case 'operate_delete':
+            // 删除
+            $pre .= $default_pre .= 'operate_delete.htm';
+            break;
+        case 'operate_move':
+            // 移动
+            $pre .= $default_pre .= 'operate_move.htm';
             break;
         // hook theme_load_case_end.php
         default:

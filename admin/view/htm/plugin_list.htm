@@ -14,7 +14,6 @@
 
         <?php $plugin['name'] = array_value($plugin, 'name');
 		    $plugin['brief'] = array_value($plugin, 'brief');
-		    $plugin['version_fmt'] = 'local' == $action ? $plugin['version'] : array_value($plugin, 'official_version');
 		?>
 
             <article class="d-flex thread" dir="<?php echo $dir; ?>">
@@ -34,7 +33,7 @@
                         </p>
                         <div class="d-flex my-1">
                             <span class="small">
-                                v<?php echo $plugin['version_fmt']; ?>
+                                v<?php echo $plugin['version']; ?>
                             </span>
                             <?php if($plugin['have_upgrade']) { ?>
                             <span class="small text-danger font-weight-bold mx-1">

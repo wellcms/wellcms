@@ -2,28 +2,29 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 // hook category_start.php
 
 $fid = param(1, 0);
-empty($fid) AND message(1, lang('data_malformation'));
+empty($fid) and message(1, lang('data_malformation'));
 
 $extra = array(); // 插件预留
+$apilist = array(); // API预留
 
 // hook category_extra.php
 
-$forum = array_value($forumlist_show, $fid);
+$apilist['forum'] = $forum = array_value($forumlist_show, $fid);
 // hook category_read.php
-empty($forum) AND message(-1, lang('forum_not_exists'));
+empty($forum) and message(-1, lang('forum_not_exists'));
 
 // 管理时使用
-(forum_access_mod($fid, $gid, 'allowdelete') OR forum_access_mod($fid, $gid, 'allowtop')) AND $extra['fid'] = $fid;
+(forum_access_mod($fid, $gid, 'allowdelete') or forum_access_mod($fid, $gid, 'allowtop')) and $extra['fid'] = $fid;
 
 // hook category_before.php
 
 // 不是频道
-empty($forum['category']) AND message(1, lang('data_malformation'));
+empty($forum['category']) and message(1, lang('data_malformation'));
 
 $website_setting = $config['setting'];
 // website_mode
@@ -86,7 +87,7 @@ switch ($forum['model']) {
 
             // hook category_article_flat_start.php
 
-            $page = param(2, 1);
+            $apilist['page'] = $page = param(2, 1);
             $pagesize = empty($forum['pagesize']) ? $conf['pagesize'] : $forum['pagesize'];
 
             $threadlist = NULL;
@@ -124,14 +125,14 @@ switch ($forum['model']) {
 
             // hook category_article_flat_unified_pull_before.php
 
-            $arrlist = thread_unified_pull($arr);
+            $apilist['arrlist'] = $arrlist = thread_unified_pull($arr);
             $threadlist = $arrlist['threadlist'];
             $flaglist = $arrlist['flaglist'];
 
             // hook category_article_flat_after.php
 
             $page_url = url('category-' . $fid . '-{page}', $extra);
-            $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
+            $apilist['num'] = $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
 
             // hook category_article_flat_pagination_before.php
 
@@ -151,11 +152,12 @@ switch ($forum['model']) {
         $header['description'] = strip_tags($forum['brief']);
         $_SESSION['fid'] = $fid;
         $active = 'default';
+        $apilist += array('extra' => $extra, 'header' => $header, 'active' => 'default');
 
         // hook category_article_end.php
 
         if ($ajax) {
-            $conf['api_on'] ? message(0, $arrlist) : message(0, lang('closed'));
+            $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
         } else {
             include _include(theme_load('category', $fid));
         }

@@ -2,7 +2,7 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 include _include(APP_PATH . 'model/operate.func.php');
 
@@ -35,25 +35,32 @@ switch ($action) {
                 $fup = 0;
             }
 
-            // hook operate_sticky_get_end.php
+            // hook operate_sticky_get_center.php
 
             $safe_token = well_token_set($uid);
+            $header['title'] = lang('top');
 
-            include _include(APP_PATH . 'view/htm/operate_sticky.htm');
+            // hook operate_sticky_get_end.php
+
+            if ('1' == _GET('ajax')) {
+                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'fup' => $fup, 'header' => $header)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('operate_sticky'));
+            }
 
         } elseif ('POST' == $method) {
 
-            $backstage && FALSE === group_access($gid, 'managesticky') AND message(1, lang('user_group_insufficient_privilege'));
+            $backstage && FALSE === group_access($gid, 'managesticky') and message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             // hook operate_sticky_start.php
 
             $sticky = param('sticky', 0);
 
             $tidarr = param('tidarr', array(0));
-            empty($tidarr) AND message(1, lang('please_choose_thread'));
+            empty($tidarr) and message(1, lang('please_choose_thread'));
 
             // hook operate_sticky_before.php
 
@@ -85,8 +92,8 @@ switch ($action) {
                 if ($sticky > 0) {
 
                     // 全站置顶
-                    3 == $sticky AND $index_stickys += 1;
-                    3 == $thread['sticky'] AND $sticky < 3 AND $index_stickys -= 1;
+                    3 == $sticky and $index_stickys += 1;
+                    3 == $thread['sticky'] and $sticky < 3 and $index_stickys -= 1;
 
                     if (!$thread['sticky']) {
                         $arr_create[$fid] = $fid;
@@ -102,9 +109,9 @@ switch ($action) {
 
                     $arr_delete[$tid] = $fid;
 
-                    3 == $thread['sticky'] AND $index_stickys -= 1;
+                    3 == $thread['sticky'] and $index_stickys -= 1;
 
-                    $thread['sticky'] AND $arr[$fid] -= 1;
+                    $thread['sticky'] and $arr[$fid] -= 1;
                 }
 
                 // hook operate_sticky_log_create_center.php
@@ -145,21 +152,29 @@ switch ($action) {
         if ('GET' == $method) {
 
             // hook operate_close_get_start.php
-            $safe_token = well_token_set($uid);
 
-            include _include(APP_PATH . 'view/htm/operate_close.htm');
+            $safe_token = well_token_set($uid);
+            $header['title'] = lang('close_thread');
+
+            // hook operate_close_get_end.php
+
+            if ('1' == _GET('ajax')) {
+                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'header' => $header)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('operate_close'));
+            }
 
         } elseif ('POST' == $method) {
 
-            $backstage && FALSE === group_access($gid, 'manageupdatethread') AND message(1, lang('user_group_insufficient_privilege'));
+            $backstage && FALSE === group_access($gid, 'manageupdatethread') and message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             $close = param('close', 0);
 
             $tidarr = param('tidarr', array(0));
-            empty($tidarr) AND message(1, lang('please_choose_thread'));
+            empty($tidarr) and message(1, lang('please_choose_thread'));
             $threadlist = well_thread_find_by_tids($tidarr);
 
             // hook operate_close_start.php
@@ -177,8 +192,8 @@ switch ($action) {
             foreach ($threadlist as &$thread) {
                 $tid = $thread['tid'];
                 $fid = $thread['fid'];
-                
-                $thread['sticky'] AND $thread['closed'] != $close AND cache_delete('sticky_thread_list');
+
+                $thread['sticky'] and $thread['closed'] != $close and cache_delete('sticky_thread_list');
 
                 if (forum_access_mod($fid, $gid, 'allowtop')) {
 
@@ -194,7 +209,7 @@ switch ($action) {
                 }
             }
 
-            !empty($tids) AND well_thread_update($tids, array('closed' => $close));
+            !empty($tids) and well_thread_update($tids, array('closed' => $close));
 
             // hook operate_close_end.php
 
@@ -204,19 +219,29 @@ switch ($action) {
     case 'delete':
         if ('GET' == $method) {
 
+            // hook operate_delete_get_start.php
+            
             $safe_token = well_token_set($uid);
-            include _include(APP_PATH . 'view/htm/operate_delete.htm');
+            $header['title'] = lang('close_thread');
+
+            // hook operate_delete_get_end.php
+            
+            if ('1' == _GET('ajax')) {
+                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'header' => $header)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('operate_delete'));
+            }
 
         } elseif ('POST' == $method) {
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             if ($backstage) {
-                FALSE === group_access($gid, 'managedeletethread') AND message(1, lang('user_group_insufficient_privilege'));
+                FALSE === group_access($gid, 'managedeletethread') and message(1, lang('user_group_insufficient_privilege'));
             } else {
                 $allowdelete = group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete') || 1 == $gid;
-                empty($allowdelete) AND message(1, lang('user_group_insufficient_privilege'));
+                empty($allowdelete) and message(1, lang('user_group_insufficient_privilege'));
             }
 
             // hook operate_delete_start.php
@@ -233,7 +258,7 @@ switch ($action) {
             } else {
                 // 选择框批量删除
                 $tidarr = param('tidarr', array(0));
-                empty($tidarr) AND message(1, lang('please_choose_thread'));
+                empty($tidarr) and message(1, lang('please_choose_thread'));
                 // hook operate_delete_tidarr.php
                 well_thread_delete_all($tidarr);
                 // hook operate_delete_after.php
@@ -248,31 +273,39 @@ switch ($action) {
         if ('GET' == $method) {
 
             // hook operate_move_get_start.php
+
             $fid = param('fid', 0);
 
             $cond = array('type' => 1, 'category' => 0);
 
             if (isset($forumlist[$fid])) {
                 $forum = $forumlist[$fid];
-                $forum['model'] AND $cond['model'] = $forum['model'];
+                $forum['model'] and $cond['model'] = $forum['model'];
             }
 
             $forumlist_show = arrlist_cond_orderby($forumlist_show, $cond, array(), 1, 1000);
             $forumarr = arrlist_key_values($forumlist_show, 'fid', 'name');
 
             $safe_token = well_token_set($uid);
+            $header['title'] = lang('move');
 
-            include _include(APP_PATH . 'view/htm/operate_move.htm');
+            // hook operate_move_get_end.php
+
+            if ('1' == _GET('ajax')) {
+                $conf['api_on'] ? message(0, array('forumlist' => $forumarr, 'safe_token' => $safe_token, 'header' => $header)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('operate_move'));
+            }
 
         } elseif ('POST' == $method) {
 
-            $backstage && (FALSE === group_access($gid, 'manageupdatethread') || FALSE === group_access($gid, 'allowmove')) AND message(1, lang('user_group_insufficient_privilege'));
+            $backstage && (FALSE === group_access($gid, 'manageupdatethread') || FALSE === group_access($gid, 'allowmove')) and message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             $tidarr = param('tidarr', array(0));
-            empty($tidarr) AND message(1, lang('please_choose_thread'));
+            empty($tidarr) and message(1, lang('please_choose_thread'));
             //$threadlist = well_thread_find_by_tids($tidarr);
             $threadlist = well_thread__find(array('tid' => $tidarr), array('tid' => 1), 1, count($tidarr));
 
@@ -338,7 +371,7 @@ switch ($action) {
 
                 well_thread_update_all($tids, array('fid' => $newfid));
 
-                $thread_tid AND thread_tid_update($tids, $newfid);
+                $thread_tid and thread_tid_update($tids, $newfid);
 
                 // hook operate_move_thread_update_after.php
 
@@ -358,7 +391,7 @@ switch ($action) {
         // hook operate_search_start.php
 
         $keyword = param('keyword');
-        empty($keyword) AND $keyword = param(2);
+        empty($keyword) and $keyword = param(2);
         $keyword = trim($keyword);
         $range = param(3, 1);
         $page = param(4, 1);
@@ -406,7 +439,6 @@ switch ($action) {
                 message(0, $threadlist);
             }
         } else {
-            //include _include(APP_PATH . 'view/htm/search.htm');
             include _include(theme_load('search'));
         }
         break;

@@ -99,7 +99,7 @@ return array(
     'session_delay_update' => 0, // 开启 session 延迟更新，减轻压力，会导致不重要的数据(useragent,url)显示有些延迟，单位为秒。
     'upload_image_width' => 927,    // 上传图片自动缩略的最大宽度
     'upload_resize' => 'clip',      // 上传图片clip裁切 thumb缩略
-    'order_default' => 'lastpid',   // 作为BBS时帖子排序
+    'order_default' => 'lastpid',   // 作为回复排序
     'attach_dir_save_rule' => 'Ym', // 附件存放规则，附件多用：Ymd，附件少：Ym
     'update_views_on' => 1,
     'user_create_email_on' => 0,

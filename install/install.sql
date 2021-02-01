@@ -113,9 +113,9 @@ CREATE TABLE `wellcms_session` (
   `bigdata` tinyint(1) NOT NULL default '0',  # 是否有大数据。
   `last_date` int(11) unsigned NOT NULL default '0',  # 上次活动时间
   PRIMARY KEY (`sid`),
-  KEY ip (`ip`),
-  KEY fid (`fid`),
-  KEY uid_last_date (`uid`, `last_date`)
+  KEY `ip` (`ip`),
+  KEY `last_date` (`last_date`),
+  KEY `uid_last_date` (`uid`, `last_date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 DROP TABLE IF EXISTS `wellcms_session_data`;
@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.1.0","official_version":"2.1.0","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.1.01","official_version":"2.1.01","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;

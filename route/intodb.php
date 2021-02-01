@@ -96,6 +96,7 @@ if ('GET' == $method) {
     } else {
         $brief = ($brief_auto AND $_message) ? xn_html_safe(xn_substr($_message, 0, 120)) : '';
     }
+    $brief and $brief = filter_all_html($brief);
     
     // hook intodb_post_center.php
     

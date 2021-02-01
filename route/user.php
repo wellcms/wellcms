@@ -19,6 +19,7 @@ switch ($action) {
 
         if ('GET' == $method) {
 
+            $apilist = array();
             $page = param(3, 1);
             $pagesize = $conf['pagesize'];
             $extra = array(); // 插件预留
@@ -67,7 +68,11 @@ switch ($action) {
             $header['title'] = $_user['username'] . ' - ' . lang('comment');
             $header['mobile_title'] = '';
 
-            include _include(theme_load('user_comment'));
+            if ($ajax) {
+                $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'arrlist' => $arrlist, 'allowdelete' => $allowdelete, 'header' => $header, 'user' => user_safe_info($_user))) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('user_comment'));
+            }
         }
 
         // hook user_comment_end.php
@@ -82,19 +87,21 @@ switch ($action) {
 
             // hook user_login_get_start.php
 
-            $referer = user_http_referer();
-
             $header['title'] = lang('user_login');
-
             $safe_token = well_token_set(0);
+            $referer = user_http_referer();
 
             // hook user_login_get_end.php
 
-            include _include(theme_load('user_login'));
+            if ('1' === _GET('ajax', $ajax)) {
+                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('user_login'));
+            }
 
         } else if ('POST' == $method) {
 
-            // 验证token
+            // 验证 token 不成功需要刷新页面
             if (1 == array_value($conf, 'login_token', 0)) {
                 $safe_token = param('safe_token');
                 well_token_set(0);
@@ -147,13 +154,17 @@ switch ($action) {
 
             // hook user_create_get_start.php
 
+            $header['title'] = lang('create_user');
             $referer = user_http_referer();
             $safe_token = well_token_set(0);
-            $header['title'] = lang('create_user');
 
             // hook user_create_get_end.php
-
-            include _include(theme_load('user_create'));
+            
+            if ('1' === _GET('ajax', $ajax)) {
+                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('user_create'));
+            }
 
         } else if ('POST' == $method) {
 
@@ -442,6 +453,7 @@ switch ($action) {
     default:
         // hook user_index_start.php
 
+        $apilist = array();
         $_uid = param(1, 0);
         $page = param(2, 1);
         $pagesize = $conf['pagesize'];
@@ -474,7 +486,14 @@ switch ($action) {
 
         // hook user_index_end.php
 
-        include _include(theme_load('user'));
+        if ($ajax) {
+            if ($threadlist) {
+                foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
+            }
+            $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'user' => $_user ? user_safe_info($_user) : '', 'threadlist' => $threadlist, 'extra' => $extra, 'allowdelete' => $allowdelete, 'header' => $header)) : message(0, lang('closed'));
+        } else {
+            include _include(theme_load('user'));
+        }
         break;
 }
 

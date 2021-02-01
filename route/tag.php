@@ -2,7 +2,7 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 $action = param(1);
 
@@ -13,6 +13,7 @@ switch ($action) {
     case 'list':
         // hook tag_list_start.php
 
+        $apilist = array();
         $page = param(2, 1);
         $pagesize = $conf['tagsize'];
         $extra = array(); // 插件预留
@@ -43,7 +44,7 @@ switch ($action) {
         // hook tag_list_end.php
 
         if ($ajax) {
-            $conf['api_on'] ? message(0, $taglist) : message(0, lang('closed'));
+            $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'arrlist' => $taglist, 'extra' => $extra, 'header' => $header)) : message(0, lang('closed'));
         } else {
             include _include(theme_load('tag_list'));
         }
@@ -51,6 +52,7 @@ switch ($action) {
     // hook tag_case_end.php
     default:
         // tag-tagid-page.htm
+        $apilist = array();
         $tagid = param(1, 0);
         $page = param(2, 1);
         $pagesize = $conf['pagesize'];
@@ -60,7 +62,7 @@ switch ($action) {
 
         $read = well_tag_read_by_tagid_cache($tagid);
         // hook tag_cache_after.php
-        empty($read) AND message(-1, lang('well_tag_not_existed'));
+        empty($read) and message(-1, lang('well_tag_not_existed'));
 
         // hook tag_center.php
 
@@ -93,7 +95,7 @@ switch ($action) {
         // hook tag_end.php
 
         if ($ajax) {
-            $conf['api_on'] ? message(0, array('tag' => $read, 'threadlist' => $threadlist)) : message(0, lang('closed'));
+            $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'tag' => $read, 'threadlist' => $threadlist, 'extra' => $extra, 'header' => $header)) : message(0, lang('closed'));
         } else {
             include _include(theme_load('tag', $tagid));
         }

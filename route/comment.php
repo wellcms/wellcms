@@ -2,7 +2,7 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 // hook comment_start.php
 
@@ -18,33 +18,36 @@ switch ($action) {
 
         // hook comment_create_start.php
 
+        $apilist = array();
         $tid = param(2, 0);
         $thread = well_thread_read($tid);
-        empty($thread) AND message(-1, lang('thread_not_exists'));
+        empty($thread) and message(-1, lang('thread_not_exists'));
 
         // hook comment_create_before.php
 
         $quotepid = param(3, 0);
         $fid = $thread['fid'];
         $forum = forum_read($fid);
-        empty($forum) AND message(1, lang('forum_not_exists'));
-        1 != $forum['type'] AND message(1, lang('user_group_insufficient_privilege'));
+        empty($forum) and message(1, lang('forum_not_exists'));
+        1 != $forum['type'] and message(1, lang('user_group_insufficient_privilege'));
 
         // 附表数据在此处合并
         // hook comment_create_center.php
 
         // 用户组权限不足
-        0 != $thread['status'] || !forum_access_user($fid, $gid, 'allowpost') AND message(1, lang('user_group_insufficient_privilege'));
+        0 != $thread['status'] || !forum_access_user($fid, $gid, 'allowpost') and message(1, lang('user_group_insufficient_privilege'));
 
         // hook comment_create_after.php
 
         // 已关闭评论
-        (($thread['closed'] || 0 == $forum['comment']) && (0 == $gid || $gid > 5)) AND message(1, lang('thread_has_already_closed'));
+        (($thread['closed'] || 0 == $forum['comment']) && (0 == $gid || $gid > 5)) and message(1, lang('thread_has_already_closed'));
 
         if ('GET' == $method) {
 
-            2 != array_value($forum, 'comment', 0) AND message(1, lang('user_group_insufficient_privilege'));
+            2 != array_value($forum, 'comment', 0) and message(1, lang('user_group_insufficient_privilege'));
 
+            $extra = array();
+            
             // hook comment_create_get_start.php
 
             $safe_token = well_token_set($uid);
@@ -60,15 +63,18 @@ switch ($action) {
 
             // hook comment_create_get_end.php
 
-            include _include(theme_load('comment', $fid));
-            //include _include(APP_PATH . 'view/htm/comment.htm');
+            if ('1' == _GET('ajax')) {
+                $conf['api_on'] ? message(0, $apilist += array('forum' => $forum, 'safe_token' => $safe_token, 'thread' => well_thread_safe_info($thread), 'extra' => $extra, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('comment', $fid));
+            }
 
         } elseif ('POST' == $method) {
 
             // 验证token
             if (1 == array_value($conf, 'comment_token', 0)) {
                 $safe_token = param('safe_token');
-                FALSE === well_token_verify($uid, $safe_token, 3) AND message(1, lang('illegal_operation'));
+                FALSE === well_token_verify($uid, $safe_token, 3) and message(1, lang('illegal_operation'));
             }
 
             // hook comment_create_post_start.php
@@ -76,7 +82,7 @@ switch ($action) {
             $doctype = param('doctype', 0);
             $quotepid = param('quotepid', 0);
             $message = param('message', '', FALSE);
-            empty($message) AND message('message', lang('please_input_message'));
+            empty($message) and message('message', lang('please_input_message'));
 
             if (2 == array_value($forum, 'comment', 0)) {
                 // 过滤a标签
@@ -90,17 +96,17 @@ switch ($action) {
 
             // hook comment_create_post_before.php
 
-            xn_strlen($message) > 524288 AND message('message', lang('message_too_long'));
+            xn_strlen($message) > 524288 and message('message', lang('message_too_long'));
 
             $quotepost = comment_pid_read($quotepid);
-            (empty($quotepost) || $quotepost['tid'] != $tid) AND $quotepid = 0;
+            (empty($quotepost) || $quotepost['tid'] != $tid) and $quotepid = 0;
 
             // hook comment_create_post_center.php
 
             $post = array('tid' => $tid, 'uid' => $uid, 'fid' => $fid, 'create_date' => $time, 'userip' => $longip, 'doctype' => $doctype, 'quotepid' => $quotepid, 'message' => $message);
             // hook comment_create_post_middle.php
             $pid = comment_create($post);
-            FALSE === $pid AND message(-1, lang('create_post_failed'));
+            FALSE === $pid and message(-1, lang('create_post_failed'));
 
             $post = comment_read($pid);
             $post['floor'] = $thread['posts'] + 2;
@@ -135,25 +141,26 @@ switch ($action) {
 
         // hook comment_update_start.php
 
+        $apilist = array();
         $pid = param(2);
         $comment = comment_read($pid);
-        empty($comment) AND message(-1, lang('post_not_exists'));
+        empty($comment) and message(-1, lang('post_not_exists'));
 
         // hook comment_update_before.php
 
         $tid = $comment['tid'];
         $thread = well_thread_read_cache($tid);
-        empty($thread) AND message(-1, lang('thread_not_exists'));
+        empty($thread) and message(-1, lang('thread_not_exists'));
 
         // hook comment_update_center.php
 
         $fid = $thread['fid'];
         $forum = forum_read($fid);
-        empty($forum) AND message(-1, lang('forum_not_exists'));
-        1 != $forum['type'] AND message(1, lang('user_group_insufficient_privilege'));
+        empty($forum) and message(-1, lang('forum_not_exists'));
+        1 != $forum['type'] and message(1, lang('user_group_insufficient_privilege'));
 
         // 高级回复编辑内容
-        2 != array_value($forum, 'comment', 0) AND message(1, lang('user_group_insufficient_privilege'));
+        2 != array_value($forum, 'comment', 0) and message(1, lang('user_group_insufficient_privilege'));
 
         // hook comment_update_middle.php
 
@@ -161,27 +168,29 @@ switch ($action) {
         forum_access_user($fid, $gid, 'allowpost') || message(1, lang('user_group_insufficient_privilege'));
 
         // 已关闭评论
-        (($thread['closed'] || 0 == $forum['comment']) && (0 == $gid || $gid > 5)) AND message(1, lang('thread_has_already_closed'));
+        (($thread['closed'] || 0 == $forum['comment']) && (0 == $gid || $gid > 5)) and message(1, lang('thread_has_already_closed'));
 
         $allowupdate = forum_access_mod($fid, $gid, 'allowupdate');
-        !$allowupdate && !$comment['allowupdate'] AND message(-1, lang('have_no_privilege_to_update'));
+        !$allowupdate && !$comment['allowupdate'] and message(-1, lang('have_no_privilege_to_update'));
 
-        !$allowupdate && $thread['closed'] AND message(-1, lang('thread_has_already_closed'));
+        !$allowupdate && $thread['closed'] and message(-1, lang('thread_has_already_closed'));
 
         // hook comment_update_after.php
 
         if ('GET' == $method) {
 
+            $extra = array();
+
             // hook comment_update_get_start.php
 
             $comment['message'] = htmlspecialchars($comment['message']);
 
-            ($uid != $comment['uid']) AND $post['message'] = xn_html_safe($comment['message']);
+            ($uid != $comment['uid']) and $post['message'] = xn_html_safe($comment['message']);
 
             // hook comment_update_get_before.php
 
             $attachlist = $imagelist = $filelist = array();
-            $comment['files'] AND list($attachlist, $imagelist, $filelist) = well_attach_find_by_pid($pid);
+            $comment['files'] and list($attachlist, $imagelist, $filelist) = well_attach_find_by_pid($pid);
 
             // hook comment_update_get_center.php
 
@@ -199,15 +208,18 @@ switch ($action) {
 
             // hook comment_update_get_end.php
 
-            include _include(theme_load('comment', $fid));
-            //include _include(APP_PATH . 'view/htm/comment.htm');
+            if ('1' == _GET('ajax')) {
+                $conf['api_on'] ? message(0, $apilist += array('forum' => $forum, 'comment' => comment_filter($comment), 'safe_token' => $safe_token, 'thread' => well_thread_safe_info($thread), 'extra' => $extra, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('comment', $fid));
+            }
 
         } elseif ('POST' == $method) {
 
             // 验证token
             if (1 == array_value($conf, 'comment_token', 0)) {
                 $safe_token = param('safe_token');
-                FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+                FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
             }
 
             $message = param('message', '', FALSE);
@@ -225,8 +237,8 @@ switch ($action) {
 
             // hook comment_update_post_before.php
 
-            empty($message) AND message('message', lang('please_input_message'));
-            mb_strlen($message, 'UTF-8') > 2048000 AND message('message', lang('message_too_long'));
+            empty($message) and message('message', lang('please_input_message'));
+            mb_strlen($message, 'UTF-8') > 2048000 and message('message', lang('message_too_long'));
 
             // hook comment_update_post_center.php
 
@@ -245,7 +257,7 @@ switch ($action) {
 
                 $update = array('doctype' => $doctype, 'images' => $images, 'files' => $files, 'message' => $message);
                 // hook comment_update_post_after.php
-                FALSE === comment_update($pid, $update) AND message(-1, lang('update_post_failed'));
+                FALSE === comment_update($pid, $update) and message(-1, lang('update_post_failed'));
             }
 
             // hook post_update_post_end.php
@@ -259,7 +271,7 @@ switch ($action) {
         user_login_check();
 
         $safe_token = param('safe_token');
-        FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+        FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
         $type = param('type', 0);
         $pid = $type ? param('pid', array()) : param(2, 0);
@@ -272,7 +284,7 @@ switch ($action) {
 
         $allowdelete = 1 == $gid || group_access($gid, 'allowdelete') || group_access($gid, 'allowuserdelete');
 
-        empty($allowdelete) AND message(-1, lang('user_group_insufficient_privilege'));
+        empty($allowdelete) and message(-1, lang('user_group_insufficient_privilege'));
 
         if ($type) {
 
@@ -314,7 +326,7 @@ switch ($action) {
 
             // hook comment_delete_pids_center.php
 
-            empty($pidarr) AND message(1, lang('data_malformation'));
+            empty($pidarr) and message(1, lang('data_malformation'));
 
             $r = comment_delete($pidarr);
 
@@ -324,7 +336,7 @@ switch ($action) {
 
             // hook comment_delete_pids_safter.php
 
-            empty($tidarr) AND message(1, lang('data_malformation'));
+            empty($tidarr) and message(1, lang('data_malformation'));
 
             // 更新主题回复数
             $tidarr = array_count_values($tidarr);
@@ -336,21 +348,21 @@ switch ($action) {
 
         } else {
             $post = comment_read($pid);
-            empty($post) AND message(-1, lang('post_not_exists'));
+            empty($post) and message(-1, lang('post_not_exists'));
 
             // hook comment_delete_before.php
 
             $forum = isset($forumlist[$post['fid']]) ? $forumlist[$post['fid']] : NULL;
-            empty($forum) AND message(1, lang('forum_not_exists'));
+            empty($forum) and message(1, lang('forum_not_exists'));
 
-            empty($forum['type']) AND message(1, lang('user_group_insufficient_privilege'));
+            empty($forum['type']) and message(1, lang('user_group_insufficient_privilege'));
 
             // hook comment_delete_center.php
 
             $allowdelete = forum_access_mod($post['fid'], $gid, 'allowdelete');
-            empty($allowdelete) && empty($post['allowdelete']) AND message(1, lang('insufficient_delete_privilege'));
+            empty($allowdelete) && empty($post['allowdelete']) and message(1, lang('insufficient_delete_privilege'));
 
-            empty($allowdelete) && ($post['closed'] OR empty($forum['comment'])) AND message(1, lang('thread_has_already_closed'));
+            empty($allowdelete) && ($post['closed'] or empty($forum['comment'])) and message(1, lang('thread_has_already_closed'));
 
             $r = comment_delete($pid);
 

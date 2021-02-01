@@ -2,8 +2,9 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
+$apilist = array();  // api预留
 $tid = param(1, 0);
 $page = param(2, 1);
 $pagesize = $conf['comment_pagesize'];
@@ -13,17 +14,17 @@ $extra = array(); // 插件预留
 
 $thread = well_thread_read_cache($tid);
 // hook read_cache_after.php
-empty($thread) AND message(-1, lang('thread_not_exists'));
+empty($thread) and message(-1, lang('thread_not_exists'));
 
 // hook read_status_before.php
 
-0 != $thread['status'] && $uid != $thread['uid'] && !group_access($gid, 'allowdelete') AND http_location($conf['path']);
+0 != $thread['status'] && $uid != $thread['uid'] && !group_access($gid, 'allowdelete') and http_location($conf['path']);
 
 // hook read_before.php
 
 $fid = $thread['fid'];
 $forum = isset($forumlist[$fid]) ? $forumlist[$fid] : NULL;
-empty($forum) AND message(-1, lang('forum_not_exists'));
+empty($forum) and message(-1, lang('forum_not_exists'));
 
 // hook read_center.php
 
@@ -53,7 +54,7 @@ switch ($thread['type']) {
 
             // hook read_article_default_before.php
 
-            $postlist = ($forum['comment'] AND $thread['closed'] < 2 AND $thread['posts'] > 0) ? comment_find_by_tid($tid, $page, $pagesize) : NULL;
+            $postlist = ($forum['comment'] and $thread['closed'] < 2 and $thread['posts'] > 0) ? comment_find_by_tid($tid, $page, $pagesize) : NULL;
 
             // hook read_article_default_center.php
 
@@ -65,12 +66,12 @@ switch ($thread['type']) {
 
                 // hook read_article_default_page_before.php
 
-                $thread['files'] > 0 AND list($attachlist, $imagelist, $thread['filelist']) = well_attach_find_by_tid($tid);
+                $thread['files'] > 0 and list($attachlist, $imagelist, $thread['filelist']) = well_attach_find_by_tid($tid);
 
                 // hook read_article_default_page_center.php
 
                 $data = data_read_cache($tid);
-                empty($data) AND message(-1, lang('data_malformation'));
+                empty($data) and message(-1, lang('data_malformation'));
 
                 // hook read_article_default_page_after.php
             }
@@ -79,7 +80,7 @@ switch ($thread['type']) {
 
             $allowpost = $forum['comment'] && $thread['closed'] < 2 && 0 == $thread['status'] && forum_access_user($fid, $gid, 'allowpost');
             $allowupdate = $uid == $thread['uid'] || forum_access_mod($thread['fid'], $gid, 'allowupdate');
-            $allowdelete = ($uid == $thread['uid'] AND forum_access_mod($fid, $gid, 'allowuserdelete')) || forum_access_mod($fid, $gid, 'allowdelete');
+            $allowdelete = ($uid == $thread['uid'] and forum_access_mod($fid, $gid, 'allowuserdelete')) || forum_access_mod($fid, $gid, 'allowdelete');
 
             // hook read_article_default_after.php
         }
@@ -127,9 +128,8 @@ switch ($thread['type']) {
         // hook read_article_end.php
 
         if ($ajax) {
-            empty($conf['api_on']) AND message(0, lang('closed'));
-            well_thread_filter($thread);
-            message(0, array('thread' => $thread, 'thread_data' => $data, 'arrlist' => $arrlist));
+            empty($conf['api_on']) and message(0, lang('closed'));
+            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'arrlist' => $arrlist, 'safe_token' => $safe_token, 'comment' => array('page' => $page, 'num' => $num, 'postlist' => $postlist, 'access' => array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete)), 'header' => $header));
         } else {
             // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
             switch ($forum['model']) {
@@ -155,15 +155,16 @@ switch ($thread['type']) {
         $attachlist = array();
         $imagelist = array();
         $thread['filelist'] = array();
+        $threadlist = NULL;
 
         // hook read_single_page_before.php
 
-        $thread['files'] > 0 AND list($attachlist, $imagelist, $thread['filelist']) = well_attach_find_by_tid($tid);
+        $thread['files'] > 0 and list($attachlist, $imagelist, $thread['filelist']) = well_attach_find_by_tid($tid);
 
         // hook read_single_page_center.php
 
         $data = data_read_cache($tid);
-        empty($data) AND message(-1, lang('data_malformation'));
+        empty($data) and message(-1, lang('data_malformation'));
 
         // hook read_single_page_middle.php
 
@@ -195,9 +196,9 @@ switch ($thread['type']) {
         // hook read_single_page_end.php
 
         if ($ajax) {
-            empty($conf['api_on']) AND message(0, lang('closed'));
-            well_thread_filter($thread);
-            message(0, array('thread' => $thread, 'data' => $data));
+            empty($conf['api_on']) and message(0, lang('closed'));
+
+            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'threadlist' => $threadlist, 'access' => array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete), 'header' => $header));
         } else {
             include _include(theme_load('single_page', $fid));
         }

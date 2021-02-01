@@ -1,5 +1,5 @@
 /*0 表示永不超时*/
-$.alert = function (subject, timeout, options) {
+$.alert = function (body, timeout, options) {
     var options = options || {size: "md"};
     var s = '\
 	<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">\
@@ -12,7 +12,7 @@ $.alert = function (subject, timeout, options) {
 					</button>\
 				</div>\
 				<div class="modal-body">\
-					<h5>' + subject + '</h5>\
+					' + body + '\
 				</div>\
 				<div class="modal-footer">\
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">' + lang.close + '</button>\

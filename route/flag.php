@@ -2,12 +2,13 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 // hook flag_start.php
 
+$apilist = array();
 $flagid = param(1, 0);
-empty($flagid) AND message(1, lang('data_malformation'));
+empty($flagid) and message(1, lang('data_malformation'));
 
 $page = param(2, 1);
 $pagesize = $conf['pagesize'];
@@ -18,7 +19,7 @@ $threadlist = NULL;
 
 $read = flag_read_cache($flagid);
 // hook flag_read_after.php
-empty($read)AND message(1, lang('thread_not_exists'));
+empty($read) and message(1, lang('thread_not_exists'));
 
 // hook flag_center.php
 $arrlist = $read['count'] ? flag_thread_find_by_flagid($flagid, $page, $pagesize) : NULL;
@@ -45,11 +46,16 @@ $header['mobile_link'] = url('flag-' . $flagid);
 $header['keywords'] = empty($read['keywords']) ? $read['name'] : $read['keywords'];
 $header['description'] = empty($read['description']) ? $read['name'] : $read['description'];
 $flag_link = '';
+$safe_token = well_token_set($uid);
 
 // hook flag_end.php
 
 if ($ajax) {
-    $conf['api_on'] ? message(0, array('flag' => $read, 'threadlist' => $threadlist)) : message(0, lang('closed'));
+    if ($threadlist) {
+        foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
+    }
+
+    $conf['api_on'] ? message(0, $apilist += array('flag' => $read, 'page' => $page, 'num' => $num, 'threadlist' => $threadlist, 'extra' => $extra, 'header' => $header, 'safe_token' => $safe_token)) : message(0, lang('closed'));
 } else {
     include _include(theme_load('flag', $flagid));
 }

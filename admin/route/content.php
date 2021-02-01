@@ -291,6 +291,7 @@ switch ($action) {
             } else {
                 $brief = ($brief_auto AND $_message) ? xn_substr($_message, 0, 120) : '';
             }
+            $brief and $brief = filter_all_html($brief);
 
             // hook admin_content_create_post_brief_end.php
 
@@ -561,6 +562,7 @@ switch ($action) {
             } else {
                 $brief = ($brief_auto AND $_message) ? xn_html_safe(xn_substr($_message, 0, 120)) : '';
             }
+            $brief and $brief = filter_all_html($brief);
 
             // hook admin_content_update_post_brief_after.php
 

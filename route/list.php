@@ -2,12 +2,13 @@
 /*
  * Copyright (C) www.wellcms.cn
 */
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 // hook list_start.php
 
+$apilist = array();
 $fid = param(1, 0);
-empty($fid) AND message(1, lang('data_malformation'));
+empty($fid) and message(1, lang('data_malformation'));
 
 $page = param(2, 1);
 $extra = array(); // 插件预留
@@ -17,7 +18,7 @@ $active = 'default';
 
 $forum = forum_read($fid);
 // hook list_read_after.php
-empty($forum) AND message(1, lang('forum_not_exists'));
+empty($forum) and message(1, lang('forum_not_exists'));
 
 // hook list_forum_after.php
 
@@ -51,7 +52,7 @@ if (1 == $forum['type']) {
                 // hook list_thread_before.php
 
                 // 返回版块下tid
-                FALSE === $orderby AND $tidlist = well_thread_find_tid($fid, $page, $pagesize);
+                FALSE === $orderby and $tidlist = well_thread_find_tid($fid, $page, $pagesize);
 
                 //TRUE === $orderby AND $tidlist = well_thread_find_desc($fid, $page, $pagesize);
 
@@ -93,12 +94,12 @@ if (1 == $forum['type']) {
             $_SESSION['fid'] = $fid;
 
             // 管理时使用
-            (forum_access_mod($fid, $gid, 'allowdelete') OR forum_access_mod($fid, $gid, 'allowtop')) AND $extra['fid'] = $fid;
+            (forum_access_mod($fid, $gid, 'allowdelete') or forum_access_mod($fid, $gid, 'allowtop')) and $extra['fid'] = $fid;
 
             // hook list_header_after.php
 
             if ($ajax) {
-                $conf['api_on'] ? message(0, $arrlist) : message(0, lang('closed'));
+                $conf['api_on'] ? message(0, $apilist += array('forum' => $forum, 'page' => $page, 'num' => $num, 'arrlist' => $arrlist, 'extra' => $extra, 'header' => $header, 'active' => $active)) : message(0, lang('closed'));
             } else {
                 // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
                 switch ($forum['model']) {

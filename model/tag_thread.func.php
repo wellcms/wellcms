@@ -49,6 +49,14 @@ function well_tag_thread__count($cond = array(), $d = NULL)
     return $n;
 }
 
+function tag_thread_max_id($col = 'id', $cond = array(), $d = NULL)
+{
+    // hook model_tag_thread_max_id_start.php
+    $id = db_maxid('website_tag_thread', $col, $cond, $d);
+    // hook model_tag_thread_max_id_end.php
+    return $id;
+}
+
 function tag_thread_big_insert($arr = array(), $d = NULL)
 {
     // hook model_tag_thread_big_insert_start.php

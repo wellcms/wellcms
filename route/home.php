@@ -19,6 +19,7 @@ list($member_navs, $member_menus) = nav_member();
 switch ($action) {
     // hook home_case_start.php
     case 'article':
+        $apilist = array();
         $page = param(2, 1);
         $pagesize = $conf['pagesize'];
         $extra = array(); // 插件预留
@@ -48,20 +49,30 @@ switch ($action) {
         $pagination = pagination($page_url, $num, $page, $pagesize);
 
         $header['title'] = lang('my_index_page');
+        $safe_token = well_token_set($uid);
 
         // hook home_article_end.php
 
-        include _include(theme_load('home_article'));
+        if ($ajax) {
+            if ($threadlist) {
+                foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
+            }
+
+            $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'allowdelete' => $allowdelete, 'threadlist' => $threadlist, 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'extra' => $extra, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+        } else {
+            include _include(theme_load('home_article'));
+        }
         break;
     case 'comment':
         // hook home_comment_start.php
 
         if ('GET' == $method) {
 
+            $apilist = array();
             $page = param(2, 1);
             $pagesize = 25;
             $extra = array(); // 插件预留
-
+            $commentlist = $threadlist = NULL;
             // hook home_comment_before.php
 
             // 从默认的地方读取主题列表
@@ -117,7 +128,16 @@ switch ($action) {
 
             // hook home_comment_after.php
 
-            include _include(theme_load('home_comment'));
+            if ($ajax) {
+                
+                if ($commentlist) {
+                    foreach ($commentlist as &$comment) $comment = comment_filter($comment);
+                }
+
+                $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'allowdelete' => $allowdelete, 'commentlist' => $commentlist, 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'extra' => $extra, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('home_comment'));
+            }
         }
 
         // hook home_comment_end.php

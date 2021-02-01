@@ -164,7 +164,7 @@ function sess_new($sid)
     }
 
     // 可能会暴涨
-    $url = _SERVER('REQUEST_URI_NO_PATH');
+    $url = _SERVER('REQUEST_URI');
 
     $arr = array(
         'sid' => $sid,
@@ -203,14 +203,13 @@ function sess_write($sid, $data)
 
     $uid = _SESSION('uid');
     $fid = _SESSION('fid');
-    unset($_SESSION['uid']);
-    unset($_SESSION['fid']);
+    unset($_SESSION['uid'], $_SESSION['fid']);
 
-    $data AND $data = session_encode();
+    $data and $data = session_encode();
 
-    function_exists('chdir') AND chdir(APP_PATH);
+    function_exists('chdir') and chdir(APP_PATH);
 
-    $url = _SERVER('REQUEST_URI_NO_PATH');
+    $url = _SERVER('REQUEST_URI');
     $agent = _SERVER('HTTP_USER_AGENT');
     $arr = array(
         'uid' => $uid,
@@ -225,32 +224,26 @@ function sess_write($sid, $data)
 
     // 开启 session 延迟更新，减轻压力，会导致不重要的数据(useragent,url)显示有些延迟，单位为秒。
     $session_delay_update_on = !empty($conf['session_delay_update']) && $time - $g_session['last_date'] < $conf['session_delay_update'];
-    if ($session_delay_update_on) {
-        unset($arr['fid']);
-        unset($arr['url']);
-        unset($arr['last_date']);
-    }
+
+    if ($session_delay_update_on) unset($arr['fid'], $arr['url'], $arr['last_date'], $arr['useragent']);
 
     // 判断数据是否超长
     $len = strlen($data);
-    if ($len > 255 && 0 == $g_session['bigdata']) {
-        session_data_create(array('sid' => $sid));
-    }
+    if ($len > 255 && 0 == $g_session['bigdata']) session_data_create(array('sid' => $sid));
+    
     if ($len <= 255) {
         $update = array_diff_value($arr, $g_session);
         session_update($sid, $update);
-        if (!empty($g_session) && 1 == $g_session['bigdata']) {
-            session_data_delete(array('sid' => $sid));
-        }
+        if (!empty($g_session) && 1 == $g_session['bigdata']) session_data_delete(array('sid' => $sid));
     } else {
         $arr['data'] = '';
         $arr['bigdata'] = 1;
         $update = array_diff_value($arr, $g_session);
-        $update AND session_update($sid, $update);
+        $update and session_update($sid, $update);
         $arr2 = array('data' => $data, 'last_date' => $time);
         if ($session_delay_update_on) unset($arr2['last_date']);
         $update2 = array_diff_value($arr2, $g_session);
-        $update2 AND session_data_update($sid, $update2);
+        $update2 and session_data_update($sid, $update2);
     }
     return TRUE;
 }
@@ -265,9 +258,23 @@ function sess_destroy($sid)
 function sess_gc($maxlifetime)
 {
     global $time;
+
     $expiry = $time - $maxlifetime;
-    session_delete(array('last_date' => array('<' => $expiry)));
-    session_data_delete(array('last_date' => array('<' => $expiry)));
+    $arrlist = session_find(array('last_date' => array('<' => $expiry)), array(), 1, 10000, '', array('sid', 'bigdata', 'last_date'));
+    if (!$arrlist) return TRUE;
+
+    $expiry = $time - 21600; // 超6小时未提交丢弃上传图片和附件
+    $sidarr = array();
+    foreach ($arrlist as $val) {
+        if ($val['last_date'] > $expiry && $val['bigdata']) continue;
+        $sidarr[] = $val['sid'];
+    }
+
+    if (empty($sidarr)) return TRUE;
+
+    session_delete(array('sid' => $sidarr));
+    session_data_delete(array('sid' => $sidarr));
+
     return TRUE;
 }
 
@@ -289,13 +296,13 @@ function sess_start()
     ini_set('session.gc_maxlifetime', $conf['online_hold_time']);
     // 垃圾回收概率 = gc_probability/gc_divisor
     ini_set('session.gc_probability', 1);
-    // 垃圾回收时间 5 秒，在线人数 * 10
-    ini_set('session.gc_divisor', 500);
+    // 垃圾回收时间 5 秒，在线人数 * 10 / 每1000个请求回收一次垃圾
+    ini_set('session.gc_divisor', 1000);
 
     session_set_save_handler('sess_open', 'sess_close', 'sess_read', 'sess_write', 'sess_destroy', 'sess_gc');
 
     // register_shutdown_function 会丢失当前目录，需要 chdir(APP_PATH)
-    $conf['url_rewrite_on'] > 1 AND function_exists('chdir') AND chdir(APP_PATH);
+    $conf['url_rewrite_on'] > 1 and function_exists('chdir') and chdir(APP_PATH);
     // 这个必须有，否则 ZEND 会提前释放 $db 资源
     register_shutdown_function('session_write_close');
 
@@ -303,6 +310,18 @@ function sess_start()
     $sid = session_id();
 
     return $sid;
+}
+
+// 刷新页面清理附件缓存 废弃
+function sess_clear_attach()
+{
+    global $sid, $time;
+    $arr = session_read($sid);
+    if (!$arr || 0 == $arr['bigdata']) return TRUE;
+
+    session_update($sid, array('bigdata' => 0, 'last_date' => $time));
+    session_data_delete(array('sid' => $sid));
+    return TRUE;
 }
 
 function online_count()
