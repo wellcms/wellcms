@@ -5,10 +5,12 @@
                         <div class="col-lg-12 d-flex justify-content-between text-muted my-2">
                             <div>
                                 <!--{hook comment_list_inc_avatar_before.htm}-->
-                                <a href="<?php echo url('user-' . $_post['uid']);?>" class="mr-2" tabindex="-1">
+                                <span class="position-relative">
+                                   <a href="<?php echo url('user-' . $_post['uid']);?>" class="mr-2" tabindex="-1">
                                     <img class="avatar-1" src="<?php echo $_post['user_avatar_url'];?>">
-                                    <!--{hook comment_list_inc_avatar_after.htm}-->
-                                </a>
+                                       <!--{hook comment_list_inc_avatar_after.htm}-->
+                                   </a>
+                                </span>
                                 <!--{hook comment_list_inc_username_before.htm}-->
                                 <span>
                                     <a href="<?php echo url('user-' . $_post['uid']);?>" class="text-muted">

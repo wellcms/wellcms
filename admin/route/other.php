@@ -142,7 +142,7 @@ switch ($action) {
             if ($last_version < $time) {
 
                 $post = array('type' => 2, 'version' => array_value($config, 'version', 0), 'version_date' => array_value($config, 'version_date', 0));
-                $json = https_post(OFFICIAL_URL . 'version.html', $post);
+                $json = https_request(OFFICIAL_URL . 'version.html', $post, '', '', 1);
 
                 $official = xn_json_decode($json);
 
@@ -185,7 +185,7 @@ switch ($action) {
             // 获取更新包
             $post = array('sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ip' => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE), 'users' => $runtime['users'], 'articles' => $runtime['articles'], 'comments' => $runtime['comments'], 'threads' => array_value($runtime, 'threads'), 'posts' => array_value($runtime, 'posts'), 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
             $url = OFFICIAL_URL . 'version-upgrade.html';
-            $json = https_post($url, $post);
+            $json = https_request($url, $post, '', 1);
             $official = xn_json_decode($json);
             if ('fail' == $official['code']) {
                 message(0, jump(lang('upgrade_failed'), url('other-upgrade', '', TRUE), 2));
@@ -213,7 +213,7 @@ switch ($action) {
                 $upgradefile = APP_PATH . 'tmp/upgrade.php';
                 if (!empty($res['upgrade_db']) && is_file($upgradefile)) include _include($upgradefile);
 
-                https_post(OFFICIAL_URL . 'version-upgrade.html?upgrade=1&id=' . $res['id']);
+                https_request(OFFICIAL_URL . 'version-upgrade.html?upgrade=1&id=' . $res['id'], '', '', 1);
 
                 // 更新完成
                 $config['version'] = $config['official_version'];

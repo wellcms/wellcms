@@ -968,26 +968,26 @@ function well_thread_format(&$thread)
             $destfile = $conf['upload_path'] . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
 
             // 本地
-            $thread['icon_fmt'] = $thread['icon_text'] = is_file($destfile) ? file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
+            $thread['icon_fmt'] = is_file($destfile) ? file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
         }
 
         if (1 == $conf['attach_on']) {
             // 云储存
-            $thread['icon_fmt'] = $thread['icon_text'] = file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
+            $thread['icon_fmt'] = file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
 
         } elseif (2 == $conf['attach_on'] && 2 == $thread['attach_on']) {
             // 图床 未上传成功 本地图片在的话使用本地，不在则默认
-            $thread['icon_fmt'] = $thread['icon_text'] = $thread['image_url'] ? $thread['image_url'] : $thread['icon_fmt'];
+            $thread['icon_fmt'] = $thread['image_url'] ? $thread['image_url'] : $thread['icon_fmt'];
         }
 
     } else {
-        $thread['icon_fmt'] = $thread['icon_text'] = $nopic;
+        $thread['icon_fmt'] = $nopic;
     }
     // hook model__thread_format_middle.php
     // 回复页面
     $thread['pages'] = ceil($thread['posts'] / $conf['comment_pagesize']);
 
-    $thread['tag_fmt'] = $thread['tag_text'] = $thread['tag'] ? xn_json_decode($thread['tag']) : '';
+    $thread['tag_fmt'] = $thread['tag'] ? xn_json_decode($thread['tag']) : '';
     // hook model__thread_format_after.php
     // 权限判断
     $thread['allowupdate'] = ($uid == $thread['uid']) || forum_access_mod($thread['fid'], $gid, 'allowupdate');
