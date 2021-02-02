@@ -819,7 +819,7 @@ function theme_install($dir)
     global $conf, $config;
 
     $dir = trim($dir);
-    if (isset($config['theme']) && $config['theme'] != $dir) {
+    if (!empty($config['theme']) && $config['theme'] != $dir) {
         is_file(APP_PATH . 'view/template/' . $dir.'/conf.json') and theme_uninstall($config['theme']);
     }
 
