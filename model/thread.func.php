@@ -108,7 +108,7 @@ function well_thread_create($arr)
 
     if (empty($arr)) return FALSE;
 
-    $publishverify = group_access($gid, 'managecreatethread') || !group_access($gid, 'publishverify');
+    $publishverify = 1 == $gid || !group_access($gid, 'publishverify');
 
     // hook model__thread_create_start.php
 
@@ -132,7 +132,9 @@ function well_thread_create($arr)
     // hook model__thread_create_before.php
 
     // 创建主题
-    $thread = array('fid' => $fid, 'subject' => $subject, 'type' => $type, 'brief' => $brief, 'uid' => $uid, 'create_date' => $time, 'closed' => $closed, 'keyword' => $keyword, 'description' => $description, 'last_date' => $time, 'userip' => $longip, 'attach_on' => $conf['attach_on'], 'flags' => $flags, 'status' => $status);
+    $thread = array('fid' => $fid, 'subject' => $subject, 'type' => $type, 'brief' => $brief, 'uid' => $uid, 'create_date' => $time, 'closed' => $closed, 'keyword' => $keyword, 'description' => $description, 'last_date' => $time, 'userip' => $longip, 'attach_on' => $conf['attach_on'], 'flags' => $flags);
+
+    $thread['status'] = TRUE === $publishverify ? 0 : 1;
 
     // hook model__thread_create_thread_after.php
 

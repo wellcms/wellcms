@@ -132,6 +132,8 @@ if ('GET' == $method) {
 
     $thread = array('fid' => $fid, 'type' => $type, 'doctype' => $doctype, 'subject' => $subject, 'brief' => $brief, 'keyword' => $keyword, 'description' => $description, 'closed' => $closed, 'flags' => $flags, 'thumbnail' => $thumbnail, 'save_image' => $save_image, 'delete_pic' => $delete_pic, 'message' => $message);
 
+    group_access($gid, 'publishverify') && 1 != $gid AND $thread += array('status' => 1);
+    
     // hook intodb_post_thread_create.php
 
     $tid = well_thread_create($thread);
