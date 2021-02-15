@@ -530,12 +530,14 @@ function plugin_check_dependency($dir, $action = 'install')
     if ('install' == $action) {
         $arr = plugin_dependencies($dir);
         if (!empty($arr)) {
+            plugin_lock_end();
             $s = plugin_dependency_arr_to_links($arr);
             message(-1, lang('plugin_dependency_following', array('name' => $name, 's' => $s)));
         }
     } else {
         $arr = plugin_by_dependencies($dir);
         if (!empty($arr)) {
+            plugin_lock_end();
             $s = plugin_dependency_arr_to_links($arr);
             message(-1, lang('plugin_being_dependent_cant_delete', array('name' => $name, 's' => $s)));
         }

@@ -284,6 +284,7 @@ function xn_html_safe($doc, $arg = array())
         'list-style' => array('list', 'none', array('disc', 'circle', 'square', 'decimal', 'lower-roman', 'upper-roman', 'none')),
         'text-align' => array('list', 'left', array('left', 'right', 'center', 'justify')),
         'text-indent' => array('range', 0, array(0, 100)),
+        'display' => array('range', 0, array(0, 100)),
     );
 
     // hook model_xn_html_safe_new_before.php

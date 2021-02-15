@@ -250,7 +250,7 @@ body.on('click', 'a.ajax', function () {
         var postdata = jthis.data('json');
         $.xpost(href, postdata, function (code, message) {
             if (0 == code) {
-                if ('undefined' == message.text) {
+                if (undefined == message.text) {
                     window.location.reload();
                 } else {
                     jthis.html(message.text);

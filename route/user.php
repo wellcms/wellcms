@@ -55,6 +55,7 @@ switch ($action) {
             // hook user_comment_middle.php
 
             $allowdelete = group_access($gid, 'allowdelete') || 1 == $gid;
+            $access = array('allowdelete' => $allowdelete);
 
             $page_url = url('user-comment-' . $_user['uid'] . '-{page}', $extra);
             $num = $_user['comments'];
@@ -69,7 +70,7 @@ switch ($action) {
             $header['mobile_title'] = '';
 
             if ($ajax) {
-                $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'arrlist' => $arrlist, 'allowdelete' => $allowdelete, 'header' => $header, 'user' => user_safe_info($_user))) : message(0, lang('closed'));
+                $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'arrlist' => $arrlist, 'access' => $access, 'header' => $header, 'user' => user_safe_info($_user))) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('user_comment'));
             }
@@ -425,29 +426,27 @@ switch ($action) {
 
         empty($_SESSION['return_url']) and $_SESSION['return_url'] = $return_url;
 
-        if (!$uid) {
-            http_location(url('user-login'));
-        } else {
-            $return_url = _SESSION('return_url');
+        if (!$uid) http_location(url('user-login'));
 
-            empty($return_url) and message(-1, lang('request_synlogin_again'));
-            unset($_SESSION['return_url']);
+        $return_url = _SESSION('return_url');
 
-            $arr = array(
-                'uid' => $user['uid'],
-                'gid' => $user['gid'],
-                'username' => $user['username'],
-                'avatar_url' => $user['avatar_url'],
-                'email' => $user['email'],
-                'mobile' => $user['mobile'],
-            );
-            $s = xn_json_encode($arr);
-            $s = xn_encrypt($s);
+        empty($return_url) and message(-1, lang('request_synlogin_again'));
+        unset($_SESSION['return_url']);
 
-            // 将 token 附加到 URL，跳转回去 | add token into URL, jump back
-            $url = xn_urldecode($return_url) . '?token=' . $s;
-            http_location($url);
-        }
+        $arr = array(
+            'uid' => $user['uid'],
+            'gid' => $user['gid'],
+            'username' => $user['username'],
+            'avatar_url' => $user['avatar_url'],
+            'email' => $user['email'],
+            'mobile' => $user['mobile'],
+        );
+        $s = xn_json_encode($arr);
+        $s = xn_encrypt($s);
+
+        // 将 token 附加到 URL，跳转回去 | add token into URL, jump back
+        $url = xn_urldecode($return_url) . '?token=' . $s;
+        http_location($url);
         break;
     // hook user_case_end.php
     default:

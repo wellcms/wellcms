@@ -42,7 +42,7 @@ $pagination = pagination($page_url, $num, $page, $pagesize);
 // hook flag_after.php
 
 $header['title'] = empty($read['title']) ? $read['name'] . '-' . $conf['sitename'] : $read['title'];
-$header['mobile_link'] = url('flag-' . $flagid);
+$header['mobile_link'] = $read['url'];
 $header['keywords'] = empty($read['keywords']) ? $read['name'] : $read['keywords'];
 $header['description'] = empty($read['description']) ? $read['name'] : $read['description'];
 $flag_link = '';

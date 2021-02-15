@@ -77,12 +77,6 @@ switch ($thread['type']) {
             }
 
             // hook read_article_default_middle.php
-
-            $allowpost = $forum['comment'] && $thread['closed'] < 2 && 0 == $thread['status'] && forum_access_user($fid, $gid, 'allowpost');
-            $allowupdate = $uid == $thread['uid'] || forum_access_mod($thread['fid'], $gid, 'allowupdate');
-            $allowdelete = ($uid == $thread['uid'] and forum_access_mod($fid, $gid, 'allowuserdelete')) || forum_access_mod($fid, $gid, 'allowdelete');
-
-            // hook read_article_default_after.php
         }
 
         // hook read_article_default_end.php
@@ -115,6 +109,12 @@ switch ($thread['type']) {
 
         $pagination = pagination($page_url, $num, $page, $pagesize);
 
+        $allowpost = $forum['comment'] && $thread['closed'] < 2 && 0 == $thread['status'] && forum_access_user($fid, $gid, 'allowpost');
+        $allowupdate = $uid == $thread['uid'] || forum_access_mod($thread['fid'], $gid, 'allowupdate');
+        $allowdelete = ($uid == $thread['uid'] and forum_access_mod($fid, $gid, 'allowuserdelete')) || forum_access_mod($fid, $gid, 'allowdelete');
+
+        $access = array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete);
+
         // hook read_article_after.php
 
         $header['title'] = $thread['subject'];
@@ -129,7 +129,7 @@ switch ($thread['type']) {
 
         if ($ajax) {
             empty($conf['api_on']) and message(0, lang('closed'));
-            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'arrlist' => $arrlist, 'safe_token' => $safe_token, 'comment' => array('page' => $page, 'num' => $num, 'postlist' => $postlist, 'access' => array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete)), 'header' => $header));
+            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'arrlist' => $arrlist, 'safe_token' => $safe_token, 'comment' => array('page' => $page, 'num' => $num, 'postlist' => $postlist, 'access' => $access), 'header' => $header));
         } else {
             // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
             switch ($forum['model']) {
@@ -168,10 +168,6 @@ switch ($thread['type']) {
 
         // hook read_single_page_middle.php
 
-        $allowpost = forum_access_user($fid, $gid, 'allowpost');
-        $allowupdate = forum_access_mod($fid, $gid, 'allowupdate');
-        $allowdelete = forum_access_mod($fid, $gid, 'allowdelete');
-
         $tidlist = $forum['threads'] ? page_find_by_fid($fid, $page, $pagesize, FALSE) : NULL;
 
         // hook read_single_page_threadlist_before.php
@@ -184,6 +180,12 @@ switch ($thread['type']) {
             $threadlist = array2_sort_key($threadlist, $tidlist, 'tid');
             // hook read_single_page_threadlist_after.php
         }
+
+        $allowpost = forum_access_user($fid, $gid, 'allowpost');
+        $allowupdate = forum_access_mod($fid, $gid, 'allowupdate');
+        $allowdelete = forum_access_mod($fid, $gid, 'allowdelete');
+
+        $access = array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete);
 
         // hook read_single_page_after.php
 
@@ -198,7 +200,7 @@ switch ($thread['type']) {
         if ($ajax) {
             empty($conf['api_on']) and message(0, lang('closed'));
 
-            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'threadlist' => $threadlist, 'access' => array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete), 'header' => $header));
+            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'threadlist' => $threadlist, 'access' => $access, 'header' => $header));
         } else {
             include _include(theme_load('single_page', $fid));
         }
