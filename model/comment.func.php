@@ -157,7 +157,9 @@ function comment_update($pid, $update)
 
     // hook model_comment_update_start.php
 
-    data_message_format($update);
+    if (isset($update['doctype'], $update['message'])) {
+        data_message_format($update);
+    }
 
     // hook model_comment_update_before.php
 
