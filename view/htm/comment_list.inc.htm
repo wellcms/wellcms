@@ -85,7 +85,9 @@
 
                             <!--{hook comment_list_inc_message_before.htm}-->
                             <?php echo $_post['message'];?>
-                            <!--{hook comment_list_inc_message_after.htm}-->
+                            <div class="comment-plugin d-flex justify-content-end mt-3">
+                                <!--{hook comment_list_inc_message_after.htm}-->
+                            </div>
                             <!--{hook comment_list_inc_filelist_before.htm}-->
                             <?php echo data_file_list_html($_post['filelist']);?>
                             <!--{hook comment_list_inc_filelist_after.htm}-->
