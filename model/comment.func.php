@@ -545,7 +545,7 @@ function comment_format(&$post)
 
     $post['username'] = array_value($user, 'username');
     $post['user_avatar_url'] = array_value($user, 'avatar_url');
-    $post['user'] = $user ? $user : user_guest();
+    $post['user'] = $user ? user_safe_info($user) : user_guest();
     isset($post['floor']) || $post['floor'] = 0;
 
     // hook model_comment_format_after.php
