@@ -148,7 +148,7 @@ return array(
     'plugin_upgrade_successfully' => '升級插件 ( {name} ) 成功',
     'plugin_not_need_update' => '已經是最新版本,無需更新',
     'plugin_set_relatied_dir_writable' => '在安裝插件目錄期間,請設置：{dir} 和文件為可寫',
-    'plugin_dependency_following' => '依賴以下插件：{s},請先安裝依賴的插件',
+    'plugin_dependency_following' => '依賴以下插件：{s},請先安裝或陞級依賴的插件',
     'plugin_being_dependent_cant_delete' => '不能刪除{name},以下插件依賴它：{s},',
     'server_response_empty' => '服務器返回數據為空',
     'server_response_error' => '服務器返回數據有錯',

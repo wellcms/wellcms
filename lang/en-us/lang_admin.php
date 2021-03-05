@@ -147,7 +147,7 @@ return array(
 	'plugin_upgrade_successfully'=>'Upgrade Plugin ( {name} ) successfully',
 	'plugin_not_need_update'=>'Already is the latest version, no need to update',
 	'plugin_set_relatied_dir_writable'=>'During the installation of the plugin directory, please set: {dir} and file for writable',
-	'plugin_dependency_following'=>'dependent on following plugin: {s}, please install them first.',
+	'plugin_dependency_following'=>'dependent on following plugin: {s}, Please install or upgrade first.',
 	'plugin_being_dependent_cant_delete'=>'can not delete ({name}), following plugin dependent on it: {s}.',
 	'server_response_empty'=>'Sever response empty',
 	'server_response_error'=>'Sever response error',

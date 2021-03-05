@@ -95,11 +95,12 @@ switch ($action) {
                 foreach ($postlist as &$_pid) {
                     $pids[] = $_pid['pid'];
                     $tids[] = $_pid['tid'];
+                    // hook home_comment_postlist_foreach.php
                 }
 
                 // hook home_comment_center.php
 
-                $threadlist = well_thread_find($tids);
+                $threadlist = well_thread_find(array_unique($tids));
 
                 $commentlist = comment_find_by_pid($pids, $pagesize);
 
@@ -109,6 +110,7 @@ switch ($action) {
                     $val['subject'] = $threadlist[$val['tid']]['subject'];
                     $val['url'] = $threadlist[$val['tid']]['url'];
                     $val['allowdelete'] = (group_access($gid, 'allowuserdelete') and $uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
+                    // hook home_comment_list_foreach.php
                 }
             }
 

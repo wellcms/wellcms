@@ -133,10 +133,11 @@ function plugin_dependencies($dir)
     // 检查插件依赖关系
     $arr = array();
     foreach ($dependencies as $_dir => $version) {
-        if (!isset($plugins[$_dir]) || !$plugins[$_dir]['enable']) {
+        if (!isset($plugins[$_dir]) || !$plugins[$_dir]['enable'] || -1 == version_compare($plugins[$_dir]['version'], $version)) {
             $arr[$_dir] = $version;
         }
     }
+    
     return $arr;
 }
 
@@ -403,7 +404,7 @@ function plugin_official_store($type = 0)
     $s = '';
     if ($type) {
         $cookie = _COOKIE($conf['cookie_pre'] . 'plugin_official_list');
-        if ($cookie) $s = cache_get('plugin_official_list');
+        if ($cookie) $s = kv_cache_get('plugin_official_list');
     }
 
     if (empty($s)) {
@@ -422,7 +423,7 @@ function plugin_official_store($type = 0)
         $s = xn_json_decode($s);
         if (empty($s)) return xn_error(-1, lang('plugin_get_data_fmt_failed'));
 
-        cache_set('plugin_official_list', $s);
+        kv_cache_set('plugin_official_list', $s);
         cookie_set('plugin_official_list', 1, 120);
     }
 

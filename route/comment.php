@@ -142,7 +142,7 @@ switch ($action) {
         // hook comment_update_start.php
 
         $apilist = array();
-        $pid = param(2);
+        $pid = param(2, 0);
         $comment = comment_read($pid);
         empty($comment) and message(-1, lang('post_not_exists'));
 
@@ -298,27 +298,29 @@ switch ($action) {
             $tidarr = array();
             $pidarr = array();
             $uidarr = array();
+            $logarr = array();
             foreach ($arrlist as $key => &$val) {
 
-                // hook comment_delete_pids_access_after.php
+                // hook comment_delete_pids_access_before.php
 
                 if (!isset($forumlist[$val['fid']])) continue;
                 $forum = $forumlist[$val['fid']];
                 if (empty($forum['type'])) continue;
 
-                // hook comment_delete_pids_access_before.php
+                // hook comment_delete_pids_access_center.php
 
                 if (!$val['closed'] && $val['allowdelete'] && $forum['comment']) {
 
                     $pidarr[] = $val['pid'];
-                    $tidarr[$val['pid']] = $val['tid'];
+
+                    if ($val['tid']) {
+                        $tidarr[$val['pid']] = $val['tid'];
+                        $logarr[] = array('type' => 1, 'uid' => $uid, 'tid' => $val['tid'], 'pid' => $val['pid'], 'subject' => $val['subject'], 'comment' => '', 'create_date' => $time);
+                    }
+
                     isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
 
-                    $arr = array('type' => 1, 'uid' => $uid, 'tid' => $val['tid'], 'pid' => $val['pid'], 'subject' => $val['subject'], 'comment' => '', 'create_date' => $time);
-
-                    // 创建日志
-                    operate_create($arr);
-                    // hook comment_delete_pids_access_aftre.php
+                    // hook comment_delete_pids_access_after.php
                 }
 
                 // hook comment_delete_pids_access_end.php
@@ -326,23 +328,41 @@ switch ($action) {
 
             // hook comment_delete_pids_center.php
 
+            operate_big_insert($logarr);
+
             empty($pidarr) and message(1, lang('data_malformation'));
 
             $r = comment_delete($pidarr);
 
+            $uids = array();
+            $update = array();
             foreach ($uidarr as $_uid => $n) {
-                user_update($_uid, array('comments-' => $n));
+                $uids[] = $_uid;
+                $update[$_uid] = array('comments-' => $n);
+                // hook comment_delete_pids_uidarr.php
             }
 
-            // hook comment_delete_pids_safter.php
+            // hook comment_delete_pids_user_update.php
+
+            user_big_update(array('uid' => $uids), $update);
+
+            // hook comment_delete_pids_after.php
 
             empty($tidarr) and message(1, lang('data_malformation'));
 
-            // 更新主题回复数
             $tidarr = array_count_values($tidarr);
+            // 更新主题回复数
+            $tids = array();
+            $update = array();
             foreach ($tidarr as $tid => $n) {
-                well_thread_update($tid, array('posts-' => $n));
+                $tids[$tid] = $tid;
+                $update[$tid] = array('posts-' => $n);
+                // hook comment_delete_pids_tidarr.php
             }
+
+            // hook comment_delete_pids_thread_update.php
+
+            thread_big_update(array('tid' => $tids), $update);
 
             // hook comment_delete_pids_end.php
 
@@ -363,6 +383,8 @@ switch ($action) {
             empty($allowdelete) && empty($post['allowdelete']) and message(1, lang('insufficient_delete_privilege'));
 
             empty($allowdelete) && ($post['closed'] or empty($forum['comment'])) and message(1, lang('thread_has_already_closed'));
+
+            // hook comment_delete_allow_after.php
 
             $r = comment_delete($pid);
 

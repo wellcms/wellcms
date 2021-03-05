@@ -323,8 +323,9 @@ function comment_delete($pid)
     // hook model_comment_delete_start.php
     $r = comment__delete(array('pid' => $pid));
     if (FALSE === $r) return FALSE;
+    // hook model_comment_delete_before.php
     // 删除小表
-    $r = comment_pid_delete($pid);
+    comment_pid_delete($pid);
     // 删除附件
     well_attach_delete_by_pid($pid);
     // hook model_comment_delete_end.php
@@ -351,22 +352,33 @@ function comment_delete_by_tid($tid)
 
     for ($i = 0; $i <= $n; ++$i) {
         // 查询回复小表 该主题回复 pid
-        $arr = comment_pid__find(array('tid' => $tid), array('pid' => -1), 1, $size, 'pid', array('pid', 'uid'));
-
-        // hook model_comment_delete_by_tid_before.php
-
+        $arr = comment_pid__find(array('tid' => $tid), array(), 1, $size, '');
         if (empty($arr)) return FALSE;
+        
+        // hook model_comment_delete_by_tid_before.php
 
         $pidarr = array();
         $uidarr = array();
         foreach ($arr as $val) {
-            $pidarr[] = $val['pid'];
-            isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
+            if (0 == $val['status']) {
+                $pidarr[] = $val['pid'];
+                isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
+            }
+            // hook model_comment_delete_by_tid_center.php
         }
 
+        // hook model_comment_delete_by_tid_middle.php
+
+        $uids = array();
+        $user_update = array();
         foreach ($uidarr as $_uid => $n) {
-            user_update($_uid, array('comments-' => $n));
+            $uids[] = $_uid;
+            $user_update[$_uid]['comments-'] = $n;
         }
+
+        user_big_update(array('uid' => $uids), $user_update);
+
+        // hook model_comment_delete_by_tid_after.php
 
         // 删除所有回复和小表
         comment_delete($pidarr);
@@ -386,16 +398,25 @@ function comment_delete_by_tid($tid)
  */
 function comment_delete_by_tids($tids, $n)
 {
+    // hook model_comment_delete_by_tids_start.php
+
     $arrlist = comment_pid__find(array('tid' => $tids), array('pid' => 1), 1, $n);
     if (!$arrlist) return 0;
 
+    // hook model_comment_delete_by_tids_before.php
+    
     $pids = array();
     $uidarr = array();
     foreach ($arrlist as $val) {
-        $pids[] = $val['pid'];
-        isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
+        if (0 == $val['status']) {
+            $pids[] = $val['pid'];
+            isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
+        }
+        // hook model_comment_delete_by_tids_foreach.php
     }
 
+    // hook model_comment_delete_by_tids_center.php
+    
     comment_pid_delete($pids);
 
     comment__delete(array('pid' => $pids));
@@ -403,16 +424,24 @@ function comment_delete_by_tids($tids, $n)
     // 删除附件
     well_attach_delete_by_pid($pids);
 
+    // hook model_comment_delete_by_tids_middle.php
+    
     $uids = array();
     $update = array();
     foreach ($uidarr as $_uid => $n) {
+        // hook model_comment_delete_by_tids_uidarr_start.php
         $uids[] = $_uid;
         $update[$_uid] = array('comments-' => $n);
+        // hook model_comment_delete_by_tids_uidarr_end.php
     }
 
+    // hook model_comment_delete_by_tids_after.php
+    
     // 更新用户评论数
     user_big_update(array('uid' => $uids), $update);
 
+    // hook model_comment_delete_by_tids_end.php
+    
     return count($pids);
 }
 
@@ -553,8 +582,8 @@ function comment_format(&$post)
     // hook model_comment_format_after.php
 
     // 权限判断
-    $post['allowupdate'] = 2 == array_value($forum, 'comment', 0) && ($uid == $post['uid'] || forum_access_mod($thread['fid'], $gid, 'allowupdate'));
-    $post['allowdelete'] = (group_access($gid, 'allowuserdelete') AND $uid == $post['uid']) || forum_access_mod($thread['fid'], $gid, 'allowdelete');
+    $post['allowupdate'] = 2 == array_value($forum, 'comment', 0) && ($uid == $post['uid'] || forum_access_mod($post['fid'], $gid, 'allowupdate'));
+    $post['allowdelete'] = group_access($gid, 'allowuserdelete') && $uid == $post['uid'] || forum_access_mod($post['fid'], $gid, 'allowdelete');
 
     $post['user_url'] = url('user-' . $post['uid'] . ($post['uid'] ? '' : '-' . $post['pid']));
 

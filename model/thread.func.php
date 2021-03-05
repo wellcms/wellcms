@@ -762,7 +762,7 @@ function well_thread_delete_all($tid)
         foreach ($fidarr as $_fid => $n) {
             $fids[] = $_fid;
             $update[$_fid] = array('threads-' => $n);
-            isset($fidstickys[$_fid]) and $update[$_fid] += array('tops-' => $fidstickys[$_fid]);
+            isset($fidstickys[$_fid]) and $update[$_fid] = array('tops-' => $fidstickys[$_fid]);
             // hook model_thread_delete_all_forum_center.php
         }
 

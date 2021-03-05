@@ -551,7 +551,7 @@ function plugin_dependency_arr_to_links($arr)
     foreach ($arr as $dir => $version) {
         $name = isset($plugins[$dir]['name']) ? $plugins[$dir]['name'] : $dir;
         $url = url('plugin-read', array('dir' => $dir), TRUE);
-        $s .= " <a href=\"$url\">【{$name}】</a> ";
+        $s .= "<a href=\"$url\">【{$name} - ".lang('official_version').$version."】</a> ";
     }
     return $s;
 }

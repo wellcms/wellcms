@@ -42,7 +42,7 @@ function kv_cache_get($k)
     $r = cache_get($k);
     if (NULL === $r) {
         $r = kv_get($k);
-        cache_set($k, $r);
+        $r and cache_set($k, $r);
     }
     return $r;
 }

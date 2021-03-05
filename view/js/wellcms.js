@@ -367,7 +367,8 @@ body.on('click', '.post_delete', function () {
 });
 
 body.on('click', '.install, .uninstall', function () {
-    var href = $(this).data('href');
+    var jthis = $(this);
+    var href = jthis.data('href') || jthis.attr('href');
     $.xpost(href, function (code, message) {
         if (code == 0) {
             $.alert(message).delay(1000).location();
@@ -431,6 +432,53 @@ function well_params_fmt(data) {
     }
     arr.push(("v=" + Math.random()).replace(".", ""));
     return arr.join("&");
+}
+
+/*
+滚动到窗口可视区域元素位置中间下方
+well_set_top('id', Element)
+*/
+function well_set_top(Type, Element) {
+    let scrollTop = document.documentElement.scrollTop;
+    let scrollHeight = document.body.scrollHeight;
+    let innerHeight = window.innerHeight;
+    let from = 'id' === Type ? document.getElementById(Element) : document.getElementsByClassName(Element);
+    /* 距离顶部距离 */
+    let top = from.getBoundingClientRect().top;
+    /* 元素高度 */
+    let height = from.getBoundingClientRect().height;
+    _height = top - innerHeight / 2 - height;
+    if (top > innerHeight) {
+        _height = innerHeight / 2;
+    }
+
+    let x = from.offsetTop + _height;
+
+    /* 判断是否在移动端打开 */
+    /*let u = navigator.userAgent;
+    if (u.match(/AppleWebKit.*Mobile.*!/)) {
+        x = form.offsetTop + _height;
+    }*/
+    let timer = setInterval(() => {
+        document.documentElement.scrollTop += _height;
+        if (document.documentElement.scrollTop >= x) {
+            clearInterval(timer);
+        }
+    }, 50);
+
+    let timer_1 = setInterval(() => {
+        window.pageYOffset += _height;
+        if (window.pageYOffset >= x) {
+            clearInterval(timer_1);
+        }
+    }, 50);
+
+    let timer_2 = setInterval(() => {
+        document.body.scrollTop += _height;
+        if (document.body.scrollTop >= x) {
+            clearInterval(timer_2);
+        }
+    }, 50);
 }
 
 //基本的使用实例
