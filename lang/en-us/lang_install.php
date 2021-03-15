@@ -37,6 +37,7 @@ return array(
     'admin_email' => 'Administrator Email',
     'admin_username' => 'Administrator Username',
     'admin_pw' => 'Administrator Password',
+    'admin_pw_repeat' => 'Repeat password',
     'installing_about_moment' => 'Installing, it takes about a minute or so',
     'license_title' => 'WellCMS 2.0 License Agreement',
     'license_content' => 'Thank you for choosing WellCMS 2.0, which is a mobile-oriented content management product. The front and back ends support various operations on the mobile terminal. WellCMS has the characteristics of safety, efficiency, stability, fast speed, and super load, especially under the large data volume, its excellence is even more outstanding.

@@ -37,6 +37,7 @@ return array(
 	'admin_email' => '管理員郵箱',
 	'admin_username' => '管理員用戶名',
 	'admin_pw' => '管理員密碼',
+	'admin_pw_repeat' => '重複密碼',
 	'installing_about_moment' => '正在安裝，大概需要壹分鐘左右',
     'license_title' => 'WellCMS 2.0 版授權協議',
 	'license_content' => '感謝您選擇 WellCMS 2.0，它是一款傾向移動端的內容管理產品，前後台支持移動端各種操作。 WellCMS 具有安全、高效、穩定、速度快、負載超強的特點，尤其在大數據量下，它的優秀才更顯卓越。

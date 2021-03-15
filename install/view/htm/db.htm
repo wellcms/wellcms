@@ -75,6 +75,12 @@
 						<input type="password" name="adminpass" class="form-control" value="">
 					</div>
 				</div>
+				<div class="form-group row">
+					<label class="col-sm-3 form-control-label"><?php echo lang('admin_pw_repeat');?>：</label>
+					<div class="col-sm-9">
+						<input type="password" name="adminpassrepeat" class="form-control" value="">
+					</div>
+				</div>
 			</div>
 	
 			<div class="text-center m-3">
@@ -90,24 +96,29 @@
 <?php include INSTALL_PATH.'view/htm/footer.inc.htm';?>
 
 <script>
-var jform = $('#form');
-var jsubmit = $('#submit');
-jform.on('submit', function() {
-	var postdata = jform.serialize();
-	jsubmit.button('loading');
-	$.xpost(jform.attr('action'), postdata, function(code, message) {
-		if(code == 0) {
-			alert(message);
-			window.location = '../';
-			jsubmit.button(message);
-		} else if(code < 0) {
-			alert(message);
+	$('body').on('submit', '#form', function () {
+		var jthis = $(this);
+		var jsubmit = jthis.find('#submit');
+		jsubmit.button('loading');
+		var postdata = jthis.serializeObject();
+		if (postdata.adminpass !== postdata.adminpassrepeat) {
+			jthis.find('[name="adminpassrepeat"]').alert('<?php echo lang('password_incorrect');?>').focus();
 			jsubmit.button('reset');
-		} else {
-			jform.find('[name="'+code+'"]').alert(message).focus();
-			jsubmit.button('reset');
+			return false;
 		}
+		$.xpost(jthis.attr('action'), postdata, function (code, message) {
+			if (code == 0) {
+				alert(message);
+				window.location = '../';
+				jsubmit.button(message);
+			} else if (code < 0) {
+				alert(message);
+				jsubmit.button('reset');
+			} else {
+				jthis.find('[name="' + code + '"]').alert(message).focus();
+				jsubmit.button('reset');
+			}
+		});
+		return false;
 	});
-	return false;
-});
 </script>

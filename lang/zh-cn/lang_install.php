@@ -37,6 +37,7 @@ return array(
 	'admin_email' => '管理员邮箱',
 	'admin_username' => '管理员用户名',
 	'admin_pw' => '管理员密码',
+	'admin_pw_repeat' => '重复密码',
 	'installing_about_moment' => '正在安装，大概需要一分钟左右',
 	'license_title' => 'WellCMS 2.0 中文版授权协议',
 	'license_content' => '感谢您选择 WellCMS 2.0，它是一款倾向移动端的内容管理产品，前后台支持移动端各种操作。WellCMS 具有安全、高效、稳定、速度快、负载超强的特点，尤其在大数据量下，它的优秀才更显卓越。

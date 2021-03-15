@@ -144,7 +144,8 @@ switch ($action) {
             $seo_keywords = param('seo_keywords');
             // 0列表 1频道 2单页 3外链
             $category = param('category', 0);
-            $fup = param('fup', 0);
+            $fup = _POST('fup', 0);
+            $fup = intval($fup);
             $pagesize = param('pagesize', 20);
 
             // hook admin_column_create_post_before.php

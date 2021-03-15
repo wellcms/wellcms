@@ -2,7 +2,6 @@
 define('DEBUG', 2);
 define('APP_PATH', realpath(dirname(__FILE__) . '/../') . '/');
 define('INSTALL_PATH', dirname(__FILE__) . '/');
-
 define('MESSAGE_HTM_PATH', INSTALL_PATH . 'view/htm/message.htm');
 
 // 切换到上一级目录，操作很方便
@@ -91,11 +90,14 @@ if (empty($action)) {
         $adminemail = param('adminemail');
         $adminuser = param('adminuser');
         $adminpass = param('adminpass');
-
+        $adminpassrepeat = param('adminpassrepeat');
+        
         empty($host) AND message('host', lang('dbhost_is_empty'));
         empty($name) AND message('name', lang('dbname_is_empty'));
         empty($user) AND message('user', lang('dbuser_is_empty'));
         empty($adminpass) AND message('adminpass', lang('adminuser_is_empty'));
+        $adminpassrepeat != $adminpass and message('adminpassrepeat', lang('password_incorrect'));
+        
         empty($adminemail) AND message('adminemail', lang('adminpass_is_empty'));
 
         // 设置超时尽量短一些
