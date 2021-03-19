@@ -855,14 +855,16 @@ function theme_uninstall($dir)
     $path = APP_PATH . 'view/template/' . $dir;
 
     $conffile = $path . '/conf.json';
-    FALSE === is_file($conffile) and message(1, lang('not_exists'));
+    //FALSE === is_file($conffile) and message(1, lang('not_exists'));
 
-    $arr = xn_json_decode(file_get_contents($conffile));
-    empty($arr) and message(1, lang('data_malformation'));
+    if (is_file($conffile)) {
+        $arr = xn_json_decode(file_get_contents($conffile));
+        empty($arr) and message(1, lang('data_malformation'));
 
-    $arr['installed'] = 0;
-    // 写入配置文件
-    file_replace_var($conffile, $arr, TRUE);
+        $arr['installed'] = 0;
+        // 写入配置文件
+        file_replace_var($conffile, $arr, TRUE);
+    }
 
     $config['theme'] = '';
     setting_set('conf', $config);

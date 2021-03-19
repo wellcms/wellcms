@@ -29,7 +29,7 @@ switch ($action) {
         $page_url = url('tag-list-{page}', $extra);
         $num = $count > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $count;
 
-        // hook tag_list_after.php
+        // hook tag_list_pagination_before.php
 
         $pagination = pagination($page_url, $num, $page, $pagesize);
 

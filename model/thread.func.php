@@ -226,7 +226,7 @@ function well_thread_create($arr)
 
         // hook model__thread_create_tid_start.php
 
-        // 会对模块进行区分，如果需要全站扁平，在首页都能出现，可以复制default的代码，写入thread_tid，其他模块原有代码不变，单独写入各小表
+        // 对模型区分，如需要全站扁平，在首页出现，需写入thread_tid，其他模型原有代码不变，可单独写入各自模型小表
         switch (array_value($forum, 'model')) {
             // hook model__thread_create_case_start.php
             case '0':
