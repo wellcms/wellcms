@@ -351,7 +351,7 @@ function comment_delete_by_tid($tid)
     }
 
     for ($i = 0; $i <= $n; ++$i) {
-        // 查询回复小表 该主题回复 pid
+        // 查询回复小表(仅通过审核的评论) 该主题回复 pid
         $arr = comment_pid__find(array('tid' => $tid), array(), 1, $size, '');
         if (empty($arr)) return FALSE;
         
@@ -360,10 +360,8 @@ function comment_delete_by_tid($tid)
         $pidarr = array();
         $uidarr = array();
         foreach ($arr as $val) {
-            if (0 == $val['status']) {
-                $pidarr[] = $val['pid'];
-                isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
-            }
+            $pidarr[] = $val['pid'];
+            isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
             // hook model_comment_delete_by_tid_center.php
         }
 
@@ -400,7 +398,8 @@ function comment_delete_by_tids($tids, $n)
 {
     // hook model_comment_delete_by_tids_start.php
 
-    $arrlist = comment_pid__find(array('tid' => $tids), array('pid' => 1), 1, $n);
+    // 查询回复小表(仅通过审核的评论) 该主题回复 pid
+    $arrlist = comment_pid__find(array('tid' => $tids), array('pid' => 1), 1, $n, '');
     if (!$arrlist) return 0;
 
     // hook model_comment_delete_by_tids_before.php
@@ -408,10 +407,8 @@ function comment_delete_by_tids($tids, $n)
     $pids = array();
     $uidarr = array();
     foreach ($arrlist as $val) {
-        if (0 == $val['status']) {
-            $pids[] = $val['pid'];
-            isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
-        }
+        $pids[] = $val['pid'];
+        isset($uidarr[$val['uid']]) ? $uidarr[$val['uid']] += 1 : $uidarr[$val['uid']] = 1;
         // hook model_comment_delete_by_tids_foreach.php
     }
 

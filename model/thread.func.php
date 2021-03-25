@@ -642,7 +642,7 @@ function well_thread_delete_all($tid)
         }
 
         if ($thread['sticky']) {
-            $sticky_tids[] = $thread['uid'];
+            $sticky_tids[] = $thread['tid'];
             if (3 == $thread['sticky']) {
                 $index_stickys += 1;
             } else {
