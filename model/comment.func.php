@@ -92,7 +92,7 @@ function comment_create($post)
 
     // hook model_comment_create_start.php
 
-    data_message_format($post);
+    isset($post['message']) and data_message_format($post);
 
     // 格式化后为空不入库
     if (empty($post['message'])) return FALSE;
@@ -157,9 +157,7 @@ function comment_update($pid, $update)
 
     // hook model_comment_update_start.php
 
-    if (isset($update['doctype'], $update['message'])) {
-        data_message_format($update);
-    }
+    isset($update['doctype'], $update['message']) and data_message_format($update);
 
     // hook model_comment_update_before.php
 

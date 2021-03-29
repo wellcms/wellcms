@@ -153,14 +153,14 @@ function category_list($forumlist, $model = 0, $display = 0, $category = 0)
     // hook model_category_list_start.php
     if ($display) {
         foreach ($forumlist as $k => $val) {
-            if (1 == $val['display'] && $val['model'] == $model && 1 == $val['type'] && $val['category'] == $category) {
+            if (1 == $val['display'] && 1 == $val['type'] && $val['category'] == $category) {
                 $cache[$key][$k] = $val;
             }
         }
         // hook model_category_list_before.php
     } else {
         foreach ($forumlist as $k => $val) {
-            if (1 == $val['type'] && $val['model'] == $model && $val['category'] == $category) {
+            if (1 == $val['type'] && $val['category'] == $category) {
                 $cache[$key][$k] = $val;
             }
         }

@@ -70,7 +70,7 @@ function data_create($arr)
 
     // hook model_data_create_before.php
 
-    data_message_format($arr);
+    isset($arr['message']) and data_message_format($arr);
 
     // hook model_data_create_after.php
 
@@ -91,7 +91,7 @@ function data_update($tid, $update)
 
     // hook model_data_update_before.php
 
-    data_message_format($update);
+    isset($update['message']) and data_message_format($update);
 
     // hook model_data_update_center.php
 
@@ -199,6 +199,9 @@ function data_message_replace_url($tid, $message)
 function data_message_format(&$post)
 {
     // hook model_data_message_format_start.php
+
+    if (empty($post['message'])) return $post;
+    !isset($post['doctype']) and $post['doctype'] = 0;
 
     // 超长内容截取
     $post['message'] = xn_substr($post['message'], 0, 2028000);
