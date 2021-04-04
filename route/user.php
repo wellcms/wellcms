@@ -94,7 +94,7 @@ switch ($action) {
 
             // hook user_login_get_end.php
 
-            if ('1' === _GET('ajax', $ajax)) {
+            if ('1' == _GET('ajax')) {
                 $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('user_login'));
@@ -161,7 +161,7 @@ switch ($action) {
 
             // hook user_create_get_end.php
             
-            if ('1' === _GET('ajax', $ajax)) {
+            if ('1' == _GET('ajax')) {
                 $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('user_create'));

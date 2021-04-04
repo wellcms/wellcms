@@ -459,21 +459,21 @@ function well_set_top(Type, Element) {
     if (u.match(/AppleWebKit.*Mobile.*!/)) {
         x = form.offsetTop + _height;
     }*/
-    let timer = setInterval(() => {
+    let timer = setInterval(function (){
         document.documentElement.scrollTop += _height;
         if (document.documentElement.scrollTop >= x) {
             clearInterval(timer);
         }
     }, 50);
 
-    let timer_1 = setInterval(() => {
+    let timer_1 = setInterval(function () {
         window.pageYOffset += _height;
         if (window.pageYOffset >= x) {
             clearInterval(timer_1);
         }
     }, 50);
 
-    let timer_2 = setInterval(() => {
+    let timer_2 = setInterval(function () {
         document.body.scrollTop += _height;
         if (document.body.scrollTop >= x) {
             clearInterval(timer_2);

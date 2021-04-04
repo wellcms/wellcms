@@ -603,8 +603,8 @@ function well_thread_delete_all($tid)
 
         $forum = array_value($forumlist, $thread['fid']);
         switch ($forum['model']) {
-            case '0': // 删除文章
-                break;
+            /*case '0': // 删除文章
+                break;*/
             // hook model_thread_delete_all_case.php
         }
 
