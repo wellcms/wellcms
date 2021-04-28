@@ -26,7 +26,8 @@ switch ($action) {
             $page = param('page', 1);
             $orderby = param('orderby', 0); // 0降序 1自定义排序降序
             $pagesize = $conf['pagesize'];
-            $extra = array('page' => '{page}', 'fid' => $fid, 'orderby' => $orderby); // 插件预留
+            $extra = array('page' => $page, 'orderby' => $orderby); // 插件预留
+            $fid and $extra += array('fid' => $fid);
 
             // hook admin_flag_list_get_forum_before.php
 
@@ -136,7 +137,9 @@ switch ($action) {
 
             $fid = param('fid', 0);
             $forum = forum_read($fid);
-            $extra = array('fid' => $fid); // 插件预留
+            $extra = array(); // 插件预留
+            $fid and $extra += array('fid' => $fid);
+
             // hook admin_flag_create_get_before.php
 
             $input = array();
@@ -268,7 +271,8 @@ switch ($action) {
 
         if ('GET' == $method) {
 
-            $extra = array('fid' => $fid, 'flagid' => $flagid); // 插件预留
+            $extra = array('flagid' => $flagid); // 插件预留
+            $fid and $extra += array('fid' => $fid);
 
             // hook admin_flag_update_get_start.php
 
