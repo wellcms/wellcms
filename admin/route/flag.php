@@ -173,7 +173,7 @@ switch ($action) {
 
             // hook admin_flag_create_post_start.php
 
-            $fid = param('fid', 0);
+            $fid = _POST('fid', 0);
             $name = param('name');
             $name = filter_all_html($name);
             empty($name) and message('name', lang('flag_empty'));
