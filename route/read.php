@@ -45,6 +45,9 @@ switch ($thread['type']) {
 
         $data = NULL;
         $arrlist = NULL;
+        $attachlist = NULL;
+        $imagelist = NULL;
+        $thread['filelist'] = NULL;
         // 从默认的地方读取主题数据
         $thread_read_from_default = 1;
 
@@ -129,7 +132,8 @@ switch ($thread['type']) {
 
         if ($ajax) {
             empty($conf['api_on']) and message(0, lang('closed'));
-            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'arrlist' => $arrlist, 'safe_token' => $safe_token, 'comment' => array('page' => $page, 'num' => $num, 'postlist' => $postlist, 'access' => $access), 'header' => $header));
+            
+            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'arrlist' => $arrlist, 'attachlist' => $attachlist, 'imagelist' => $imagelist, 'filelist' => $thread['filelist'], 'safe_token' => $safe_token, 'comment' => array('page' => $page, 'num' => $num, 'postlist' => $postlist, 'access' => $access), 'header' => $header));
         } else {
             // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
             switch ($forum['model']) {
@@ -200,7 +204,7 @@ switch ($thread['type']) {
         if ($ajax) {
             empty($conf['api_on']) and message(0, lang('closed'));
 
-            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'threadlist' => $threadlist, 'access' => $access, 'header' => $header));
+            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'threadlist' => $threadlist, 'attachlist' => $attachlist, 'imagelist' => $imagelist, 'filelist' => $thread['filelist'], 'access' => $access, 'header' => $header));
         } else {
             include _include(theme_load('single_page', $fid));
         }

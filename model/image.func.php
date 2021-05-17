@@ -202,6 +202,12 @@ function well_image_clip($sourcefile, $destfile, $clipx, $clipy, $clipwidth, $cl
         case 3 :
             $imgcolor = imagecreatefrompng($sourcefile);
             break;
+        case 15: // WBMP
+            $imgcolor = imagecreatefromwbmp($sourcefile);
+            break;
+        case 18: // WEBP
+            $imgcolor = imagecreatefromwebp($sourcefile);
+            break;
     }
 
     if (!$imgcolor) return 0;

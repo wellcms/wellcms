@@ -53,6 +53,9 @@ function url($url, $extra = array(), $url_access = NULL)
             $r = 'index.php?' . http_build_query($arr);
         } else {
             $r = $conf['path'] . str_replace('-', '/', $query) . (2 == $conf['url_rewrite_on'] ? '.html' : '');
+
+            $ajax = param('ajax', 0);
+            $ajax and $extra += array('ajax' => $ajax);
         }
     }
 

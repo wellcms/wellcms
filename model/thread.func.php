@@ -601,6 +601,8 @@ function well_thread_delete_all($tid)
 
         if ($uid != $thread['uid'] && !forum_access_mod($thread['fid'], $gid, 'allowdelete')) continue;
 
+        // hook model_thread_delete_all_operate_start.php
+
         $forum = array_value($forumlist, $thread['fid']);
         switch ($forum['model']) {
             /*case '0': // 删除文章
@@ -791,7 +793,7 @@ function well_thread_delete_all($tid)
 
     // hook model_thread_delete_all_after.php
 
-    function_exists('operate_big_insert') and operate_big_insert($operate_create);
+    !empty($operate_create) && function_exists('operate_big_insert') and operate_big_insert($operate_create);
 
     // hook model_thread_delete_all_end.php
 

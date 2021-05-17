@@ -459,7 +459,7 @@ function well_set_top(Type, Element) {
     if (u.match(/AppleWebKit.*Mobile.*!/)) {
         x = form.offsetTop + _height;
     }*/
-    let timer = setInterval(function (){
+    let timer = setInterval(function () {
         document.documentElement.scrollTop += _height;
         if (document.documentElement.scrollTop >= x) {
             clearInterval(timer);
@@ -479,6 +479,109 @@ function well_set_top(Type, Element) {
             clearInterval(timer_2);
         }
     }, 50);
+}
+
+/*
+调用方法
+formId
+format:0对象{'key':'value'} 1字符串key=value
+console.log(well_serialize_form('form'));
+console.log(well_serialize_form('form', 1));
+*/
+function well_serialize_form(formId, format) {
+    format = format || 0;
+    let elements = well_get_elements(formId);
+    let queryComponents = new Array();
+    let length = elements.length;
+    for (let i = 0; i < length; ++i) {
+        let queryComponent = well_serialize_element(elements[i], format);
+        if (queryComponent) queryComponents.push(queryComponent);
+    }
+
+    if (format) return queryComponents.join('&');
+
+    let ojb = {}
+    let len = queryComponents.length;
+    if (!len) return ojb;
+
+    for (let i = 0; i < len; ++i) {
+        ojb[queryComponents[i][0]] = queryComponents[i][1];
+    }
+
+    return ojb;
+}
+
+/* 获取指定form中的所有的<input>对象 */
+function well_get_elements(formId) {
+    let form = document.getElementById(formId);
+
+    let elements = new Array();
+    let tagInputs = form.getElementsByTagName('input');
+    for (let i = 0; i < tagInputs.length; ++i) {
+        elements.push(tagInputs[i]);
+    }
+
+    let tagSelects = form.getElementsByTagName('select');
+    for (let i = 0; i < tagSelects.length; ++i) {
+        elements.push(tagSelects[i]);
+    }
+
+    let tagTextareas = form.getElementsByTagName('textarea');
+    for (let i = 0; i < tagTextareas.length; ++i) {
+        elements.push(tagTextareas[i]);
+    }
+
+    return elements;
+}
+
+/* 组合URL 0数组'key':'value' 1字符串key=value */
+function well_serialize_element(element, format) {
+    format = format || 0;
+    let method = element.tagName.toLowerCase();
+    let parameter;
+
+    if ('select' == method) parameter = [element.name, element.value];
+
+    switch (element.type.toLowerCase()) {
+        case 'submit':
+        case 'hidden':
+        case 'password':
+        case 'text':
+        case 'date':
+        case 'textarea':
+            parameter = [element.name, element.value];
+            break;
+        case 'checkbox':
+        case 'radio':
+            if (element.checked) {
+                parameter = [element.name, element.value];
+            }
+            break;
+    }
+
+    if (parameter) {
+        let key = encodeURIComponent(parameter[0]);
+        if (0 == key.length) return;
+
+        if (parameter[1].constructor != Array) parameter[1] = [parameter[1]];
+
+        let results = new Array();
+        let values = parameter[1];
+        let length = values.length;
+        for (let i = 0; i < length; ++i) {
+            if (format) {
+                results.push(key + '=' + encodeURIComponent(values[i]));
+            } else {
+                results = [key, values[i]];
+            }
+        }
+
+        if (format) {
+            return results.join('&');
+        } else {
+            return results;
+        }
+    }
 }
 
 //基本的使用实例

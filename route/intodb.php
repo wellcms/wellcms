@@ -87,7 +87,8 @@ if ('GET' == $method) {
         // hook intodb_post_message.php
         
         empty($message) ? exit(lang('please_input_message')) : xn_strlen($message) > 2028000 AND exit(lang('message_too_long'));
-        $_message = filter_all_html($message);
+        
+        $_message = htmlspecialchars(filter_all_html($message), ENT_QUOTES);
     }
 
     $brief = param('brief');
