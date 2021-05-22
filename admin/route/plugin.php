@@ -307,10 +307,10 @@ switch ($action) {
 
             $password = param('password');
             empty($password) and message('password', lang('please_input_password'));
-
+            
             $siteip = ip2long(_SERVER('SERVER_ADDR'));
             $siteip < 0 and $siteip = sprintf("%u", $siteip);
-            $post = array('siteid' => plugin_siteid(), 'app_url' => xn_urlencode(http_url_path()), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $data[4], 'storeid' => $storeid, 'uid' => $data[0], 'ua' => md5($useragent), 'password' => $password, 'siteip' => $siteip, 'longip' => $longip);
+            $post = array('siteid' => plugin_siteid(), 'app_url' => xn_urlencode(http_url_path()), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $data[4], 'storeid' => $storeid, 'uid' => $data[0], 'ua' => md5($useragent), 'password' => md5($password), 'siteip' => $siteip, 'longip' => $longip);
             $url = PLUGIN_OFFICIAL_URL . 'plugin-payment.html';
             $json = https_post($url, $post);
             empty($json) and message(-1, lang('server_response_empty'));
@@ -324,7 +324,6 @@ switch ($action) {
             } else {
                 message($arr['code'], $arr['message']);
             }
-
         }
         break;
     case 'is_bought':

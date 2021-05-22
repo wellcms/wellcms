@@ -29,8 +29,8 @@
 </div>
 
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
-<script src="<?php echo admin_view_path();?>js/md5.js"></script>
-<script src="<?php echo admin_view_path();?>js/jquery.qrcode.min.js"></script>
+
+<script src="<?php echo admin_view_path();?>js/qrcode.min.js"></script>
 
 <script ajax-eval="true">
     var pay_api = '<?php echo array_value($return, 'pay_api');?>';
@@ -40,17 +40,8 @@
     if(1 == pay_api) {
         $('.qrcode').html('<iframe runat="server" width="200px" height="210px" frameborder="no" allowtransparency="yes" scrolling="yes" src="' + qrcode + '" style="margin: 0 auto;"></iframe>');
     } else if(2 == pay_api) {
-        $('#qrcode').qrcode({
-            render: 'canvas', /*使用canvas方式渲染*/
-            text: qrcode, /*扫描二维码后显示的内容,可以直接填一个网址，扫描二维码后自动跳向该链接*/
-            width: 200, /*二维码的宽度*/
-            height: 200,
-            background: '#ffffff', /*二维码的后景色*/
-            foreground: '#000000', /*二维码的前景色*/
-            src: '',
-            imgWidth: 50,
-            imgHeight: 50
-        });
+        let qrcode_img = kjua({text: qrcode});
+        document.getElementById('qrcode').appendChild(qrcode_img);
     } else {
         var jform = $('#form');
         jform.on('submit', function() {

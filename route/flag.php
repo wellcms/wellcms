@@ -55,7 +55,7 @@ if ($ajax) {
         foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
     }
 
-    $conf['api_on'] ? message(0, $apilist += array('flag' => $read, 'page' => $page, 'num' => $num, 'threadlist' => $threadlist, 'extra' => $extra, 'header' => $header, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+    $conf['api_on'] ? message(0, $apilist += array('flag' => $read, 'num' => $num, 'page' => $page, 'threadlist' => $threadlist, 'extra' => $extra, 'header' => $header, 'safe_token' => $safe_token)) : message(0, lang('closed'));
 } else {
     include _include(theme_load('flag', $flagid));
 }

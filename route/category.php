@@ -88,8 +88,9 @@ switch ($forum['model']) {
             // hook category_article_flat_start.php
 
             $apilist['page'] = $page = param(2, 1);
-            $pagesize = empty($forum['pagesize']) ? $conf['pagesize'] : $forum['pagesize'];
+            $apilist['pagesize'] = $pagesize = empty($forum['pagesize']) ? $conf['pagesize'] : $forum['pagesize'];
 
+            $active = 'default';
             $threadlist = NULL;
             $tidlist = NULL;
             $threads = 0;
@@ -129,7 +130,7 @@ switch ($forum['model']) {
             $threadlist = $arrlist['threadlist'];
             $flaglist = $arrlist['flaglist'];
 
-            // hook category_article_flat_after.php
+            // hook category_article_flat_unified_pull_after.php
 
             $page_url = url('category-' . $fid . '-{page}', $extra);
             $apilist['num'] = $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
@@ -151,7 +152,6 @@ switch ($forum['model']) {
         $header['keywords'] = strip_tags($seo_keywords);
         $header['description'] = strip_tags($forum['brief']);
         $_SESSION['fid'] = $fid;
-        $active = 'default';
         $apilist += array('extra' => $extra, 'header' => $header, 'active' => 'default');
 
         // hook category_article_end.php

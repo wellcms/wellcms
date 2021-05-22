@@ -59,7 +59,7 @@ switch ($action) {
                 foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
             }
 
-            $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'access' => $access, 'threadlist' => $threadlist, 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'extra' => $extra, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+            $conf['api_on'] ? message(0, $apilist += array('num' => $num, 'page' => $page, 'access' => $access, 'threadlist' => $threadlist, 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'extra' => $extra, 'safe_token' => $safe_token)) : message(0, lang('closed'));
         } else {
             include _include(theme_load('home_article'));
         }
@@ -138,7 +138,7 @@ switch ($action) {
                     foreach ($commentlist as &$comment) $comment = comment_filter($comment);
                 }
 
-                $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'access' => $access, 'commentlist' => $commentlist, 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'extra' => $extra, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+                $conf['api_on'] ? message(0, $apilist += array('num' => $num, 'page' => $page, 'access' => $access, 'commentlist' => $commentlist, 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'extra' => $extra, 'safe_token' => $safe_token)) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('home_comment'));
             }

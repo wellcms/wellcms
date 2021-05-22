@@ -1,10 +1,10 @@
 <?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
 
-<!--{hook index_flat_start.htm}-->
+<!--{hook category_flat_start.htm}-->
 
 <div class="row">
     <div class="col-lg-9 main">
-        <!--{hook index_flat_main_start.htm}-->
+        <!--{hook category_flat_main_start.htm}-->
         <div class="card-header bg-light shadow">
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
@@ -12,20 +12,20 @@
                         <?php echo lang('new_thread');?>
                     </a>
                 </li>
-                <!--{hook index_flat_thread_list_nav_item_after.htm}-->
+                <!--{hook category_flat_thread_list_nav_item_after.htm}-->
             </ul>
         </div>
         <ul class="threadlist list-unstyled bg-white shadow">
-            <!--{hook index_flat_threadlist_before.htm}-->
+            <!--{hook category_flat_threadlist_before.htm}-->
             <?php include _include(APP_PATH . 'view/htm/thread_list.inc.htm');?>
-            <!--{hook index_flat_threadlist_after.htm}-->
+            <!--{hook category_flat_threadlist_after.htm}-->
         </ul>
 
-        <!--{hook index_flat_mod_before.htm}-->
+        <!--{hook category_flat_mod_before.htm}-->
 
         <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
 
-        <!--{hook index_flat_page_before.htm}-->
+        <!--{hook category_flat_page_before.htm}-->
         <?php if ($pagination) { ?>
         <nav class="my-3">
             <ul class="pagination justify-content-center flex-wrap">
@@ -33,24 +33,24 @@
             </ul>
         </nav>
         <?php } ?>
-        <!--{hook index_flat_page_end.htm}-->
+        <!--{hook category_flat_page_end.htm}-->
     </div>
 
     <div class="col-lg-3 d-none d-lg-block aside">
-        <!--{hook index_flat_before.htm}-->
+        <!--{hook category_flat_before.htm}-->
         <div class="card-site-info bg-white shadow">
-            <!--{hook index_flat_site_start.htm}-->
+            <!--{hook category_flat_site_start.htm}-->
             <div class="mx-3 pt-3">
                 <h5 class="text-center">
                     <?php echo $conf['sitename'];?>
                 </h5>
-                <!--{hook index_flat_sitename_after.htm}-->
+                <!--{hook category_flat_sitename_after.htm}-->
                 <div class="small line-height-3">
                     <?php echo $conf['sitebrief'];?>
                 </div>
-                <!--{hook index_flat_sitebrief_after.htm}-->
+                <!--{hook category_flat_sitebrief_after.htm}-->
             </div>
-            <!--{hook index_flat_site_before.htm}-->
+            <!--{hook category_flat_site_before.htm}-->
             <div class="card-footer p-2">
                 <table class="w-100 small">
                     <tr align="center">
@@ -81,13 +81,13 @@
                                 <?php echo $forum['todaythreads'];?>
                             </b>
                         </td>
-                        <!--{hook index_flat_todaythreads_after.htm}-->
+                        <!--{hook category_flat_todaythreads_after.htm}-->
                     </tr>
                 </table>
             </div>
-            <!--{hook index_flat_site_end.htm}-->
+            <!--{hook category_flat_site_end.htm}-->
         </div>
-        <!--{hook index_flat_middle.htm}-->
+        <!--{hook category_flat_middle.htm}-->
 
         <?php if($flaglist){foreach($flaglist as &$_flag) { ?>
         <div class="d-none d-lg-block aside shadow mt-3">
@@ -114,11 +114,11 @@
     </div>
 </div>
 
-<!--{hook index_flat_end.htm}-->
+<!--{hook category_flat_end.htm}-->
 
 <?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
 
 <script>
     $('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
 </script>
-<!--{hook index_flat_js.htm}-->
+<!--{hook category_flat_js.htm}-->
