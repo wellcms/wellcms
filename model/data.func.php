@@ -209,15 +209,20 @@ function data_message_format(&$post)
     // hook model_data_message_format_beofre.php
 
     // 格式转换: 类型，0: html, 1: txt; 2: markdown; 3: ubb
-    $message = htmlspecialchars($post['message'], ENT_QUOTES); // html标签全部转换
-
-    // 入库过滤 非管理员全部过滤
-    0 == $post['doctype'] && $message = ((isset($post['gid']) AND 1 == $post['gid']) ? $post['message'] : xn_html_safe($post['message']));
-    1 == $post['doctype'] && $message = xn_txt_to_html($post['message']);
+    switch ($post['doctype']) {
+        case '0': // 入库过滤 非管理员全部过滤
+            $post['message'] = isset($post['gid']) && 1 == $post['gid'] ? $post['message'] : xn_html_safe($post['message']);
+            break;
+        case '1':
+            $post['message'] = xn_txt_to_html($post['message']);
+            break;
+        default:
+            $post['message'] = htmlspecialchars($post['message'], ENT_QUOTES); // html标签全部转换
+            break;
+    }
 
     // hook model_data_message_format_after.php
 
-    $post['message'] = $message;
     unset($post['gid']);
 
     // 对引用进行处理

@@ -340,17 +340,16 @@ body.on('click', '.post_reply', function () {
     return false;
 });
 
-/* BBS 删除 / Delete post*/
+/* 删除 / Delete post*/
 body.on('click', '.post_delete', function () {
     var jthis = $(this);
     var href = jthis.data('href');
-    var isfirst = jthis.attr('isfirst');
     if (window.confirm(lang.confirm_delete)) {
         $.xpost(href, {safe_token: safe_token}, function (code, message) {
             var isfirst = jthis.attr('isfirst');
             if (code == 0) {
                 if (isfirst == 1) {
-                    window.location = forum_url;
+                    window.location = jthis.attr('forum-url');
                 } else {
                     // 删掉楼层
                     jthis.parents('.post').remove();

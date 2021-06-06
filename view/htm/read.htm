@@ -76,7 +76,7 @@
                                 <span class="dropdown-menu dropdown-menu-right animated--fade-in-up shadow border-left-primary py-0">
                                     <!--{hook read_dropdown_menu_start.htm}-->
                                     <?php if($allowdelete) { ?>
-									<a data-href="<?php echo url('operate-delete-'.$tid);?>" href="javascript:void(0);" class="dropdown-item post_delete">
+									<a isfirst="1" forum-url="<?php echo $thread['forum_url'];?>" data-href="<?php echo url('operate-delete-'.$tid);?>" href="javascript:void(0);" class="dropdown-item post_delete">
                                     <?php echo lang('delete');?>
                                     </a>
 									<?php } ?>

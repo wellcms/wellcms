@@ -725,7 +725,7 @@ function filter_html($text)
     $text = trim($text);
     $text = stripslashes($text);
     $text = strip_tags($text, "$html_tag"); // 需要保留的字符在后台设置
-    $text = str_replace(array("\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
+    $text = str_replace(array('&nbsp;', '/', "\t", "\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
     //$text = preg_replace('#\s+#', '', $text);//空白区域 会过滤图片等
     //$text = preg_replace("#<(.*?)>#is", "", $text);
     // 过滤所有的style
