@@ -931,9 +931,9 @@ function well_thread_format(&$thread)
     $thread['user'] = user_safe_info($user);
     unset($user);
     // hook model__thread_format_before.php
-    $forum = isset($forumlist[$thread['fid']]) ? $forumlist[$thread['fid']] : array('name' => '');
-    $thread['forum_name'] = $forum['name'];
-    $thread['forum_url'] = $forum['url'];
+    $forum = array_value($forumlist, $thread['fid']);
+    $thread['forum_name'] = array_value($forum, 'name');
+    $thread['forum_url'] = array_value($forum, 'url');
 
     if ($thread['last_date'] == $thread['create_date']) {
         $thread['last_date_fmt'] = '';

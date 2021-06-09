@@ -347,7 +347,7 @@ function forum_filter($forumlist)
 {
     // hook model_forum_filter_start.php
     foreach ($forumlist as &$val) {
-        unset($val['brief'], $val['moduids'], $val['announcement'], $val['threads'], $val['tops'], $val['seo_title'], $val['seo_keywords'], $val['create_date_fmt'], $val['accesslist'], $val['icon_url'], $val['modlist'], $val['create_date_fmt']);
+        unset($val['brief'], $val['announcement'], $val['seo_title'], $val['seo_keywords'], $val['create_date_fmt'], $val['icon_url'], $val['modlist']);
         // hook model_forum_filter_after.php
     }
     // hook model_forum_filter_end.php
