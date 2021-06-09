@@ -172,7 +172,7 @@ switch ($thread['type']) {
 
         // hook read_single_page_middle.php
 
-        $tidlist = $forum['threads'] ? page_find_by_fid($fid, $page, $pagesize, FALSE) : NULL;
+        $tidlist = $forum['threads'] ? page_find_by_fid($fid, $page, $pagesize) : NULL;
 
         // hook read_single_page_threadlist_before.php
 

@@ -82,7 +82,7 @@ function page_update($tid, $fid)
  */
 function page_update_rank($tid, $rank)
 {
-    if (empty($tid) || empty($rank)) return FALSE;
+    if (empty($tid)) return FALSE;
     // hook model_page_update_rank_start.php
     $r = page__update(array('tid' => $tid), array('rank' => $rank));
     // hook model_page_update_rank_end.php

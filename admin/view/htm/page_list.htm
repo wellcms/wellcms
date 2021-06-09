@@ -21,7 +21,7 @@
                 <div class="d-flex justify-content-between mb-3">
                     <!--{hook admin_page_list_menu_start.htm}-->
                     <div>
-                        <select class="custom-select mr-1 w-auto" name="fid">
+                        <select class="custom-select mr-1 w-auto" name="fid" fid="<?php echo $fid;?>">
                             <!--{hook admin_page_list_select_strat.htm}-->
                             <option value="0"><?php echo 'sticky'==$route?lang('top_3'):lang('select'); ?></option>
                             <!--{hook admin_page_list_select_before.htm}-->
@@ -78,7 +78,7 @@
         <?php if ($fid) { ?>
         <div class="text-center">
             <div class="btn-group mod-button my-3" role="group" aria-label="">
-                <button class="btn btn-secondary rank"><?php echo lang('rank');?></button>
+                <button class="btn btn-secondary rank" safe_token="<?php echo $safe_token;?>"><?php echo lang('rank');?></button>
             </div>
         </div>
         <?php } ?>
@@ -95,23 +95,23 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    var select = $('select[name="fid"]');
-    select.val(<?php echo $fid;?>);
+    let select = $('select[name="fid"]');
+    select.val(select.attr('fid'));
     select.change(function () {
-        var fid = $(this).val();
+        let fid = $(this).val();
         window.location = xn.url('page-list', {fid:fid}, true);
     });
 
-    <?php if ($fid) { ?>
     $('button.rank').on('click', function () {
-        var rankarr = new Array();
+        let jthis = $(this);
+        let rankarr = new Array();
         $('input[name="rank"]').each(function(){
-            var tid = xn.intval($(this).attr('tid'));
-            var oldrank = xn.intval($(this).attr('rank'));
-            var rank = xn.intval($(this).val());
+            let tid = xn.intval($(this).attr('tid'));
+            let oldrank = xn.intval($(this).attr('rank'));
+            let rank = xn.intval($(this).val());
             rankarr.push({tid:tid,oldrank:oldrank,rank:rank});
         });
-        $.xpost(xn.url('page-list', '', true), {data:rankarr}, function (code, message) {
+        $.xpost(xn.url('page-list', '', true), {'data':rankarr, 'safe_token':jthis.attr('safe_token')}, function (code, message) {
             if (code == 0) {
                 $.alert(message);
                 setTimeout(function() {
@@ -122,7 +122,6 @@
             }
         });
     });
-    <?php } ?>
 
     $('#content').addClass('show');
     $('li.content, .menu-page').addClass('active');
