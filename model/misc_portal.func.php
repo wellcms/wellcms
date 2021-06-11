@@ -164,7 +164,7 @@ function portal_index_thread($forumlist)
 
                 if (isset($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
 
-                    $arrlist['flaglist'][$key] = $val;
+                    !isset($arrlist['flaglist'][$key]) and $arrlist['flaglist'][$key] = $val;
                     $arrlist['flaglist'][$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
                     ksort($arrlist['flaglist'][$key]);
 
