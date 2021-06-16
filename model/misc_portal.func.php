@@ -249,13 +249,13 @@ function portal_channel_thread($fid)
                 'rank' => $_forum['rank'],
                 'type' => $_forum['type'],
                 'url' => $_forum['url'],
-                'index_new' => $_forum['index_new'],
+                'channel_new' => $_forum['channel_new'],
                 // hook model_portal_channel_thread_forum_foreach.php
             );
 
             // hook model_portal_channel_thread_forumlist_after.php
 
-            $forum_thread = thread_tid__find(array('fid' => $_forum['fid']), $orderby, $page, $_forum['index_new'], 'tid', array('tid'));
+            $forum_thread = thread_tid__find(array('fid' => $_forum['fid']), $orderby, $page, $_forum['channel_new'], 'tid', array('tid'));
             // 最新信息按栏目分组
             foreach ($forum_thread as $key => $_thread) {
                 $forum_tids[$key] = $_thread;
