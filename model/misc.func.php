@@ -55,7 +55,10 @@ function url($url, $extra = array(), $url_access = NULL)
             $r = $conf['path'] . str_replace('-', '/', $query) . (2 == $conf['url_rewrite_on'] ? '.html' : '');
 
             $ajax = param('ajax', 0);
-            $ajax and $extra += array('ajax' => $ajax);
+            if ($ajax) {
+                empty($extra) and $extra = array();
+                $extra['ajax'] = $ajax;
+            }
         }
     }
 
@@ -705,7 +708,7 @@ function filter_all_html($text)
     $text = trim($text);
     $text = stripslashes($text);
     $text = strip_tags($text);
-    $text = str_replace(array('/', "\t", "\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
+    $text = str_replace(array('&nbsp;', '/', "\t", "\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
     //$text = htmlspecialchars($text, ENT_QUOTES); // 入库前保留干净，入库时转码 输出时无需htmlspecialchars_decode()
     return $text;
 }
@@ -725,7 +728,7 @@ function filter_html($text)
     $text = trim($text);
     $text = stripslashes($text);
     $text = strip_tags($text, "$html_tag"); // 需要保留的字符在后台设置
-    $text = str_replace(array('&nbsp;', '/', "\t", "\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
+    $text = str_replace(array("\r\n", "\r", "\n", '  ', '   ', '    ', '	'), '', $text);
     //$text = preg_replace('#\s+#', '', $text);//空白区域 会过滤图片等
     //$text = preg_replace("#<(.*?)>#is", "", $text);
     // 过滤所有的style
@@ -1050,6 +1053,7 @@ function array_to_string($arr, &$sign = '', &$url = '')
         $sign .= $key . '=' . $val . '&';
     }
     $url = substr($url, 0, -1);
+    $url = htmlspecialchars($url);
     $sign = substr($sign, 0, -1);
 }
 

@@ -1,0 +1,47 @@
+<template include="./view/htm/common.header.htm">
+    <slot name="body">
+        <div class="card-body bg-white">
+            <div class="row">
+                <div class="col-lg-6 mx-auto">
+                    <?php if (!empty($arrlist)) { foreach ($arrlist as $key => &$val) {  ?>
+                    <div class="d-flex justify-content-between my-3 border-bottom">
+                        <div>
+                            <!-- 图标 -->
+                            <img src="<?php echo $val['icon']?>" alt="<?php echo $val['title'];?>">
+                        </div>
+                        <div>
+
+                            <?php if($val['state']){?>
+                            <span>
+                                <!-- 直接复制链接/text-danger p-2 可去掉 -->
+                                <a class="confirm text-danger p-2" data-method="post" data-confirm-text="<?php echo $val['text'];?>" href="<?php echo $val['url'];?>">
+                                    <?php echo $val['text'];?>
+                                </a>
+
+                            </span>
+
+                            <?php } else {?>
+
+                            <span>
+                                <a class="text-primary p-2" href="<?php echo $val['url'];?>">
+                                    <?php echo $val['text'];?>
+                                </a>
+                            </span>
+                            <?php }?>
+                        </div>
+                    </div>
+                    <?php }} else { ?>
+                    <div class="text-center">
+                        <?php echo lang('none'); ?>
+                    </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </slot>
+</template>
+
+<script>
+    $('a[data-active="menu-my"], a[data-active="my-bind"]').addClass('active');
+</script>
+<!--{hook my_bind_js.htm}-->

@@ -27,7 +27,11 @@ switch ($action) {
             $safe_token = well_token_set($uid);
 
             if ($ajax) {
-                $conf['api_on'] ? message(0, array('user' => user_safe_info($user), 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['member_navlist'] = $member_navs;
+                $apilist['member_menulist'] = $member_menus;
+                $apilist['safe_token'] = $safe_token;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('my_avatar'));
             }
@@ -77,7 +81,10 @@ switch ($action) {
             // hook my_password_get_start.php
 
             if ($ajax) {
-                $conf['api_on'] ? message(0, array('user' => user_safe_info($user), 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['member_navlist'] = $member_navs;
+                $apilist['member_menulist'] = $member_menus;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('my_password'));
             }
@@ -100,10 +107,80 @@ switch ($action) {
 
         }
         break;
+    case 'bind':
+
+        if ('GET' == $method) {
+
+            // hook my_bind_start.php
+
+            $arrlist = array();
+            /*$arrlist['qq'] = array(
+                'title' => 'QQ',
+                'icon' => view_path() . 'img/well_qq.png'.$conf['static_version'],
+                'state' => $user['wechat_user'] ? 1 : 0,
+                'text' => $user['well_qq'] ? '解除绑定' : '绑定QQ',
+                'url' => $user['well_qq'] ? url('my-bind', array('type' => 'qq', 'referer' => url('my-bind'))) : url('user-auth-qq', array('referer' => url('my-bind'))),
+            );*/
+
+            // hook my_bind_before.php
+
+            $header['title'] = lang('bind');
+
+            // hook my_bind_end.php
+
+            if ($ajax) {
+                $apilist['header'] = $header;
+                $apilist['member_navlist'] = $member_navs;
+                $apilist['member_menulist'] = $member_menus;
+                $apilist['arrlist'] = $arrlist;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('my_bind'));
+            }
+        } elseif ('POST' == $method) {
+            // unbind
+            $type = param('type');
+
+            // hook my_bind_post_start.php
+
+            switch ($type) {
+                /*case 'wechat':
+                    // 处理业务
+                    break;*/
+                // hook my_bind_post_case.php
+                default:
+                    message(-1, lang('data_malformation'));
+                    break;
+            }
+
+            // hook my_bind_post_end.php
+        }
+
+        break;
     // hook my_case_end.php
     default:
-        $header['title'] = lang('my_home');
-        include _include(theme_load('my'));
+
+        // hook my_case_default_start.php
+
+        if ('GET' == $method) {
+
+            // hook my_case_default_get_start.php
+
+            $header['title'] = lang('my_home');
+
+            // hook my_case_default_get_end.php
+
+            if ($ajax) {
+                $apilist['header'] = $header;
+                $apilist['member_navlist'] = $member_navs;
+                $apilist['member_menulist'] = $member_menus;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('my'));
+            }
+        }
+
+        // hook my_case_default_end.php
         break;
 }
 
