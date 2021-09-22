@@ -138,9 +138,16 @@ switch ($action) {
             $safe_token = param('safe_token');
             FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
-            plugin_official_store(1);
+            $type = param('type', 0);
+            if ($type) {
+                setting_delete('plugin_data');
 
-            message(0, lang('operator_complete'));
+                message(0, lang('exited'));
+            } else {
+                plugin_official_store(1);
+
+                message(0, lang('operator_complete'));
+            }
         }
         break;
     case 'read':
@@ -216,7 +223,7 @@ switch ($action) {
             $siteip < 0 and $siteip = sprintf("%u", $siteip);
             $post = array('email' => $email, 'password' => md5($password), 'auth_key' => xn_key(), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'ua' => md5($useragent), 'siteip' => $siteip, 'longip' => $longip);
             $url = PLUGIN_OFFICIAL_URL . 'plugin-login.html';
-            $json = https_post($url, $post);
+            $json = https_request($url, $post);
             empty($json) and message(-1, lang('server_response_empty'));
             $r = xn_json_decode($json);
             // -1用户不存在 -2用户被锁 0正常 1用户名错误 2密码错误
@@ -307,12 +314,12 @@ switch ($action) {
 
             $password = param('password');
             empty($password) and message('password', lang('please_input_password'));
-            
+
             $siteip = ip2long(_SERVER('SERVER_ADDR'));
             $siteip < 0 and $siteip = sprintf("%u", $siteip);
             $post = array('siteid' => plugin_siteid(), 'app_url' => xn_urlencode(http_url_path()), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'token' => $data[4], 'storeid' => $storeid, 'uid' => $data[0], 'ua' => md5($useragent), 'password' => md5($password), 'siteip' => $siteip, 'longip' => $longip);
             $url = PLUGIN_OFFICIAL_URL . 'plugin-payment.html';
-            $json = https_post($url, $post);
+            $json = https_request($url, $post);
             empty($json) and message(-1, lang('server_response_empty'));
             $arr = xn_json_decode($json);
 
@@ -324,6 +331,7 @@ switch ($action) {
             } else {
                 message($arr['code'], $arr['message']);
             }
+
         }
         break;
     case 'is_bought':
@@ -570,7 +578,7 @@ function plugin_verify_token()
     $post = array('siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'domain' => $domain, 'token' => $arr[4], 'uid' => $arr[0]);
     $url = PLUGIN_OFFICIAL_URL . 'plugin-verify.html';
     // return 'success' or 'fail'
-    return https_post($url, $post);
+    return https_request($url, $post);
 }
 
 function plugin_data_verify()
@@ -650,7 +658,7 @@ function plugin_download_unzip($dir, $storeid, $upgrade = 0)
     // 检查解压是否成功 / check the zip if success
     if (is_dir($destpath . $dir)) {
         $post += array('res' => $arr[1]);
-        https_post(PLUGIN_OFFICIAL_URL . 'plugin-notice.html', $post);
+        https_request(PLUGIN_OFFICIAL_URL . 'plugin-notice.html', $post);
     } else {
         message(-1, lang('plugin_maybe_download_failed'));
     }
@@ -678,7 +686,7 @@ function plugin_bought($storeid)
     $siteip < 0 and $siteip = sprintf("%u", $siteip);
     $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
     $url = PLUGIN_OFFICIAL_URL . 'plugin-bought.html';
-    $s = https_post($url, $post);
+    $s = https_request($url, $post);;
     $arr = xn_json_decode($s);
     empty($arr) and message(-1, $url . lang('plugin_return_data_error') . $s);
     if (0 == $arr['code']) {
@@ -709,7 +717,7 @@ function plugin_query($storeid, $paying = FALSE)
         $post = array('storeid' => $storeid, 'siteid' => $siteid, 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
         FALSE !== $paying and $post['paying'] = 1;
         $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html';
-        $s = https_post($url, $post);
+        $s = https_request($url, $post);;
         if (empty($s)) {
             xn_error(-4, lang('server_response_empty'));
             return FALSE;
@@ -743,7 +751,7 @@ function plugin_notice($dir, $type = 0)
     if (FALSE === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return TRUE;
 
     $url = PLUGIN_OFFICIAL_URL . 'plugin-query.html';
-    $s = https_post($url, array('dir' => $dir));
+    $s = https_request($url, array('dir' => $dir));
     if (empty($s)) return TRUE;
     $res = xn_json_decode($s);
     if (isset($res['code']) && 1 == $res['code']) {
@@ -767,7 +775,7 @@ function plugin_notice($dir, $type = 0)
             isset($arr['key']) and $post += array('key' => $arr['key']);
         }
         $url = PLUGIN_OFFICIAL_URL . 'plugin-notice.html';
-        https_post($url, $post);
+        https_request($url, $post);
     }
     return TRUE;
 }
