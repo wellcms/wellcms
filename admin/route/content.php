@@ -590,7 +590,7 @@ switch ($action) {
             // hook admin_content_update_post_fid_before.php
 
             $newfid = param('fid', 0);
-            $forum = array_value($forumlist, $fid);
+            $forum = array_value($forumlist, $newfid);
             empty($forum) AND message('fid', lang('forum_not_exists'));
 
             // hook admin_content_update_post_fid_center.php
