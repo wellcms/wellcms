@@ -42,24 +42,21 @@ function url($url, $extra = array(), $url_access = NULL)
     } elseif (1 == $conf['url_rewrite_on']) {
         $r = $path . $query . '.html';
     } elseif (2 == $conf['url_rewrite_on'] || 3 == $conf['url_rewrite_on']) {
+        $r = $conf['path'] . str_replace('-', '/', $query) . (2 == $conf['url_rewrite_on'] ? '.html' : '');
+    }
 
-        $arr = explode('-', $query);
-        $filter = array('operate', 'attach', 'read', 'category', 'list', 'my', 'forum', 'thread');
+    $arr = explode('-', $query);
+    $filter = array('operate', 'attach', 'read', 'category', 'list', 'my', 'forum', 'thread');
+    // hook model_url_center.php
+    // 后台链接
+    if ((TRUE === $url_access && !in_array($arr[0], $filter, TRUE)) || 3 === $url_access) {
+        $r = 'index.php?' . http_build_query($arr);
+    }
 
-        // hook model_url_center.php
-
-        // 后台链接
-        if ((TRUE === $url_access && !in_array($arr[0], $filter, TRUE)) || 3 === $url_access) {
-            $r = 'index.php?' . http_build_query($arr);
-        } else {
-            $r = $conf['path'] . str_replace('-', '/', $query) . (2 == $conf['url_rewrite_on'] ? '.html' : '');
-
-            $ajax = param('ajax', 0);
-            if ($ajax) {
-                empty($extra) and $extra = array();
-                $extra['ajax'] = $ajax;
-            }
-        }
+    $ajax = param('ajax', 0);
+    if ($ajax) {
+        empty($extra) and $extra = array();
+        $extra['ajax'] = $ajax;
     }
 
     // hook model_url_after.php
