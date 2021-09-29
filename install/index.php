@@ -67,18 +67,20 @@ if (empty($action)) {
     if ($method == 'GET') {
 
         $succeed = 1;
-        $mysql_support = function_exists('mysql_connect');
+        //$mysql_support = function_exists('mysql_connect');
         $pdo_mysql_support = extension_loaded('pdo_mysql');
         $myisam_support = extension_loaded('pdo_mysql');
         $innodb_support = extension_loaded('pdo_mysql');
 
-        (!$mysql_support && !$pdo_mysql_support) AND message(-1, lang('evn_not_support_php_mysql'));
+        //(!$mysql_support && !$pdo_mysql_support) AND message(-1, lang('evn_not_support_php_mysql'));
+        !$pdo_mysql_support AND message(-1, lang('evn_not_support_php_mysql'));
 
         include INSTALL_PATH . "view/htm/db.htm";
 
     } else {
 
-        $type = param('type');
+        //$type = param('type', 'pdo_mysql');
+        $type = 'pdo_mysql';
         $engine = param('engine');
         $host = param('host');
         $name = param('name');
