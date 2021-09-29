@@ -1047,7 +1047,7 @@ function xn_url_parse($request_url)
         $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']);
     }
 
-    isset($r[0]) and 'index.php' == $r[0] and $r[0] = 'index';
+    isset($r[0]) && ('admin' == $r[0] || 'index.php' == $r[0]) and $r[0] = 'index';
 
     return $r;
 }
