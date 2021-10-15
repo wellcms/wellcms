@@ -323,7 +323,8 @@ function pagination_tpl($url, $text, $active = '')
 // bootstrap 翻页，命名与 bootstrap 保持一致
 function pagination($url, $totalnum, $page, $pagesize = 20)
 {
-    $url = trim(xn_urldecode($url));
+    //$url = trim(xn_urldecode($url));
+    $url = trim($url);
     $totalpage = ceil($totalnum / $pagesize);
     if ($totalpage < 2) return '';
 
