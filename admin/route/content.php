@@ -342,7 +342,8 @@ switch ($action) {
                 'thumbnail' => $thumbnail,
                 'save_image' => $save_image,
                 'delete_pic' => $delete_pic,
-                'message' => $message
+                'message' => $message,
+                'admin' => TRUE
             );
 
             // hook admin_content_create_post_middle.php

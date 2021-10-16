@@ -108,7 +108,8 @@ function well_thread_create($arr)
 
     if (empty($arr)) return FALSE;
 
-    $publishverify = 1 == $gid || !group_access($gid, 'publishverify');
+    // 管理员和后台无需审核
+    $publishverify = 1 == $gid || (!empty($arr['admin']) && group_access($gid, 'managecreatethread')) || !group_access($gid, 'publishverify');
 
     // hook model__thread_create_start.php
 
