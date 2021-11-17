@@ -163,8 +163,8 @@ function user_find($cond = array(), $orderby = array(), $page = 1, $pagesize = 2
     // hook model_user_find_start.php
     $userlist = user__find($cond, $orderby, $page, $pagesize);
     if ($userlist) foreach ($userlist as &$user) {
-        $g_static_users[$user['uid']] = $user;
         user_format($user);
+        $g_static_users[$user['uid']] = $user;
     }
     // hook model_user_find_end.php
     return $userlist;

@@ -82,7 +82,7 @@
             s += '<p class="tag-outline-list">';
             $.each(fup.flagstr_fmt, function(k, flag) {
                 s += '<a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm mr-3 mb-2 flag-option ' + (xn.in_array(flag.flagid, category_flagids) ? 'active' : '') + '" flagid="' + flag.flagid + '">' + flag.name + '</a>';
-                s += '<input type="hidden" name="category[]" value="' + (xn.in_array(flag.flagid, category_flagids)) + '" />';
+                s += '<input type="hidden" name="category[]" value="' + (xn.in_array(flag.flagid, category_flagids) ? flag.flagid : '') + '" />';
             });
             s += '</p>';
         }
