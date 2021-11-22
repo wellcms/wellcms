@@ -617,7 +617,7 @@ switch ($action) {
             // 1 删除主图
             $delete_pic = param('delete_pic', 0);
             // hook admin_content_update_post_fid_after.php
-            $upload_thumbnail = well_attach_assoc_type(0);
+            $upload_thumbnail = well_attach_assoc_type('thumbnail');
             if (!empty($upload_thumbnail) || $delete_pic || $thumbnail) {
                 // Ym变更删除旧图
                 $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
