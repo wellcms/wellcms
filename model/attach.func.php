@@ -657,7 +657,7 @@ function well_attach_assoc_handle($arr = array())
 
     // hook model_attach_assoc_image_upload_start.php
 
-    if ($sess_file && !empty($uploadlist)) {
+    if ($sess_file) {
 
         // hook model_attach_assoc_image_upload_before.php
 
