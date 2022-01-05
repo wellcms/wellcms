@@ -118,7 +118,7 @@ function thread_create_handle($arr)
     $time = array_value($arr, 'time', time());
     $longip = array_value($arr, 'longip');
     $gid = array_value($arr, 'gid', 0);
-    $uid = array_value($arr, 'uid', 0);
+    $uid = array_value($arr, 'uid', $uid);
     $forumlist = forum_list_cache();
     $config = setting_get('conf');
 
