@@ -13,7 +13,6 @@ switch ($action) {
     case 'list':
         // hook tag_list_start.php
 
-        $apilist = array();
         $page = param(2, 1);
         $pagesize = $conf['tagsize'];
         $extra = array(); // 插件预留
@@ -44,7 +43,14 @@ switch ($action) {
         // hook tag_list_end.php
 
         if ($ajax) {
-            $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'arrlist' => $taglist, 'extra' => $extra, 'header' => $header)) : message(0, lang('closed'));
+            $apilist['header'] = $header;
+            $apilist['extra'] = $extra;
+            $apilist['num'] = $num;
+            $apilist['page'] = $page;
+            $apilist['pagesize'] = $pagesize;
+            $apilist['page_url'] = $page_url;
+            $apilist['arrlist'] = $taglist;
+            $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
         } else {
             include _include(theme_load('tag_list'));
         }
@@ -52,7 +58,7 @@ switch ($action) {
     // hook tag_case_end.php
     default:
         // tag-tagid-page.htm
-        $apilist = array();
+
         $tagid = param(1, 0);
         $page = param(2, 1);
         $pagesize = $conf['pagesize'];
@@ -95,7 +101,16 @@ switch ($action) {
         // hook tag_end.php
 
         if ($ajax) {
-            $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'tag' => $read, 'threadlist' => $threadlist, 'extra' => $extra, 'header' => $header)) : message(0, lang('closed'));
+            $apilist['header'] = $header;
+            $apilist['extra'] = $extra;
+            $apilist['tag'] = $read;
+            $apilist['num'] = $num;
+            $apilist['page'] = $page;
+            $apilist['pagesize'] = $pagesize;
+            $apilist['page_url'] = $page_url;
+            $apilist['threadlist'] = $threadlist;
+
+            $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
         } else {
             include _include(theme_load('tag', $tagid));
         }

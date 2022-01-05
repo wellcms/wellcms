@@ -84,11 +84,16 @@ function comment_big_update($cond = array(), $update = array(), $d = NULL)
 // array('tid' => $tid, 'fid' => $fid, 'doctype' => $doctype, 'message' => $message);
 function comment_create($post)
 {
-    global $time, $uid, $gid;
+    global $conf, $time, $uid, $gid;
     if (empty($post)) return FALSE;
 
     // 是否审核 TRUE无需审核 FALSE需要审核
     $commentverify = group_access($gid, 'allowdelete') || !group_access($gid, 'commentverify');
+
+    $thread_update = array();
+    $user_update = array();
+    $forum_update = array();
+    $comment_update = array();
 
     // hook model_comment_create_start.php
 
@@ -103,17 +108,17 @@ function comment_create($post)
     if (FALSE === $pid) return FALSE;
 
     // 关联附件
-    well_attach_assoc_post(array('tid' => $post['tid'], 'pid' => $pid, 'uid' => $uid, 'assoc' => 'post', 'post_create' => 1, 'images' => 0, 'files' => 0, 'message' => $post['message']));
+    $assoc = array('uid' => $post['uid'], 'gid' => $gid, 'tid' => $post['tid'], 'pid' => $pid, 'fid' => $post['fid'], 'time' => $time, 'conf' => $conf, 'message' => $post['message'], 'thumbnail' => 0, 'save_image' => 0, 'sess_file' => 1);
+    $return = well_attach_assoc_handle($assoc);
+    unset($assoc);
+    $return['message'] and $comment_update['message'] = $return['message'];
+    $return['images'] and $comment_update['images'] = $return['images'];
+    $return['files'] and $comment_update['files'] = $return['files'];
 
     // hook model_comment_create_center.php
 
     // 我的回复 审核成功写入website_post_pid
     if (TRUE === $commentverify) {
-
-        $forum_update = array('todayposts+' => 1);
-        // hook model_comment_create_forum_update_before.php
-        forum_update($post['fid'], $forum_update);
-        unset($forum_update);
 
         // hook model_comment_create_middle.php
 
@@ -122,14 +127,10 @@ function comment_create($post)
         // hook model_comment_create_post.php
         comment_pid_create($arr);
 
+        $forum_update = array('todayposts+' => 1);
         // 更新最后回复lastuid
-        $arr = array('posts+' => 1, 'last_date' => $time, 'lastuid' => $uid);
-        // hook model_comment_create_thread_update.php
-        well_thread_update($post['tid'], $arr);
-
-        $user_update = array('comments+' => 1);
-        // hook model_comment_create_user_update.php
-        user_update($uid, $user_update);
+        $thread_update += array('posts+' => 1, 'last_date' => $time, 'lastuid' => $uid);
+        $user_update['comments+'] = 1;
 
         // hook model_comment_create_after.php
 
@@ -142,6 +143,13 @@ function comment_create($post)
         // 评论需要审核
         // hook model_comment_create_verify.php
     }
+
+    // hook model_comment_create_update_after.php
+
+    !empty($thread_update) and well_thread_update($post['tid'], $thread_update);
+    !empty($user_update) and user_update($post['uid'], $user_update);
+    !empty($forum_update) and forum_update($post['fid'], $forum_update);
+    !empty($comment_update) and comment__update($pid, $comment_update);
 
     // hook model_comment_create_end.php
 
@@ -557,10 +565,16 @@ function comment_format(&$post)
     // hook model_comment_format_before.php
     $forum = $post['fid'] ? forum_read($post['fid']) : '';
     $thread = well_thread_read_cache($post['tid']);
-    //$post['fid'] = $thread['fid'];
-    $post['closed'] = $thread['closed'];
-    $post['subject'] = $thread['subject'];
-    $post['url'] = $thread['url'];
+    if ($thread) {
+        //$post['fid'] = $thread['fid'];
+        $post['closed'] = $thread['closed'];
+        $post['subject'] = $thread['subject'];
+        $post['url'] = $thread['url'];
+    } else {
+        $post['closed'] = 0;
+        $post['subject'] = lang('thread_not_exists');
+        $post['url'] = '';
+    }
 
     $post['create_date_fmt'] = humandate($post['create_date']);
     //$post['message'] = stripslashes(htmlspecialchars_decode($post['message']));
@@ -612,8 +626,22 @@ function comment_format_message(&$val)
     if (empty($val)) return;
 
     // 使用云储存
-    1 == $conf['attach_on'] || 0 == $conf['attach_on'] AND $val['message'] = str_replace('="upload/', '="' . file_path(), $val['message']);
+    if (1 == $conf['attach_on'] && 1 == $val['attach_on']) {
+        $val['message'] = str_replace('="upload/', '="' . file_path($val['attach_on']), $val['message']);
+    } elseif (2 == $conf['attach_on'] && 2 == $val['attach_on']) {
+        // 使用图床
+        list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($val['tid']);
 
+        foreach ($imagelist as $key => $attach) {
+
+            $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
+
+            // 替换成图床
+            $val['message'] = FALSE !== strpos($val['message'], $url) && $attach['image_url'] ? str_replace($url, $attach['image_url'], $val['message']) : $val['message'];
+        }
+    } else {
+        $val['message'] = str_replace('="upload/', '="' . file_path($val['attach_on']), $val['message']);
+    }
     //$val['message'] = stripslashes(htmlspecialchars_decode($val['message']));
 
     // hook model_comment_format_message_end.php

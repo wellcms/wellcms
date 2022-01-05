@@ -408,8 +408,11 @@ function well_tag_process($tid, $fid, $new_tags = array(), $tagarr = array())
 
         foreach ($new_tags as $name) {
             ++$i;
-            $name = strip_tags(trim($name));
-            $name = htmlspecialchars($name);
+            $name = trim($name);
+            $name = stripslashes($name);
+            $name = strip_tags($name);
+            $name = str_replace(array('&nbsp;', '#', "@", "$", "%", "^", '&', '·', '<', '>', '；', '`', '~', '!', '￥', '……', ';', '?', '？', '-', '—', '_', '=', '+', '.', '{', '}', '|', ':', '：', '、', '/', '。', '[', ']', '【', '】', '‘', '	', '    ', '  ', '   ', '    '), '', $name);
+            $name = htmlspecialchars($name, ENT_QUOTES);
             if ($name && $i <= $n) {
                 // hook model_tag_process_read_name_before.php
                 // 查询标签

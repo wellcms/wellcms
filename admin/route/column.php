@@ -98,8 +98,8 @@ switch ($action) {
             $channel_new = 10;
             $pagesize = 20;
             $accesson = 0;
-            $width = 170;
-            $height = 113;
+            $width = array_value($conf, 'thumbnail_width', 400);
+            $height = array_value($conf, 'thumbnail_height', 280);
             $son = 0;
             $threads = 0;
             $checked_fup = 0;
@@ -137,8 +137,10 @@ switch ($action) {
             $moduids = user_names_to_ids($modnames);
             $nav_display = param('nav_display', 0);
             $model = param('model', 0);
-            $width = param('width', 170);
-            $height = param('height', 113);
+            $width = param('width', 0);
+            $width = $width ? $width : 400;
+            $height = param('height', 0);
+            $height = $height ? $height : 280;
             $thumbnail = json_encode(array('width' => $width, 'height' => $height));
             $seo_title = param('seo_title');
             $seo_keywords = param('seo_keywords');
@@ -282,8 +284,8 @@ switch ($action) {
             $accesson = $_forum['accesson'];
 
             $thumbnail_size = $_forum['thumbnail'];
-            $width = array_value($_forum['thumbnail'], 'width', 170);
-            $height = array_value($_forum['thumbnail'], 'height', 113);
+            $width = array_value($_forum['thumbnail'], 'width', 400);
+            $height = array_value($_forum['thumbnail'], 'height', 280);
 
             // hook admin_column_update_get_middle.php
 
@@ -330,8 +332,10 @@ switch ($action) {
             $moduids = user_names_to_ids($modnames);
             $nav_display = param('nav_display', 0);
             $model = ($_forum['threads'] OR $_forum['son']) ? $_forum['model'] : param('model', 0);
-            $width = param('width', 170);
-            $height = param('height', 113);
+            $width = param('width', 0);
+            $width = $width ? $width : 400;
+            $height = param('height', 0);
+            $height = $height ? $height : 280;
             $thumbnail = json_encode(array('width' => $width, 'height' => $height));
             $seo_title = param('seo_title');
             $seo_keywords = param('seo_keywords');

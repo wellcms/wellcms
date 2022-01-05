@@ -69,12 +69,7 @@
                                     <!--{hook admin_thread_post_inc_thumbnail_after.htm}-->
 
                                     <!--{hook admin_thread_post_inc_delete_before.htm}-->
-                                    <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox" id="delete_pic-box" name="delete_pic" value="1" />
-                                        <label class="custom-control-label custom-checkbox mr-1" for="delete_pic-box">
-                                            <?php echo lang('delete_thumbnail');?>
-                                        </label>
-                                    </div>
+                                    <a class="btn btn-outline-danger btn-sm" id="thumbnail-delete" href="javascript:void(0);" data-href="<?php echo $form_thumbnailDelete; ?>"><?php echo lang('delete');?></a>
                                     <!--{hook admin_thread_post_inc_delete_after.htm}-->
 
                                 </div>

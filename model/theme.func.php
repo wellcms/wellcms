@@ -83,6 +83,10 @@ function theme_load($type = '', $id = 0, $dir = '')
             // password 修改密码
             $pre .= $default_pre .= 'my_password.htm';
             break;
+        case 'my_bind':
+            // 绑定第三方登录
+            $pre .= $default_pre .= 'my_bind.htm';
+            break;
         case 'my_avatar':
             // 我的头像
             $pre .= $default_pre .= 'my_avatar.htm';
@@ -157,13 +161,13 @@ function theme_load($type = '', $id = 0, $dir = '')
     }
 
     // 加载绑定ID安装风格
-    !empty($json['installed']) AND $path_file = APP_PATH . 'view/template/' . $config['theme'] . '/htm/' . ($id ? $id . '_' : '') . $pre;
+    !empty($json['installed']) and $path_file = APP_PATH . 'view/template/' . $config['theme'] . '/htm/' . ($id ? $id . '_' : '') . $pre;
 
     // 加载安装风格
-    (empty($path_file) || !is_file($path_file)) AND $path_file = APP_PATH . 'view/template/' . $config['theme'] . '/htm/' . $pre;
+    (empty($path_file) || !is_file($path_file)) and $path_file = APP_PATH . 'view/template/' . $config['theme'] . '/htm/' . $pre;
 
     // 风格不存在加载适配端
-    (empty($path_file) || !is_file($path_file)) AND $path_file = APP_PATH . ($dir ? 'plugin/' . $dir . '/view/htm/' : 'view/htm/') . $default_pre;
+    (empty($path_file) || !is_file($path_file)) and $path_file = APP_PATH . ($dir ? 'plugin/' . $dir . '/view/htm/' : 'view/htm/') . $default_pre;
 
     return $path_file;
 }

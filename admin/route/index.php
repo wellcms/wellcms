@@ -47,7 +47,7 @@ if ('login' == $action) {
 
     admin_token_clean();
 
-    message(0, jump(lang('logout_successfully'), './'));
+    message(0, jump(lang('logout_successfully'), $conf['path']));
 
 } elseif ('phpinfo' == $action) {
 
@@ -94,25 +94,27 @@ if ('login' == $action) {
 
     // hook admin_index_info_end.php
 
-    get_last_version($stat);
+    get_last_version();
 
     include _include(ADMIN_PATH . 'view/htm/index.htm');
 }
 
 // hook admin_index_end.php
 
-function get_last_version($stat)
+function get_last_version()
 {
     global $time, $conf, $config, $ip;
 
     $domain = _SERVER('HTTP_HOST');
     if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || $time < array_value($config, 'last_version', 0)) return;
 
-    $post = array('type' => 1, 'sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode($domain), 'app_url' => xn_urlencode(http_url_path()), 'users' => $stat['users'], 'articles' => $stat['articles'], 'comments' => $stat['comments'], 'threads' => $stat['threads'], 'posts' => $stat['posts'], 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
+    $post = array('type' => 1, 'sitename' => xn_urlencode($conf['sitename']), 'domain' => xn_urlencode($domain), 'app_url' => xn_urlencode(http_url_path()), 'siteid' => plugin_siteid(), 'version' => array_value($config, 'version'), 'version_date' => array_value($config, 'version_date', 0));
 
     $json = https_request(OFFICIAL_URL . 'version.html', $post, '', 500, 1);
+    if (empty($json)) return;
 
     $official = xn_json_decode($json);
+    if (empty($official)) return;
 
     // 可更新
     if (0 == $official['code'] && $version = array_value($official, 'version')) {

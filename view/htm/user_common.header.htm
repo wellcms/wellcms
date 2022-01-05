@@ -6,17 +6,13 @@
                 <ul class="nav nav-pills small">
                     <!--用户首页-->
                     <!--{hook user_common_header_nav_thread_before.htm}-->
+                    <?php if (!empty($menulist)) { foreach ($menulist as $menu) { ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo url('user-'.$_uid);?>" data-active="user-home">
-                            <?php echo lang('thread');?>
+                        <a class="nav-link" href="<?php echo $menu['url'];?>" data-active="<?php echo $menu['active'];?>">
+                            <?php echo $menu['name'];?>
                         </a>
                     </li>
-                    <!--{hook user_common_header_nav_thread_after.htm}-->
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo url('user-comment-'.$_uid);?>" data-active="user-comment">
-                            <?php echo lang('comment');?>
-                        </a>
-                    </li>
+                    <?php }} ?>
                     <!--{hook user_common_header_nav_comment_after.htm}-->
                 </ul>
             </div>

@@ -49,7 +49,7 @@
         <!--{hook list_main_page_after.htm}-->
     </div>
 
-    <div class="col-lg-3 d-none d-lg-block aside">
+    <div class="col-lg-3 d-none d-lg-block">
         <!--{hook list_site_brief_start.htm}-->
         <div class="card-site-info bg-white shadow">
             <!--{hook list_site_brief_before.htm}-->
@@ -109,11 +109,11 @@
                     </a>
                 </h3>
             </div>
-            <ul class="list-group list-group-flush nowrap">
+            <ul class="list-group list-group-flush">
                 <?php if(isset($_flag['list'])){foreach($_flag['list'] as $_thread) { ?>
                 <li class="list-group-item bg-white">
                     <h4 class="h6 my-0">
-                        <a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
+                        <a href="<?php echo $_thread['url'];?>" class="d-block text-truncate" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                             <?php echo $_thread['subject'];?>
                         </a>
                     </h4>

@@ -14,12 +14,14 @@ $action = param(1, 'article');
 // 从全局拉取$user
 $header['mobile_title'] = '';
 $header['mobile_linke'] = '';
-list($member_navs, $member_menus) = nav_member();
+list($member_navs, $member_menus) = nav_member(array('user' => $user, 'route' => $route));
+
+// hook home_before.php
 
 switch ($action) {
     // hook home_case_start.php
     case 'article':
-        $apilist = array();
+
         $page = param(2, 1);
         $pagesize = $conf['pagesize'];
         $extra = array(); // 插件预留
@@ -54,12 +56,23 @@ switch ($action) {
 
         // hook home_article_end.php
 
-        if ($ajax) {
+        if ('1' == _GET('ajax')) {
             if ($threadlist) {
                 foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
             }
 
-            $conf['api_on'] ? message(0, $apilist += array('num' => $num, 'page' => $page, 'access' => $access, 'threadlist' => $threadlist, 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'extra' => $extra, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+            $apilist['header'] = $header;
+            $apilist['extra'] = $extra;
+            $apilist['num'] = $num;
+            $apilist['page'] = $page;
+            $apilist['pagesize'] = $pagesize;
+            $apilist['page_url'] = $page_url;
+            $apilist['safe_token'] = $safe_token;
+            $apilist['access'] = $access;
+            $apilist['member_navlist'] = $member_navs;
+            $apilist['member_menulist'] = $member_menus;
+            $apilist['threadlist'] = $threadlist;
+            $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
         } else {
             include _include(theme_load('home_article'));
         }
@@ -69,7 +82,6 @@ switch ($action) {
 
         if ('GET' == $method) {
 
-            $apilist = array();
             $page = param(2, 1);
             $pagesize = 25;
             $extra = array(); // 插件预留
@@ -107,9 +119,9 @@ switch ($action) {
                 foreach ($commentlist as &$val) {
                     data_format($val);
                     comment_filter($val);
-                    $val['subject'] = $threadlist[$val['tid']]['subject'];
-                    $val['url'] = $threadlist[$val['tid']]['url'];
-                    $val['allowdelete'] = (group_access($gid, 'allowuserdelete') and $uid == $val['uid']) || forum_access_mod($val['fid'], $gid, 'allowdelete');
+                    $val['subject'] = isset($threadlist[$val['tid']]) ? $threadlist[$val['tid']]['subject'] : '';
+                    $val['url'] = isset($threadlist[$val['tid']]) ? $threadlist[$val['tid']]['url'] : '';
+                    $val['allowdelete'] = (group_access($gid, 'allowuserdelete') and $uid == $val['uid']) || $val['fid'] && forum_access_mod($val['fid'], $gid, 'allowdelete');
                     // hook home_comment_list_foreach.php
                 }
             }
@@ -132,13 +144,22 @@ switch ($action) {
 
             // hook home_comment_after.php
 
-            if ($ajax) {
-                
+            if ('1' == _GET('ajax')) {
+
                 if ($commentlist) {
                     foreach ($commentlist as &$comment) $comment = comment_filter($comment);
                 }
 
-                $conf['api_on'] ? message(0, $apilist += array('num' => $num, 'page' => $page, 'access' => $access, 'commentlist' => $commentlist, 'header' => $header, 'member_navlist' => $member_navs, 'member_menulist' => $member_menus, 'extra' => $extra, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['extra'] = $extra;
+                $apilist['num'] = $num;
+                $apilist['page'] = $page;
+                $apilist['pagesize'] = $pagesize;
+                $apilist['page_url'] = $page_url;
+                $apilist['safe_token'] = $safe_token;
+                $apilist['access'] = $access;
+                $apilist['commentlist'] = $commentlist;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('home_comment'));
             }

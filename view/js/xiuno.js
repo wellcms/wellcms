@@ -57,7 +57,7 @@ Object.sum = function (obj) {
     });
     return sum;
 };
-if (typeof console == 'undefined') {
+if (typeof console == undefined) {
     console = {};
     console.log = function () {
     };
@@ -167,7 +167,7 @@ xn.floatval = function (s) {
 
 xn.isset = function (k) {
     var t = typeof k;
-    return t != 'undefined' && t != 'unknown';
+    return t != undefined && t != 'unknown';
 };
 
 xn.empty = function (s) {
@@ -574,15 +574,17 @@ xn.url = function (u, extra, url_access) {
     let on = window.url_rewrite_on || 0;
     url_access = url_access || window.url_access || false;
 
-    if (xn.strpos(u, '/') != -1) {
-        var path = xn.substr(u, 0, xn.strrpos(u, '/') + 1);
-        var query = xn.substr(u, xn.strrpos(u, '/') + 1);
+    let path = '';
+    let query = '';
+    if (-1 != u.indexOf('/')) {
+        path = xn.substr(u, 0, u.lastIndexOf('/') + 1);
+        query = xn.substr(u, u.lastIndexOf('/') + 1);
     } else {
-        var path = '';
-        var query = u;
+        path = '';
+        query = u;
     }
 
-    var r = '';
+    let r = '';
     if (!on) {
         r = path + '?' + query + '.html';
     } else if (1 == on) {
@@ -593,26 +595,26 @@ xn.url = function (u, extra, url_access) {
         if (2 == on) r = r + '.html';
     }
 
-    var arr = xn.explode('-', query);
-    var url_filter = window.url_filter || ['operate', 'attach', 'read', 'category', 'list', 'my', 'forum', 'thread'];
+    let arr = query.split('-');
+    let url_filter = window.url_filter || ['operate', 'attach', 'read', 'category', 'list', 'my', 'forum', 'thread'];
 
     if ((true === url_access && false === xn.in_array(arr[0], url_filter)) || 3 === url_access) {
-        var str = '';
-        $.each(arr, function (k, v) {
-            str += '&' + k + '=' + v;
-        });
+        let str = '';
+        for (let key in arr) {
+            str += '&' + key + '=' + arr[key];
+        }
         r = 'index.php?' + str.replace('&','');
     }
 
     if(2 === url_access && 2 > on) r = '../' + r;
 
     if (extra) {
-        var args = '';
-        $.each(extra, function (k, v) {
-            args += '&' + k + '=' + v;
-        });
+        let args = '';
+        for (let key in extra) {
+            args += '&' + key + '=' + extra[key];
+        }
         args = args.replace('&','');
-        var sep = r.indexOf('?') == -1 ? '?' : '&';
+        let sep = r.indexOf('?') == -1 ? '?' : '&';
         r += sep + args;
     }
 
@@ -1292,7 +1294,7 @@ xn.image_resize = function (file_base64_data, callback, options) {
     var thumb_height = options.height || 4960;
     var action = options.action || 'thumb';
     var filetype = options.filetype || xn.image_file_type(file_base64_data);/*xn.base64_data_image_type(file_base64_data);*/
-    var qulity = options.qulity || 0.75; /*图片质量, 1 为无损*/
+    var quality = options.quality || options.qulity || 0.75; /*图片质量, 1 为无损*/
 
     if (thumb_width < 1) return callback(-1, '缩略图宽度不能小于 1 / thumb image width length is less 1 pix');
     if (xn.substr(file_base64_data, 0, 10) != 'data:image') return callback(-1, '传入的 base64 数据有问题 / deformed base64 data');
@@ -1406,9 +1408,8 @@ xn.image_resize = function (file_base64_data, callback, options) {
 
             /*//filetype = 'png';*/
             if (filetype == 'jpg') filetype = 'jpeg';
-            var s = canvas.toDataURL('image/' + filetype, qulity);
+            var s = canvas.toDataURL('image/' + filetype, quality);
             if (callback) callback(0, {width: width, height: height, data: s});
-
         };
 
         var water_img = new Image();

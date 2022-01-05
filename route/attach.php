@@ -67,7 +67,7 @@ switch ($action) {
         sess_restart();
 
         !isset($_SESSION[$key]) and $_SESSION[$key] = array();
-        
+
         // 超过30则删除之前上传的所有附件
         if (count($_SESSION[$key]) > 50) {
             foreach ($_SESSION[$key] as $_file) is_file($_file['path']) and unlink($_file['path']);
@@ -107,7 +107,7 @@ switch ($action) {
         file_put_contents($tmpfile, $data) or message(1, lang('write_to_file_failed'));
 
         // hook attach_create_save_after.php
-    
+
         // $mode = 0内容图片和附件按照SESSION数组附件数量统计，1主图按照传入的n数值
         empty($mode) and $n = count($_SESSION[$key]);
 
@@ -179,16 +179,18 @@ switch ($action) {
             if (empty($t)) {
                 $attach = well_attach_read($aid);
                 $thread = well_thread_read($attach['tid']);
+                $comment = comment__read(array('pid' => $attach['pid']));
             }
             // hook attach_delete_middle.php
             empty($attach) and message(-1, lang('attach_not_exists'));
-            empty($thread) and message(-1, lang('thread_not_exists'));
+
             // hook attach_delete_thread_after.php
             $allowdelete = forum_access_mod($thread['fid'], $gid, 'allowdelete');
             $attach['uid'] != $uid && !$allowdelete and message(0, lang('insufficient_privilege'));
             if (empty($t)) {
                 FALSE === well_attach_delete($aid) and message(-1, lang('delete_failed'));
-                well_thread_update($thread['tid'], array('files-' => 1));
+                $attach['tid'] and well_thread_update($attach['tid'], array('files-' => 1));
+                $attach['pid'] and comment_update($attach['pid'], array('files-' => 1));
             }
             // hook attach_delete_aid_after.php
         }

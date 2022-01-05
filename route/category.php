@@ -10,7 +10,6 @@ $fid = param(1, 0);
 empty($fid) and message(1, lang('data_malformation'));
 
 $extra = array(); // 插件预留
-$apilist = array(); // API预留
 
 // hook category_extra.php
 
@@ -87,8 +86,8 @@ switch ($forum['model']) {
 
             // hook category_article_flat_start.php
 
-            $apilist['page'] = $page = param(2, 1);
-            $apilist['pagesize'] = $pagesize = empty($forum['pagesize']) ? $conf['pagesize'] : $forum['pagesize'];
+            $page = param(2, 1);
+            $pagesize = empty($forum['pagesize']) ? $conf['pagesize'] : $forum['pagesize'];
 
             $active = 'default';
             $threadlist = NULL;
@@ -100,7 +99,6 @@ switch ($forum['model']) {
 
             if ($thread_list_from_default) {
                 $fids = array();
-                $threads = 0;
                 if ($forumlist_show) {
                     foreach ($forumlist_show as $key => $val) {
                         if ($val['fup'] == $fid && 1 == $val['type'] && 0 == $val['category']) {
@@ -109,6 +107,8 @@ switch ($forum['model']) {
                         }
                     }
                 }
+
+                $forum['threads'] = $threads;
 
                 // hook index_flat_thread_find_tid_before.php
 
@@ -126,14 +126,14 @@ switch ($forum['model']) {
 
             // hook category_article_flat_unified_pull_before.php
 
-            $apilist['arrlist'] = $arrlist = thread_unified_pull($arr);
-            $threadlist = $arrlist['threadlist'];
-            $flaglist = $arrlist['flaglist'];
+            $arrlist = thread_unified_pull($arr);
+            $threadlist = array_value($arrlist, 'threadlist');
+            $flaglist =  array_value($arrlist, 'flaglist');
 
             // hook category_article_flat_unified_pull_after.php
 
             $page_url = url('category-' . $fid . '-{page}', $extra);
-            $apilist['num'] = $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
+            $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
 
             // hook category_article_flat_pagination_before.php
 
@@ -152,14 +152,30 @@ switch ($forum['model']) {
         $header['keywords'] = strip_tags($seo_keywords);
         $header['description'] = strip_tags($forum['brief']);
         $_SESSION['fid'] = $fid;
-        $apilist += array('extra' => $extra, 'header' => $header, 'active' => 'default');
 
         // hook category_article_end.php
 
         if ($ajax) {
+            $apilist['page'] = $page;
+            $apilist['pagesize'] = $pagesize;
+            $apilist['num'] = $num;
+            $apilist['page_url'] = $page_url;
+            $apilist['extra'] = $extra;
+            $apilist['header'] = $header;
+            $apilist['active'] = $active;
+            $apilist['arrlist'] = $arrlist;
             $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
         } else {
-            include _include(theme_load('category', $fid));
+            // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
+            switch ($forum['model']) {
+                /*case '0':
+                    include _include(theme_load('test_category', $fid, 'well_test')); // Plug-in directory / 插件目录
+                    break;*/
+                // hook category_case.php
+                default:
+                    include _include(theme_load('category', $fid));
+                    break;
+            }
         }
         break;
     // hook category_model_case_after.php

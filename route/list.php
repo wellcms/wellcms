@@ -6,13 +6,13 @@
 
 // hook list_start.php
 
-$apilist = array();
 $fid = param(1, 0);
 empty($fid) and message(1, lang('data_malformation'));
 
 $page = param(2, 1);
 $extra = array(); // 插件预留
 $active = 'default';
+empty($safe_token) and $safe_token = well_token_set($uid);
 
 // hook list_before.php
 
@@ -99,7 +99,16 @@ if (1 == $forum['type']) {
             // hook list_header_after.php
 
             if ($ajax) {
-                $conf['api_on'] ? message(0, $apilist += array('forum' => $forum, 'page' => $page, 'num' => $num, 'arrlist' => $arrlist, 'extra' => $extra, 'header' => $header, 'active' => $active)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['extra'] = $extra;
+                $apilist['num'] = $num;
+                $apilist['page'] = $page;
+                $apilist['pagesize'] = $pagesize;
+                $apilist['page_url'] = $page_url;
+                $apilist['active'] = $active;
+                $apilist['forum'] = $forum;
+                $apilist['arrlist'] = $arrlist;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
                 switch ($forum['model']) {

@@ -7,7 +7,6 @@
 
 // hook index_start.php
 
-$apilist = array();
 $arrlist = array();
 $extra = array(); // 插件预留
 $fid = 0;
@@ -144,8 +143,8 @@ if (0 == $website_mode) {
 
     // hook index_flat_start.php
 
-    $apilist['page'] = $page = param(1, 1);
-    $apilist['pagesize'] = $pagesize = $conf['pagesize'];
+    $page = param(1, 1);
+    $pagesize = $conf['pagesize'];
     $threadlist = $tidlist = NULL;
     $threads = 0;
 
@@ -203,7 +202,7 @@ if (0 == $website_mode) {
     // hook index_flat_link_after.php
 
     $page_url = url($route . '-{page}', $extra);
-    $apilist['num'] = $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
+    $num = $threads > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $threads;
 
     // hook index_flat_pagination_before.php
 
@@ -224,7 +223,15 @@ $active = 'default';
 // hook index_end.php
 
 if ($ajax) {
-    $conf['api_on'] ? message(0, $apilist += array('arrlist' => $arrlist, 'header' => $header, 'active' => $active, 'extra' => $extra)) : message(0, lang('closed'));
+    $apilist['header'] = $header;
+    $apilist['extra'] = $extra;
+    $apilist['num'] = $num;
+    $apilist['page'] = $page;
+    $apilist['pagesize'] = $pagesize;
+    $apilist['page_url'] = $page_url;
+    $apilist['active'] = $active;
+    $apilist['arrlist'] = $arrlist;
+    $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
 } else {
     include _include(theme_load('index'));
 }

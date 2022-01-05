@@ -122,7 +122,8 @@ $(function () {
     $(document).on('keydown', '.tag-input', function (event) {
         var tag_input = $(this);
         var token = tag_input.parents('.tags').find('.tags-token');
-        if (event.keyCode == 13 || event.keyCode == 108 || event.keyCode == 188 || event.keyCode == 32) {
+        /* event.keyCode == 32 */
+        if (event.keyCode == 13 || event.keyCode == 108 || event.keyCode == 188) {
             create_tag();
             return false;
         }
@@ -153,7 +154,8 @@ $(function () {
 
     tag_input.bind("input propertychange", function () {
         var str = $(this).val();
-        if (str.indexOf(',') != -1 || str.indexOf('，') != -1 || str.indexOf(' ') != -1) {
+        /* || str.indexOf(' ') != -1 */
+        if (str.indexOf(',') != -1 || str.indexOf('，') != -1) {
             create_tag();
             return false;
         }
@@ -161,8 +163,9 @@ $(function () {
 
     function create_tag() {
         var tag_input = $('.tag-input');
-        var tag = tag_input.val().replace(/\s+/g, '');
-        var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？%]", 'g');
+        /*var tag = tag_input.val().replace(/\s+/g, '');*/
+        var tag = tag_input.val();
+        var reg = new RegExp("[`~!@#$^&*()=|{}:;,\\[\\].<>/?！￥…（）—【】‘；：”“。，、？%]", 'g');
         tag = tag.replace(reg, '');
         if (tag.length > 0) {
             var tags = $('input[name="tags"]').val();
@@ -172,7 +175,7 @@ $(function () {
                 return false;
             }
             if (Object.count(arr) <= 5) {
-                $('<span class="border border-secondary tag btn-sm my-1 mr-3 tags-token">' + tag + '</span>').insertBefore(tag_input.parents('.tags').find('.tag-wrap'));
+                $('<span class="tag tags-token" style="margin-right: 1rem;margin-bottom: .25rem;margin-top: .25rem;padding: .25rem .5rem;border: 1px solid #dddfeb;font-size: .8575rem;line-height: 1.5;border-radius: .2rem;">' + tag + '</span>').insertBefore(tag_input.parents('.tags').find('.tag-wrap'));
             }
             tag_input.val('');
             get_tag_val(tag_input);
@@ -188,7 +191,9 @@ $(function () {
         }
         for (var i = 0; i < token.length; i++) {
             str += token.eq(i).text() + ',';
-            str = str.replace(/\s+/g, '');
+            /*str = str.replace(/\s+/g, '');*/
+            var reg = new RegExp("[`~!@#$^&*()=|{}:;\\[\\].<>/?！￥…（）—【】‘；：”“。，、？%]", 'g');
+            str = str.replace(reg, '');
             $(obj).parents('.tags').find('.tags-val').val(str);
         }
     }
@@ -221,52 +226,66 @@ body.on('click', 'a.confirm', function () {
 });
 
 /*
- <a class="ajax" rel="nofollow" href="<?php echo url('comment-create'); ?>" data-method="get" aria-label="评论提交">提交</a>
+ <a class="ajax" rel="nofollow" href="<?php echo url('comment-create'); ?>" data-method="get" data-confirm-text="删除" aria-label="评论提交">提交</a>
 
- <a class="ajax" rel="nofollow" href="<?php echo url('comment-create'); ?>" data-method="post" data-json="{data:1}" aria-label="评论提交">提交</a>
+ <a class="ajax" rel="nofollow" href="<?php echo url('comment-create'); ?>" data-method="post" data-json='{"safe_token":"<?php echo $safe_token;?>","type":"1"}' data-confirm-text="删除" aria-label="评论提交">提交</a>
 
- var list = document.getElementsByClassName('follow');
-    for (var i in list) {
-        list[i].onclick = function () {
-            var jthis = this;
-            var _uid = jthis.getAttribute('uid');
-            var href = jthis.getAttribute('href');
-            var method = jthis.getAttribute('data-method');
-            $.xpost(href, {'uid': _uid}, function (code, data) {
+	let list = document.getElementsByClassName('follow');
+	let listLen = list.length;
+	for (var i = 0; i < listLen; ++i) {
+		list[i].onclick = function () {
+			let jthis = this;
+			let _uid = jthis.getAttribute('uid');
+			let href = jthis.getAttribute('href');
+			let method = jthis.getAttribute('data-method');
+			$.xpost(href, {'uid': _uid}, function (code, data) {
 
-            });
-            console.log(_uid);
-            return false;
-        };
-    }
+			});
+			console.log(_uid);
+			return false;
+		};
+	}
 
 array('url' => url('my-follow', array('type' => 1,'followuid' => $followuid)), 'text' => lang('well_unfollow'), 'data-method' => 'post', 'data-modal-title' => '')
  */
 body.on('click', 'a.ajax', function () {
-    var jthis = $(this);
-    var method = xn.strtolower(jthis.data('method'));
-    var href = jthis.data('href') || jthis.attr('href');
-    if ('post' == method) {
-        var postdata = jthis.data('json');
-        $.xpost(href, postdata, function (code, message) {
-            if (0 == code) {
-                if (undefined == message.text) {
-                    window.location.reload();
-                } else {
-                    jthis.html(message.text);
-                    if (message.url) jthis.attr('href', message.url); /*url*/
-                    if (message.method) jthis.attr('data-method', message.method); /*data-method*/
-                    if (message.modal) jthis.attr('data-method', message.modal); /*data-modal-title*/
-                }
-            } else if ('url' == code) {
-                window.location = message;
-            } else {
-                $.alert(message);
-            }
+    let jthis = $(this);
+    let text = jthis.data('confirm-text') || '';
+
+    if (text) {
+        $.confirm(text, function () {
+            well_click_ajax()
         });
     } else {
-        window.location = jthis.attr('href');
+        well_click_ajax();
     }
+
+    function well_click_ajax() {
+        let method = xn.strtolower(jthis.data('method'));
+        let href = jthis.data('href') || jthis.attr('href');
+        if ('post' == method) {
+            let postdata = jthis.data('json');
+            $.xpost(href, postdata, function (code, message) {
+                if (0 == code) {
+                    if (undefined == message.text) {
+                        window.location.reload();
+                    } else {
+                        jthis.html(message.text);
+                        if (message.url) jthis.attr('href', message.url); /*url*/
+                        if (message.method) jthis.attr('data-method', message.method); /*data-method*/
+                        if (message.modal) jthis.attr('data-method', message.modal); /*data-modal-title*/
+                    }
+                } else if ('url' == code) {
+                    window.location = message;
+                } else {
+                    $.alert(message);
+                }
+            });
+        } else {
+            window.location = jthis.attr('href');
+        }
+    }
+
     return false;
 });
 
@@ -510,7 +529,10 @@ function well_serialize_form(formId, format) {
     return ojb;
 }
 
-/* 获取指定form中的所有的<input>对象 */
+/*
+获取指定form中的所有的<input>对象
+暂时不支持表单数组name="a[]"
+*/
 function well_get_elements(formId) {
     let form = document.getElementById(formId);
 
@@ -580,6 +602,283 @@ function well_serialize_element(element, format) {
         } else {
             return results;
         }
+    }
+}
+
+/*
+* body = Element
+* options = {'title': 'title', 'timeout': '1', 'size': '', 'width': '550px', 'fixed': 'bottom', 'bg': 'white', 'screen': 'black'};
+*
+* title 标题
+* timeout x秒关闭 0点击关闭 -1自行使用代码关闭
+* size 模态框大小CSS 定义的class / bootstrap 可以使用 modal-dialog modal-md
+* width 限制模态框宽度 size和width同时存在时，使用width 550px
+* fixed 默认居中center 从底部弹出bottom
+* screen 弹窗全屏背景 默认透明 black 黑色60%透明度
+* bg 弹窗背景 默认黑色60%透明度 white or black
+* rounded 边框角度，默认0.25rem 圆角
+* */
+$.modal = function (body, options) {
+
+    let w_modal = document.getElementById('w-modal');
+    if (w_modal) w_modal.parentNode.removeChild(w_modal);
+
+    options = options || {'title': '', 'timeout': '1', 'size': '', 'width': '550px', 'fixed': 'center', 'screen': '', 'bg': 'rgb(0 0 0 / 60%)', 'rounded': '0.25rem'};
+    if (options.size && options.width) options.size = '';
+
+    if ('white' == options.bg) {
+        options.bg = '#FFFFFF';
+        font_bg = 'rgb(0 0 0 / 100%)';
+    } else if ('black' == options.bg) {
+        options.bg = 'rgb(0 0 0 / 60%)';
+        font_bg = '#FFFFFF';
+    } else {
+        options.bg = 'rgb(0 0 0 / 60%)';
+        font_bg = '#FFFFFF';
+    }
+
+    let styleCode = '';
+    let header = '';
+    if (options.title || 0 == options.timeout) {
+        let title = '&nbsp;';
+        if (options.title) {
+            title = '<div id="w-title" style="position: relative;margin: .5rem .5rem;line-height: 1.3;font-weight: bold;font-size: 1.05rem;color: '+font_bg+';">' + options.title + '</div>';
+        }
+
+        let close = '';
+        if (0 == options.timeout) {
+            close = '<span id="w-modal-close" style="position: relative;padding: .5rem .5rem;float: right;font-size: 1.5rem;font-weight: 700;cursor:pointer;color: '+font_bg+';">&times;</span>';
+        }
+
+        header = '\
+        <div id="w-modal-header" style="display: flex;position: relative;width: 100%;align-items: flex-start;justify-content: space-between;line-height: .8;padding: 0.5rem 0;">\
+            ' + title + '\
+            ' + close + '\
+		</div>';
+    }
+
+    if (!options.fixed) options.fixed = 'center';
+    if (!options.rounded) options.rounded = '0.25rem';
+
+    if ('top' == options.fixed) {
+        fixed = 'position:fixed;top:0;left:0;visibility:visible;animation: modal-fadein .5s;';
+        radius = 'border-bottom-left-radius:'+options.rounded+';border-bottom-right-radius:'+options.rounded+';';
+        options.width = '100%';
+        styleCode += '@keyframes modal-fadein { from{opacity:0;top:0;} to{opacity:1;top:0;}}';
+    } else if ('center' == options.fixed) {
+        /*let Width = window.screen.availWidth;
+        if (Width > 800) {
+            maxWidth = 'calc(100% - 30px)';
+        } else {
+            maxWidth = '100%';
+        }*/
+        let maxWidth = 'calc(100% - 30px)';
+        fixed = 'position: relative;top:50%;left:50%;max-height:calc(100% - 30px);max-width:'+maxWidth+';transform:translate(-50%,-50%);';
+        radius = 'border-radius: '+options.rounded+';';
+    } else if ('bottom' == options.fixed) {
+        fixed = 'position:fixed;bottom:0;left:0;visibility:visible;animation: modal-fadein .5s;';
+        radius = 'border-top-left-radius:'+options.rounded+';border-top-right-radius:'+options.rounded+';';
+        options.width = '100%';
+        styleCode += '@keyframes modal-fadein { from{opacity:0;bottom:0;} to{opacity:1;bottom:0;}}';
+    }
+
+    let style = '<style>' + styleCode + '</style>';
+
+    let screen = '';
+    if (options.screen && 'black' == options.screen) {
+        screen = 'background-color: rgb(0 0 0 / 60%);';
+    }
+
+    const s = '\
+    ' + style + '\
+    <div style="display: block;overflow-x: hidden;overflow-y: hidden;position: fixed;top: 0;left: 0;z-index: 1050;width: 100%;height: 100%;'+screen+'">\
+        <div id="w-modal-dialog" style="flex-direction: column;overflow-x: hidden;overflow-y: hidden;margin:0 !important;width: 100%;' + fixed + '">\
+            <div id="w-wrap" class="' + options.size + '" style="position: relative;margin: 0 auto;max-width:' + options.width + ';font-size: 1.2rem;background-color: ' + options.bg + ';color: '+font_bg+';pointer-events: auto !important;overflow-x: hidden;overflow-y: hidden;' + radius + '">\
+            <div id="w-modal-content" style="display: block;position: relative;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;padding: 0 .5rem;overflow-x: hidden;overflow-y: auto;width: 100%;">\
+                ' + header + '\
+                <div id = "w-modal-body" style = "display: block;display: -ms-flexbox;display: flex;position: relative;-ms-flex-direction: column;flex-direction: column;word-wrap: break-word;-ms-flex: 1 1 auto;flex: 1 1 auto;width: 100%;" >' + body + '</div>\
+            </div>\
+        </div>\
+    </div>';
+
+    let modal = document.createElement("div");
+    modal.id = 'w-modal';
+    modal.innerHTML = s;
+    let jmodal = document.body.insertBefore(modal, document.body.lastElementChild);
+    if (typeof options.timeout) {
+        w_modal = document.getElementById('w-modal');
+        if (options.timeout > 0) {
+            setTimeout(function () {
+                w_modal.parentNode.removeChild(w_modal);
+            }, options.timeout * 1000);
+        } else if (0 == options.timeout) {
+            w_close = document.getElementById('w-modal-close');
+            if (w_close) {
+                w_close.addEventListener('click', function (e) {
+                    w_modal.parentNode.removeChild(w_modal);
+                    e.stopPropagation();
+                });
+            }
+        }
+    }
+
+    return jmodal;
+};
+
+/*
+options = {'title': '标题可空', 'timeout': 0, 'size': '定义的class', 'width': '550px', 'fixed': 'center or bottom', 'screen': 'black 黑色背景', 'rounded': '0.25rem 圆角', 'bg': 'white or black 默认黑色60%透明度'}
+*/
+$.ajaxModal = function (url, callback, arg, options) {
+    options = options || {'title': '.', 'timeout': 0, 'size': '', 'width': '550px', 'fixed': 'center', 'screen': '', 'rounded': ''};
+    if (0 != options.timeout) options.timeout = 0;
+    if (!options.size && !options.width) options.width = '550px';
+
+    let jmodal = $.modal('<div style="text-align: center;padding-bottom: 1.5rem;padding-top: .5rem;">Loading...</div>', options);
+
+    jmodal.querySelector('[id="w-title"]').innerHTML = options.title;
+
+    /*ajax 加载内容*/
+    $.xget(url, function (code, message) {
+        /*对页面 html 进行解析*/
+        if (code == -101) {
+            var r = xn.get_title_body_script_css(message);
+            jmodal.querySelector('[id="w-modal-body"]').innerHTML = r.body;
+        } else {
+            jmodal.querySelector('[id="w-modal-body"]').innerHTML = '<div style="text-align: center;padding-bottom: 1.5rem;padding-top: .5rem;">' + message + '</div>';
+            return;
+        }
+        /*eval script, css*/
+        xn.eval_stylesheet(r.stylesheet_links);
+        jmodal.script_sections = r.script_sections;
+        if (r.script_srcs.length > 0) {
+            $.require(r.script_srcs, function () {
+                xn.eval_script(r.script_sections, {'jmodal': jmodal, 'callback': callback, 'arg': arg});
+            });
+        } else {
+            xn.eval_script(r.script_sections, {'jmodal': jmodal, 'callback': callback, 'arg': arg});
+        }
+    });
+
+    return jmodal;
+};
+
+/*
+modal-width 和 modal-size 同时存在，优先使用 modal-width
+
+<button id="button1" class="w-ajax-modal btn btn-primary" modal-url="user-login.htm" modal-title="用户登录" modal-arg="xxx" modal-callback="login_success_callback" modal-width="550px" modal-size="md" modal-fixed="bottom" modal-bg="white" modal-rounded="1rem" modal-screen="black">登陆</button>
+
+<a class="w-ajax-modal nav-link" rel="nofollow" modal-title="<?php echo lang('login');?>" modal-arg="xxx" modal-callback="login_success_callback" modal-width="550px" modal-size="md" modal-fixed="bottom" modal-bg="white" modal-screen="black" modal-rounded="1rem" href="<?php echo url('user-login');?>"><i class="icon-user"></i>&nbsp;<?php echo lang('login');?></a>
+*/
+$(function () {
+    var modalList = document.getElementsByClassName('w-ajax-modal');
+    var length = modalList.length;
+    for (var i = 0; i < length; ++i) {
+        modalList[i].onclick = function (e) {
+            let jthis = this;
+            let url = jthis.getAttribute('modal-url') || jthis.getAttribute('href');
+            let title = jthis.getAttribute('modal-title');
+            if (!title) title = '';
+            let arg = jthis.getAttribute('modal-arg');
+            if (!arg) arg = '';
+            let callback_str = jthis.getAttribute('modal-callback');
+            let callback = callback_str ? window[callback_str] : '';
+            let width = jthis.getAttribute('modal-width');
+            if (!width) width = '';
+            let size = jthis.getAttribute('modal-size');
+            if (!size) size = '';
+            let fixed = jthis.getAttribute('modal-fixed');
+            if (!fixed) fixed = '';
+            let bg = jthis.getAttribute('modal-bg');
+            if (!bg) bg = '';
+            let screen = jthis.getAttribute('modal-screen');
+            if (!screen) screen = '';
+            let rounded = jthis.getAttribute('modal-rounded');
+            if (!rounded) rounded = '';
+            let options = {'title': title, 'timeout': 0, 'size': size, 'width': width, 'fixed': fixed, 'screen': screen, 'bg': bg, 'rounded': rounded}
+            $.ajaxModal(url, callback, arg, options);
+            e.stopPropagation();
+            return false;
+        }
+    }
+});
+
+/*二位数组 依据 key 排序
+* asc false升序 true降序
+* */
+arrListMultiSort = function (arrList, asc) {
+
+    let newKeys = Object.keys(arrList).sort(function (a, b) {
+        return parseInt(arrList[a].num) - parseInt(arrList[b].num)
+    });
+
+    if (asc) newKeys.reverse();
+
+    var arr = []
+    for (let i in newKeys) {
+        arr.push(arrList[newKeys[i]]);
+    }
+
+    /*console.log(arr);*/
+    return arr;
+}
+
+/**
+ * number_format
+ * @param number 传进来的数,
+ * @param bit 保留的小数位,默认保留两位小数,
+ * @param sign 为整数位间隔符号,默认为空格
+ * @param gapnum 为整数位每几位间隔,默认为3位一隔
+ * @type arguments的作用：arguments[0] == number(之一)
+ */
+number_format = function (number, bit, sign, gapnum) {
+    /*设置接收参数的默认值*/
+    bit = arguments[1] ? arguments[1] : 2;
+    sign = arguments[2] ? arguments[2] : '';
+    gapnum = arguments[3] ? arguments[3] : 3;
+    var str = '';
+
+    number = number.toFixed(bit);/*格式化*/
+    realnum = number.split('.')[0];/*整数位(使用小数点分割整数和小数部分)*/
+    decimal = number.split('.')[1];/*小数位*/
+    realnumarr = realnum.split('');/*将整数位逐位放进数组 ["1", "2", "3", "4", "5", "6"]*/
+
+    /*把整数部分从右往左拼接，每bit位添加一个sign符号*/
+    for (var i = 1; i <= realnumarr.length; i++) {
+        str = realnumarr[realnumarr.length - i] + str;
+        if (i % gapnum == 0) {
+            str = sign + str;/*每隔gapnum位前面加指定符号*/
+        }
+    }
+
+    /*当遇到 gapnum 的倍数的时候，会出现比如 ",123",这种情况，所以要去掉最前面的 sign*/
+    str = (realnum.length % gapnum == 0) ? str.substr(1) : str;
+    /*重新拼接实数部分和小数位*/
+    realnum = str + '.' + decimal;
+    return realnum;
+}
+
+format_number = function (number) {
+    number = parseInt(number);
+    return number > 1000 ? (number > 1100 ? number_format((number / 1000), 1) : parseInt($number / 1000))+'K+' : number;
+}
+
+/**
+ * 获取客户端信息
+ */
+get_device = function () {
+    var userAgent = navigator.userAgent;
+    var Agents = new Array('Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod');
+    var agentinfo = null;
+    for (var i = 0; i < Agents.length; i++) {
+        if (userAgent.indexOf(Agents[i]) > 0) {
+            agentinfo = userAgent;
+            break;
+        }
+    }
+    if (agentinfo) {
+        return agentinfo;
+    } else {
+        return 'PC';
     }
 }
 

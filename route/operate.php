@@ -39,11 +39,17 @@ switch ($action) {
 
             $safe_token = well_token_set($uid);
             $header['title'] = lang('top');
+            $form_action = $url_path.url('operate-sticky');
 
             // hook operate_sticky_get_end.php
 
             if ('1' == _GET('ajax')) {
-                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'fup' => $fup, 'header' => $header)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['safe_token'] = $safe_token;
+                $apilist['form_action'] = $form_action;
+                $apilist['fid'] = $fid;
+                $apilist['fup'] = $fup;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('operate_sticky'));
             }
@@ -75,6 +81,7 @@ switch ($action) {
             foreach ($threadlist as &$thread) {
                 $fid = $thread['fid'];
                 $tid = $thread['tid'];
+                if (!$fid) continue;
 
                 // hook operate_sticky_log_create_start.php
 
@@ -155,11 +162,15 @@ switch ($action) {
 
             $safe_token = well_token_set($uid);
             $header['title'] = lang('close_thread');
+            $form_action = $url_path.url('operate-close');
 
             // hook operate_close_get_end.php
 
             if ('1' == _GET('ajax')) {
-                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'header' => $header)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['safe_token'] = $safe_token;
+                $apilist['form_action'] = $form_action;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('operate_close'));
             }
@@ -195,7 +206,7 @@ switch ($action) {
 
                 $thread['sticky'] and $thread['closed'] != $close and cache_delete('sticky_thread_list');
 
-                if (forum_access_mod($fid, $gid, 'allowtop')) {
+                if ($fid && forum_access_mod($fid, $gid, 'allowtop')) {
 
                     $tids[] = $thread['tid'];
 
@@ -223,11 +234,15 @@ switch ($action) {
             
             $safe_token = well_token_set($uid);
             $header['title'] = lang('close_thread');
+            $form_action = $url_path.url('operate-delete');
 
             // hook operate_delete_get_end.php
             
             if ('1' == _GET('ajax')) {
-                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'header' => $header)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['safe_token'] = $safe_token;
+                $apilist['form_action'] = $form_action;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('operate_delete'));
             }
@@ -288,11 +303,17 @@ switch ($action) {
 
             $safe_token = well_token_set($uid);
             $header['title'] = lang('move');
+            $form_action = $url_path.url('operate-move');
 
             // hook operate_move_get_end.php
 
             if ('1' == _GET('ajax')) {
-                $conf['api_on'] ? message(0, array('forumlist' => $forumarr, 'safe_token' => $safe_token, 'header' => $header)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['safe_token'] = $safe_token;
+                $apilist['fid'] = $fid;
+                $apilist['forumarr'] = $forumarr;
+                $apilist['form_action'] = $form_action;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('operate_move'));
             }
@@ -321,6 +342,8 @@ switch ($action) {
             foreach ($threadlist as &$thread) {
                 $tid = $thread['tid'];
                 $fid = $thread['fid'];
+                if (!$fid) continue;
+
                 // hook operate_move_foreach_start.php
 
                 $forum = array_value($forumlist, $fid);
@@ -404,6 +427,7 @@ switch ($action) {
         $keyword_arr = explode(' ', $keyword_decode);
         $threadlist = array();
         $pagination = '';
+        $form_action = url('operate-search');
         $active = 'default';
 
         // hook operate_search_middle.php
@@ -436,8 +460,17 @@ switch ($action) {
         if ($ajax) {
             if ($threadlist) {
                 foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
-                message(0, $threadlist);
             }
+
+            $apilist['keyword'] = $keyword;
+            $apilist['range'] = $range;
+            $apilist['page'] = $page;
+            $apilist['pagesize'] = $pagesize;
+            $apilist['extra'] = $extra;
+            $apilist['active'] = $active;
+            $apilist['threadlist'] = $threadlist;
+            $apilist['form_action'] = $form_action;
+            $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
         } else {
             include _include(theme_load('search'));
         }

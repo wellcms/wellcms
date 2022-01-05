@@ -68,7 +68,6 @@ switch ($action) {
             if (1 == $type) {
                 // 排序
                 $arr = _POST('data');
-
                 empty($arr) and message(1, lang('data_malformation'));
 
                 // hook admin_flag_list_rank_post_start.php

@@ -71,7 +71,7 @@ return array(
     'upload_quick' => 0,  // 文件秒传 0关闭 1开启
     'attach_on' => 0,     // 0本地储存 1云储存 2图床
     'attach_delete' => 0, // 开启云储存后本地附件 0不删除 1删除
-    'cloud_url' => '',    // 云储存域名或单独CDN域名，本地upload目录和目录下的文件上传至云储存，域名绑定的目录必须对应程序的upload，如http://upload.domain.com/upload/thumbnail/201912/***.jpg
+    'cloud_url' => '',    // 云储存域名或单独CDN域名，本地upload目录和目录下的文件上传至云储存，域名绑定的目录必须对应程序的upload，如http://upload.domain.com/upload/thumbnail/201912/***.jpg，如无法绑定目录，https://img.wellcms.net/file/wellcms/upload/website_attach/202111/1257_ERQJAYTYYDXJ6UC.png 这种则填写 https://img.wellcms.net/file/wellcms/
     'path' => './', // 前台路径 "/" 结尾
     'logo_mobile_url' => 'img/logo.png',        // 手机 LOGO URL
     'logo_pc_url' => 'img/logo.png',            // PC  LOGO URL
@@ -117,17 +117,19 @@ return array(
     'url_rewrite_on' => 0,
     // 禁止插件
     'disabled_plugin' => 0,
-    'version' => '2.1.0',
-    'static_version' => '?2.1.0',
+    'version' => '2.2.0',
+    'static_version' => '?2.2.0',
     'installed' => 0,
     'compress' => 1, // 代码压缩 0关闭 1仅压缩php、html代码(不压缩js代码) 2压缩全部代码 如果启用压缩出现错误，请关闭，删除html中的所有注释，并且js代码按照英文分号结束的地方加上分号;
     // token验证，开启后内容提交和上传都需要token，没有token无法操作，app建议开启，有效阻止抓包伪造提交等。开启后相当于单线程，仅限当前页有效。
     'upload_token' => 1, // 0关闭 1开启上传验证 token
     'message_token' => 0, // 0关闭 1开启发布内容验证 token
     'comment_token' => 0, // 0关闭 1开启评论验证 token
-    'login_token' => 1, // 0关闭 1开启用户登陆 token
     'login_only' => 0, // 单点登录 0关闭 1开启
     'login_ip' => 0, // 验证IP 0关闭 1开启
     'login_ua' => 0, // 验证UA 0关闭 1开启
+    'thumbnail_width' => 400, // 缩略图宽度
+    'thumbnail_height' => 280, // 缩略图高度
+    'cache_thread' => 1, // 详情页 0直接读取 1缓存中读取 互动很强的站点建议0
 );
 ?>

@@ -162,7 +162,9 @@ function user_find($cond = array(), $orderby = array(), $page = 1, $pagesize = 2
     global $g_static_users;
     // hook model_user_find_start.php
     $userlist = user__find($cond, $orderby, $page, $pagesize);
-    if ($userlist) foreach ($userlist as &$user) {
+    if (!$userlist) return NULL;
+
+    foreach ($userlist as &$user) {
         user_format($user);
         $g_static_users[$user['uid']] = $user;
     }
@@ -227,6 +229,7 @@ function user_format(&$user)
 
     $onlinelist = online_user_list_cache();
     $user['online_status'] = isset($onlinelist[$user['uid']]) ? 1 : 0;
+    $user['url'] = url('user-' . $user['uid']);
     // hook model_user_format_end.php
 }
 
@@ -303,12 +306,11 @@ function user_find_by_uids($uids)
 function user_safe_info($user)
 {
     // hook model_user_safe_info_start.php
-    unset($user['password'], $user['email'], $user['salt'], $user['password_sms'], $user['idnumber'], $user['realname'], $user['qq'], $user['mobile'], $user['create_ip'], $user['create_ip_fmt'], $user['create_date'], $user['create_date_fmt'], $user['login_ip'], $user['login_date'], $user['login_ip_fmt'], $user['login_date_fmt'], $user['logins'], $user['avatar_path']);
+    unset($user['password'], $user['credits'], $user['golds'], $user['money'], $user['email'], $user['salt'], $user['password_sms'], $user['idnumber'], $user['realname'], $user['qq'], $user['mobile'], $user['create_ip'], $user['create_ip_fmt'], $user['create_date'], $user['create_date_fmt'], $user['login_ip'], $user['login_date'], $user['login_ip_fmt'], $user['login_date_fmt'], $user['logins'], $user['avatar_path']);
     // hook model_user_safe_info_end.php
     return $user;
 }
 
-// 用户
 function user_token_get()
 {
     global $conf, $time;
@@ -318,6 +320,16 @@ function user_token_get()
     empty($_uid) and user_token_clear(); // 退出登录
     // hook model_user_token_get_end.php
     return $_uid;
+}
+
+// 支持 Token 接口（token 与 session 双重登入机制，方便 REST 接口设计，也方便 $_SESSION 使用）
+// Support Token interface (token and session dual match, to facilitate the design of the REST interface, but also to facilitate the use of $_SESSION)
+function user_rest()
+{
+    $uid = intval(_SESSION('uid'));
+    empty($uid) and $uid = user_token_get() and $_SESSION['uid'] = $uid;
+    $user = user_read($uid);
+    return $user;
 }
 
 // 用户

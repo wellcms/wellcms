@@ -1,6 +1,6 @@
 <?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
 
-<div class="row vh-100 justify-content-center align-items-center my-n5">
+<div class="row">
 	<!--{hook user_create_start.htm}-->
 	<div class="col-lg-7 mx-auto">
 		<!--{hook user_create_card_before.htm}-->
@@ -8,8 +8,9 @@
 			<div class="card-header h4 text-center">
 				<?php echo lang('user_create');?>
 			</div>
-			<div class="card-body">
-				<form action="<?php echo url('user-create');?>" method="post" id="form">
+			<div class="card-body ajax-body">
+				<form action="<?php echo $form_action;?>" method="post" id="form">
+					<div id="root-data" safe_token="<?php echo $safe_token; ?>"></div>
 					<div class="form-group input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="icon-user icon-fw"></i></span>
@@ -19,15 +20,11 @@
 
 					<!--{hook user_create_username_after.htm}-->
 
-					<div class="media">
-						<div class="media-body">
-							<div class="form-group input-group">
-								<div class="input-group-prepend">
-									<span class="input-group-text"><i class="icon-lock icon-fw"></i></span>
-								</div>
-								<input type="password" class="form-control" placeholder="<?php echo lang('password');?>" name="password" id="password" required>
-							</div>
+					<div class="form-group input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="icon-lock icon-fw"></i></span>
 						</div>
+						<input type="password" class="form-control" placeholder="<?php echo lang('password');?>" name="password" id="password" required>
 					</div>
 
 					<!--{hook user_create_password_after.htm}-->
@@ -48,7 +45,7 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="icon-barcode icon-fw"></i></span>
 								</div>
-								<input type="text" class="form-control" placeholder="<?php echo lang('verify_code');?>" name="code" id="code">
+								<input type="text" class="form-control" placeholder="<?php echo lang('verify_code');?>" name="code" id="code" required>
 							</div>
 						</div>
 						<div class="align-self-center ml-1">
@@ -59,11 +56,14 @@
 					</div>
 					<?php } ?>
 
+					<!--{hook user_create_submit_before.htm}-->
+
 					<div class="form-group">
-						<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..." <?php if($conf['user_create_email_on']) { ?>disabled<?php } ?>>
+						<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..." <?php echo $conf['user_create_email_on'] ? 'disabled' : '';?>>
 						<?php echo lang('next_step');?>
 						</button>
 					</div>
+
 					<!--{hook user_create_submit_after.htm}-->
 
 					<div class="media">
@@ -140,7 +140,6 @@
         jsubmit.button('loading');
         var postdata = jthis.serializeObject();
         postdata.password = $.md5(postdata.password);
-        postdata.safe_token = safe_token;
         $.xpost(jthis.attr('action'), postdata, function(code, message) {
             if(0 == code) {
                 jsubmit.button(message).delay(1000).location(referer);

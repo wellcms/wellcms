@@ -1,5 +1,18 @@
 <?php
 
+function well_longip()
+{
+    $ip = ip();
+    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        $longip = ip2long($ip);
+        // fix 32 位 OS 下溢出的问题
+        $longip < 0 and $longip = sprintf("%u", $longip);
+    } else {
+        $longip = ip2long_v6($ip);
+    }
+    return $longip;
+}
+
 function xn_message($code, $message)
 {
     $ajax = $_SERVER['ajax'];
@@ -997,57 +1010,61 @@ function xn_url_add_arg($url, $k, $v)
  *     c => d
  * )
  */
-function xn_url_parse($request_url)
+function xn_url_parse($request_url, $conf = array(), $access = '')
 {
-    $conf = _SERVER('conf');
-    !isset($conf['url_rewrite_on']) and $conf['url_rewrite_on'] = 0;
+    $url_access = GLOBALS('url_access');
+    if ($url_access || 'manage' == $access) return $_GET;
 
-    if ($conf['url_rewrite_on'] < 2) {
+    if ('access' == $access || !$access) {
+        !isset($conf['url_rewrite_on']) and $conf['url_rewrite_on'] = 0;
 
-        0 == $conf['url_rewrite_on'] and $request_url = str_replace('/?', '/', $request_url);
+        if ($conf['url_rewrite_on'] < 2) {
 
-        $arr = parse_url($request_url);
-        $q = array_value($arr, 'path');
-        $pos = strrpos($q, '/');
-        FALSE === $pos && $pos = -1;
-        $q = substr($q, $pos + 1); // 截取最后一个 / 后面的内容
-        // 查找第一个 ? & 进行分割
-        $sep = FALSE === strpos($q, '?') ? strpos($q, '&') : FALSE;
-        if (FALSE !== $sep) {
-            // 对后半部分截取，并且分析
-            $front = substr($q, 0, $sep);
-            $behind = substr($q, $sep + 1);
+            0 == $conf['url_rewrite_on'] and $request_url = str_replace('/?', '/', $request_url);
+
+            $arr = parse_url($request_url);
+            $q = array_value($arr, 'path');
+            $pos = strrpos($q, '/');
+            FALSE === $pos && $pos = -1;
+            $q = substr($q, $pos + 1); // 截取最后一个 / 后面的内容
+            // 查找第一个 ? & 进行分割
+            $sep = FALSE === strpos($q, '?') ? strpos($q, '&') : FALSE;
+            if (FALSE !== $sep) {
+                // 对后半部分截取，并且分析
+                $front = substr($q, 0, $sep);
+                $behind = substr($q, $sep + 1);
+            } else {
+                $front = $q;
+                $behind = '';
+            }
+
+            if ('.html' == substr($front, -5)) $front = substr($front, 0, -5);
+            $r = $front ? explode('-', $front) : array();
+
+            // 将后半部分合并
+            $arr1 = $arr2 = $arr3 = array();
+            $behind and parse_str($behind, $arr1);
+
+            // 将 xxx.htm?a=b&c=d 放到后面，并且修正 $_GET
+            if (!empty($arr['query'])) {
+                parse_str($arr['query'], $arr2);
+            } else {
+                !empty($_GET) and $_GET = array();
+            }
+            $arr3 = $arr1 + $arr2;
+            if ($arr3) {
+                //array_diff_key($arr3, $_GET) || array_diff_key($_GET, $arr3);
+                count($arr3) != count($_GET) and $_GET = $arr3;
+            } else {
+                !empty($_GET) and $_GET = array();
+            }
+            $r += $arr3;
         } else {
-            $front = $q;
-            $behind = '';
+            $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']);
         }
 
-        if ('.html' == substr($front, -5)) $front = substr($front, 0, -5);
-        $r = $front ? explode('-', $front) : array();
-
-        // 将后半部分合并
-        $arr1 = $arr2 = $arr3 = array();
-        $behind and parse_str($behind, $arr1);
-
-        // 将 xxx.htm?a=b&c=d 放到后面，并且修正 $_GET
-        if (!empty($arr['query'])) {
-            parse_str($arr['query'], $arr2);
-        } else {
-            !empty($_GET) and $_GET = array();
-        }
-        $arr3 = $arr1 + $arr2;
-        if ($arr3) {
-            //array_diff_key($arr3, $_GET) || array_diff_key($_GET, $arr3);
-            count($arr3) != count($_GET) and $_GET = $arr3;
-        } else {
-            !empty($_GET) and $_GET = array();
-        }
-        $r += $arr3;
-    } else {
-        $r = xn_url_parse_path_format($_SERVER['REQUEST_URI']);
+        isset($r[0]) && ('admin' == $r[0] || 'index.php' == $r[0]) and $r[0] = 'index';
     }
-
-    isset($r[0]) && ('admin' == $r[0] || 'index.php' == $r[0]) and $r[0] = 'index';
 
     return $r;
 }

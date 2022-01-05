@@ -145,7 +145,7 @@ function forum_access_user($fid, $gid, $access)
     if (empty($forumlist[$fid])) return FALSE;
     $group = $grouplist[$gid];
     $forum = $forumlist[$fid];
-    if ($forum['accesson']) {
+    if (!empty($forum['accesson'])) {
         $r = (!isset($group[$access]) || $group[$access]) && !empty($forum['accesslist'][$gid][$access]);
     } else {
         $r = !empty($group[$access]);

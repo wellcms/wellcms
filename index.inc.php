@@ -1,34 +1,39 @@
 <?php
 
-!defined('DEBUG') AND exit('Access Denied.');
+!defined('DEBUG') and exit('Access Denied.');
 
 // hook index_inc_start.php
 
 $sid = sess_start();
 
+$apilist = array();
+
 // 语言 / Language
-$_SERVER['lang'] = $lang = include _include(APP_PATH . 'lang/' . $conf['lang'] . '/lang.php');
+$apilist['lang'] = $_SERVER['lang'] = $lang = include _include(APP_PATH . 'lang/' . $conf['lang'] . '/lang.php');
 
 // hook index_inc_lang_after.php
 
 // 用户组 / Group
 $grouplist = group_list_cache();
 
-// 支持 Token 接口（token 与 session 双重登陆机制，方便 REST 接口设计，也方便 $_SESSION 使用）
-// Support Token interface (token and session dual match, to facilitate the design of the REST interface, but also to facilitate the use of $_SESSION)
-$uid = intval(_SESSION('uid'));
-empty($uid) AND $uid = user_token_get() AND $_SESSION['uid'] = $uid;
-$user = user_read($uid);
+$user = user_rest();
+$uid = array_value($user, 'uid', 0);
+$apilist['user'] = $user;
 
 // hook index_inc_before.php
 
-$gid = empty($user) ? 0 : intval($user['gid']);
+$gid = array_value($user, 'gid', 0);
 $group = isset($grouplist[$gid]) ? $grouplist[$gid] : $grouplist[0];
 
 // hook index_inc_center.php
 
 // 配置数据
 $config = setting_get('conf');
+
+if (!empty($config['theme'])) {
+    $theme_lang = APP_PATH . 'view/template/' . $config['theme'] . '/lang/' . $conf['lang'] . '/lang.php';
+    is_file($theme_lang) and $apilist['lang'] = $_SERVER['lang'] = $lang += include _include($theme_lang);
+}
 
 // hook index_inc_config_after.php
 
@@ -38,11 +43,12 @@ $forumlist = forum_list_cache();
 // 有权限查看的板块 / filter no permission forum
 $forumlist_show = forum_list_access_filter($forumlist, $gid);
 $forumarr = arrlist_key_values($forumlist_show, 'fid', 'name');
+$apilist['forumlist'] = $forumlist_show;
 
 // hook index_inc_middle.php
 
 // 头部 header.inc.htm 
-$header = array(
+$apilist['header'] = $header = array(
     'title' => $conf['sitename'],
     'mobile_title' => '',
     'mobile_link' => $conf['path'],
@@ -54,7 +60,7 @@ $header = array(
 // hook index_inc_header_after.php
 
 // 运行时数据，存放于 cache_set() / runtime data
-$runtime = runtime_init();
+$apilist['runtime'] = $runtime = runtime_init();
 
 // hook index_inc_runtime_after.php
 
@@ -63,7 +69,7 @@ check_runlevel();
 
 // 全站的设置数据，站点名称，描述，关键词
 // $setting = kv_get('setting');
-$forum_nav = nav_list($forumlist_show);
+$apilist['forum_nav'] = $forum_nav = nav_list($forumlist_show);
 // 二叉树导航 需要的时候自行启用
 //$forum_nav = category_tree($forumlist_show);
 

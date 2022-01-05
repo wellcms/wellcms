@@ -356,8 +356,11 @@ switch ($action) {
         $official = plugin_official_read($dir);
         empty($official) and message(-1, lang('plugin_not_exists'));
 
+        $config = setting_get('conf');
+        $version = array_value($config, 'version', 0);
+
         // 检查版本  / check version match
-        -1 == version_compare($conf['version'], $official['software_version']) and message(-1, lang('plugin_version_not_match', array('software_version' => $official['software_version'], 'version' => $conf['version'])));
+        -1 == version_compare($version, $official['software_version']) and message(-1, lang('plugin_version_not_match', array('software_version' => $official['software_version'], 'version' => $version)));
 
         // 下载，解压 / download and zip
         plugin_download_unzip($dir, $official['storeid']);
@@ -378,7 +381,7 @@ switch ($action) {
 
         // 插件依赖检查 / check plugin dependency
         plugin_check_dependency($dir, 'install');
-        
+
         // 安装插件 / install plugin
         plugin_install($dir);
 
@@ -404,7 +407,7 @@ switch ($action) {
         }
 
         plugin_notice($dir);
-        
+
         $msg = lang('plugin_install_successfully', array('name' => $name));
         $url = is_file(APP_PATH . "plugin/$dir/setting.php") ? url('plugin-setting', array('dir' => $dir), TRUE) : url('plugin-list', array('type' => 1), TRUE);
         message(0, jump($msg, $url, 2));
@@ -494,10 +497,11 @@ switch ($action) {
         $official = plugin_read_by_dir($dir, FALSE);
         if (empty($official['storeid'])) message(1, jump(lang('data_malformation'), url('plugin-read', array('dir' => $dir), TRUE), 3));
 
+        $config = setting_get('conf');
+        $version = array_value($config, 'version', 0);
+
         // 检查版本  / check version match
-        if (-1 == version_compare($conf['version'], $official['software_version'])) {
-            message(-1, lang('plugin_version_not_match', array('software_version' => $official['software_version'], 'version' => $conf['version'])));
-        }
+        -1 == version_compare($version, $official['software_version']) and message(-1, lang('plugin_version_not_match', array('software_version' => $official['software_version'], 'version' => $version)));
 
         // 下载，解压 / download and zip
         plugin_download_unzip($dir, $official['storeid'], 1);
@@ -518,8 +522,8 @@ switch ($action) {
         message(0, jump($msg, url('plugin-read', array('dir' => $dir), TRUE), 3));
         break;
     case 'setting':
-        $dir = param_word('dir');
-        empty($dir) and $dir = param_word(2); // 兼容旧插件
+        $dir = param('dir');
+        empty($dir) and $dir = param(2); // 兼容旧插件
         plugin_check_exists($dir);
         $name = $plugins[$dir]['name'];
 
@@ -558,7 +562,7 @@ function plugin_dependency_arr_to_links($arr)
     foreach ($arr as $dir => $version) {
         $name = isset($plugins[$dir]['name']) ? $plugins[$dir]['name'] : $dir;
         $url = url('plugin-read', array('dir' => $dir), TRUE);
-        $s .= "<a href=\"$url\">【{$name} - ".lang('official_version').$version."】</a> ";
+        $s .= "<a href=\"$url\">【{$name} - " . lang('official_version') . $version . "】</a> ";
     }
     return $s;
 }
@@ -829,7 +833,7 @@ function theme_install($dir)
 
     $dir = trim($dir);
     if (!empty($config['theme']) && $config['theme'] != $dir) {
-        is_file(APP_PATH . 'view/template/' . $dir.'/conf.json') and theme_uninstall($config['theme']);
+        is_file(APP_PATH . 'view/template/' . $dir . '/conf.json') and theme_uninstall($config['theme']);
     }
 
     $path = APP_PATH . 'view/template/' . $dir;

@@ -21,7 +21,7 @@ switch ($action) {
 
             $input = array();
             $input['clear_tmp'] = form_checkbox('clear_tmp', 1);
-            $input['clear_cache'] = form_checkbox('clear_cache', 1);
+            $input['clear_cache'] = form_checkbox('clear_cache');
             $safe_token = well_token_set($uid);
             $input['safe_token'] = form_hidden('safe_token', $safe_token);
 
@@ -49,6 +49,7 @@ switch ($action) {
             $g_website = kv_cache_get('website');
             $g_website['flag'] = '';
             $g_website['flag_thread'] = '';
+            $g_website['grouplist'] = '';
             // hook admin_other_cache_post_before.php
             kv_cache_set('website', $g_website);
 

@@ -19,7 +19,7 @@
             </li>
             <!--{hook read_main_breadcrumb_after.htm}-->
 			<li class="breadcrumb-item active">
-                <a href="<?php echo $thread['url']; ?>" title="<?php echo lang('index_page');?>返回主题第一页">
+                <a href="<?php echo $thread['url']; ?>" title="<?php echo $thread['subject'];?>">
                     <?php echo $thread['subject'];?>
                 </a>
             </li>
@@ -90,8 +90,9 @@
 					</div>
 				</div>
 				<hr />
-				<div class="message text-break">
+
 				<?php if(1 == $page) { ?>
+				<div class="message text-break">
 					<!--需要 主图 文字环绕 删除下面的注释代码即可-->
                     <!--<div class="clearfix float-left mx-2">
                         <img src="<?php echo $thread['icon_fmt'];?>" alt="<?php echo $thread['subject'];?>" />
@@ -101,25 +102,28 @@
 					<!--{hook read_message_after.htm}-->
 					<?php echo data_file_list_html($thread['filelist']);?>
 					<!--{hook read_filelist_after.htm}-->
+				</div>
 				<?php } else { ?>
-					<!--{hook read_message_more_before.htm}-->
-					<p>
-                        <a href="<?php echo $thread['url']; ?>">
-                            <?php echo lang('view_thread_message');?>
-                        </a>
-                    </p>
-					<!--{hook read_message_more_after.htm}-->
+				<!--{hook read_message_more_before.htm}-->
+				<p>
+					<a href="<?php echo $thread['url']; ?>">
+						<?php echo lang('view_thread_message');?>
+					</a>
+				</p>
+				<!--{hook read_message_more_after.htm}-->
 				<?php } ?>
-				</div>
+
+				<?php if (1 == $page) { ?>
 				<div class="text-center mt-3 text-grey">
-                    转载请注明原文地址: <?php echo http_url_path(),$thread['url']; ?>
+					转载请注明原文地址: <?php echo http_url_path(),$thread['url']; ?>
 				</div>
+
 				<!--{hook read_plugin_before.htm}-->
 				<div class="plugin d-flex justify-content-center mt-3">
 					<!--{hook read_plugin_body.htm}-->
 				</div>
 				<!--{hook read_plugin_after.htm}-->
-				<?php if (1 == $page) { ?>
+
 				<?php if ($thread['tag']) { ?>
 				<hr>
 				<div class="row">
@@ -188,9 +192,8 @@
                         </div>
                         <div class="col-lg-12">
                             <!--{hook read_comment_form_start.htm}-->
-                            <form action="<?php echo url('comment-create-'.$tid);?>" method="post" id="quick_reply_form" class="d-block">
+                            <form action="<?php echo $comment_action;?>" method="post" id="form" class="d-block">
                                 <input type="hidden" name="doctype" value="1" />
-                                <input type="hidden" name="return_html" value="1" />
                                 <input type="hidden" name="quotepid" value="0" />
                                 <!--{hook read_comment_form_before.htm}-->
                                 <div class="message mt-1">
@@ -229,7 +232,7 @@
 
 		<div class="d-none threadlist">
             <input type="checkbox" name="modtid" value="<?php echo $thread['tid']; ?>" checked />
-            <?php $extra += array('fid' => $fid);?>
+			<?php $extra['fid'] = $fid;?>
         </div>
         <?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
 		
@@ -274,33 +277,15 @@
 var forum_url = '<?php echo array_value($forum, 'url');?>';
 var safe_token = '<?php echo GLOBALS('safe_token');?>';
 var body = $('body');
-body.on('submit', '#quick_reply_form', function() {
+body.on('submit', '#form', function() {
 	var jthis = $(this);
     var jsubmit = jthis.find('#submit');
 	jthis.reset();
 	jsubmit.button('loading');
 	var postdata = jthis.serializeObject();
-    postdata.safe_token = safe_token;
 	$.xpost(jthis.attr('action'), postdata, function(code, message) {
 		if(code == 0) {
-			var s = '<ul>'+message+'</ul>';
-			var jli = $(s).find('li');
-			jli.insertBefore($('.postlist > .post').last());
-            $('.post-subject').remove();
-			jsubmit.button('reset');
-			$('#message').val('');
-			
-			/*楼层 +1*/
-			var jfloor = $('#newfloor');
-			jfloor.html(xn.intval(jfloor.html()) + 1);
-			
-			/*回复数 +1*/
-			var jposts = $('.posts');
-			jposts.html(xn.intval(jposts.html()) + 1);
-			
-			var quotepid = jthis.find('input[name="quotepid"]');
-            $('[data-pid="'+quotepid.val()+'"]').removeClass('quote');
-            quotepid.val(0);
+			location.reload();
 		} else {
 			$.alert(message);
 			jsubmit.button('reset');

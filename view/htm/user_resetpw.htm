@@ -7,17 +7,18 @@
 				<?php echo lang('user_resetpw');?>
 			</div>
 			<div class="card-body">
-				<form action="<?php echo url('user-resetpw');?>" method="post" id="form">
+				<form action="<?php echo $form_action;?>" method="post" id="form">
 					<!--{hook user_resetpw_email_before.htm}-->
 					<div class="form-group input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="icon icon-envelope icon-fw"></i></span>
 						</div>
-						<input type="text" class="form-control" placeholder="<?php echo lang('email');?>" name="email" id="email">
+						<input type="text" class="form-control" placeholder="<?php echo lang('email');?>" name="email" id="email" required>
 						<div class="invalid-feedback"></div>
 					</div>
 					<!--{hook user_resetpw_email_after.htm}-->
-					
+
+					<?php if($conf['user_create_email_on']) { ?>
 					<!--{hook user_resetpw_verify_code_before.htm}-->
 					<div class="media">
 						<div class="media-body">
@@ -25,7 +26,7 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="icon icon-key icon-fw"></i></span>
 								</div>
-								<input type="text" class="form-control" placeholder="<?php echo lang('verify_code');?>" name="code" id="code">
+								<input type="text" class="form-control" placeholder="<?php echo lang('verify_code');?>" name="code" id="code" required>
 							</div>
 						</div>
 						<div class="ml-1 mt-1">
@@ -35,8 +36,9 @@
 						</div>
 					</div>
 					<!--{hook user_resetpw_verify_code_after.htm}-->
+					<?php } ?>
 					
-					<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..." <?php if($conf['user_create_email_on']) { ?>disabled<?php } ?>>
+					<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..." <?php echo $conf['user_create_email_on'] ? 'disabled' : '';?>>
                         <?php echo lang('next_step');?>
                     </button>
 				</form>

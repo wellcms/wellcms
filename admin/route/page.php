@@ -104,10 +104,9 @@ switch ($action) {
             FALSE === group_access($gid, 'managepage') AND message(1, lang('user_group_insufficient_privilege'));
 
             $arr = _POST('data');
-
             empty($arr) && message(1, lang('data_is_empty'));
 
-            foreach ($arr as &$val) {
+            foreach ($arr as $val) {
                 $rank = intval($val['rank']);
                 $tid = intval($val['tid']);
                 intval($val['oldrank']) != $rank && $tid && $r = page_update_rank($tid, $rank);
@@ -173,6 +172,9 @@ switch ($action) {
                 FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
             }
 
+            // 统一更新主题数据
+            $thread_update = array();
+
             FALSE === group_access($gid, 'managepage') AND message(1, lang('user_group_insufficient_privilege'));
 
             // hook admin_page_create_post_start.php
@@ -216,10 +218,16 @@ switch ($action) {
             FALSE === $tid AND message(-1, lang('create_thread_failed'));
 
             // 关联附件
-            $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => 0, 'files' => 0, 'message' => $message);
-            // hook admin_page_create_post_attach_before.php
-            $message = well_attach_assoc_post($attach);
-            unset($attach);
+            $assoc = array('uid' => $uid, 'gid' => $gid, 'tid' => $tid, 'fid' => $fid, 'time' => $time, 'conf' => $conf, 'message' => $message, 'thumbnail' => 0, 'save_image' => 1, 'sess_file' => 1);
+            $result = well_attach_assoc_handle($assoc);
+            unset($assoc);
+            $message = $result['message'];
+            $icon = $result['icon'];
+            $icon and $thread_update['icon'] = $icon;
+            $images = $result['images'];
+            $images and $thread_update['images'] = $images;
+            $files = $result['files'];
+            $files and $thread_update['files'] = $files;
 
             $tid = data_create(array('tid' => $tid, 'gid' => $gid, 'message' => $message, 'doctype' => $doctype));
             FALSE === $tid AND message(-1, lang('create_thread_failed'));
@@ -236,6 +244,8 @@ switch ($action) {
             runtime_set('todayarticles+', 1);
 
             // hook admin_page_create_post_end.php
+
+            !empty($thread_update) && FALSE === well_thread_update($tid, $thread_update) AND message(-1, lang('update_thread_failed'));
 
             message(0, lang('create_thread_successfully'));
         }
@@ -363,15 +373,25 @@ switch ($action) {
 
             $arr['userip'] = $longip;
 
-            !empty($arr) && FALSE === well_thread_update($tid, $arr) AND message(-1, lang('update_thread_failed'));
-            unset($arr);
-
             // 关联附件 assoc thumbnail主题主图 post:内容图片或附件
-            $attach = array('tid' => $tid, 'uid' => $uid, 'assoc' => 'post', 'images' => $thread['images'], 'files' => $thread['files'], 'message' => $message);
-            $message = well_attach_assoc_post($attach);
-            unset($attach);
+            $assoc = array('uid' => $thread['uid'], 'gid' => $gid, 'tid' => $thread['tid'], 'fid' => $thread['fid'], 'time' => $time, 'conf' => $conf, 'message' => $message, 'thumbnail' => 0, 'save_image' => 0, 'sess_file' => 1);
+            $result = well_attach_assoc_handle($assoc);
+            unset($assoc);
+            $message = $result['message'];
+
+            $icon = $result['icon'];
+            $icon and $arr['icon'] = $icon;
+
+            $images = $result['images'];
+            $images and $arr['images'] = $images;
+
+            $files = $result['files'];
+            $files and $arr['files'] = $files;
 
             // hook admin_page_update_post_before.php
+
+            !empty($arr) && FALSE === well_thread_update($tid, $arr) AND message(-1, lang('update_thread_failed'));
+            unset($arr);
 
             // 如果开启云储存或使用图床，需要把内容中的附件链接替换掉
             $message = data_message_replace_url($tid, $message);

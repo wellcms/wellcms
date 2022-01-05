@@ -15,7 +15,7 @@ if (DEBUG < 3) {
     // 管理组检查 / check admin group
     if (FALSE === group_access($gid, 'intoadmin')) {
         setcookie($conf['cookie_pre'] . 'sid', '', $time - 86400);
-        http_location(url(($conf['url_rewrite_on'] < 2 ? '../' : '') . 'user-login', '', 2));
+        http_location(url('../user-login', '', 2));
     }
 
     // hook admin_index_inc_check_before.php

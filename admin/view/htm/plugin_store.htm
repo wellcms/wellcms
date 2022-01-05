@@ -70,7 +70,8 @@
 
     <div class="d-flex justify-content-between thread py-3">
         <div class="btn-group" role="group">
-            <a role="button" class="sync btn btn-secondary" href="javascript:void(0);"><?php echo lang('sync_official');?></a>
+            <a role="button" class="ajax btn btn-secondary"  href="<?php echo url('plugin-store', '', true); ?>" data-method="post" data-json='{"safe_token":"<?php echo $safe_token;?>"}'><?php echo lang('sync_official');?></a>
+            <a role="button" class="ajax btn btn-secondary"  href="<?php echo url('plugin-store', '', true); ?>" data-method="post" data-json='{"safe_token":"<?php echo $safe_token;?>","type":"1"}'><?php echo lang('logout');?></a>
         </div>
         <div class="col-8 col-md-6 col-lg-5 input-group px-0">
             <select id="srchtype" value="<?php echo $srchtype; ?>" class="form-control">
@@ -162,7 +163,7 @@
                     <div class="small text-muted">
                         <?php echo lang('author'); ?>：
                         <?php if(!empty($plugin['official']['author'])) { ?>
-                        <a href="http://www.wellcms.cn/user-<?php echo $plugin['uid'];?>.htm" target="_blank"><?php echo $plugin['author'];?></a>
+                        <a href="http://www.wellcms.cn/user-<?php echo $plugin['uid'];?>.html" target="_blank"><?php echo $plugin['author'];?></a>
                         <?php } else { echo lang('none');}?>
                     </div>
                     <div class="text-muted small">
@@ -199,41 +200,27 @@
 <?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
 
 <script>
-    var safe_token = '<?php echo $safe_token;?>';
-    <?php if ('store' == $action) { ?>
-        $('a.sync').on('click', function () {
-            $.xpost(xn.url('plugin-store', '', true), {safe_token: safe_token}, function (code, message) {
-                if (code == 0) {
-                    $.alert(message).delay(1000).location();
-                } else {
-                    $.alert(message);
-                }
-            });
+    <?php if ('store' == $action && FALSE === $data_verify) { ?>
+    var jform = $('#form');
+    jform.on('submit', function () {
+        jform.reset();
+        var jthis = $(this);
+        var jsubmit = jthis.find('#submit');
+        jsubmit.button('loading');
+        var postdata = jform.serializeObject();
+        $.xpost(jform.attr('action'), postdata, function (code, message) {
+            if (code == 0) {
+                jsubmit.button(message).delay(1000).location();
+            } else if (xn.is_number(code)) {
+                $.alert(message);
+                jsubmit.button('reset');
+            } else {
+                jform.find('[name="' + code + '"]').alert(message).focus();
+                jsubmit.button('reset');
+            }
         });
-
-        <?php if (FALSE === $data_verify) { ?>
-            var jform = $('#form');
-            jform.on('submit', function() {
-                jform.reset();
-                var jthis = $(this);
-                var jsubmit = jthis.find('#submit');
-                jsubmit.button('loading');
-                var postdata = jform.serializeObject();
-                $.xpost(jform.attr('action'), postdata, function(code, message) {
-                    if(code == 0) {
-                        jsubmit.button(message).delay(1000).location();
-                    } else if(xn.is_number(code)) {
-                        $.alert(message);
-                        jsubmit.button('reset');
-                    } else {
-                        jform.find('[name="'+code+'"]').alert(message).focus();
-                        jsubmit.button('reset');
-                    }
-                });
-                return false;
-            });
-        <?php } ?>
-
+        return false;
+    });
     <?php } ?>
 
     var jsearch = $("#search");
@@ -241,13 +228,13 @@
     var jkeyword = $('#keyword');
     jsrchtype.val(jsrchtype.attr('value'));
 
-    jsearch.on('click', function(){
+    jsearch.on('click', function () {
         var srchtype = jsrchtype.val();
         var keyword = $("#keyword").val();
-        window.location = xn.url('plugin-store', {srchtype:srchtype,keyword:xn.urlencode(keyword)}, true);
+        window.location = xn.url('plugin-store', {srchtype: srchtype, keyword: xn.urlencode(keyword)}, true);
     });
-    jkeyword.on('keydown', function(e) {
-        if(e.keyCode == 13) jsearch.trigger('click');
+    jkeyword.on('keydown', function (e) {
+        if (e.keyCode == 13) jsearch.trigger('click');
     });
 
     $('#plugin').addClass('show');

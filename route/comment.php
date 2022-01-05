@@ -18,7 +18,6 @@ switch ($action) {
 
         // hook comment_create_start.php
 
-        $apilist = array();
         $tid = param(2, 0);
         $thread = well_thread_read($tid);
         empty($thread) and message(-1, lang('thread_not_exists'));
@@ -55,16 +54,23 @@ switch ($action) {
 
             // 来源
             $referer = http_referer();
+            $referer = $referer ? $referer : $thread['url'];
 
             // hook comment_create_get_before.php
 
             $header['title'] = lang('reply');
-            $header['mobile_link'] = $referer ? $referer : url('read-' . $tid);
+            $header['mobile_link'] = $referer;
 
             // hook comment_create_get_end.php
 
             if ('1' == _GET('ajax')) {
-                $conf['api_on'] ? message(0, $apilist += array('forum' => $forum, 'safe_token' => $safe_token, 'thread' => well_thread_safe_info($thread), 'extra' => $extra, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['extra'] = $extra;
+                $apilist['referer'] = $referer;
+                $apilist['forum'] = $forum;
+                $apilist['thread'] = well_thread_safe_info($thread);
+                $apilist['safe_token'] = $safe_token;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('comment', $fid));
             }
@@ -74,7 +80,7 @@ switch ($action) {
             // 验证token
             if (1 == array_value($conf, 'comment_token', 0)) {
                 $safe_token = param('safe_token');
-                FALSE === well_token_verify($uid, $safe_token, 3) and message(1, lang('illegal_operation'));
+                FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
             }
 
             // hook comment_create_post_start.php
@@ -82,6 +88,7 @@ switch ($action) {
             $doctype = param('doctype', 0);
             $quotepid = param('quotepid', 0);
             $message = param('message', '', FALSE);
+
             empty($message) and message('message', lang('please_input_message'));
 
             if (2 == array_value($forum, 'comment', 0)) {
@@ -108,6 +115,9 @@ switch ($action) {
             $pid = comment_create($post);
             FALSE === $pid and message(-1, lang('create_post_failed'));
 
+            // 清理主题缓存
+            cache_delete('website_thread_' . $tid);
+
             $post = comment_read($pid);
             $post['floor'] = $thread['posts'] + 2;
             $postlist = array($post);
@@ -123,12 +133,14 @@ switch ($action) {
             // 直接返回帖子的 html
             // return the html string to browser.
             $return_html = param('return_html', 0);
-            if ($return_html) {
+            if (1 == $return_html) {
                 $filelist = array();
                 ob_start();
                 include _include(theme_load('comment_list.inc'));
                 $s = ob_get_clean();
                 message(0, $s);
+            } elseif (2 == $return_html) {
+                message(0, $post);
             } else {
                 message(0, lang('create_post_successfully'));
             }
@@ -141,7 +153,6 @@ switch ($action) {
 
         // hook comment_update_start.php
 
-        $apilist = array();
         $pid = param(2, 0);
         $comment = comment_read($pid);
         empty($comment) and message(-1, lang('post_not_exists'));
@@ -202,14 +213,23 @@ switch ($action) {
 
             // 来源
             $referer = http_referer();
+            $referer = $referer ? $referer : $thread['url'];
+
             $header['title'] = lang('reply');
-            $header['mobile_title'] = '';
-            $header['mobile_link'] = $referer ? $referer : url('read-' . $tid);
+            $header['mobile_link'] = $thread['url'];
 
             // hook comment_update_get_end.php
 
             if ('1' == _GET('ajax')) {
-                $conf['api_on'] ? message(0, $apilist += array('forum' => $forum, 'comment' => comment_filter($comment), 'safe_token' => $safe_token, 'thread' => well_thread_safe_info($thread), 'extra' => $extra, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['extra'] = $extra;
+                $apilist['referer'] = $referer;
+                $apilist['forum'] = $forum;
+                $apilist['thread'] = well_thread_safe_info($thread);
+                $apilist['comment'] = comment_filter($comment);
+                $apilist['safe_token'] = $safe_token;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('comment', $fid));
             }
@@ -248,10 +268,12 @@ switch ($action) {
                 $message = data_message_replace_url($tid, $message);
                 // hook comment_update_post_assoc_before.php
                 // 关联附件
-                $attach = array('tid' => $tid, 'pid' => $pid, 'uid' => $comment['uid'], 'assoc' => 'post', 'images' => $comment['images'], 'files' => $comment['files'], 'message' => $message);
-                // hook comment_update_post_assoc_center.php
-                list($message, $images, $files) = well_attach_assoc_post($attach);
-                unset($attach);
+                $assoc = array('uid' => $uid, 'gid' => $gid, 'tid' => $tid, 'pid' => $comment['pid'], 'fid' => $comment['fid'], 'time' => $time, 'conf' => $conf, 'message' => $message, 'thumbnail' => 0, 'save_image' => 0, 'sess_file' => 1);
+                $result = well_attach_assoc_handle($assoc);
+                unset($assoc);
+                $message = $result['message'];
+                $images = $result['images'];
+                $files = $result['files'];
 
                 // hook comment_update_post_assoc_after.php
 

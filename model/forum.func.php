@@ -205,7 +205,7 @@ function forum_format(&$forum)
 
         // 可根据 model 区分 URL
         switch ($forum['model']) {
-            /*case 1:
+            /*case '1':
                 $forum['url'] = url('category-' . $forum['fid'], '', FALSE);
                 break;*/
             // hook model_forum_format_url_case.php

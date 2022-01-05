@@ -36,7 +36,7 @@
         <!--{hook index_flat_page_end.htm}-->
     </div>
 
-    <div class="col-lg-3 d-none d-lg-block aside">
+    <div class="col-lg-3 d-none d-lg-block">
         <!--{hook index_flat_before.htm}-->
         <div class="card-site-info bg-white shadow">
             <!--{hook index_flat_site_start.htm}-->
@@ -108,11 +108,11 @@
                     </a>
                 </h3>
             </div>
-            <ul class="list-group list-group-flush nowrap">
+            <ul class="list-group list-group-flush">
                 <?php if(isset($_flag['list'])){foreach($_flag['list'] as $_thread) { ?>
                 <li class="list-group-item bg-white">
                     <h4 class="h6 my-0">
-                        <a href="<?php echo $_thread['url'];?>" class="d-block ellipsis" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
+                        <a href="<?php echo $_thread['url'];?>" class="d-block text-truncate" <?php echo (10==$_thread['type']?'rel="nofollow" target="_blank"':''); ?> title='<?php echo $_thread['subject'];?>' aria-label='<?php echo $_thread['subject'];?>'>
                             <?php echo $_thread['subject'];?>
                         </a>
                     </h4>
@@ -148,6 +148,7 @@
 <?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
 
 <script>
+    xn.url('index-login', {'k1':'v1', 'k2':'v2', 'k3':'v3'});
     $('#nav li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
 </script>
 <!--{hook index_flat_js.htm}-->

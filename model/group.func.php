@@ -90,6 +90,7 @@ function group_find($cond = array(), $orderby = array('gid' => 1), $page = 1, $p
 {
     // hook model_group_find_start.php
     $grouplist = group__find($cond, $orderby, $page, $pagesize);
+
     if ($grouplist) foreach ($grouplist as &$group) group_format($group);
     // hook model_group_find_end.php
     return $grouplist;
@@ -139,6 +140,7 @@ function group_access($gid, $access)
     if (isset($result[$k])) return $result[$k];
     if (3 == DEBUG) return TRUE;
     if (1 == $gid) return TRUE; // 管理员有所有权限
+    if (!isset($grouplist[$gid])) return TRUE;
     $group = $grouplist[$gid];
     $result[$k] = empty($group[$access]) ? FALSE : TRUE;
     // hook model_group_access_end.php

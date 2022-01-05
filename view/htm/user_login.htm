@@ -1,64 +1,61 @@
 <?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
 <!--{hook user_login_start.htm}-->
-<div class="container">
-    <!-- Outer Row -->
-    <div class="row vh-100 justify-content-center align-items-center my-n5">
-        <div class="col-lg-7 mx-auto">
-            <div class="card">
-                <div class="card-header h4 text-center p-3">
-                    <?php echo lang('user_login');?>
-                </div>
-                <div class="card-body ajax-body">
-                    <form action="<?php echo url('user-login');?>" method="post" id="form">
-                        <div class="form-group input-group my-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="icon-user icon-fw"></i></span>
-                            </div>
-                            <input type="text" class="form-control" placeholder="<?php echo lang('email');?> / <?php echo lang('username');?>" id="email" name="email" required>
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <!--{hook user_login_email_after.htm}-->
-                        <div class="form-group input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="icon-lock icon-fw"></i></span>
-                            </div>
-                            <input type="password" class="form-control" placeholder="<?php echo lang('password');?>" id="password" name="password" required>
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <!--{hook user_login_password_after.htm}-->
-                        <div class="form-group my-4">
-                            <button type="submit" class="btn btn-primary mx-auto btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
-                                <?php echo lang('login');?>
-                            </button>
-                        </div>
-                        <!--{hook user_login_submit_after.htm}-->
-                        <div class="media">
-                            <div>
-                                <!--{hook user_login_form_footer_left.htm}-->
-                            </div>
-                            <div class="media-body text-right">
-                                <!--{hook user_login_form_footer_right_start.htm}-->
-                                <a href="<?php echo url('user-create');?>" class="text-muted">
-                                    <small>
-                                        <?php echo lang('user_create');?>
-                                    </small>
-                                </a>
-                                <?php if(!empty($conf['user_resetpw_on'])) { ?>
-                                <a href="<?php echo url('user-resetpw');?>" class="text-muted ml-3">
-                                    <small>
-                                        <?php echo lang('forgot_pw');?>
-                                    </small>
-                                </a>
-                                <?php } ?>
-                                <!--{hook user_login_form_footer_right_end.htm}-->
-                            </div>
-                        </div>
-                    </form>
-                </div>
+<div class="row">
+    <div class="col-lg-7 mx-auto">
+        <div class="card">
+            <div class="card-header h4 text-center p-3">
+                <?php echo lang('user_login');?>
             </div>
-            <!--{hook user_login_card_after.htm}-->
+            <div class="card-body ajax-body">
+                <form action="<?php echo $form_action;?>" method="post" id="form">
+                    <div id="root-data" safe_token="<?php echo $safe_token; ?>"></div>
+                    <div class="form-group input-group my-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="icon-user icon-fw"></i></span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="<?php echo lang('email');?> / <?php echo lang('username');?>" id="email" name="email" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <!--{hook user_login_email_after.htm}-->
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="icon-lock icon-fw"></i></span>
+                        </div>
+                        <input type="password" class="form-control" placeholder="<?php echo lang('password');?>" id="password" name="password" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <!--{hook user_login_password_after.htm}-->
+                    <div class="form-group my-4">
+                        <button type="submit" class="btn btn-primary mx-auto btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
+                            <?php echo lang('login');?>
+                        </button>
+                    </div>
+                    <!--{hook user_login_submit_after.htm}-->
+                    <div class="media">
+                        <div>
+                            <!--{hook user_login_form_footer_left.htm}-->
+                        </div>
+                        <div class="media-body text-right">
+                            <!--{hook user_login_form_footer_right_start.htm}-->
+                            <a href="<?php echo url('user-create');?>" class="text-muted">
+                                <small>
+                                    <?php echo lang('user_create');?>
+                                </small>
+                            </a>
+                            <?php if(!empty($conf['user_resetpw_on'])) { ?>
+                            <a href="<?php echo url('user-resetpw');?>" class="text-muted ml-3">
+                                <small>
+                                    <?php echo lang('forgot_pw');?>
+                                </small>
+                            </a>
+                            <?php } ?>
+                            <!--{hook user_login_form_footer_right_end.htm}-->
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-
+        <!--{hook user_login_card_after.htm}-->
     </div>
 </div>
 <!--{hook user_login_end.htm}-->
@@ -66,9 +63,7 @@
 <?php include _include(APP_PATH . 'view/htm/footer.inc.htm');?>
 
 <script src="<?php echo view_path();?>js/md5.js"></script>
-
 <script ajax-eval="true">
-    var safe_token = '<?php echo GLOBALS('safe_token');?>';
     var body = $('body');
     var referer = '<?php echo $referer;?>';
     body.on('submit', '#form', function() {
@@ -78,7 +73,6 @@
         jsubmit.button('loading');
         var postdata = jthis.serializeObject();
         postdata.password = $.md5(postdata.password);
-        postdata.safe_token = safe_token;
         $.xpost(jthis.attr('action'), postdata, function(code, message) {
             if(code == 0) {
                 jsubmit.button(message);
@@ -95,6 +89,8 @@
         });
         return false;
     });
+
+    <!--{hook user_login_js_end.htm}-->
 </script>
 
 <!--{hook user_login_js.htm}-->

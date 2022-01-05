@@ -5,7 +5,7 @@
 		<?php echo lang('top_thread');?>
 	</div>
 	<div class="card-body ajax-body">
-		<form action="<?php echo $url_path.url('operate-sticky');?>" method="post" id="mode_sticky_form">
+		<form action="<?php echo $form_action;?>" method="post" id="mode_sticky_form">
 			<?php echo form_hidden('safe_token', $safe_token);?>
 			<div class="form-group d-flex justify-content-center">
 				<span class="mr-2">

@@ -6,7 +6,6 @@
 
 // hook flag_start.php
 
-$apilist = array();
 $flagid = param(1, 0);
 empty($flagid) and message(1, lang('data_malformation'));
 
@@ -54,8 +53,16 @@ if ($ajax) {
     if ($threadlist) {
         foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
     }
-
-    $conf['api_on'] ? message(0, $apilist += array('flag' => $read, 'num' => $num, 'page' => $page, 'threadlist' => $threadlist, 'extra' => $extra, 'header' => $header, 'safe_token' => $safe_token)) : message(0, lang('closed'));
+    $apilist['header'] = $header;
+    $apilist['extra'] = $extra;
+    $apilist['num'] = $num;
+    $apilist['page'] = $page;
+    $apilist['pagesize'] = $pagesize;
+    $apilist['page_url'] = $page_url;
+    $apilist['safe_token'] = $safe_token;
+    $apilist['flag'] = $read;
+    $apilist['threadlist'] = $threadlist;
+    $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
 } else {
     include _include(theme_load('flag', $flagid));
 }

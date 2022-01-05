@@ -80,7 +80,8 @@ function plugin_init()
     if (is_array($plugin_paths)) {
         foreach ($plugin_paths as $path) {
             $dir = file_name($path);
-            $conffile = $path . "/conf.json";
+            $conffile = $path . '/conf.json';
+
             if (!is_file($conffile)) continue;
             $arr = xn_json_decode(file_get_contents($conffile));
             if (empty($arr)) continue;

@@ -141,6 +141,7 @@ switch ($action) {
             FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
 
             $name = param('name');
+            !$name and message(1, lang('group_name_empty'));
             $creditsfrom = param('creditsfrom');
             $creditsto = param('creditsto');
             $allowread = param('allowread', 0);

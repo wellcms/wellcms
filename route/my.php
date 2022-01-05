@@ -41,7 +41,7 @@ switch ($action) {
             // 验证token
             $safe_token = param('safe_token');
             well_token_set($uid);
-            FALSE === well_token_verify($uid, $safe_token, 1) and message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             // hook my_avatar_post_start.php
 

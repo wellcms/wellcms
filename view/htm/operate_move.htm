@@ -5,7 +5,7 @@
         <?php echo lang('move_thread');?>
     </div>
 	<div class="card-body ajax-body">
-		<form action="<?php echo $url_path.url('operate-move');?>" method="post" id="mode_move_form">
+		<form action="<?php echo $form_action;?>" method="post" id="mode_move_form">
 			<?php echo form_hidden('safe_token', $safe_token);?>
 			<div class="form-group d-flex justify-content-center">
 				<span class="mr-2">

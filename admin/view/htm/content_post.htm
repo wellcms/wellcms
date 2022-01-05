@@ -306,6 +306,18 @@
         $('#nav-show').css({"position": "fixed", "top": "0", "bottom": "0", "right": "0", "margin-top": "3.625rem", "z-index": "1032"});
     }
 
+    document.getElementById('thumbnail-delete').addEventListener('click', function (e) {
+        let url = this.getAttribute('data-href');
+        $.xget(url, function (code, message) {
+            if (0 == code) {
+                document.querySelector('.img-thumbnail').setAttribute('src', message.thumbnail);
+            } else {
+                $.alert(message.message);
+            }
+        });
+        e.stopPropagation();
+    });
+
     $('#content').addClass('show');
     $('li.<?php echo $route;?>').addClass('active');
 </script>

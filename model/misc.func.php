@@ -42,7 +42,11 @@ function url($url, $extra = array(), $url_access = NULL)
     } elseif (1 == $conf['url_rewrite_on']) {
         $r = $path . $query . '.html';
     } elseif (2 == $conf['url_rewrite_on'] || 3 == $conf['url_rewrite_on']) {
-        $r = $conf['path'] . str_replace('-', '/', $query) . (2 == $conf['url_rewrite_on'] ? '.html' : '');
+        if (FALSE === strpos($query, '-')) {
+            $r = $conf['path'] . $query;
+        } else {
+            $r = $conf['path'] . str_replace('-', '/', $query) . (2 == $conf['url_rewrite_on'] ? '.html' : '');
+        }
     }
 
     $arr = explode('-', $query);
@@ -112,9 +116,12 @@ function check_runlevel()
 
 /*
 	message(0, '登录成功');
-	message(1, '密码错误');
-	message(2, '权限错误');
-	message(-1, '数据库连接失败');
+	message(1, '参数错误');
+	message(-1, '数据创建失败');
+
+0成功
+1参数错误 2权限错误 3密码错误 4方法错误
+-1数据创建或更新失败 -2查询数据不存在 -3数据比对为空 -4参数为空 -5获取数据为空
 
 	code:
 		< 0 全局错误，比如：系统错误：数据库丢失连接/文件不可读写
@@ -312,20 +319,23 @@ function view_path()
     return $path['view_path'];
 }
 
-// 附件路径/支持分离
-function file_path()
+// 附件路径/支持分离 $attach_on 为传入标识，默认不传入读取$conf['attach_on']
+function file_path($attach_on = NULL)
 {
-    static $path = array();
-    if (isset($path['file_path'])) return $path['file_path'];
-    $conf = _SERVER('conf');
-    if (0 == $conf['attach_on']) {
+    $conf = include APP_PATH . 'conf/conf.php';
+    if ($attach_on && $conf['attach_on']) {
+        if ($attach_on == $conf['attach_on']) {
+            // 云储存
+            $path = $conf['cloud_url'] . $conf['upload_url'];
+        } else {
+            // 本地
+            $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : $conf['upload_url'];
+        }
+    } else {
         // 本地
-        $path['file_path'] = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : $conf['upload_url'];
-    } elseif (1 == $conf['attach_on'] || 2 == $conf['attach_on']) {
-        // 云储存
-        $path['file_path'] = $conf['cloud_url'] . $conf['upload_url'];
+        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] . $conf['upload_url'] : $conf['upload_url'];
     }
-    return $path['file_path'];
+    return $path;
 }
 
 // 后台访问view目录下文件路径/支持分离
@@ -382,18 +392,19 @@ function admin_attach_path()
 // 设置token
 function well_token_set($uid = 0)
 {
-    global $conf, $time, $useragent;
+    $key = 'safe_token_' . $uid;
+    static $cache = array();
+    if (isset($cache[$key])) return $cache[$key];
     if ($uid) {
         $user = user_read_cache($uid);
         if (empty($user)) return FALSE;
         $pwd = md5($user['password']);
     } else {
+        $useragent = _SERVER('HTTP_USER_AGENT');
         $pwd = md5($useragent);
     }
-    $token = well_token_gen($uid, $pwd);
-    $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
-    setcookie($key, $token, $time + 3600, '/', $conf['cookie_domain'], '', TRUE);
-    return $token;
+    $cache[$key] = well_token_gen($uid, $pwd);
+    return $cache[$key];
 }
 
 /*
@@ -403,10 +414,10 @@ function well_token_set($uid = 0)
  * @param int $life token 生命期
  * @return bool|mixed|string 返回 token 验证成功 / FALSE 验证失败
  */
-function well_token_verify($uid, $token, $verify = 0, $life = 3600)
+function well_token_verify($uid, $token, $life = 3600)
 {
-    global $conf, $time, $useragent;
     if (empty($token)) return FALSE;
+    $useragent = _SERVER('HTTP_USER_AGENT');
     if ($uid) {
         $user = user_read_cache($uid);
         if (empty($user)) return FALSE;
@@ -415,37 +426,17 @@ function well_token_verify($uid, $token, $verify = 0, $life = 3600)
         if (empty($useragent)) return FALSE;
         $pwd = md5($useragent);
     }
-
-    $key = md5($conf['auth_key'] . '_safe_token_' . $uid);
-    if (1 == $verify) {
-        $_token = _COOKIE($key, 0);
-        if ($_token != $token) return FALSE;
-        well_token_clear();
-    } elseif (2 == $verify) {
-        if (!_COOKIE($key, 0)) return FALSE;
-        $num = _COOKIE(md5($token), 0);
-        if ($num) return FALSE; // 发表主题仅限使用1次
-        well_token_clear();
-        setcookie(md5($token), $num + 1, $time + 600, '/', $conf['cookie_domain'], '', TRUE);
-    } elseif (3 == $verify) {
-        if (!_COOKIE($key, 0)) return FALSE;
-        $num = _COOKIE(md5($token), 0);
-        if ($num >= 10) {
-            well_token_clear();
-            return FALSE; // 评论仅限使用10次
-        }
-        setcookie(md5($token), $num + 1, $time + 600, '/', $conf['cookie_domain'], '', TRUE);
-    }
-
     return well_token_decrypt($token, $uid, $pwd, $life);
 }
 
 // 生成token / salt 混淆码用于加解密
 function well_token_gen($uid, $salt = '')
 {
-    global $time, $ip, $useragent;
     $token_key = md5(xn_key() . $salt);
+    $useragent = _SERVER('HTTP_USER_AGENT');
     $ua_md5 = md5($useragent);
+    $ip = ip();
+    $time = time();
     $token = xn_encrypt("$ip	$uid	$time	$ua_md5", $token_key);
     return $token;
 }
@@ -453,13 +444,16 @@ function well_token_gen($uid, $salt = '')
 // 解密token 正确则返回新token 错误返回FALSE
 function well_token_decrypt($token, $uid, $salt = '', $life = 3600)
 {
-    global $time, $ip, $useragent;
+    $ip = ip();
+    $time = time();
+    $useragent = _SERVER('HTTP_USER_AGENT');
     $token_key = md5(xn_key() . $salt);
     $s = xn_decrypt($token, $token_key);
     if (empty($s)) return FALSE;
     $arr = explode("\t", $s);
     if (count($arr) != 4) return FALSE;
     list($_ip, $_uid, $_time, $ua_md5) = $arr;
+    $life < 10 and $life = 1800;
     if ($ua_md5 != md5($useragent) || $time - $_time > $life || $uid != $_uid || $ip != $_ip) return FALSE;
     return well_token_gen($uid, $salt);
 }
@@ -650,11 +644,11 @@ function get_device()
     $md5 = md5($agent);
     if (isset($cache[$md5])) return $cache[$md5];
     if (FALSE !== strpos($agent, 'MicroMessenger')) {
-        $cache[$md5] = 1;//微信
+        $cache[$md5] = 1; // 微信
     } elseif (strpos($agent, 'pad') || strpos($agent, 'Pad')) {
-        $cache[$md5] = 2;//pad;
+        $cache[$md5] = 2; // pad
     } elseif (isset($_SERVER['HTTP_X_WAP_PROFILE']) || (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], "wap") || stripos($agent, 'phone') || stripos($agent, 'mobile') || strpos($agent, 'ipod'))) {
-        $cache[$md5] = 3;// 手机
+        $cache[$md5] = 3; // 手机
     } else {
         $cache[$md5] = 0;
     }
@@ -939,7 +933,9 @@ function https_request($url, $post = '', $cookie = '', $timeout = 30, $ms = 0)
         // 使用自动跳转，返回最后的Location
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
     }
-    curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+    $ua1 = 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
+    $ua = empty($_SERVER["HTTP_USER_AGENT"]) ? $ua1 : $_SERVER["HTTP_USER_AGENT"];
+    curl_setopt($curl, CURLOPT_USERAGENT, $ua);
     // 兼容HTTPS
     if (FALSE !== stripos($url, 'https://')) {
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);

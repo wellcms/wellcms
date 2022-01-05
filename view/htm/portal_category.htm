@@ -13,7 +13,7 @@
                 </ol>
 
                 <div class="carousel-inner">
-                    <?php $i =0;foreach($slide as &$_thread) {++$i;?>
+                    <?php $i=0;foreach($slide as &$_thread) {++$i;?>
                     <div class="carousel-item <?php if (1 == $i) {echo 'active';} ?>">
                         <a href="<?php echo $_thread['url'];?>">
                             <img class="d-block w-100" src="<?php echo $_thread['icon_fmt']; ?>" alt='<?php echo $_thread['subject'];?>'>

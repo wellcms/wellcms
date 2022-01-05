@@ -101,7 +101,173 @@ function thread_big_update($cond = array(), $update = array(), $d = NULL)
 }
 
 //--------------------------强相关--------------------------
+// 创建主题内容数据，并关联相关数据
+function thread_create_handle($arr)
+{
+    global $longip, $gid, $uid, $config;
 
+    if (empty($arr)) return FALSE;
+
+    // 管理员和后台无需审核
+    $publishverify = 1 == $gid || (!empty($arr['admin']) && group_access($gid, 'managecreatethread')) || !group_access($gid, 'publishverify');
+
+    // hook model_thread_create_handle_start.php
+
+    // 防止扩展出错
+    $conf = array_value($arr, 'conf');
+    $time = array_value($arr, 'time', time());
+    $longip = array_value($arr, 'longip');
+    $gid = array_value($arr, 'gid', 0);
+    $uid = array_value($arr, 'uid', 0);
+    $forumlist = forum_list_cache();
+    $config = setting_get('conf');
+
+    $fid = array_value($arr, 'fid', 0);
+    $forum = array_value($forumlist, $fid);
+    $subject = array_value($arr, 'subject');
+    $type = array_value($arr, 'type', 0);
+    $closed = array_value($arr, 'closed', 0);
+    $keyword = array_value($arr, 'keyword');
+    $brief = array_value($arr, 'brief');
+    $description = array_value($arr, 'description');
+    $flags = array_value($arr, 'flags');
+    $message = array_value($arr, 'message');
+    $thumbnail = array_value($arr, 'thumbnail', 0); // 内容主图
+    $save_image = array_value($arr, 'save_image', 0); // 图片本地化
+    $doctype = array_value($arr, 'doctype', 0);
+    $status = array_value($arr, 'status', 0);
+    $thread_default = array_value($arr, 'thread_default', 1); // 默认入库方便扩展
+
+    // hook model__thread_create_before.php
+
+    // 创建主题
+    $thread = array('fid' => $fid, 'subject' => $subject, 'type' => $type, 'brief' => $brief, 'uid' => $uid, 'create_date' => $time, 'closed' => $closed, 'keyword' => $keyword, 'description' => $description, 'last_date' => $time, 'userip' => $longip, 'flags' => $flags);
+
+    $thread['status'] = TRUE === $publishverify ? 0 : 1;
+
+    // hook model__thread_create_thread_after.php
+
+    $upload_thumbnail = well_attach_assoc_type('thumbnail'); // 缩略图主图
+    !empty($upload_thumbnail) and $thread['icon'] = $time;
+
+    // hook model_thread_create_handle_center.php
+
+    // 主题入库
+    $tid = well_thread__create($thread);
+    if (FALSE === $tid) return FALSE;
+    unset($thread);
+
+    // hook model_thread_create_handle_after.php
+
+    // 关联主图 assoc:thumbnail
+    if (!empty($upload_thumbnail)) {
+        // 上传了主图
+        // hook model_thread_create_thumbnail_before.php
+        $arr = array('tid' => $tid, 'uid' => $uid);
+        // hook model_thread_create_thumbnail_after.php
+        well_attach_assoc_thumbnail($arr);
+        unset($arr);
+        $thumbnail = 0;
+    }
+
+    // hook model_thread_create_save_image_before.php
+
+    !forum_access_user($fid, $gid, 'allowattach') and $save_image = 0;
+
+    // hook model_thread_create_attach_before.php
+
+    $assoc = array('uid' => $uid, 'gid' => $gid, 'tid' => $tid, 'fid' => $fid, 'time' => $time, 'conf' => $conf, 'message' => $message, 'thumbnail' => $thumbnail, 'save_image' => $save_image, 'sess_file' => 1);
+    // hook model_thread_create_assoc_before.php
+    $result = well_attach_assoc_handle($assoc);
+    unset($assoc);
+    $message = $result['message'];
+    $icon = $result['icon'];
+    $images = $result['images'];
+    $files = $result['files'];
+
+    // hook model_thread_create_data_handle_before.php
+
+    // 主题数据入库
+    $data = array('tid' => $tid, 'gid' => $gid, 'message' => $message, 'doctype' => $doctype);
+
+    // hook model_thread_create_data_handle_after.php
+
+    $tid = data_create($data);
+    if (FALSE === $tid) return FALSE;
+    unset($data);
+
+    // hook model_thread_create_verify_before.php
+
+    $user_update = array();
+
+    // hook model_thread_create_verify_center.php
+
+    if (1 == $thread_default) {
+        // 我的主题 审核成功写入该表 website_thread_tid表
+        if (TRUE === $publishverify) {
+
+            // hook model__thread_create_forum_update_before.php
+
+            $forum_update = array('threads+' => 1, 'todaythreads+' => 1);
+            // hook model__thread_create_forum_update_center.php
+            $fid and forum_update($fid, $forum_update);
+            unset($forum_update);
+
+            // hook model__thread_create_tid_start.php
+
+            // 对模型区分，如需要全站扁平，在首页出现，需写入thread_tid，其他模型原有代码不变，可单独写入各自模型小表
+            switch (array_value($forum, 'model')) {
+                // hook model__thread_create_case_start.php
+                case '0':
+                    $thread_tid_create = array('tid' => $tid, 'fid' => $fid, 'uid' => $uid);
+                    // hook model__thread_create_tid_before.php
+                    thread_tid_create($thread_tid_create);
+                    // hook model__thread_create_tid_center.php
+                    $user_update['articles+'] = 1;
+                    // hook model__thread_create_tid_middle.php
+                    runtime_set('articles+', 1);
+                    runtime_set('todayarticles+', 1);
+                    // hook model__thread_create_tid_after.php
+                    break;
+                // hook model__thread_create_case_end.php
+            }
+
+            // hook model__thread_create_tid_end.php
+
+            // 门户模式删除首页所有缓存
+            if (1 == array_value($config, 'model')) {
+                cache_delete('portal_index_thread');
+                $fid and cache_delete('portal_channel_thread_' . $fid);
+            }
+
+            // hook model__thread_create_portal_after.php
+
+        } else {
+            // 待审核 / Waiting for verification
+            // hook model__thread_create_tid_verify_start.php
+            switch (array_value($forum, 'model')) {
+                // hook model__thread_create_verify_case_start.php
+                /*case 0:
+                    break;*/
+                // hook model__thread_create_verify_case_end.php
+            }
+            // hook model__thread_create_tid_verify_end.php
+        }
+    }
+
+    // hook model_thread_create_verify_after.php
+
+    // 更新统计数据 返回到路由处理
+    //!empty($user_update) and user_update($uid, $user_update);
+
+    $return = array('tid' => $tid, 'icon' => $icon, 'images' => $images, 'files' => $files, 'user_update' => $user_update);
+
+    // hook model_thread_create_handle_end.php
+
+    return $return;
+}
+
+// 逐渐放弃使用该函数，请使用 thread_create_handle()
 function well_thread_create($arr)
 {
     global $conf, $time, $longip, $gid, $uid, $forumlist, $config;
@@ -125,10 +291,10 @@ function well_thread_create($arr)
     $flags = array_value($arr, 'flags');
     $message = array_value($arr, 'message');
     $thumbnail = array_value($arr, 'thumbnail', 0); // 内容主图
-    $delete_pic = array_value($arr, 'delete_pic', 0); // 删除主图
     $save_image = array_value($arr, 'save_image', 0); // 图片本地化
     $doctype = array_value($arr, 'doctype', 0);
     $status = array_value($arr, 'status', 0);
+    $thread_default = array_value($arr, 'thread_default', 1); // 默认入库方便扩展
 
     // hook model__thread_create_before.php
 
@@ -144,12 +310,10 @@ function well_thread_create($arr)
 
     // hook model__thread_create_center.php
 
-    if (empty($delete_pic)) {
-        if (!empty($upload_thumbnail)) {
-            $thread['icon'] = $time;
-        } elseif ($thumbnail && ($upload_file || preg_match_all('#<img[^>]+src="(http.*?)"#i', strtolower($message)))) {
-            $thread['icon'] = $time;
-        }
+    if (!empty($upload_thumbnail)) {
+        $thread['icon'] = $time;
+    } elseif ($thumbnail && ($upload_file || preg_match_all('#<img[^>]+src="(http.*?)"#i', strtolower($message)))) {
+        $thread['icon'] = $time;
     }
 
     // hook model__thread_create_middle.php
@@ -163,24 +327,22 @@ function well_thread_create($arr)
 
     // 关联主图 assoc:thumbnail
     $create_thumbnail = FALSE;
-    if (empty($delete_pic)) {
-        // 没上传主图 内容中有上传图片附件
-        if (empty($upload_thumbnail) && $upload_file) {
-            // 获取内容第一张图为主图
-            $arr = array('tid' => $tid, 'uid' => $uid, 'fid' => $fid);
-            // hook model__thread_create_thumbnail_before.php
-            $thumbnail and well_attach_create_thumbnail($arr);
-        } elseif (!empty($upload_thumbnail)) {
-            // 上传了主图
-            // hook model__thread_create_thumbnail_center.php
-            $arr = array('tid' => $tid, 'uid' => $uid, 'type' => $type, 'assoc' => 'thumbnail');
-            // hook model__thread_create_thumbnail_after.php
-            well_attach_assoc_post($arr);
-            unset($arr);
-        } elseif ($thumbnail) {
-            // 获取内容中图片，远程图片下载创建缩略图
-            $create_thumbnail = TRUE;
-        }
+    // 没上传主图 内容中有上传图片附件
+    if (empty($upload_thumbnail) && $upload_file) {
+        // 获取内容第一张图为主图
+        $arr = array('tid' => $tid, 'uid' => $uid, 'fid' => $fid);
+        // hook model__thread_create_thumbnail_before.php
+        $thumbnail and well_attach_create_thumbnail($arr);
+    } elseif (!empty($upload_thumbnail)) {
+        // 上传了主图
+        // hook model__thread_create_thumbnail_center.php
+        $arr = array('tid' => $tid, 'uid' => $uid, 'type' => $type, 'assoc' => 'thumbnail');
+        // hook model__thread_create_thumbnail_after.php
+        well_attach_assoc_post($arr);
+        unset($arr);
+    } elseif ($thumbnail) {
+        // 获取内容中图片，远程图片下载创建缩略图
+        $create_thumbnail = TRUE;
     }
 
     // hook model__thread_create_save_image_before.php
@@ -215,55 +377,57 @@ function well_thread_create($arr)
 
     // hook model__thread_create_verify_center.php
 
-    // 我的主题 审核成功写入该表 website_thread_tid表
-    if (TRUE === $publishverify) {
+    if (1 == $thread_default) {
+        // 我的主题 审核成功写入该表 website_thread_tid表
+        if (TRUE === $publishverify) {
 
-        // hook model__thread_create_forum_update_before.php
+            // hook model__thread_create_forum_update_before.php
 
-        $forum_update = array('threads+' => 1, 'todaythreads+' => 1);
-        // hook model__thread_create_forum_update_center.php
-        $fid and forum_update($fid, $forum_update);
-        unset($forum_update);
+            $forum_update = array('threads+' => 1, 'todaythreads+' => 1);
+            // hook model__thread_create_forum_update_center.php
+            $fid and forum_update($fid, $forum_update);
+            unset($forum_update);
 
-        // hook model__thread_create_tid_start.php
+            // hook model__thread_create_tid_start.php
 
-        // 对模型区分，如需要全站扁平，在首页出现，需写入thread_tid，其他模型原有代码不变，可单独写入各自模型小表
-        switch (array_value($forum, 'model')) {
-            // hook model__thread_create_case_start.php
-            case '0':
-                $thread_tid_create = array('tid' => $tid, 'fid' => $fid, 'uid' => $uid);
-                // hook model__thread_create_tid_before.php
-                thread_tid_create($thread_tid_create);
-                // hook model__thread_create_tid_center.php
-                $user_update += array('articles+' => 1);
-                // hook model__thread_create_tid_middle.php
-                runtime_set('articles+', 1);
-                runtime_set('todayarticles+', 1);
-                // hook model__thread_create_tid_after.php
-                break;
-            // hook model__thread_create_case_end.php
+            // 对模型区分，如需要全站扁平，在首页出现，需写入thread_tid，其他模型原有代码不变，可单独写入各自模型小表
+            switch (array_value($forum, 'model')) {
+                // hook model__thread_create_case_start.php
+                case '0':
+                    $thread_tid_create = array('tid' => $tid, 'fid' => $fid, 'uid' => $uid);
+                    // hook model__thread_create_tid_before.php
+                    thread_tid_create($thread_tid_create);
+                    // hook model__thread_create_tid_center.php
+                    $user_update['articles+'] = 1;
+                    // hook model__thread_create_tid_middle.php
+                    runtime_set('articles+', 1);
+                    runtime_set('todayarticles+', 1);
+                    // hook model__thread_create_tid_after.php
+                    break;
+                // hook model__thread_create_case_end.php
+            }
+
+            // hook model__thread_create_tid_end.php
+
+            // 门户模式删除首页所有缓存
+            if (1 == array_value($config, 'model')) {
+                cache_delete('portal_index_thread');
+                $fid and cache_delete('portal_channel_thread_' . $fid);
+            }
+
+            // hook model__thread_create_portal_after.php
+
+        } else {
+            // 待审核 / Waiting for verification
+            // hook model__thread_create_tid_verify_start.php
+            switch (array_value($forum, 'model')) {
+                // hook model__thread_create_verify_case_start.php
+                /*case 0:
+                    break;*/
+                // hook model__thread_create_verify_case_end.php
+            }
+            // hook model__thread_create_tid_verify_end.php
         }
-
-        // hook model__thread_create_tid_end.php
-
-        // 门户模式删除首页所有缓存
-        if (1 == array_value($config, 'model')) {
-            cache_delete('portal_index_thread');
-            $fid and cache_delete('portal_channel_thread_' . $fid);
-        }
-
-        // hook model__thread_create_portal_after.php
-
-    } else {
-        // 待审核 / Waiting for verification
-        // hook model__thread_create_tid_verify_start.php
-        switch (array_value($forum, 'model')) {
-            // hook model__thread_create_verify_case_start.php
-            /*case 0:
-                break;*/
-            // hook model__thread_create_verify_case_end.php
-        }
-        // hook model__thread_create_tid_verify_end.php
     }
 
     // hook model__thread_create_verify_after.php
@@ -292,7 +456,7 @@ function well_thread_update($tid, $update)
     // hook model__thread_update_after.php
 
     if ('mysql' != $conf['cache']['type']) {
-        if (is_array($tid)) {
+        if (TRUE === is_array($tid)) {
             foreach ($tid as $_tid) cache_delete('website_thread_' . $_tid);
         } else {
             cache_delete('website_thread_' . $tid);
@@ -599,6 +763,7 @@ function well_thread_delete_all($tid)
     $operate_create = array();
     $tagtids = array();
     foreach ($threadlist as $thread) {
+        if (!$thread['fid']) continue;
 
         if ($uid != $thread['uid'] && !forum_access_mod($thread['fid'], $gid, 'allowdelete')) continue;
 
@@ -765,7 +930,7 @@ function well_thread_delete_all($tid)
         foreach ($fidarr as $_fid => $n) {
             $fids[] = $_fid;
             $update[$_fid] = array('threads-' => $n);
-            isset($fidstickys[$_fid]) and $update[$_fid] = array('tops-' => $fidstickys[$_fid]);
+            isset($fidstickys[$_fid]) ? $update[$_fid]['tops-'] = $fidstickys[$_fid] : $update[$_fid]['tops-'] = 0;
             // hook model_thread_delete_all_forum_center.php
         }
 
@@ -925,10 +1090,11 @@ function well_thread_format(&$thread)
     $thread['last_date_fmt_ymd'] = date('Y-m-d', $thread['last_date']);
 
     $user = user_read_cache($thread['uid']);
+
     $onlinelist = online_user_list_cache();
     $user['online_status'] = isset($onlinelist[$user['uid']]) ? 1 : 0;
     $thread['username'] = $user['username'];
-    $thread['user_avatar_url'] = $user['avatar_url'];
+    $thread['user_avatar_url'] = array_value($user, 'avatar_url');
     $thread['user'] = user_safe_info($user);
     unset($user);
     // hook model__thread_format_before.php
@@ -943,6 +1109,8 @@ function well_thread_format(&$thread)
     } else {
         $lastuser = $thread['lastuid'] ? user_read_cache($thread['lastuid']) : array();
         $thread['lastusername'] = $thread['lastuid'] ? $lastuser['username'] : lang('guest');
+        $thread['lastuser'] = $thread['lastuid'] ? user_safe_info($lastuser) : array();
+        // hook model__thread_format_lastuser.php
         unset($lastuser);
     }
 
@@ -968,27 +1136,34 @@ function well_thread_format(&$thread)
         $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
         $day = date($attach_dir_save_rule, $thread['icon']);
 
-        if (in_array($conf['attach_on'], array(0, 2))) {
+        $thread_format_icon_default = 1;
+
+        // hook model_thread_format_icon_before.php
+
+        if (1 == $thread_format_icon_default) {
             // 本地文件绝对路径
             $destfile = $conf['upload_path'] . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
 
             // 本地
-            $thread['icon_fmt'] = is_file($destfile) ? file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
-        }
+            $thread['icon_fmt'] = is_file($destfile) ? file_path($thread['attach_on']) . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg' : $nopic;
 
-        if (1 == $conf['attach_on']) {
-            // 云储存
-            $thread['icon_fmt'] = file_path() . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
+            if (1 == $conf['attach_on'] && 1 == $thread['attach_on']) {
 
-        } elseif (2 == $conf['attach_on'] && 2 == $thread['attach_on']) {
-            // 图床 未上传成功 本地图片在的话使用本地，不在则默认
-            $thread['icon_fmt'] = $thread['image_url'] ? $thread['image_url'] : $thread['icon_fmt'];
+                // 云储存
+                $thread['icon_fmt'] = file_path($thread['attach_on']) . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $thread['tid'] . '_' . $thread['icon'] . '.jpeg';
+
+            } elseif (2 == $conf['attach_on'] && 2 == $thread['attach_on']) {
+                // 图床 未上传成功 本地图片在的话使用本地，不在则默认
+                $thread['icon_fmt'] = $thread['image_url'] ? $thread['image_url'] : $thread['icon_fmt'];
+            }
         }
 
     } else {
         $thread['icon_fmt'] = $nopic;
     }
+
     // hook model__thread_format_middle.php
+
     // 回复页面
     $thread['pages'] = ceil($thread['posts'] / $conf['comment_pagesize']);
 
@@ -1000,6 +1175,7 @@ function well_thread_format(&$thread)
     $thread['allowtop'] = forum_access_mod($thread['fid'], $gid, 'allowtop');
 
     // hook model__thread_format_end.php
+
     $thread = well_thread_safe_info($thread);
 }
 

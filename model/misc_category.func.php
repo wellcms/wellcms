@@ -5,11 +5,13 @@
 
 // hook model_misc_category_start.php
 
-function nav_member()
+// 个人中心
+function nav_member($arr = array())
 {
-    $route = param(0);
+    $user = isset($arr['user']) ? $arr['user'] : GLOBALS('user');
+    $route = isset($arr['route']) ? $arr['route'] : param(0);
     static $cache = array();
-    $key = 'nav_member_'.$route;
+    $key = 'nav_member_' . $route;
     if (isset($cache[$key])) return $cache[$key];
 
     // hook model_misc_nav_member_start.php
@@ -35,6 +37,8 @@ function nav_member()
             $menus += array(
                 // hook model_misc_nav_member_my_profile_before.php
                 'my' => array('url' => url('my'), 'name' => lang('my_basic_profile'), 'active' => 'my-profile'),
+                // hook model_misc_nav_member_my_bind_before.php
+                'my-bind' => array('url' => url('my-bind'), 'name' => lang('bind'), 'active' => 'my-bind'),
                 // hook model_misc_nav_member_my_password_before.php
                 'my-password' => array('url' => url('my-password'), 'name' => lang('modify_password'), 'active' => 'my-password'),
                 // hook model_misc_nav_member_my_avatar_before.php
@@ -60,6 +64,29 @@ function nav_member()
     // hook model_misc_nav_member_end.php
 
     return array($navs, $menus);
+}
+
+// 用户中心
+function user_menu($_uid)
+{
+    // hook model_misc_user_menu_start.php
+
+    $arr = array(
+        'thread' => array(
+            'url' => url('user-' . $_uid),
+            'name' => lang('article'),
+            'active' => 'user-home'
+        ),
+        'comment' => array(
+            'url' => url('user-comment-' . $_uid),
+            'name' => lang('comment'),
+            'active' => 'user-comment'
+        ),
+    );
+
+    // hook model_misc_user_menu_end.php
+
+    return $arr;
 }
 
 // 获取CMS全部栏目，包括频道的二叉树结构

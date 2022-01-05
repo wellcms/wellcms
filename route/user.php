@@ -9,20 +9,17 @@ switch ($action) {
     // hook user_case_start.php
     case 'comment':
         $_uid = param(2, 0);
-
-        empty($_uid) and $_uid = $uid;
         $_user = user_read_cache($_uid);
-
         empty($_user) and message(-1, lang('user_not_exists'));
 
         // hook user_comment_start.php
 
         if ('GET' == $method) {
 
-            $apilist = array();
             $page = param(3, 1);
             $pagesize = $conf['pagesize'];
             $extra = array(); // 插件预留
+            $menulist = user_menu($_uid);
 
             // hook user_comment_before.php
 
@@ -46,9 +43,9 @@ switch ($action) {
                     // 过滤没有权限访问的主题 / filter no permission thread
                     if (empty($threadlist[$val['tid']])) unset($arrlist[$key]);
                     comment_filter($val);
-                    $val['subject'] = $threadlist[$val['tid']]['subject'];
-                    $val['url'] = $threadlist[$val['tid']]['url'];
-                    $val['allowdelete'] = forum_access_mod($val['fid'], $gid, 'allowdelete');
+                    $val['subject'] = isset($threadlist[$val['tid']]['subject']) ? $threadlist[$val['tid']]['subject'] : '';
+                    $val['url'] = isset($threadlist[$val['tid']]['url']) ? $threadlist[$val['tid']]['url'] : '';
+                    $val['allowdelete'] = $val['fid'] ? forum_access_mod($val['fid'], $gid, 'allowdelete') : group_access($gid, 'allowdelete');
                 }
             }
 
@@ -70,7 +67,17 @@ switch ($action) {
             $header['mobile_title'] = '';
 
             if ($ajax) {
-                $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'arrlist' => $arrlist, 'access' => $access, 'header' => $header, 'user' => user_safe_info($_user))) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['extra'] = $extra;
+                $apilist['menulist'] = $menulist;
+                $apilist['num'] = $num;
+                $apilist['page'] = $page;
+                $apilist['pagesize'] = $pagesize;
+                $apilist['page_url'] = $page_url;
+                $apilist['arrlist'] = $arrlist;
+                $apilist['access'] = $access;
+
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('user_comment'));
             }
@@ -89,25 +96,26 @@ switch ($action) {
             // hook user_login_get_start.php
 
             $header['title'] = lang('user_login');
-            $safe_token = well_token_set(0);
+            empty($safe_token) and $safe_token = well_token_set(0);
             $referer = user_http_referer();
+            $extra = array('safe_token' => $safe_token);
 
             // hook user_login_get_end.php
 
+            $form_action = url('user-login', $extra);
+
             if ('1' == _GET('ajax')) {
-                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['safe_token'] = $safe_token;
+                $apilist['referer'] = $referer;
+                $apilist['action'] = $action;
+
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('user_login'));
             }
 
         } else if ('POST' == $method) {
-
-            // 验证 token 不成功需要刷新页面
-            if (1 == array_value($conf, 'login_token', 0)) {
-                $safe_token = param('safe_token');
-                well_token_set(0);
-                FALSE === well_token_verify(0, $safe_token, 1) and message(1, lang('illegal_operation'));
-            }
 
             // hook user_login_post_start.php
 
@@ -128,9 +136,15 @@ switch ($action) {
             // hook user_login_post_password_check_after.php
             empty($check) and message('password', lang('password_incorrect'));
 
+            // hook user_login_post_before.php
+
             // 更新登录时间和次数
             // update login times
-            user_update($_user['uid'], array('login_ip' => $longip, 'login_date' => $time, 'logins+' => 1));
+            $update = array('login_ip' => $longip, 'login_date' => time(), 'logins+' => 1);
+
+            // hook user_login_post_after.php
+
+            user_update($_user['uid'], $update);
 
             // 全局变量 $uid 会在结束后，在函数 register_shutdown_function() 中存入 session (文件: model/session.func.php)
             // global variable $uid will save to session in register_shutdown_function() (file: model/session.func.php)
@@ -157,23 +171,24 @@ switch ($action) {
 
             $header['title'] = lang('create_user');
             $referer = user_http_referer();
-            $safe_token = well_token_set(0);
+            empty($safe_token) and $safe_token = well_token_set(0);
+            $extra = array('safe_token' => $safe_token);
+
+            $form_action = url('user-create', $extra);
 
             // hook user_create_get_end.php
-            
+
             if ('1' == _GET('ajax')) {
-                $conf['api_on'] ? message(0, array('safe_token' => $safe_token, 'referer' => $referer, 'header' => $header)) : message(0, lang('closed'));
+                $apilist['header'] = $header;
+                $apilist['safe_token'] = $safe_token;
+                $apilist['referer'] = $referer;
+                $apilist['action'] = $action;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('user_create'));
             }
 
         } else if ('POST' == $method) {
-
-            // 验证token
-            if (1 == array_value($conf, 'login_token', 0)) {
-                $safe_token = param('safe_token');
-                FALSE === well_token_verify(0, $safe_token, 1) and message(1, lang('illegal_operation'));
-            }
 
             // hook user_create_post_start.php
 
@@ -226,7 +241,7 @@ switch ($action) {
             // hook user_create_post_center.php
 
             $uid = user_create($_user);
-            FALSE === $uid and message('email', lang('user_create_failed'));
+            FALSE === $uid and message(-1, lang('user_create_failed'));
             $user = user_read($uid);
 
             // hook user_create_post_after.php
@@ -241,7 +256,6 @@ switch ($action) {
 
             // hook user_create_post_end.php
 
-            well_token_set(0);
             message(0, lang('user_create_successfully'), $extra);
         }
         break;
@@ -267,10 +281,17 @@ switch ($action) {
             // hook user_resetpw_get_start.php
 
             $header['title'] = lang('resetpw');
+            $form_action = url('user-resetpw');
 
             // hook user_resetpw_get_end.php
 
-            include _include(theme_load('user_resetpw'));
+            if ('1' == _GET('ajax')) {
+                $apilist['header'] = $header;
+                $apilist['form_action'] = $form_action;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('user_resetpw'));
+            }
 
         } else if ('POST' == $method) {
 
@@ -319,10 +340,17 @@ switch ($action) {
             // hook user_resetpw_get_start.php
 
             $header['title'] = lang('resetpw');
+            $form_action = url('user-resetpw_complete');
 
             // hook user_resetpw_get_end.php
 
-            include _include(theme_load('user_resetpw_complete'));
+            if ('1' == _GET('ajax')) {
+                $apilist['header'] = $header;
+                $apilist['form_action'] = $form_action;
+                $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
+            } else {
+                include _include(theme_load('user_resetpw_complete'));
+            }
 
         } else if ('POST' == $method) {
 
@@ -452,7 +480,6 @@ switch ($action) {
     default:
         // hook user_index_start.php
 
-        $apilist = array();
         $_uid = param(1, 0);
         $page = param(2, 1);
         $pagesize = $conf['pagesize'];
@@ -461,6 +488,8 @@ switch ($action) {
         empty($_uid) and $_uid = $uid;
         $_user = user_read_cache($_uid);
         empty($_user) and message(-1, lang('user_not_exists'));
+
+        $menulist = user_menu($_uid);
 
         // hook user_index_before.php
 
@@ -489,7 +518,18 @@ switch ($action) {
             if ($threadlist) {
                 foreach ($threadlist as &$thread) $thread = well_thread_safe_info($thread);
             }
-            $conf['api_on'] ? message(0, $apilist += array('page' => $page, 'num' => $num, 'user' => $_user ? user_safe_info($_user) : '', 'threadlist' => $threadlist, 'extra' => $extra, 'allowdelete' => $allowdelete, 'header' => $header)) : message(0, lang('closed'));
+
+            $apilist['header'] = $header;
+            $apilist['extra'] = $extra;
+            $apilist['menulist'] = $menulist;
+            $apilist['num'] = $num;
+            $apilist['page'] = $page;
+            $apilist['pagesize'] = $pagesize;
+            $apilist['page_url'] = $page_url;
+            $apilist['threadlist'] = $threadlist;
+            $apilist['allowdelete'] = $allowdelete;
+
+            $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
         } else {
             include _include(theme_load('user'));
         }

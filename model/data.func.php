@@ -60,6 +60,7 @@ function data_big_update($cond = array(), $update = array(), $d = NULL)
     // hook model_data_big_update_end.php
     return $r;
 }
+
 //--------------------------强相关--------------------------
 // $arr = array('tid' => $tid, 'gid' => $gid, 'message' => $arr['message'], 'doctype' => $doctype);
 function data_create($arr)
@@ -70,7 +71,7 @@ function data_create($arr)
 
     // hook model_data_create_before.php
 
-    isset($arr['message']) and data_message_format($arr);
+    data_message_format($arr);
 
     // hook model_data_create_after.php
 
@@ -99,8 +100,8 @@ function data_update($tid, $update)
 
     // hook model_data_update_after.php
 
-    $r AND 'mysql' != $conf['cache']['type'] AND cache_delete('website_data_' . $tid);
-    
+    $r and 'mysql' != $conf['cache']['type'] and cache_delete('website_data_' . $tid);
+
     // hook model_data_update_end.php
 
     return $r;
@@ -111,7 +112,7 @@ function data_read($tid)
 {
     // hook model_data_read_by_tid_start.php
     $r = data__read(array('tid' => $tid));
-    $r AND data_format($r);
+    $r and data_format($r);
     // hook model_data_read_by_tid_end.php
     return $r;
 }
@@ -120,6 +121,11 @@ function data_find($tid, $pagesize = 20)
 {
     // hook model_data_find_start.php
     $arrlist = data__find(array('tid' => $tid), array('tid' => -1), 1, $pagesize);
+    if (!$arrlist) return NULL;
+    // hook model_data_find_before.php
+    foreach ($arrlist as $val) {
+        data_format($r);
+    }
     // hook model_data_find_end.php
     return $arrlist;
 }
@@ -132,7 +138,7 @@ function data_delete($tid)
     if (empty($tid)) return FALSE;
     // hook model_data_delete_before.php
     $r = data__delete($tid);
-    $r AND 'mysql' != $conf['cache']['type'] AND cache_delete('website_data_' . $tid);
+    $r and 'mysql' != $conf['cache']['type'] and cache_delete('website_data_' . $tid);
     // hook model_data_delete_end.php
     return $r;
 }
@@ -144,23 +150,31 @@ function data_format(&$val)
 
     if (empty($val)) return;
 
-    // 使用云储存
-    1 == $conf['attach_on'] || 0 == $conf['attach_on'] AND $val['message'] = str_replace('="upload/', '="' . file_path(), $val['message']);
+    $data_format_storage_default = 1; // 默认云储存和图床
 
-    // 使用图床
-    if (2 == $conf['attach_on']) {
+    // hook model_data_format_before.php
 
-        list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($val['tid']);
+    if (1 == $data_format_storage_default) {
 
-        foreach ($imagelist as $key => $attach) {
+        // 使用云储存
+        if (1 == $conf['attach_on'] && 1 == $val['attach_on']) {
+            $val['message'] = str_replace('="upload/', '="' . file_path($val['attach_on']), $val['message']);
+        } elseif (2 == $conf['attach_on'] && 2 == $val['attach_on']) {
+            // 使用图床
+            list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($val['tid']);
 
-            $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
+            foreach ($imagelist as $key => $attach) {
 
-            // 替换成图床
-            $val['message'] = FALSE !== strpos($val['message'], $url) && $attach['image_url'] ? str_replace($url, $attach['image_url'], $val['message']) : $val['message'];
+                $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
+
+                // 替换成图床
+                $val['message'] = FALSE !== strpos($val['message'], $url) && $attach['image_url'] ? str_replace($url, $attach['image_url'], $val['message']) : $val['message'];
+            }
+        } else {
+            $val['message'] = str_replace('="upload/', '="' . file_path($val['attach_on']), $val['message']);
         }
+        //$val['message'] = stripslashes(htmlspecialchars_decode($val['message']));
     }
-    //$val['message'] = stripslashes(htmlspecialchars_decode($val['message']));
 
     // hook model_data_format_end.php
 }
@@ -170,23 +184,27 @@ function data_message_replace_url($tid, $message)
 {
     global $conf;
 
+    $data_message_storage_default = 1; // 默认储存
+
     // hook model_data_message_replace_url_start.php
 
-    if (0 == $conf['attach_on']) {
-        $message = FALSE !== strpos($message, '="../upload/') ? str_replace('="../upload/', '="upload/', $message) : $message;
-        $message = FALSE !== strpos($message, '="/upload/') ? str_replace('="/upload/', '="upload/', $message) : $message;
-    } elseif (1 == $conf['attach_on']) {
-        // 使用云储存
-        $message = str_replace('="' . $conf['cloud_url'] . 'upload/', '="upload/', $message);
-    } elseif (2 == $conf['attach_on']) {
+    if (1 == $data_message_storage_default) {
+        if (0 == $conf['attach_on']) {
+            $message = FALSE !== strpos($message, '="../upload/') ? str_replace('="../upload/', '="upload/', $message) : $message;
+            $message = FALSE !== strpos($message, '="/upload/') ? str_replace('="/upload/', '="upload/', $message) : $message;
+        } elseif (1 == $conf['attach_on']) {
+            // 使用云储存
+            $message = str_replace('="' . $conf['cloud_url'] . 'upload/', '="upload/', $message);
+        } elseif (2 == $conf['attach_on']) {
 
-        // 使用图床
-        list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($tid);
+            // 使用图床
+            list($attachlist, $imagelist, $filelist) = well_attach_find_by_tid($tid);
 
-        foreach ($imagelist as $key => $attach) {
-            $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
-            // 替换回相对链接
-            $message = $attach['image_url'] && FALSE !== strpos($message, $attach['image_url']) ? str_replace($attach['image_url'], $url, $message) : $message;
+            foreach ($imagelist as $key => $attach) {
+                $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
+                // 替换回相对链接
+                $message = $attach['image_url'] && FALSE !== strpos($message, $attach['image_url']) ? str_replace($attach['image_url'], $url, $message) : $message;
+            }
         }
     }
 
@@ -200,33 +218,35 @@ function data_message_format(&$post)
 {
     // hook model_data_message_format_start.php
 
-    if (empty($post['message'])) return $post;
-    !isset($post['doctype']) and $post['doctype'] = 0;
+    if (!empty($post['message'])) {
 
-    // 超长内容截取
-    $post['message'] = xn_substr($post['message'], 0, 2028000);
+        !isset($post['doctype']) and $post['doctype'] = '0';
 
-    // hook model_data_message_format_beofre.php
+        // 超长内容截取
+        $post['message'] = xn_substr($post['message'], 0, 2028000);
 
-    // 格式转换: 类型，0: html, 1: txt; 2: markdown; 3: ubb
-    switch ($post['doctype']) {
-        case '0': // 入库过滤 非管理员全部过滤
-            $post['message'] = isset($post['gid']) && 1 == $post['gid'] ? $post['message'] : xn_html_safe($post['message']);
-            break;
-        case '1':
-            $post['message'] = xn_txt_to_html($post['message']);
-            break;
-        default:
-            $post['message'] = htmlspecialchars($post['message'], ENT_QUOTES); // html标签全部转换
-            break;
+        // hook model_data_message_format_beofre.php
+
+        // 格式转换: 类型，0: html, 1: txt; 2: markdown; 3: ubb
+        switch ($post['doctype']) {
+            case '0': // 入库过滤 非管理员全部过滤
+                $post['message'] = isset($post['gid']) && 1 == $post['gid'] ? $post['message'] : xn_html_safe($post['message']);
+                break;
+            case '1':
+                $post['message'] = xn_txt_to_html($post['message']);
+                break;
+            default:
+                $post['message'] = htmlspecialchars($post['message'], ENT_QUOTES); // html标签全部转换
+                break;
+        }
+
+        // hook model_data_message_format_after.php
+
+        // 对引用进行处理
+        !empty($post['quotepid']) && $post['quotepid'] > 0 && $post['message'] = comment_quote($post['quotepid']) . $post['message'];
     }
 
-    // hook model_data_message_format_after.php
-
     unset($post['gid']);
-
-    // 对引用进行处理
-    !empty($post['quotepid']) && $post['quotepid'] > 0 && $post['message'] = comment_quote($post['quotepid']) . $post['message'];
 
     // hook model_data_message_format_end.php
 }
@@ -267,7 +287,7 @@ function data_file_list_html($filelist, $include_delete = FALSE, $access = FALSE
         $s .= '			' . $attach['orgfilename'] . "\r\n";
         $s .= '		</a>' . "\r\n";
         // hook model_post_file_list_html_delete_before.php
-        $include_delete AND $s .= '		<span class="btn px-1 py-0 delete"><i class="icon-remove"></i></span>' . "\r\n";
+        $include_delete and $s .= '		<span class="btn px-1 py-0 delete"><i class="icon-remove"></i></span>' . "\r\n";
         // hook model_post_file_list_html_delete_after.php
         $s .= '</li>' . "\r\n";
     };
@@ -294,7 +314,7 @@ function data_read_cache($tid)
         $r = cache_get($key);
         if (NULL === $r) {
             $r = data_read($tid);
-            $r AND cache_set($key, $r, 1800); // 30分钟
+            $r and cache_set($key, $r, 1800); // 30分钟
         }
     }
     $cache[$key] = $r ? $r : NULL;

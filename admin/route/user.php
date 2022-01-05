@@ -84,7 +84,7 @@ switch ($action) {
             $email = param('email');
             $username = param('username');
             $password = param('password');
-            $_gid = param('_gid');
+            $_gid = param('_gid', 0);
 
             // hook admin_user_create_post_start.php
 
@@ -191,9 +191,7 @@ switch ($action) {
 
             // 仅仅更新发生变化的部分 / only update changed field
             $update = array_diff_value($arr, $old);
-            empty($update) and message(-1, lang('data_not_changed'));
-
-            FALSE === user_update($_uid, $update) and message(-1, lang('update_failed'));
+            !empty($update) && FALSE === user_update($_uid, $update) and message(-1, lang('update_failed'));
 
             // hook admin_user_update_post_end.php
 
@@ -214,7 +212,7 @@ switch ($action) {
 
         $_user = user_read($_uid);
         empty($_user) and message(-1, lang('user_not_exists'));
-        (1 == $_user['gid']) and message(-1, 'admin_cant_be_deleted');
+        (1 == $_user['gid']) and message(-1, lang('admin_cant_be_deleted'));
 
         FALSE === user_delete($_uid) and message(-1, lang('delete_failed'));
 

@@ -50,7 +50,6 @@
             var jsubmit = jthis.find('#submit');
             jsubmit.button('loading');
             var postdata = jform.serializeObject();
-            postdata.password = $.md5(postdata.password);
             $.xpost(jform.attr('action'), postdata, function(code, message) {
                 if(code == 0) {
                     jsubmit.button(message);

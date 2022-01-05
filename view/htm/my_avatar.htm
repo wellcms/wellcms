@@ -3,15 +3,21 @@
 		<div class="card-body bg-white px-0 py-5">
 			<div class="row line-height-4 m-0">
 				<div class="col-lg-6 mx-auto">
-					<div class="form-group text-center">
-						<img id="avatar_img" class="logo-4" src="<?php echo $user['avatar_url'];?>">
+					<div class="form-group d-flex justify-content-center">
+						<div class="position-relative">
+							<label id="avatar_upload" class="d-block" safe_token="<?php echo $safe_token;?>">
+								<img id="avatar_img" class="avatar-4" src="<?php echo $user['avatar_url'];?>">
+								<span style="position: absolute;bottom:0;right:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 40 40"><g transform="translate(-4 -4)"><path d="M24,44A20,20,0,1,0,4,24,20,20,0,0,0,24,44Z" fill="#f2556e"/><path d="M24,34a2,2,0,0,1-2-2V16a2,2,0,0,1,4,0V32A2,2,0,0,1,24,34Z" fill="#fff"/><path d="M32,26H16a2,2,0,0,1,0-4H32a2,2,0,0,1,0,4Z" fill="#fff"/></g></svg>
+                    </span>
+								<input type="file" accept="image/jpeg,image/png,image/jpg" class="d-none" value="<?php echo lang('modify_avatar');?>"/>
+							</label>
+						</div>
 					</div>
-					<div class="form-group custom-file">
-						<input type="file" id="avatar_upload" accept="image/jpeg,image/png,image/jpg"  class="upload custom-file-input" value="<?php echo lang('modify_avatar');?>"/>
-						<label class="custom-file-label" for="customFile">Upload file</label>
-					</div>
-					<div class="progress mt-2">
-						<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"  id="avatar_progress"></div>
+					<div id="progress" class="form-group" style="display: none;">
+						<div class="progress mt-2">
+							<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"  id="avatar_progress"></div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -20,37 +26,50 @@
 </template>
 
 <script>
+	let avatarImg = document.getElementById('avatar_img');
+	let progress = document.getElementById('progress');
+	let avatarProgress = document.getElementById('avatar_progress');
+	avatarProgress.style.display = 'none';
+	avatarProgress.style.display = 'none';
+	avatarProgress.style.width = '0%';
+
+	const avatarUpload = document.getElementById('avatar_upload');
+	if (avatarUpload) {
+		avatarUpload.addEventListener('change', function (e) {
+			let safe_token = this.getAttribute('safe_token');
+			let files = e.srcElement.files;
+			xn.upload_file(files[0], xn.url('my-avatar'),
+					{
+						'width': 200,
+						'height': 200,
+						'action': 'clip',
+						'filetype': 'jpg',
+						'safe_token': safe_token
+					},
+					function (code, message) {
+						if (code == 0) {
+							avatarImg.setAttribute('src', message.url + '?' + Math.random())
+							$.modal('<div style="text-align: center;padding: 1rem 1rem;">Update&nbsp;completed</div>', {
+								'timeout': '1',
+								'size': 'modal-dialog modal-sm'
+							});
+							setTimeout(function () {
+								window.location.reload();
+							}, 1000);
+						} else {
+							$.alert(message);
+						}
+					},
+					function (percent) {
+						progress.style.display = 'block';
+						avatarProgress.style.display = 'block';
+						avatarProgress.style.width = percent + '%';
+					}
+			);
+		});
+	}
+
     $('a[data-active="menu-my"]').addClass('active');/*菜单*/
 	$('a[data-active="my-avatar"]').addClass('active');
-</script>
-
-<script>
-var javatar_upload = $('#avatar_upload');
-var jprogress = $('#avatar_progress');
-var jimg = $('#avatar_img');
-var safe_token = '<?php echo $safe_token;?>';
-jprogress.hide();
-javatar_upload.on('change', function(e) {
-	var files = xn.get_files_from_event(e);
-	xn.upload_file(
-		files[0],
-		xn.url('my-avatar'), 
-		{width: 128, height: 128, action: 'clip', filetype: 'jpg', safe_token: safe_token},
-		function(code, message) {
-			if(code == 0) {
-				jimg.attr('src', message.url+'?'+Math.random());
-				$.alert("<?php echo lang('save_successfully');?>");
-				jprogress.delay(1000).hide();
-                window.location.reload();
-			} else {
-				$.alert(message);
-			}
-		}, 
-		function(percent) {
-			jprogress.show();
-			jprogress.width(percent+'%');
-		}
-	);
-});
 </script>
 <!--{hook my_avatar_after.htm}-->

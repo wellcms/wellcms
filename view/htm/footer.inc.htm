@@ -4,7 +4,6 @@
 <?php $ip = GLOBALS('ip');?>
 <?php $useragent = GLOBALS('useragent');?>
 <?php $forumlist = GLOBALS('forumlist');?>
-<?php $forumarr = GLOBALS('forumarr');?>
 <?php $fid = GLOBALS('fid');?>
 <?php $conf = GLOBALS('conf');?>
 <?php $config = GLOBALS('config');?>
@@ -45,7 +44,6 @@
 	var debug = DEBUG = <?php echo DEBUG; ?>;
 	var url_rewrite_on = <?php echo $conf['url_rewrite_on'];?>;
 	var url_path = '<?php echo $conf['path'];?>';
-	var forumarr = <?php echo xn_json_encode($forumarr);?>;
 	var fid = <?php echo $fid;?>;
 	var uid = <?php echo intval($uid);?>;
 	var gid = <?php echo intval($gid);?>;

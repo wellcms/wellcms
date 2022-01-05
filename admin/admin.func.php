@@ -21,7 +21,7 @@ function admin_token_check()
     } else {
         $s = xn_decrypt($admin_token, $key);
         if (empty($s)) {
-            setcookie($conf['cookie_pre'] . 'admin_token', '', 0, $conf['cookie_path'], $conf['cookie_domain'], 0, TRUE);
+            setcookie($conf['cookie_pre'] . 'admin_token', '', $time - 86400, $conf['cookie_path'], $conf['cookie_domain'], 0, TRUE);
             message(-1, lang('admin_token_expiry'));
         }
         list($_ip, $_time) = explode("\t", $s);
@@ -29,8 +29,9 @@ function admin_token_check()
         // 后台超过 3600 自动退出。
         // Background / more than 3600 automatic withdrawal.
         if ((XN_ADMIN_BIND_IP && $_ip != $longip || !XN_ADMIN_BIND_IP) && $time - $_time > 3600) {
-            setcookie($conf['cookie_pre'] . 'admin_token', '', 0, $conf['cookie_path'], $conf['cookie_domain'], 0, TRUE);
+            setcookie($conf['cookie_pre'] . 'admin_token', '', $time - 86400, $conf['cookie_path'], $conf['cookie_domain'], 0, TRUE);
             message(-1, lang('admin_token_expiry'));
+            //jump(lang('admin_token_expiry'), url('index-login', '', TRUE), 1);
         }
 
         // 超过半小时，重新发新令牌，防止过期

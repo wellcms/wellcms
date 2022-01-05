@@ -6,7 +6,7 @@
 			<div class="card-header"><?php echo lang('user_resetpw');?></div>
 			<!--{hook user_create_card_title.htm}-->
 			<div class="card-body">
-				<form action="<?php echo url('user-resetpw_complete');?>" method="post" id="form">
+				<form action="<?php echo $form_action;?>" method="post" id="form">
 					<div class="form-group input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="icon icon-envelope icon-fw"></i></span>
@@ -17,16 +17,16 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="icon icon-lock icon-fw"></i></span>
 						</div>
-						<input type="password" class="form-control" placeholder="<?php echo lang('password_new');?>" id="password" name="password">
+						<input type="password" class="form-control" placeholder="<?php echo lang('password_new');?>" id="password" name="password" required>
 					</div>
 					<div class="form-group input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="icon icon-lock icon-fw"></i></span>
 						</div>
-						<input type="password" class="form-control" placeholder="<?php echo lang('password_new_repeat');?>" id="password2">
+						<input type="password" class="form-control" placeholder="<?php echo lang('password_new_repeat');?>" id="password2" required>
 					</div>
 					<p>
-						<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..." <?php if(!$conf['user_resetpw_on']) { ?>disabled<?php } ?>>
+						<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..." <?php echo $conf['user_create_email_on'] ? 'disabled' : '';?>>
 						    <?php echo lang('next_step');?>
 						</button>
 					</p>

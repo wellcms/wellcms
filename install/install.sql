@@ -134,7 +134,7 @@ CREATE TABLE `wellcms_kv` (
   `expiry` int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.1.02","official_version":"2.1.02","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":170,"height":113},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
+INSERT INTO `wellcms_kv` (`k`, `v`, `expiry`) VALUES ('setting', '{"conf":{"name":"WellCMS Oriental Lion","version":"2.2.0","official_version":"2.2.0","last_version":"0","version_date":"0","installed":0,"setting":{"website_mode":2,"tpl_mode":0,"map":"map","verify_thread":0,"verify_post":0,"verify_special":0,"thumbnail_on":1,"save_image_on":1},"picture_size":{"width":400,"height":280},"theme":"","shield":[],"index_stickys":0,"index_flags":"0","index_flagstr":""}}', 0);
 
 # 缓存表 用来保存临时数据
 DROP TABLE IF EXISTS `wellcms_cache`;
@@ -151,7 +151,7 @@ CREATE TABLE `wellcms_forum` (
   `fup` int(11) unsigned NOT NULL DEFAULT '0',       # 上级栏目fid
   `son` int(11) NOT NULL DEFAULT '0',       # 子栏目数
   `type` tinyint(1) unsigned NOT NULL DEFAULT '1',   # 分类 0论坛 1cms
-  `model` tinyint(2) unsigned NOT NULL DEFAULT '0',  # 模型 0文章
+  `model` tinyint(2) unsigned NOT NULL DEFAULT '0',  # 模型 0文章 2下载 3咨询 4视频点播 5商城
   `category` tinyint(2) unsigned NOT NULL DEFAULT '0', # 版块分类 (0列表 1频道 2单页 3外链)
   `name` varchar(24) NOT NULL DEFAULT '',    # 版块名称
   `rank` tinyint(3) unsigned NOT NULL DEFAULT '0', # 显示，倒序，数字越大越靠前
@@ -169,7 +169,7 @@ CREATE TABLE `wellcms_forum` (
   `comment` tinyint(1) NOT NULL DEFAULT '0',  # 评论开启 0关闭 1开启
   `pagesize` tinyint(3) NOT NULL DEFAULT '0', # 列表显示数量
   #`thread_rank` tinyint(1) NOT NULL DEFAULT '0',  # 主题排序
-  `publish` tinyint(1) NOT NULL DEFAULT '0',  # 投稿
+  #`publish` tinyint(1) NOT NULL DEFAULT '0',  # 投稿
   `flags` int(11) unsigned NOT NULL DEFAULT '0', # 板块下属性数量
   `create_date` int(11) unsigned NOT NULL DEFAULT '0', # 板块创建时间
   `flagstr` varchar(120) NOT NULL DEFAULT '', # 前台显示的属性 字串
@@ -196,7 +196,7 @@ CREATE TABLE `wellcms_forum_access` (
 
 DROP TABLE IF EXISTS `wellcms_website_attach`;
 CREATE TABLE `wellcms_website_attach` (
-  `aid` int(11) unsigned NOT NULL AUTO_INCREMENT, # 附件ID
+  `aid` BIGINT(20) unsigned NOT NULL AUTO_INCREMENT, # 附件ID
   `tid` int(11) unsigned NOT NULL DEFAULT '0',  # 主题ID
   `pid` int(11) unsigned NOT NULL DEFAULT '0',  # 评论ID
   `uid` int(11) unsigned NOT NULL DEFAULT '0',  # 用户ID
@@ -212,7 +212,7 @@ CREATE TABLE `wellcms_website_attach` (
   `create_date` int(11) unsigned NOT NULL DEFAULT '0',  # 文件上传时间 UNIX 时间戳
   `filename` varchar(60) NOT NULL DEFAULT '', # 文件名称，会过滤，并且截断，保存后的文件名，不包含URL前缀 upload_url
   `orgfilename` varchar(80) NOT NULL DEFAULT '',  # 上传的原文件名
-  `image_url` varchar(120) NOT NULL DEFAULT '', # 使用图床完整链接
+  `image_url` varchar(120) NOT NULL DEFAULT '', # 如果使用云储存则文件ID存这里，如果使用图床则完整链接
   `filetype` char(7) NOT NULL DEFAULT '',  # 文件类型: image/txt/zip 小图标显示 <i class="icon filetype image"></i>
   `comment` varchar(100) NOT NULL DEFAULT '', # 文件注释 方便于搜索
   PRIMARY KEY (`aid`),
@@ -225,6 +225,7 @@ DROP TABLE IF EXISTS `wellcms_website_data`;
 CREATE TABLE `wellcms_website_data` (
   `tid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `doctype` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `attach_on` tinyint(1) unsigned NOT NULL DEFAULT '0',  # 文件上传完成更新这里 0本地储存 1云储存 2图床
   `message` longtext NOT NULL,
   PRIMARY KEY (`tid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -260,7 +261,7 @@ CREATE TABLE `wellcms_website_flag_thread` (
 
 DROP TABLE IF EXISTS `wellcms_website_operate`;
 CREATE TABLE `wellcms_website_operate` (
-  `logid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `logid` BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
   `type` tinyint(3) NOT NULL DEFAULT '0', # 1删除 2移动 3置顶 4取消置顶 5禁止回复 6关闭 7打开 8操作人民币 9操作金币 10操作积分 11删除节点 12删除节点分类 13审核专题 14删除专题 15归类专题主题 16删除专题主题 17删除用户 18禁止用户 19编辑用户 20删除待审核主题 21删除退稿 22删除草稿 23删除待审核评论 24审核主题 25退稿 26审核评论
   `uid` int(11) unsigned NOT NULL DEFAULT '0', # 版主 uid
   `tid` int(11) unsigned NOT NULL DEFAULT '0', # 主题tid
@@ -287,6 +288,7 @@ CREATE TABLE `wellcms_website_comment` (
   `quotepid` int(11) unsigned NOT NULL DEFAULT '0',
   `images` tinyint(2) NOT NULL DEFAULT '0', # 附件中包含的图片数
   `files` tinyint(2) NOT NULL DEFAULT '0',  # 附件中包含的文件数
+  `attach_on` tinyint(1) unsigned NOT NULL DEFAULT '0',  # 文件上传完成更新这里 0本地储存 1云储存 2图床
   `message` longtext NOT NULL,
   PRIMARY KEY (`pid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -317,11 +319,11 @@ CREATE TABLE `wellcms_website_thread` (
   `images` tinyint(3) NOT NULL DEFAULT '0', # 附件中包含的图片数
   `files` tinyint(3) NOT NULL DEFAULT '0',  # 附件中包含的文件数
   `mods` tinyint(3) NOT NULL DEFAULT '0',   # 预留：版主操作次数，如果 > 0, 则查询 operate，显示斑竹的评分
-  `status` tinyint(2) NOT NULL DEFAULT '0', # 0:通过 1~9审核:1待审核 2草稿 10~19:10退稿 11逻辑删除
+  `status` tinyint(2) NOT NULL DEFAULT '0', # 0:通过 1~9审核:1待审核 2草稿 10~19:10退稿 11逻辑删除 20~29:20下架
   `closed` tinyint(1) unsigned NOT NULL DEFAULT '0', # 1关闭回复 2关闭主题不能回复、编辑
   `lastuid` int(11) unsigned NOT NULL DEFAULT '0',   # 最近参与的 uid
   `last_date` int(11) unsigned NOT NULL DEFAULT '0', # 最后回复时间
-  `attach_on` tinyint(1) unsigned NOT NULL DEFAULT '0',  # 0本地储存 1云储存 2图床
+  `attach_on` tinyint(1) unsigned NOT NULL DEFAULT '0',  # 0本地储存 1云储存 2图床 3外部链接，URL更新到image_url
   `flags` tinyint(2) NOT NULL DEFAULT '0',  # 主题绑定flag数量
   `subject` varchar(128) NOT NULL DEFAULT '', # 主题
   `tag` varchar(120) NOT NULL DEFAULT '',  # 标签 json {tgaid:name}

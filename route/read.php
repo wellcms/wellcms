@@ -4,7 +4,6 @@
 */
 !defined('DEBUG') and exit('Access Denied.');
 
-$apilist = array();  // api预留
 $tid = param(1, 0);
 $page = param(2, 1);
 $pagesize = $conf['comment_pagesize'];
@@ -12,7 +11,7 @@ $extra = array(); // 插件预留
 
 // hook read_start.php
 
-$thread = well_thread_read_cache($tid);
+$thread = 1 == array_value($conf, 'cache_thread') ? well_thread_read_cache($tid) : well_thread_read($tid);
 // hook read_cache_after.php
 empty($thread) and message(-1, lang('thread_not_exists'));
 
@@ -48,6 +47,7 @@ switch ($thread['type']) {
         $attachlist = NULL;
         $imagelist = NULL;
         $thread['filelist'] = NULL;
+        $safe_token = well_token_set($uid);
         // 从默认的地方读取主题数据
         $thread_read_from_default = 1;
 
@@ -57,7 +57,7 @@ switch ($thread['type']) {
 
             // hook read_article_default_before.php
 
-            $postlist = ($forum['comment'] and $thread['closed'] < 2 and $thread['posts'] > 0) ? comment_find_by_tid($tid, $page, $pagesize) : NULL;
+            $postlist = $forum['comment'] && $thread['closed'] < 2 && $thread['posts'] ? comment_find_by_tid($tid, $page, $pagesize) : NULL;
 
             // hook read_article_default_center.php
 
@@ -118,6 +118,8 @@ switch ($thread['type']) {
 
         $access = array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete);
 
+        $comment_action = url('comment-create-' . $tid, array('safe_token' => $safe_token));
+
         // hook read_article_after.php
 
         $header['title'] = $thread['subject'];
@@ -126,14 +128,34 @@ switch ($thread['type']) {
         $header['description'] = $thread['description'] ? $thread['description'] : $thread['brief'];
         $_SESSION['fid'] = $fid;
 
-        $safe_token = well_token_set($uid);
-
         // hook read_article_end.php
 
         if ($ajax) {
             empty($conf['api_on']) and message(0, lang('closed'));
-            
-            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'arrlist' => $arrlist, 'attachlist' => $attachlist, 'imagelist' => $imagelist, 'filelist' => $thread['filelist'], 'safe_token' => $safe_token, 'comment' => array('page' => $page, 'num' => $num, 'postlist' => $postlist, 'access' => $access), 'header' => $header));
+
+            $apilist['header'] = $header;
+            $apilist['extra'] = $extra;
+            $apilist['safe_token'] = $safe_token;
+            $apilist['access'] = $access;
+            $apilist['thread'] = well_thread_safe_info($thread);
+            $apilist['thread_data'] = $data;
+            $apilist['forum'] = $forum;
+            $apilist['arrlist'] = $arrlist;
+            $apilist['imagelist'] = $imagelist;
+            $apilist['filelist'] = $thread['filelist'];
+            if ($postlist) {
+                foreach ($postlist as $key => $val) {
+                    unset($postlist[$key]['userip']);
+                    if ($val['replylist']) {
+                        foreach ($val['replylist'] as $k => $_reply) {
+                            unset($postlist[$key]['replylist'][$k]['userip']);
+                        }
+                    }
+                }
+            }
+            $apilist['comment'] = array('num' => $num, 'page' => $page, 'page_url' => $page_url, 'postlist' => $postlist, 'comment_action' => $comment_action);
+
+            message(0, $apilist);
         } else {
             // 可使用模板绑定版块功能，也可根据模型 hook 不同模板
             switch ($forum['model']) {
@@ -150,7 +172,7 @@ switch ($thread['type']) {
     case '10':
         // 主题外链 / thread external link
         // hook read_link_before.php
-        http_location(trim($thread['description']));
+        http_location(htmlspecialchars_decode(trim($thread['description'])));
         break;
     case '11':
         // 单页 / single page
@@ -204,7 +226,17 @@ switch ($thread['type']) {
         if ($ajax) {
             empty($conf['api_on']) and message(0, lang('closed'));
 
-            message(0, $apilist += array('thread' => well_thread_safe_info($thread), 'thread_data' => $data, 'forum' => $forum, 'threadlist' => $threadlist, 'attachlist' => $attachlist, 'imagelist' => $imagelist, 'filelist' => $thread['filelist'], 'access' => $access, 'header' => $header));
+            $apilist['header'] = $header;
+            $apilist['extra'] = $extra;
+            $apilist['access'] = $access;
+            $apilist['thread'] = well_thread_safe_info($thread);
+            $apilist['thread_data'] = $data;
+            $apilist['forum'] = $forum;
+            $apilist['imagelist'] = $imagelist;
+            $apilist['filelist'] = $thread['filelist'];
+            $apilist['threadlist'] = $threadlist;
+
+            message(0, $apilist);
         } else {
             include _include(theme_load('single_page', $fid));
         }

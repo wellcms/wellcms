@@ -62,13 +62,7 @@ empty($conf['tmp_path']) and $conf['tmp_path'] = ini_get('upload_tmp_dir');
 empty($conf['log_path']) and $conf['log_path'] = './';
 
 $ip = ip();
-if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-    $longip = ip2long($ip);
-    // fix 32 位 OS 下溢出的问题
-    $longip < 0 and $longip = sprintf("%u", $longip);
-} else {
-    $longip = ip2long_v6($ip);
-}
+$longip = well_longip();
 
 $useragent = _SERVER('HTTP_USER_AGENT');
 
@@ -90,8 +84,8 @@ date_default_timezone_set($conf['timezone']);
 // 超级全局变量
 !empty($_SERVER['HTTP_X_REWRITE_URL']) and $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_REWRITE_URL'];
 !isset($_SERVER['REQUEST_URI']) and $_SERVER['REQUEST_URI'] = '';
-$_SERVER['REQUEST_URI'] = str_replace('/index.php?', '/', $_SERVER['REQUEST_URI']); // 兼容 iis6
-$_REQUEST = array_merge($_COOKIE, $_POST, $_GET, xn_url_parse($_SERVER['REQUEST_URI']));
+//$_SERVER['REQUEST_URI'] = str_replace('/index.php?', '/', $_SERVER['REQUEST_URI']); // 兼容 iis6
+$_REQUEST = array_merge($_COOKIE, $_POST, $_GET, xn_url_parse($_SERVER['REQUEST_URI'], $conf));
 
 // IP 地址
 !isset($_SERVER['REMOTE_ADDR']) and $_SERVER['REMOTE_ADDR'] = '';

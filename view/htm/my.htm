@@ -1,6 +1,7 @@
 <template include="./view/htm/common.header.htm">
 	<slot name="body">
-        <div class="card-body bg-white px-0 py-5">
+        <div class="card-body bg-white px-0">
+            <!--{hook my_profile_start.htm}-->
             <div class="row line-height-4 m-0">
                 <div class="col-md-6">
                     <span class="text-muted">
@@ -37,11 +38,12 @@
                     <!--{hook my_profile_login_date_after.htm}-->
                 </div>
             </div>
+            <!--{hook my_profile_end.htm}-->
         </div>
     </slot>
 </template>
 
 <script>
-    $('a[data-active="my-profile"]').addClass('active');/*动态*/
-    $('a[data-active="menu-my"]').addClass('active');/*菜单*/
+    $('a[data-active="my-profile"], a[data-active="menu-my"]').addClass('active');
 </script>
+<!--{hook my_profile_js.htm}-->

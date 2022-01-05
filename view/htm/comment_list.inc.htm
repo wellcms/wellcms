@@ -74,7 +74,7 @@
                         <div class="col-lg-12 message my-2 text-break">
 
                             <!--{hook comment_list_inc_subject_before.htm}-->
-                            <?php if('read' != $route && !empty($_post['subject'])) {?>
+                            <?php if(!isset($thread) && !empty($_post['subject'])) {?>
                             <h6 class="h6 text-break font-weight-bold">
                                 <a href="<?php echo $_post['url'];?>" target="_blank">
                                     <?php echo $_post['subject'];?>
