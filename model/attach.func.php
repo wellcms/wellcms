@@ -531,11 +531,12 @@ function well_attach_assoc_handle($arr = array())
                     'url' => $conf['upload_path'] . substr($_url, 7, strlen($_url))
                 );
             } elseif (substr($_url, 0, 12) == '/upload/tmp/') {
+                $_url = str_replace('/upload/tmp/', 'upload/tmp/', $_url);
                 $uploadlist[] = $_url;
 
                 1 == $i and $thumbnail_tmp = array(
                     'type' => 'file',
-                    'url' => $conf['upload_path'] . substr($_url, 8, strlen($_url))
+                    'url' => $conf['upload_path'] . substr($_url, 7, strlen($_url))
                 );
             } elseif (substr($_url, 0, 14) == '../upload/tmp/') {
 
@@ -738,6 +739,7 @@ function well_attach_assoc_handle($arr = array())
             // hook model_attach_assoc_session_end.php
 
         } else {
+
             // session 丢失，则只关联图片，忽略附件
             $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] : '';
 
