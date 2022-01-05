@@ -673,10 +673,10 @@ function well_attach_assoc_handle($arr = array())
                 // hook model_attach_assoc_file_foreach_start.php
 
                 // 后台提交的内容需要替换掉../
-                $file['url'] = $file['backstage'] ? str_replace('../upload/', 'upload/', $file['url']) : str_replace('/upload/', 'upload/', $file['url']);
+                $file_url = $file['backstage'] ? str_replace('../upload/', 'upload/', $file['url']) : str_replace('/upload/', 'upload/', $file['url']);
 
                 // 过滤非内容图，不包括附件
-                if (!in_array($file['url'], $uploadlist) && 0 != $file['isimage']) {
+                if (!in_array($file_url, $uploadlist) && 0 != $file['isimage']) {
                     unlink($file['path']);
                     continue;
                 }
@@ -696,6 +696,7 @@ function well_attach_assoc_handle($arr = array())
                 $destpath = $upload_path . '/' . $filename;
                 // 相对路径
                 $desturl = $upload_url . '/' . $filename;
+                $desturl = str_replace('/upload/', 'upload/', $desturl);
                 // 复制
                 copy($file['path'], $destpath);
 
@@ -760,6 +761,7 @@ function well_attach_assoc_handle($arr = array())
                 $destfile = $upload_path . '/' . $filename;
                 // 相对路径 upload/website_attach/1_D34JFMJTW3NXSZR.jpeg
                 $desturl = $upload_url . '/' . $filename;
+                $desturl = str_replace('/upload/', 'upload/', $desturl);
                 // 内容中图片缓存路径 upload/tmp/1_D34JFMJTW3NXSZR.jpeg
                 $tmpurl = $path . $conf['upload_url'] . 'tmp/' . $filename;
 
