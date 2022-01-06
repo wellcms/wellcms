@@ -673,10 +673,10 @@ function well_attach_assoc_handle($arr = array())
                 // hook model_attach_assoc_file_foreach_start.php
 
                 // 后台提交的内容需要替换掉../
-                $file_url = $file['backstage'] ? str_replace('../upload/', 'upload/', $file['url']) : str_replace('/upload/', 'upload/', $file['url']);
+                $file['url'] = str_replace(array('../upload/', '/upload/'), 'upload/', $file['url']);
 
                 // 过滤非内容图，不包括附件
-                if (!in_array($file_url, $uploadlist) && 0 != $file['isimage']) {
+                if (!in_array($file['url'], $uploadlist) && 0 != $file['isimage']) {
                     unlink($file['path']);
                     continue;
                 }
@@ -731,7 +731,7 @@ function well_attach_assoc_handle($arr = array())
 
                 $attach[] = $attacharr;
 
-                //$file['backstage'] and $message = str_replace('../upload/', 'upload/', $message);
+                $message = str_replace(array('="../upload/', '="/upload/'), '="upload/', $message);
                 $message = str_replace($file['url'], $desturl, $message);
 
                 // hook model_attach_assoc_file_foreach_end.php
@@ -750,7 +750,7 @@ function well_attach_assoc_handle($arr = array())
 
                 $filename = file_name($file);
                 // 绝对路径
-                $file = $conf['upload_path'] . 'tmp/' . $filename ;
+                $file = $conf['upload_path'] . 'tmp/' . $filename;
 
                 if (!is_file($file)) continue;
 
