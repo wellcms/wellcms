@@ -63,11 +63,11 @@ return array(
 	'bbs'=>'Forum',
 	'channel'=>'Channel',
 	'my'=>'My',
-	'month_ago'=>' Months+',
-	'day_ago'=>' Days+',
-	'hour_ago'=>' Hours+',
-	'minute_ago'=>' Minutes+',
-	'second_ago'=>' Seconds+',
+	'month_ago'=>' Months ago',
+	'day_ago'=>' Days ago',
+	'hour_ago'=>' Hours ago',
+	'minute_ago'=>' Minutes ago',
+	'second_ago'=>' Seconds ago',
 	'update_failed'=>'Update Failed',
 	'delete_failed'=>'Delete Failed',
 	'create_failed'=>'Create Failed',
@@ -295,7 +295,7 @@ return array(
     'user_member' => 'user member',
     'theme' => 'theme',
     'style' => 'style',
-    'sticky' => 'sticky',
+    'sticky' => 'Sticky',
     'function' => 'function',
     'other' => 'other',
     'push' => 'push',
@@ -474,6 +474,7 @@ return array(
     'description' => 'description',
     'description_limit_tips' => 'Description is limited to 120 characters',
     'member_adv' => 'No matter how small an individual is, it is also a brand!',
+    'bind' => 'Bind',
 	// hook lang_en_us.php
 );
 

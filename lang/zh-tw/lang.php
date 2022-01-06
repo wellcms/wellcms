@@ -474,6 +474,7 @@ return array(
     'description' => '描述',
     'description_limit_tips' => '描述120個字符',
     'member_adv' => '再小的個體，也是一個品牌！',
+    'bind' => '綁定',
     // hook lang_zh_tw.php
 );
 
