@@ -799,7 +799,7 @@ function plugin_check_exists($dir, $local = TRUE)
     global $plugins, $official_plugins, $themes;
     !is_word($dir) and message(-1, lang('plugin_name_error'));
     if ($local) {
-        empty($plugins[$dir]) and !isset($themes[$dir]) and message(-1, lang('plugin_not_exists'));
+        empty($plugins[$dir]) && !isset($themes[$dir]) and message(-1, lang('plugin_not_exists'));
     } else {
         !isset($official_plugins[$dir]) and message(-1, lang('plugin_not_exists'));
     }

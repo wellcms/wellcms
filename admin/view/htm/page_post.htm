@@ -21,13 +21,13 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
-                                <!--{hook thread__post_inc_fid_select_before.htm}-->
+                                <!--{hook admin_page_fid_select_before.htm}-->
                                 <select class="custom-select mr-1 w-auto" name="fid">
                                     <?php foreach ($columnlist as $forum) { ?>
                                     <option value="<?php echo $forum['fid']; ?>"><?php echo $forum['name']; ?></option>
                                     <?php } ?>
                                 </select>
-                                <!--{hook thread__post_inc_fid_select_after.htm}-->
+                                <!--{hook admin_page_fid_select_after.htm}-->
                             </div>
                             <div class="form-group subject">
                                 <input type="text" class="form-control" placeholder="<?php echo lang('subject');?>" name="subject" value="<?php echo $form_subject;?>" id="subject">

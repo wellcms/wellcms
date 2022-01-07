@@ -378,7 +378,7 @@ switch ($action) {
         // 发送验证码
         'POST' != $method and message(-1, lang('method_error'));
 
-        // hook user_sendcode_start.php
+        // hook user_send_code_start.php
 
         $action2 = param(2);
 

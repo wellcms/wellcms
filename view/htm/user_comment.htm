@@ -1,36 +1,31 @@
 <template include="./view/htm/user_common.header.htm">
 	<slot name="body">
         <ul class="threadlist list-unstyled bg-white shadow">
-            <!--{hook home_comment_threadlist_before.htm}-->
+            <!--{hook user_comment_threadlist_before.htm}-->
             <?php if(!empty($arrlist)) { foreach($arrlist as $_post) { ?>
             <li class="media thread bg-white" data-pid="<?php echo $_post['pid'];?>" data-uid="<?php echo $_post['uid'];?>">
                 <?php if($_post['allowdelete']) { ?>
                 <input type="checkbox" name="pid" class="mt-3 ml-2" value="<?php echo $_post['pid']; ?>" />
                 <?php } ?>
-                <!--{hook reply_list_inc_avatar_after.htm}-->
+                <!--{hook user_comment_list_inc_avatar_after.htm}-->
                 <div class="media-body">
                     <div class="message mt-1 break-all ml-2">
-
-                        <!--{hook home_comment_list_inc_subject_before.htm}-->
+                        <!--{hook user_comment_list_inc_subject_before.htm}-->
                         <h6 class="font-weight-bold">
                             <a href="<?php echo url('read-'.$_post['tid']);?>" target="_blank">
                                 <?php echo $_post['subject'];?>
                             </a>
                         </h6>
-                        <!--{hook home_comment_list_inc_subject_after.htm}-->
-
-                        <!--{hook home_comment_list_inc_message_before.htm}-->
+                        <!--{hook user_comment_list_inc_subject_after.htm}-->
+                        <!--{hook user_comment_list_inc_message_before.htm}-->
                         <?php echo $_post['message'];?>
-                        <!--{hook home_comment_list_inc_message_after.htm}-->
-
+                        <!--{hook user_comment_list_inc_message_after.htm}-->
                     </div>
                 </div>
             </li>
             <?php }} ?>
-
-            <!--{hook home_comment_threadlist_after.htm}-->
+            <!--{hook user_comment_threadlist_after.htm}-->
         </ul>
-
         <?php if($allowdelete) { ?>
         <div class="text-center">
             <label class="mr-3">
@@ -38,15 +33,14 @@
                 <?php echo lang('checkall');?>
             </label>
             <div class="btn-group mod-button my-3" role="group" aria-label="">
-                <!--{hook home_comment_mode_delete_before.htm}-->
+                <!--{hook user_comment_mode_delete_before.htm}-->
                 <button class="btn btn-secondary delete" data-href="<?php echo url('comment-delete');?>">
                     <?php echo lang('delete');?>
                 </button>
-                <!--{hook home_comment_mode_delete_after.htm}-->
+                <!--{hook user_comment_mode_delete_after.htm}-->
             </div>
         </div>
         <?php } ?>
-
         <?php if ($pagination) { ?>
         <nav class="my-3">
             <ul class="pagination justify-content-center flex-wrap">
@@ -54,10 +48,8 @@
             </ul>
         </nav>
         <?php } ?>
-		
 	</slot>
 </template>
-
 <script>
     var body = $('body');
     body.on('click', 'button.delete', function() {

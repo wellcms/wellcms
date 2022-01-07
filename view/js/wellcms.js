@@ -167,6 +167,7 @@ $(function () {
         var tag = tag_input.val();
         var reg = new RegExp("[`~!@#$^&*()=|{}:;,\\[\\].<>/?！￥…（）—【】‘；：”“。，、？%]", 'g');
         tag = tag.replace(reg, '');
+        tag = tag.replace(/(^\s*)|(\s*$)/g, '');
         if (tag.length > 0) {
             var tags = $('input[name="tags"]').val();
             var arr = tags.split(',');
@@ -194,6 +195,7 @@ $(function () {
             /*str = str.replace(/\s+/g, '');*/
             var reg = new RegExp("[`~!@#$^&*()=|{}:;\\[\\].<>/?！￥…（）—【】‘；：”“。，、？%]", 'g');
             str = str.replace(reg, '');
+            str = str.replace(/(^\s*)|(\s*$)/g, '');
             $(obj).parents('.tags').find('.tags-val').val(str);
         }
     }
@@ -500,7 +502,7 @@ function well_set_top(Type, Element) {
 }
 
 /*
-调用方法
+获取表单值 调用方法
 formId
 format:0对象{'key':'value'} 1字符串key=value
 console.log(well_serialize_form('form'));
@@ -707,6 +709,7 @@ $.modal = function (body, options) {
     let jmodal = document.body.insertBefore(modal, document.body.lastElementChild);
     if (typeof options.timeout) {
         w_modal = document.getElementById('w-modal');
+        console.log(w_modal)
         if (options.timeout > 0) {
             setTimeout(function () {
                 w_modal.parentNode.removeChild(w_modal);

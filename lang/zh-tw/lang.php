@@ -449,7 +449,7 @@ return array(
     'brief_get' => '获取摘要',
     'brief_limit_character' => '摘要限120个字',
     'no_brief' => '暂无导读……',
-    'spatial_segmentation' => '空格分割',
+    'spatial_segmentation' => '回車|逗號',
     'nav_display' => '导航显示',
     'forum_category' => array('顶级版块', '频道'),
     'pagesize_tips' => '每页显示多少主题',

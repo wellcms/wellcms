@@ -682,9 +682,11 @@ function well_attach_assoc_handle($arr = array())
                 }
 
                 // 没有附件权限
-                if (0 == $file['isimage'] && !forum_access_user($fid, $gid, 'allowattach')) {
-                    unlink($file['path']);
-                    continue;
+                if (0 == $file['isimage']) {
+                    if (($fid && !forum_access_user($fid, $gid, 'allowattach')) && !group_access($gid, 'allowattach')) {
+                        unlink($file);
+                        continue;
+                    }
                 }
 
                 // 内容附件 将文件移动到 upload/website_attach 目录
@@ -754,6 +756,12 @@ function well_attach_assoc_handle($arr = array())
 
                 if (!is_file($file)) continue;
 
+                // 没有附件权限
+                if (($fid && !forum_access_user($fid, $gid, 'allowattach')) && !group_access($gid, 'allowattach')) {
+                    unlink($file);
+                    continue;
+                }
+
                 // hook model_attach_assoc_image_path_before.php
 
                 // 内容附件 将文件移动到 upload/website_attach 目录
@@ -763,7 +771,7 @@ function well_attach_assoc_handle($arr = array())
                 $desturl = $upload_url . '/' . $filename;
                 $desturl = str_replace('/upload/', 'upload/', $desturl);
                 // 内容中图片缓存路径 upload/tmp/1_D34JFMJTW3NXSZR.jpeg
-                $tmpurl = $path . $conf['upload_url'] . 'tmp/' . $filename;
+                $tmpurl = $conf['upload_url'] . 'tmp/' . $filename;
 
                 // hook model_attach_assoc_image_path_copy.php
 
@@ -783,7 +791,7 @@ function well_attach_assoc_handle($arr = array())
                 $attach[] = $attach_arr;
 
                 // hook model_attach_assoc_image_path_message_before.php
-
+                $message = str_replace(array('="../upload/', '="/upload/'), '="upload/', $message);
                 $message = str_replace($tmpurl, $desturl, $message);
 
                 // hook model_attach_assoc_image_path_message_after.php
@@ -1068,337 +1076,6 @@ function well_attach_assoc_file($arr = array())
     // hook model_attach_assoc_file_end.php
 
     return $message;
-}
-
-// 关联内容中的图片 route 层使用 只支持内容图片不支持附件
-/*
- * @param array uid / tid(创建主题和评论) / pid(评论) / message / conf / time / fid / thumbnail(获取内容中的图创建缩略图) / save_image(本地化图片) / sess_file(关联上传的文件)
- * @return array|false
- */
-function well_attach_assoc_image($arr = array())
-{
-    if (empty($arr['tid']) && empty($arr['pid']) || empty($arr['conf'])) return FALSE;
-
-    // hook model_attach_assoc_image_start.php
-
-    $uid = array_value($arr, 'uid', 0);
-    $tid = array_value($arr, 'tid', 0);
-    $pid = array_value($arr, 'pid', 0);
-    $message = array_value($arr, 'message');
-    $conf = array_value($arr, 'conf');
-    $time = array_value($arr, 'time');
-    $fid = array_value($arr, 'fid', 0);
-    $forumlist = forum_list_cache();
-    $thumbnail = array_value($arr, 'thumbnail', 0);
-    $save_image = array_value($arr, 'save_image', 0); // 本地化
-    $sess_file = array_value($arr, 'sess_file', 0); // 关联上传文件
-
-    // hook model_attach_assoc_image_before.php
-
-    $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
-    $day = date($attach_dir_save_rule, $time);
-    $upload_path = $conf['upload_path'] . 'website_attach/' . $day;
-    $upload_url = $conf['upload_url'] . 'website_attach/' . $day;
-    is_dir($upload_path) || mkdir($upload_path, 0777, TRUE);
-
-    // hook model_attach_assoc_image_message_before.php
-
-    $message = urldecode($message);
-    //$message = htmlspecialchars_decode($message);
-    preg_match_all('#<img[^>]+src="(.*?)"#i', $message, $match);
-
-    $localurlarr = array(
-        'http://' . $_SERVER['SERVER_NAME'] . '/',
-        'https://' . $_SERVER['SERVER_NAME'] . '/',
-    );
-
-    // 跳过云储存
-    $conf['cloud_url'] and $localurlarr[] = $conf['cloud_url'];
-
-    // hook model_attach_assoc_image_match_before.php
-
-    /*$match[1]
-            Array
-            (
-                [0] => https://nimg.ws.126.net/?url=http://dingyue.ws.126.net/2021/1109/d3321a58j00r29xq20013c000hk00h4g.jpg&thumbnail=650x2147483647&quality=80&type=jpg
-                [1] => https://nimg.ws.126.net/?url=http://dingyue.ws.126.net/2021/1109/e4974b87j00r29xq30013c000fi00i3g.jpg&thumbnail=650x2147483647&quality=80&type=jpg
-                [2] => upload/tmp/1_KAUXKFMJHFTUMNS.jpg
-                [3] => https://nimg.ws.126.net/?url=http://dingyue.ws.126.net/2021/1109/5a7be552j00r29xq3001qc000hs00hvg.jpg&thumbnail=650x2147483647&quality=80&type=jpg
-            )*/
-    $attach = array();
-    $thumbnail_tmp = '';
-    $uploadlist = array();
-    $imagelist = array();
-    $i = 0;
-    if (!empty($match[1])) {
-        foreach ($match[1] as $_url) {
-
-            foreach ($localurlarr as $localurl) {
-                if ($localurl == substr($_url, 0, strlen($localurl))) continue 2;
-            }
-
-            ++$i;
-
-            if (substr($_url, 0, 7) == 'http://' || substr($_url, 0, 8) == 'https://') {
-                $imagelist[] = $_url;
-
-                1 == $i and $thumbnail_tmp = array(
-                    'type' => 'http',
-                    'url' => htmlspecialchars_decode($_url)
-                );
-
-            } elseif (substr($_url, 0, 11) == 'upload/tmp/') {
-                $_upload_path = $conf['upload_path'] . substr($_url, 7, strlen($_url));
-
-                $uploadlist[] = $_upload_path;
-
-                1 == $i and $thumbnail_tmp = array(
-                    'type' => 'file',
-                    'url' => $_upload_path
-                );
-
-            } elseif (substr($_url, 0, 12) == '/upload/tmp/') {
-                $_upload_path = $conf['upload_path'] . substr($_url, 8, strlen($_url));
-
-                $uploadlist[] = $_upload_path;
-
-                1 == $i and $thumbnail_tmp = array(
-                    'type' => 'file',
-                    'url' => $_upload_path
-                );
-            }
-        }
-    }
-
-    // hook model_attach_assoc_image_match_after.php
-
-    $icon = 0; // 缩略图
-    if ($thumbnail && $thumbnail_tmp) {
-
-        $forum = array_value($forumlist, $fid);
-        $picture = $forum['thumbnail'];
-        $pic_width = $picture['width'];
-        $pic_height = $picture['height'];
-
-        $thumbnail_path = $conf['upload_path'] . 'thumbnail/' . $day . '/';
-        is_dir($thumbnail_path) || mkdir($thumbnail_path, 0777, TRUE);
-
-        $tmp_thumbnail = $thumbnail_path . $uid . '_' . $tid . '_' . $time . '.jpeg';
-
-        $icon = $time;
-        $delete = FALSE;
-        if ('http' == $thumbnail_tmp['type']) {
-            $imgdata = https_request($thumbnail_tmp['url']);
-            $filename = $uid . '_' . xn_rand(16);
-            $destpath = $upload_path . $filename;
-            file_put_contents_try($destpath, $imgdata);
-
-            $delete = TRUE;
-        } else {
-            $destpath = $thumbnail_tmp['url'];
-        }
-
-        $getimgsize = getimagesize($destpath);
-
-        // 裁切保存到缩略图目录
-        'clip' == array_value($conf, 'upload_resize', 'clip') ? well_image_clip_thumb($destpath, $tmp_thumbnail, $pic_width, $pic_height, $getimgsize) : well_image_thumb($destpath, $tmp_thumbnail, $pic_width, $pic_height, $getimgsize);
-
-        $delete && is_file($destpath) and unlink($destpath);
-    }
-
-    // hook model_attach_assoc_image_thumbnail_after.php
-
-    // 处理需要本地化的图片 不支持评论图片本地化
-    if ($save_image && !$pid && !empty($imagelist)) {
-
-        // hook model_attach_assoc_file_save_before.php
-
-        foreach ($imagelist as $image_url) {
-
-            $full_url = htmlspecialchars_decode($image_url);
-            $message = str_replace($image_url, $full_url, $message);
-            $getimgsize = getimagesize($full_url);
-            if (FALSE === $getimgsize) continue; // 非图片跳出
-
-            // hook model_attach_assoc_file_save_filename.php
-
-            $filename = $uid . '_' . xn_rand(16);
-            if (1 == $getimgsize[2]) {
-                $filename .= '.gif';
-                $destpath = $upload_path . $filename;
-            } elseif (in_array($getimgsize[2], array(2, 3, 15, 18))) {
-                $filename .= '.jpeg';
-                $destpath = $upload_url . $filename;
-            } else {
-                continue; // 非常见图片格式跳出
-            }
-
-            $desturl = $upload_url . $filename;
-
-            // hook model_attach_assoc_file_save_filename_after.php
-
-            // 本地化
-            if ($save_image) {
-                $imgdata = https_request($full_url);
-                file_put_contents_try($destpath, $imgdata);
-
-                // hook model_attach_assoc_file_save_file_put.php
-
-                $filesize = strlen($imgdata);
-                $attach_arr = array('tid' => $tid, 'uid' => $uid, 'filesize' => $filesize, 'width' => $getimgsize[0], 'height' => $getimgsize[1], 'filename' => "$day/$filename", 'orgfilename' => $filename, 'filetype' => 'image', 'create_date' => $time, 'downloads' => 0, 'isimage' => 1);
-
-                // hook model_attach_assoc_file_save_attach.php
-
-                $attach[] = $attach_arr;
-            }
-
-            // hook model_attach_assoc_file_save_message_before.php
-
-            $message = str_replace($full_url, $desturl, $message);
-            $message = preg_replace('#(<img.*?)(class=.+?[\'|\"])|(data-src=.+?[\'|"])|(data-type=.+?[\'|"])|(data-ratio=.+?[\'|"])|(data-s=.+?[\'|"])|(data-fail=.+?[\'|"])|(crossorigin=.+?[\'|"])|((data-w)=[\'"]+[0-9]+[\'"]+)|(_width=.+?[\'|"]+)|(_height=.+?[\'|"]+)|(style=.+?[\'|"])|((width)=[\'"]+[0-9]+[\'"]+)|((height)=[\'"]+[0-9]+[\'"]+)#i', '$1', $message);
-
-            // hook model_attach_assoc_file_save_message_after.php
-        }
-
-        // hook model_attach_assoc_file_save_end.php
-    }
-
-    // hook model_attach_assoc_image_upload_start.php
-
-    if ($sess_file && !empty($uploadlist)) {
-
-        $path = $conf['url_rewrite_on'] > 1 ? $conf['path'] : '';
-
-        // hook model_attach_assoc_image_upload_before.php
-
-        foreach ($uploadlist as $file) {
-
-            if (!is_file($file)) continue;
-
-            // 内容附件 将文件移动到 upload/website_attach 目录
-            $filename = file_name($file);
-
-            // hook model_attach_assoc_file_upload_filename.php
-
-            // 绝对路径
-            $destfile = $upload_path . '/' . $filename;
-            // 相对路径 upload/website_attach/1_D34JFMJTW3NXSZR.jpeg
-            $desturl = $upload_url . '/' . $filename;
-            // 内容中图片缓存路径 upload/tmp/1_D34JFMJTW3NXSZR.jpeg
-            //$tmpurl = $path . str_replace($conf['upload_path'], $conf['upload_url'], $file);
-            $tmpurl = $path . $conf['upload_url'] . 'tmp/' . $filename;
-
-            // hook model_attach_assoc_file_upload_copy.php
-
-            copy($file, $destfile);
-
-            unlink($file);
-
-            // 按照$destfile文件路径，上传至云储存或图床，返回数据。附件分离最优方案是redis队列，单独写上传云储存php文件，nohup后台运行，将队列数据上传云储存，然后根据aid更新附件表attach_on、image_url，根据tid更新主题表attach_on。关联附件上传云储存，有可能导致超时。
-
-            if (!empty($_SESSION['tmp_website_files'])) {
-                foreach ($_SESSION['tmp_website_files'] as $key => $_tmp) {
-
-                    if ($_tmp['url'] != $tmpurl) continue;
-
-                    $attach_arr = array('uid' => $uid, 'filesize' => $_tmp['filesize'], 'width' => $_tmp['width'], 'height' => $_tmp['height'], 'filename' => $day . '/' . $filename, 'orgfilename' => $_tmp['orgfilename'], 'filetype' => $_tmp['filetype'], 'create_date' => $time, 'isimage' => $_tmp['isimage']);
-
-                    $tid and $attach_arr += $pid ? array('pid' => $pid) : array('tid' => $tid);
-
-                    $attach[] = $attach_arr;
-
-                    unset($_SESSION['tmp_website_files'][$key]);
-                }
-
-            } else {
-                $getimgsize = getimagesize($file);
-                $attach_arr = array('uid' => $uid, 'filesize' => filesize($file), 'width' => $getimgsize['width'], 'height' => $getimgsize['height'], 'filename' => $day . '/' . $filename, 'orgfilename' => '', 'filetype' => $getimgsize['filetype'], 'create_date' => $time, 'isimage' => 1);
-
-                $tid and $attach_arr += $pid ? array('pid' => $pid) : array('tid' => $tid);
-
-                // hook model_attach_assoc_file_upload_create_before.php
-
-                $attach[] = $attach_arr;
-            }
-
-            // hook model_attach_assoc_file_upload_create_after.php
-
-            $message = str_replace($tmpurl, $desturl, $message);
-
-            // hook model_attach_assoc_file_upload_message.php
-        }
-
-        // hook model_attach_assoc_image_upload_center.php
-
-        // 清空缓存图片
-        if (!empty($_SESSION['tmp_website_files'])) {
-            // hook model_attach_assoc_file_tmp_start.php
-            foreach ($_SESSION['tmp_website_files'] as $file) if (isset($file['path']) && is_file($file['path'])) unlink($file['path']);
-            // hook model_attach_assoc_file_tmp_before.php
-            // 清空 session
-            $_SESSION['tmp_website_files'] = array();
-            // hook model_attach_assoc_file_tmp_start.php
-        }
-
-        // hook model_attach_assoc_image_upload_after.php
-    }
-
-    // hook model_attach_assoc_image_upload_end.php
-
-    !empty($attach) and attach_big_insert($attach);
-
-    // hook model_attach_assoc_image_filter_start.php
-
-    $images = 0;
-    $files = 0;
-    // 处理不在 message 中的图片，删除掉没有插入的附件
-    if ($message) {
-        // 只有评论会传pid
-        list($attachlist, $imagelist, $filelist) = $pid ? well_attach_find_by_pid($pid) : well_attach_find_by_tid($tid);
-
-        // hook model_attach_assoc_image_filter_before.php
-
-        if (!empty($imagelist)) {
-            $aids = array();
-            foreach ($imagelist as $key => $attach) {
-
-                $image_url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
-
-                // hook model_attach_assoc_image_filter_delete_before.php
-
-                if (FALSE === strpos($message, $image_url)) {
-                    unset($attachlist[$attach['aid']], $imagelist[$attach['aid']]);
-                    $aids[] = $attach['aid'];
-
-                    $path = $conf['upload_path'] . 'website_attach/' . $attach['filename'];
-                    is_file($path) and unlink($path);
-
-                    // hook model_attach_assoc_file_filter_delete.php
-
-                    // 删除云储存文件
-                }
-
-                // hook model_attach_assoc_image_filter_center.php
-            }
-
-            !empty($aids) and well_attach__delete($aids);
-
-            // hook model_attach_assoc_image_filter_middle.php
-        }
-
-        $images = count($imagelist);
-        $files = count($filelist);
-
-        // hook model_attach_assoc_image_filter_after.php
-    }
-
-    // hook model_attach_assoc_image_filter_end.php
-
-    $arr = array('tid' => $tid, 'pid' => $pid, 'icon' => $icon, 'message' => $message, 'images' => $images, 'files' => $files);
-
-    // hook model_attach_assoc_image_end.php
-
-    return $arr;
 }
 
 // thumbnail:主题主图 post:内容图片或附件

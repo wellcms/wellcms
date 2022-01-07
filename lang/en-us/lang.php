@@ -449,7 +449,7 @@ return array(
     'brief_get' => 'get brief',
     'brief_limit_character' => 'brief limited to 120 words',
     'no_brief' => 'No brief……',
-    'spatial_segmentation' => 'Space ends',
+    'spatial_segmentation' => 'Enter or ,',
     'nav_display' => 'nav display',
     'forum_category' => array('column', 'channel'),
     'pagesize_tips' => 'Number of topics displayed per page',

@@ -863,7 +863,7 @@ function eight_expired($time = NULL)
 {
     $time = intval($time) ? $time : time();
     // 当前时间大于8点则改为第二天8点过期
-    $life = date('G') <= 8 ? (strtotime(date('Ymd')) + 28800 - $time) : well_clock_twenty_four() - $time + 28800;
+    $life = date('G') <= 8 ? (strtotime(date('Ymd')) + 28800 - $time) : clock_twenty_four() - $time + 28800;
     return $life;
 }
 

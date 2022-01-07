@@ -49,9 +49,9 @@
                 <input type="checkbox" data-target='input[name="id"]' class="checkall mt-2 mr-2" value="" aria-label="<?php echo lang('checkall');?>" /><?php echo lang('checkall');?>
             </label>
             <div class="btn-group mod-button my-3" role="group" aria-label="">
-                <!--{hook thread_list_mod_delete_before.htm}-->
+                <!--{hook admin_flag_read_mod_delete_before.htm}-->
                 <button class="btn btn-danger delete" data-href="<?php echo url('flag-read', array('flagid' => $flagid,'type' => 1));?>"><?php echo lang('delete');?></button>
-                <!--{hook thread_list_mod_close_after.htm}-->
+                <!--{hook admin_flag_read_mod_close_after.htm}-->
             </div>
         </div>
 
@@ -59,9 +59,9 @@
         <?php if ($pagination) { ?>
 		<nav class="my-3"><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
         <?php } ?>
-		<!--{hook awebsite_dmin_flag_read_page_after.htm}-->
+		<!--{hook admin_flag_read_page_after.htm}-->
         <a role="button" class="btn btn-secondary btn-block xn-back col-md-6 mx-auto mb-3" href="javascript:history.back();"><?php echo lang('back');?></a>
-		<!--{hook awebsite_dmin_flag_read_back_after.htm}-->
+		<!--{hook admin_flag_read_back_after.htm}-->
 	</div>
 </div>
 </div>
