@@ -148,7 +148,7 @@ if ('GET' == $method) {
     !empty($result['user_update']) and $user_update += $result['user_update'];
 
     $tag_json = well_tag_post($tid, $fid, $tags);
-    if (xn_strlen($subject) >= 120) {
+    if (xn_strlen($tag_json >= 120) {
         $s = xn_substr($tag_json, -1, NULL);
         if ('}' != $s) {
             $len = mb_strripos($tag_json, ',', 0, 'UTF-8');

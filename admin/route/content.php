@@ -370,7 +370,7 @@ switch ($action) {
             // hook admin_content_create_post_after.php
 
             $tag_json = well_tag_post($tid, $fid, $tags);
-            if (xn_strlen($subject) >= 120) {
+            if (xn_strlen($tag_json) >= 120) {
                 $s = xn_substr($tag_json, -1, NULL);
                 if ('}' != $s) {
                     $len = mb_strripos($tag_json, ',', 0, 'UTF-8');
@@ -711,7 +711,7 @@ switch ($action) {
             // hook admin_content_update_post_tag_center.php
 
             $tag_json = well_tag_post_update($tid, $fid, $tags, $thread['tag_fmt']);
-            if (xn_strlen($subject) >= 120) {
+            if (xn_strlen($tag_json) >= 120) {
                 $s = xn_substr($tag_json, -1, NULL);
                 if ('}' != $s) {
                     $len = mb_strripos($tag_json, ',', 0, 'UTF-8');

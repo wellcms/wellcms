@@ -15,6 +15,9 @@ function array_multisort_key($arrlist, $col, $asc = TRUE, $key = NULL)
         if (!isset($v[$col])) continue;
         $colarr[$k] = $v[$col];
     }
+
+    if (empty($colarr)) return $arrlist;
+    
     $asc = $asc ? SORT_ASC : SORT_DESC;
     array_multisort($colarr, $asc, $arrlist);
     unset($colarr);

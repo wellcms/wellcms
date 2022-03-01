@@ -68,7 +68,7 @@ switch ($action) {
 
         $read = well_tag_read_by_tagid_cache($tagid);
         // hook tag_cache_after.php
-        empty($read) and message(-1, lang('well_tag_not_existed'));
+        empty($read) and message(-1, lang('data_malformation'));
 
         // hook tag_center.php
 

@@ -37,7 +37,7 @@
                         </div>
                         <div class="media-body text-right">
                             <!--{hook user_login_form_footer_right_start.htm}-->
-                            <a href="<?php echo url('user-create');?>" class="text-muted">
+                            <a href="<?php echo url('user-create', array('referer' => $referer));?>" class="text-muted">
                                 <small>
                                     <?php echo lang('user_create');?>
                                 </small>

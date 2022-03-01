@@ -479,7 +479,6 @@ function well_attach_assoc_handle($arr = array())
 
     // hook model_attach_assoc_image_message_before.php
 
-    $message = urldecode($message);
     //$message = htmlspecialchars_decode($message);
     preg_match_all('#<img[^>]+src="(.*?)"#i', $message, $match);
 
