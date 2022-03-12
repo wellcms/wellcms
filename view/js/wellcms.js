@@ -509,6 +509,20 @@ console.log(well_serialize_form('form'));
 console.log(well_serialize_form('form', 1));
 */
 function well_serialize_form(formId, format) {
+
+    let form = document.getElementById(formId);
+    if (form && 'FORM' != form.tagName) {
+        let parent = form.parentNode;
+        while ('FORM' != parent.tagName) {
+            parent = parent.parentNode;
+        }
+        if (!parent) '';
+        formId = parent.id;
+    } else {
+        formId = form.id;
+        if (!formId) return '';
+    }
+
     format = format || 0;
     let elements = well_get_elements(formId);
     let queryComponents = new Array();
@@ -537,7 +551,7 @@ function well_serialize_form(formId, format) {
 */
 function well_get_elements(formId) {
     let form = document.getElementById(formId);
-
+    if (!form) return '';
     let elements = new Array();
     let tagInputs = form.getElementsByTagName('input');
     for (let i = 0; i < tagInputs.length; ++i) {
