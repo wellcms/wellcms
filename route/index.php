@@ -10,6 +10,7 @@
 $arrlist = array();
 $extra = array(); // 插件预留
 $fid = 0;
+$num = $page = $pagesize = $page_url = '';
 // hook index_before.php
 
 $website_setting = $config['setting'];
