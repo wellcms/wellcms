@@ -205,7 +205,7 @@ function xn_html_safe($doc, $arg = array())
 
     $pattern = array(
         //'img_url'=>'#^(https?://[^\'"\\\\<>:\s]+(:\d+)?)?([^\'"\\\\<>:\s]+?)*$#is',
-        'img_url' => '#^(((https?://[^\'"\\\\<>:\s]+(:\d+)?)?([^\'"\\\\<>:\s]+?)*)|(data:image/jpg;base64,[\w\/+]+)|(data:image/gif;base64,[\w\/+]+)|(data:image/jpeg;base64,[\w\/+]+)|(data:image/png;base64,[\w\/+]+))$#is',
+        'img_url' => '#^(((https?://[^\'"\\\\<>:\s]+(:\d+)?)?([^\'"\\\\<>:\s]+?)*)|(data:image/jpg;base64,[\w/+=\/+]+)|(data:image/gif;base64,[\w/+=\/+]+)|(data:image/jpeg;base64,[\w/+=\/+]+)|(data:image/png;base64,[\w/+=\/+]+))$#is',
         'url' => '#^(https?://[^\'"\\\\<>:\s]+(:\d+)?)?([^\'"\\\\<>:\s]+?)*$#is', // '#https?://[\w\-/%?.=]+#is'
         'mailto' => '#^mailto:([\w%\-\.]+)@([\w%\-\.]+)(\.[\w%\-\.]+?)+$#is',
         'ftp_url' => '#^ftp:([\w%\-\.]+)@([\w%\-\.]+)(\.[\w%\-\.]+?)+$#is',
