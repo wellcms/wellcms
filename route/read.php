@@ -146,7 +146,7 @@ switch ($thread['type']) {
             if ($postlist) {
                 foreach ($postlist as $key => $val) {
                     unset($postlist[$key]['userip']);
-                    if ($val['replylist']) {
+                    if (isset($val['replylist'])) {
                         foreach ($val['replylist'] as $k => $_reply) {
                             unset($postlist[$key]['replylist'][$k]['userip']);
                         }
