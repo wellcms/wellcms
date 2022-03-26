@@ -322,7 +322,7 @@ body.on('click', '.well_reply', function () {
     var jli = jthis.closest('.post');
     var jpostlist = jli.closest('.postlist');
     var jadvanced_reply = $('#advanced_reply');
-    var jform = $('#quick_reply_form');
+    var jform = $('#form');
     if (jli.hasClass('quote')) {
         jli.removeClass('quote');
         jform.find('input[name="quotepid"]').val(0);
