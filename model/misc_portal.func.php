@@ -103,7 +103,7 @@ function portal_index_thread($forumlist)
 
     // 获取属性对应的tid集合
     list($flaglist, $flagtids) = flag_thread_by_fid(0);
-    empty($flagtids) || $tidlist += $forum_tids;
+    empty($flagtids) || $tidlist += $flagtids;
 
     // hook model_portal_index_thread_flag_after.php
 
@@ -276,7 +276,7 @@ function portal_channel_thread($fid)
 
     // 获取属性对应的tid集合
     list($flaglist, $flagtids) = flag_thread_by_fid($fid);
-    empty($flagtids) || $tidlist += $forum_tids;
+    empty($flagtids) || $tidlist += $flagtids;
 
     // hook model_portal_channel_thread_flag_after.php
 
