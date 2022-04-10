@@ -471,7 +471,21 @@ function well_token_clear($token = 0)
 function format_number($number)
 {
     $number = intval($number);
-    return $number > 1000 ? ($number > 1100 ? number_format(($number / 1000), 1) : intval($number / 1000)) . 'K+' : $number;
+
+    if ($number < 1000) return $number;
+    
+    if ($number > 1000 && $number < 1000000) {
+        // 千
+        $return = number_format($number / 1000, 1) . 'K+';
+    } elseif ($number > 1000000 && $number < 1000000000) {
+        // 百万
+        $return = number_format($number / 1000000, 1) . 'M+';
+    } elseif ($number > 1000000000) {
+        // 10亿
+        $return = number_format($number / 1000000000, 1) . 'B+';
+    }
+
+    return $return;
 }
 
 //---------------表单安全过滤---------------
