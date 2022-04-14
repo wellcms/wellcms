@@ -129,7 +129,9 @@ if (!defined('SKIP_ROUTE')) {
         // hook index_route_case_end.php
         default:
             // hook index_route_case_default.php
-            include _include(APP_PATH . 'route/index.php');
+            header('HTTP/1.1 404 Not Found');
+            header('Status: 404 Not Found');
+            include _include(theme_load('404'));
             break;
         //http_404();
         /*

@@ -55,6 +55,9 @@ if (empty($action)) {
 
 } elseif ($action == 'env') {
 
+    $agree = param('agree', 0);
+    if (1 != $agree) http_location('index.php?action=license');
+
     if ($method == 'GET') {
         $succeed = 1;
         $env = $write = array();
@@ -65,6 +68,9 @@ if (empty($action)) {
 } elseif ($action == 'db') {
 
     if ($method == 'GET') {
+
+        $agree = param('agree', 0);
+        if (1 != $agree) http_location('index.php?action=license');
 
         $succeed = 1;
         //$mysql_support = function_exists('mysql_connect');

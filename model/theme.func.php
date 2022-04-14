@@ -147,6 +147,9 @@ function theme_load($type = '', $id = 0, $dir = '')
             // 移动
             $pre .= $default_pre .= 'operate_move.htm';
             break;
+        case '404':
+            $pre .= $default_pre .= '404.htm';
+            break;
         // hook theme_load_case_end.php
         default:
             // 首页

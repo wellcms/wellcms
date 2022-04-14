@@ -1,21 +1,44 @@
 <?php include INSTALL_PATH.'view/htm/header.inc.htm';?>
 
-<div class="container">
-	<div class="row my-3">
-		<div class="col-lg-10 offset-lg-1">
-			<div class="card">
+<div class="container vh-100">
+	<div class="row d-flex align-items-center vh-100">
+		<div class="col-lg-10 offset-lg-1 h-50">
+			<div class="card h-100">
 				<div class="card-body">
-                    <div class="mb-3 text-center">
-                        <a target="_blank" href="http://www.wellcms.cn/"><img src="../view/img/logo.png" class="logo-2"></a>
-                    </div>
-					<h3 class="card-title mt-3"><?php echo lang('license_title');?></h3>
-					<hr />
-					<?php echo lang('license_content');?>
-					<br><br><?php echo lang('license_date');?>
-					<div class="text-center m-3"><button class="btn btn-primary" onClick="window.location='index.php?action=env'"><?php echo lang('agree_license_to_continue');?></button></div>
+					<div class="d-flex d-flex justify-content-center align-items-center h-75">
+						<div class="text-center">
+							<a target="_blank" href="http://www.wellcms.cn/"><img src="../view/img/logo.png" class="logo-4"></a>
+							<h1 class="card-title font-weight-bold mt-3"><?php echo lang('license_title');?></h1>
+							<h4 class="card-title mt-3"><?php echo lang('license_content');?></h4>
+						</div>
+					</div>
+					<div>
+						<?php echo lang('license_version');?>&nbsp;<?php echo lang('license_date');?>
+					</div>
+					<div class="d-flex justify-content-between mt-3">
+						<div class="custom-control custom-checkbox"><input class="custom-control-input" type="checkbox" id="agree" name="agree" value="1"><label class="custom-control-label custom-checkbox" for="agree"><?php echo lang('agree_license');?></label></div>
+						<button class="btn btn-primary" onClick="window.location='index.php?action=env&agree=1'" disabled><?php echo lang('agree_license_to_continue');?></button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+<script>
+	let agree = document.getElementById('agree');
+	if (agree) {
+		agree.addEventListener('click', function (e) {
+			e.stopPropagation();
+			let checked = this.checked;
+			let button = document.querySelector('button');
+			if (checked) {
+				button.disabled = false;
+				button.setAttribute('onClick', "window.location='index.php?action=env&agree=1'");
+			} else {
+				button.disabled = true;
+				button.removeAttribute('onClick');
+			}
+		});
+	}
+</script>
 <?php include INSTALL_PATH.'view/htm/footer.inc.htm';?>
