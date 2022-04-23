@@ -29,7 +29,7 @@ function form_checkbox($name, $checked = 0, $txt = '', $val = 1)
     return $s;
 }
 
-// form_multi_checkbox('flag', array('k1'=>'v1','k2'=>'v2'), array('v1','v2'))
+// form_multi_checkbox('flag', array('k1'=>'v1','k2'=>'v2'), array('k1','k2'))
 // name  选项内容  被选中选项(选项内容的键名)
 function form_multi_checkbox($name, $arr, $checked = array())
 {

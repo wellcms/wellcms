@@ -2,6 +2,7 @@
 /*
 include _include(APP_PATH . 'model/chinese_spell.func.php');
 $str = '取汉字所有拼音';
+$str = iconv('UTF-8', 'gb2312//IGNORE', $str); // 转gb2312
 // 取全部拼音
 echo get_full_spell($str);
 echo '<hr>';
@@ -12,7 +13,6 @@ echo get_first_spell($str);
 function get_full_spell($str)
 {
     $chinese_spell = new chinese_spell();
-    $str = code_conversion($str, 'gb2312'); // 转gb2312
     return $chinese_spell->get_full_spell($str);
 }
 
@@ -20,7 +20,6 @@ function get_full_spell($str)
 function get_first_spell($str)
 {
     $chinese_spell = new chinese_spell();
-    $str = code_conversion($str, 'gb2312'); // 转gb2312
     return $chinese_spell->get_first_spell($str);
 }
 

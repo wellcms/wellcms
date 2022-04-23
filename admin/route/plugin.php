@@ -810,7 +810,7 @@ function plugin_cate_active($action, $arr, $type, $page)
     $s = '';
     foreach ($arr as $_type => $name) {
         $url = url('plugin-' . $action, array('type' => $_type, 'page' => $page), TRUE);
-        $s .= '<a role="button" class="btn btn btn-secondary' . ($type == $_type ? ' active' : '') . '" href="' . $url . '">' . $name . '</a>';
+        $s .= '<a role="button" class="btn btn-secondary' . ($type == $_type ? ' active' : '') . '" href="' . $url . '">' . $name . '</a>';
     }
     return $s;
 }

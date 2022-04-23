@@ -770,7 +770,7 @@ function https_post($url, $post = '', $cookie = '', $timeout = 30, $method = 'PO
         return '';
     }
 
-    list($header, $data) = explode("\r\n\r\n", $data);
+    list($header, $data) = explode("\r\n\r\n", $data, 2);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if (301 == $http_code || 302 == $http_code) {
         $matches = array();

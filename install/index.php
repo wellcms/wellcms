@@ -14,6 +14,7 @@ include APP_PATH . 'model/misc.func.php';
 include APP_PATH . 'model/plugin.func.php';
 include APP_PATH . 'model/user.func.php';
 include APP_PATH . 'model/form.func.php';
+
 // 从 cookie 中获取数据，默认为中文
 $_lang = param('lang', 'zh-cn');
 $conf['lang'] = $_lang;
@@ -21,6 +22,7 @@ $lang = include APP_PATH . "lang/$conf[lang]/lang.php";
 $lang += include APP_PATH . "lang/$conf[lang]/lang_install.php";
 include INSTALL_PATH . 'install.func.php';
 $_SERVER['lang'] = $lang;
+$version = '2.2.0';
 
 is_file(APP_PATH . 'install/install.lock') AND message(0, jump(lang('already_installed'), '../'));
 
@@ -94,7 +96,6 @@ if (empty($action)) {
         $password = param('password');
         $tablepre = param('tablepre');
         $force = param('force');
-
         $adminemail = param('adminemail');
         $adminuser = param('adminuser');
         $adminpass = param('adminpass');
@@ -113,13 +114,13 @@ if (empty($action)) {
         ini_set('mysql.connect_timeout', 5);
         ini_set('default_socket_timeout', 5);
 
-        $conf['db']['type'] = $type;
+        /*$conf['db']['type'] = $type;
         $conf['db']['mysql']['master']['host'] = $host;
         $conf['db']['mysql']['master']['name'] = $name;
         $conf['db']['mysql']['master']['user'] = $user;
         $conf['db']['mysql']['master']['password'] = $password;
         $conf['db']['mysql']['master']['tablepre'] = $tablepre;
-        $conf['db']['mysql']['master']['engine'] = $engine;
+        $conf['db']['mysql']['master']['engine'] = $engine;*/
         $conf['db']['pdo_mysql']['master']['host'] = $host;
         $conf['db']['pdo_mysql']['master']['name'] = $name;
         $conf['db']['pdo_mysql']['master']['user'] = $user;
@@ -177,7 +178,8 @@ if (empty($action)) {
         $replace['db'] = $conf['db'];
         $replace['cache'] = $conf['cache'];
         $replace['cookie_pre'] = $tablepre;
-        $replace['auth_key'] = xn_rand(64);
+        $rand = xn_rand(64);
+        $replace['auth_key'] = $rand;
         $replace['installed'] = 1;
         $replace['lang'] = $_lang;
         file_replace_var(APP_PATH . 'conf/conf.php', $replace);
@@ -201,13 +203,15 @@ if (empty($action)) {
         $update = array('username' => $adminuser, 'email' => $adminemail, 'password' => $password, 'salt' => $salt, 'create_date' => $time, 'create_ip' => $longip);
         db_update('user', array('uid' => 1), $update);
 
+        if (filter_var(ip(), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {$post = array('type' => 1, 'sitename' => xn_urlencode(_SERVER('HTTP_HOST')), 'domain' => xn_urlencode(_SERVER('HTTP_HOST')), 'app_url' => '', 'siteid' => md5($rand . _SERVER('SERVER_ADDR')), 'version' => $version, 'version_date' => time());$json = https_request('http://www.wellcms.cn/version.html', $post, '', 500, 1);}
+
         xn_mkdir(APP_PATH . 'upload/tmp', 0777);
-        xn_mkdir(APP_PATH . 'upload/attach', 0777);
+        xn_mkdir(APP_PATH . 'upload/website_attach', 0777);
+        xn_mkdir(APP_PATH . 'upload/thumbnail', 0777);
         xn_mkdir(APP_PATH . 'upload/avatar', 0777);
-        xn_mkdir(APP_PATH . 'upload/forum', 0777);
         xn_mkdir(APP_PATH . 'view/template', 0777);
 
-        file_put_contents(APP_PATH . 'install/install.lock', date('Y-m-d H:i:s'));
+        file_put_contents(APP_PATH . 'install/install.lock', $version.'|'.date('Y-m-d H:i:s'));
 
         message(0, jump(lang('conguralation_installed'), '../'));
     }
