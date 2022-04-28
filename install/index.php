@@ -114,13 +114,13 @@ if (empty($action)) {
         ini_set('mysql.connect_timeout', 5);
         ini_set('default_socket_timeout', 5);
 
-        /*$conf['db']['type'] = $type;
+        $conf['db']['type'] = $type;
         $conf['db']['mysql']['master']['host'] = $host;
         $conf['db']['mysql']['master']['name'] = $name;
         $conf['db']['mysql']['master']['user'] = $user;
         $conf['db']['mysql']['master']['password'] = $password;
         $conf['db']['mysql']['master']['tablepre'] = $tablepre;
-        $conf['db']['mysql']['master']['engine'] = $engine;*/
+        $conf['db']['mysql']['master']['engine'] = $engine;
         $conf['db']['pdo_mysql']['master']['host'] = $host;
         $conf['db']['pdo_mysql']['master']['name'] = $name;
         $conf['db']['pdo_mysql']['master']['user'] = $user;
