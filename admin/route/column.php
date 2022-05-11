@@ -127,7 +127,6 @@ switch ($action) {
             $name = filter_all_html($name);
             empty($name) AND message(1, lang('data_empty_to_last_step'));
 
-            $rank = param('rank', 0);
             $brief = param('brief', '', FALSE);
             $brief = xn_html_safe($brief);
             $announcement = param('announcement', '', FALSE);
@@ -156,14 +155,12 @@ switch ($action) {
             if (1 == $category) {
                 $comment = 0;
                 $display = 0;
-                //$thread_rank = 0;
                 $index_new = 0;
                 $channel_new = 0;
             } else {
                 // 列表需要显示数据
                 $comment = param('comment', 0);
                 $display = param('display', 0);
-                //$thread_rank = param('thread_rank', 0);
                 $index_new = param('index_new', 10);
                 $index_new = $display ? $index_new : 10;
                 $channel_new = param('channel_new', 10);
@@ -177,7 +174,6 @@ switch ($action) {
                 'model' => $model,
                 'category' => $category,
                 'name' => $name,
-                'rank' => $rank,
                 'accesson' => $accesson,
                 'create_date' => $time,
                 'display' => $display,
@@ -322,7 +318,6 @@ switch ($action) {
             $name = filter_all_html($name);
             empty($name) AND message(1, lang('data_empty_to_last_step'));
 
-            $rank = param('rank', 0);
             $brief = param('brief', '', FALSE);
             $brief = xn_html_safe($brief);
             $announcement = param('announcement', '', FALSE);
@@ -352,14 +347,12 @@ switch ($action) {
             if (in_array($category, array(1, 2, 3))) {
                 $comment = 0;
                 $display = 0;
-                //$thread_rank = 0;
                 $index_new = 0;
                 $channel_new = 0;
             } else {
                 // 列表需要显示数据
                 $comment = param('comment', 0);
                 $display = param('display', 0);
-                //$thread_rank = param('thread_rank', 0);
                 $index_new = param('index_new', 10);
                 $index_new = $display ? $index_new : 10;
                 $channel_new = param('channel_new', 10);
@@ -373,7 +366,6 @@ switch ($action) {
                 'model' => $model,
                 'category' => $category,
                 'name' => $name,
-                'rank' => $rank,
                 'accesson' => $accesson,
                 'create_date' => $time,
                 'display' => $display,
