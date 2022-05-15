@@ -597,7 +597,8 @@ function well_serialize_element(element, format) {
     }
 
     if (parameter) {
-        let key = encodeURIComponent(parameter[0]);
+        //let key = encodeURIComponent(parameter[0]);
+        let key = parameter[0];
         if (0 == key.length) return;
 
         if (parameter[1].constructor != Array) parameter[1] = [parameter[1]];
@@ -607,7 +608,7 @@ function well_serialize_element(element, format) {
         let length = values.length;
         for (let i = 0; i < length; ++i) {
             if (format) {
-                results.push(key + '=' + encodeURIComponent(values[i]));
+                results.push(key + '=' + values[i]);
             } else {
                 results = [key, values[i]];
             }
