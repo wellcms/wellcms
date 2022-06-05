@@ -131,5 +131,6 @@ return array(
     'thumbnail_width' => 400, // 缩略图宽度
     'thumbnail_height' => 280, // 缩略图高度
     'cache_thread' => 1, // 详情页 0直接读取 1缓存中读取 互动很强的站点建议0
+    'img_base64' => 0, // 详情src支持base64图片 1支持
 );
 ?>

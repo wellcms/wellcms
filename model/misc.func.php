@@ -199,6 +199,8 @@ include XIUNOPHP_PATH . 'xn_html_safe.func.php';
 function xn_html_safe($doc, $arg = array())
 {
 
+    $conf = include APP_PATH . 'conf/conf.php';
+
     // hook model_xn_html_safe_start.php
 
     empty($arg['table_max_width']) and $arg['table_max_width'] = 746; // 这个宽度为 回帖宽度
@@ -215,6 +217,8 @@ function xn_html_safe($doc, $arg = array())
         'css' => '#^[\(,\)\#;\w\-\.\s\x7f-\xff]+$#is',
         'word' => '#^[\w\-\x7f-\xff]+$#is',
     );
+
+    if (1 == array_value($conf, 'img_base64')) $pattern['img_url'] = '#^(((https?://[^\'"\\\\<>:\s]+(:\d+)?)?([^\'"\\\\<>:\s]+?)*)|(data:image/jpg;base64,[\w/+=\/+]+)|(data:image/gif;base64,[\w/+=\/+]+)|(data:image/jpeg;base64,[\w/+=\/+]+)|(data:image/png;base64,[\w/+=\/+]+))$#is';
 
     $white_tag = array('a', 'b', 'i', 'u', 'font', 'strong', 'em', 'span',
         'table', 'tr', 'td', 'th', 'tbody', 'thead', 'tfoot', 'caption',
@@ -298,9 +302,11 @@ function xn_html_safe($doc, $arg = array())
     );
 
     // hook model_xn_html_safe_new_before.php
+
     $safehtml = new HTML_White($white_tag, $white_value, $white_css, $arg);
 
     // hook model_xn_html_safe_parse_before.php
+    
     $result = $safehtml->parse($doc);
 
     // hook model_xn_html_safe_end.php
