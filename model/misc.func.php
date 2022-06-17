@@ -57,11 +57,11 @@ function url($url, $extra = array(), $url_access = NULL)
         $r = 'index.php?' . http_build_query($arr);
     }
 
-    $ajax = param('ajax', 0);
+    /*$ajax = param('ajax', 0);
     if ($ajax) {
         empty($extra) and $extra = array();
         $extra['ajax'] = $ajax;
-    }
+    }*/
 
     // hook model_url_after.php
 
