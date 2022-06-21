@@ -269,7 +269,7 @@ body.on('click', 'a.ajax', function () {
             let postdata = jthis.data('json');
             $.xpost(href, postdata, function (code, message) {
                 if (0 == code) {
-                    if (undefined == message.text) {
+                    if ('undefined' === message.text) {
                         window.location.reload();
                     } else {
                         jthis.html(message.text);
@@ -938,7 +938,7 @@ $.well_post = function (url, postdata, callback, progress_callback) {
         success: function (r) {
             if (!r) return callback(-1, 'Server Response Empty!');
             var s = xn.json_decode(r);
-            if (!s || s.code === undefined) return callback(-1, 'Server Response Not JSON：' + r);
+            if (!s || s.code === 'undefined') return callback(-1, 'Server Response Not JSON：' + r);
             if (s.code == 0) {
                 return callback(0, s.message);
             } else if (s.code < 0) {

@@ -57,7 +57,7 @@ Object.sum = function (obj) {
     });
     return sum;
 };
-if (typeof console == undefined) {
+if (typeof console === 'undefined') {
     console = {};
     console.log = function () {
     };
@@ -167,7 +167,7 @@ xn.floatval = function (s) {
 
 xn.isset = function (k) {
     var t = typeof k;
-    return t != undefined && t != 'unknown';
+    return t !== 'undefined' && t != 'unknown';
 };
 
 xn.empty = function (s) {
@@ -362,7 +362,7 @@ xn.array_filter = function (arr, callback) {
         var v = arr[k];
         if (callback && callback(k, v)) continue;
         /*默认过滤空值*/
-        /*if(!callback && v === undefined) continue;*/
+        /*if(!callback && v === 'undefined') continue;*/
         newarr.push(v);
     }
     return newarr;
@@ -637,7 +637,7 @@ xn.url_add_arg = function (url, k, v) {
 /********************* 对 JQuery 进行扩展 ************************/
 
 $.location = function (url, seconds) {
-    if (seconds === undefined) seconds = 1;
+    if (seconds === 'undefined') seconds = 1;
     setTimeout(function () {
         window.location = './';
     }, seconds * (debug ? 2000 : 1000));
@@ -646,7 +646,7 @@ $.location = function (url, seconds) {
 /*二级数组排序*/
 /*Array.prototype.proto_sort = Array.prototype.sort;
  Array.prototype.sort = function(arg) {
- if(arg === undefined) {
+ if(arg === 'undefined') {
  return this.proto_sort();
  } else if(arg.constructor === Function) {
  return this.proto_sort(arg);
@@ -722,7 +722,7 @@ xn.arrlist_multisort = function (arrlist, k, asc) {
  */
 $.pdata = function (key, value) {
     var r = '';
-    if (typeof value != 'undefined') {
+    if (typeof value !== 'undefined') {
         value = xn.json_encode(value);
     }
 
@@ -730,7 +730,7 @@ $.pdata = function (key, value) {
     try {
         /*ie10 需要 try 一下*/
         if (window.localStorage) {
-            if (typeof value == 'undefined') {
+            if (typeof value === 'undefined') {
                 r = localStorage.getItem(key);
                 return xn.json_decode(r);
             } else {
@@ -745,7 +745,7 @@ $.pdata = function (key, value) {
         return '';
     }
     /*get*/
-    if (typeof value == 'undefined') {
+    if (typeof value === 'undefined') {
         if (xn.is_ie) {
             try {
                 document.documentElement.load(key);
@@ -784,12 +784,12 @@ $.pdata = function (key, value) {
 
 /*time 单位为秒，与php setcookie, 和  misc::setcookie() 的 time 参数略有差异。*/
 $.cookie = function (name, value, time, path) {
-    if (typeof value != 'undefined') {
+    if (typeof value !== 'undefined') {
         if (value === null) {
             var value = '';
             var time = -1;
         }
-        if (typeof time != 'undefined') {
+        if (typeof time !== 'undefined') {
             date = new Date();
             date.setTime(date.getTime() + (time * 1000));
             var time = '; expires=' + date.toUTCString();
@@ -920,7 +920,7 @@ $.xpost = function (url, postdata, callback, progress_callback) {
         success: function (r) {
             if (!r) return callback(-1, 'Server Response Empty!');
             var s = xn.json_decode(r);
-            if (!s || s.code === undefined) return callback(-1, 'Server Response Not JSON：' + r);
+            if (!s || s.code === 'undefined') return callback(-1, 'Server Response Not JSON：' + r);
             if (s.code == 0) {
                 return callback(0, s.message);
             } else if (s.code < 0) {
@@ -1029,7 +1029,7 @@ $.require = function () {
     }
     this.load = function (args, i) {
         var _this = this;
-        if (args[i] === undefined) return;
+        if (args[i] === 'undefined') return;
         if (typeof args[i] == 'string') {
             var js = args[i];
             /*避免重复加载*/
@@ -1218,12 +1218,12 @@ xn.image_background_opacity = function (data, width, height, callback) {
 
     function checked_push(x, y) {
         var k = x + '-' + y;
-        if (checked[k] === undefined) checked[k] = 1;
+        if (checked[k] === 'undefined') checked[k] = 1;
     }
 
     function unchecked_push(x, y) {
         var k = x + '-' + y;
-        if (checked[k] === undefined && unchecked[k] === undefined) {
+        if (checked[k] === 'undefined' && unchecked[k] === 'undefined') {
             unchecked[k] = 1;
             unchecked_arr.push(k);
         }
@@ -1679,7 +1679,7 @@ $.fn.serializeObject = function () {
     };
 
     this.push_counter = function (key) {
-        if (push_counters[key] === undefined) {
+        if (push_counters[key] === 'undefined') {
             push_counters[key] = 0;
         }
         return push_counters[key]++;
@@ -1695,7 +1695,7 @@ $.fn.serializeObject = function () {
             merge = this.value,
             reverse_key = this.name;
 
-        while ((k = keys.pop()) !== undefined) {
+        while ((k = keys.pop()) !== 'undefined') {
             reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
             if (k.match(patterns.push)) {
                 merge = self.build([], self.push_counter(reverse_key), merge);
@@ -1756,7 +1756,7 @@ $.fn.attr_name_index = function (rowid) {
         var jthis = $(this);
         var name = jthis.attr('name');
         name = name.replace(/\[(\d*)\]/, function (all, oldid) {
-            var newid = rowid === undefined ? xn.intval(oldid) + 1 : rowid;
+            var newid = rowid === 'undefined' ? xn.intval(oldid) + 1 : rowid;
             return '[' + newid + ']';
         });
         jthis.attr('name', name);
