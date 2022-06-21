@@ -136,6 +136,9 @@ function thread_create_handle($arr)
     $save_image = array_value($arr, 'save_image', 0); // 图片本地化
     $doctype = array_value($arr, 'doctype', 0);
     $status = array_value($arr, 'status', 0);
+    $intodb = array_value($arr, 'intodb', 0);
+    $tid = array_value($arr, 'tid', 0);
+    $tid = intval($tid);
     $thread_default = array_value($arr, 'thread_default', 1); // 默认入库方便扩展
 
     // hook model__thread_create_before.php
@@ -143,6 +146,8 @@ function thread_create_handle($arr)
     // 创建主题
     $thread = array('fid' => $fid, 'subject' => $subject, 'type' => $type, 'brief' => $brief, 'uid' => $uid, 'create_date' => $time, 'closed' => $closed, 'keyword' => $keyword, 'description' => $description, 'last_date' => $time, 'userip' => $longip, 'flags' => $flags);
 
+    $intodb && $tid && $thread['tid'] = $tid;
+    
     $thread['status'] = TRUE === $publishverify ? 0 : 1;
 
     // hook model__thread_create_thread_after.php

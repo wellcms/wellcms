@@ -232,6 +232,7 @@ if ($ajax) {
     $apilist['page_url'] = $page_url;
     $apilist['active'] = $active;
     $apilist['arrlist'] = $arrlist;
+    $apilist['stickylist'] = $stickylist;
     $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
 } else {
     include _include(theme_load('index'));

@@ -164,6 +164,7 @@ switch ($forum['model']) {
             $apilist['header'] = $header;
             $apilist['active'] = $active;
             $apilist['arrlist'] = $arrlist;
+            $apilist['stickylist'] = $stickylist;
             $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
         } else {
             // 可使用模板绑定版块功能，也可根据模型 hook 不同模板

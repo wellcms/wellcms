@@ -599,6 +599,7 @@ function well_serialize_element(element, format) {
     if (parameter) {
         //let key = encodeURIComponent(parameter[0]);
         let key = parameter[0];
+
         if (0 == key.length) return;
 
         if (parameter[1].constructor != Array) parameter[1] = [parameter[1]];
@@ -826,12 +827,12 @@ $(function () {
 arrListMultiSort = function (arrList, asc) {
 
     let newKeys = Object.keys(arrList).sort(function (a, b) {
-        return parseInt(arrList[a].num) - parseInt(arrList[b].num)
+        return parseInt(arrList[a].num) - parseInt(arrList[b].num);
     });
 
     if (asc) newKeys.reverse();
 
-    var arr = []
+    var arr = [];
     for (let i in newKeys) {
         arr.push(arrList[newKeys[i]]);
     }

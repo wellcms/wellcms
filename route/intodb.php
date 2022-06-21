@@ -54,6 +54,7 @@ if ('GET' == $method) {
 
     // hook intodb_post_forum_before.php
 
+    $tid = param('tid', 0);
     $fid = param('fid', $_fid);
     $forum = array_value($forumlist, $fid);
     empty($forum) and exit(lang('forum_not_exists'));
@@ -131,8 +132,13 @@ if ('GET' == $method) {
 
     // hook intodb_post_after.php
 
-    $thread = array('fid' => $fid, 'type' => $type, 'doctype' => $doctype, 'subject' => $subject, 'brief' => $brief, 'keyword' => $keyword, 'description' => $description, 'closed' => $closed, 'flags' => $flags, 'thumbnail' => $thumbnail, 'save_image' => $save_image, 'delete_pic' => $delete_pic, 'message' => $message, 'time' => $time, 'longip' => $longip, 'gid' => $gid, 'uid' => $uid, 'conf' => $conf,);
+    $thread = array('fid' => $fid, 'type' => $type, 'doctype' => $doctype, 'subject' => $subject, 'brief' => $brief, 'keyword' => $keyword, 'description' => $description, 'closed' => $closed, 'flags' => $flags, 'thumbnail' => $thumbnail, 'save_image' => $save_image, 'delete_pic' => $delete_pic, 'message' => $message, 'time' => $time, 'longip' => $longip, 'gid' => $gid, 'uid' => $uid, 'conf' => $conf);
 
+    if ($tid) {
+        $thread['tid'] = $tid;
+        $thread['intodb'] = 1;
+    }
+    
     group_access($gid, 'publishverify') && 1 != $gid and $thread['status'] = 1;
 
     // hook intodb_post_thread_create.php
