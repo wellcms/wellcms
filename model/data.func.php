@@ -124,7 +124,7 @@ function data_find($tid, $pagesize = 20)
     if (!$arrlist) return NULL;
     // hook model_data_find_before.php
     foreach ($arrlist as $val) {
-        data_format($r);
+        data_format($val);
     }
     // hook model_data_find_end.php
     return $arrlist;
