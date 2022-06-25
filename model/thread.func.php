@@ -655,7 +655,10 @@ function well_thread_find_asc($tidarr, $pagesize = 20)
 
     // hook model__thread_find_before.php
 
+    $i = 0;
     foreach ($threadlist as $_tid => &$thread) {
+        ++$i;
+        $thread['i'] = $i;
         well_thread_format($thread);
         // hook model__thread_find_format_after.php
     }
