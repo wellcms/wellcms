@@ -18,7 +18,10 @@ $grouplist = group_list_cache();
 
 $user = user_rest();
 $uid = array_value($user, 'uid', 0);
-$apilist['user'] = $user;
+if ('1' == intval(_GET('ajax'))) {
+    unset($user['password'], $user['salt'], $user['password_sms'], $user['create_ip'], $user['create_ip_fmt'], $user['create_date'], $user['login_ip'], $user['login_date'], $user['login_ip_fmt'], $user['avatar_path']);
+    $apilist['user'] = $user;
+}
 
 // hook index_inc_before.php
 

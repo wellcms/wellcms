@@ -108,7 +108,7 @@ switch ($action) {
                 $apilist['header'] = $header;
                 $apilist['safe_token'] = $safe_token;
                 $apilist['referer'] = $referer;
-                $apilist['action'] = $action;
+                $apilist['action'] = $form_action;
 
                 $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
@@ -150,11 +150,13 @@ switch ($action) {
             // global variable $uid will save to session in register_shutdown_function() (file: model/session.func.php)
 
             $_SESSION['uid'] = $_user['uid'];
-            user_token_set($_user['uid']); // 设置 token，下次自动登陆。
-
+            $token = user_token_set($_user['uid']); // 设置 token，下次自动登陆。
+            unset($_user['password'], $_user['salt'], $_user['password_sms'], $_user['create_ip'], $_user['create_ip_fmt'], $_user['create_date'], $_user['login_ip'], $_user['login_date'], $_user['login_ip_fmt'], $_user['avatar_path']);
+            $extra = array('user' => $_user, 'token_key' => $conf['cookie_pre'] . 'token', 'token' => $token);
+            
             // hook user_login_post_end.php
 
-            message(0, lang('login_successfully'));
+            message(0, lang('login_successfully'), $extra);
         }
         break;
     case 'create':
@@ -182,7 +184,7 @@ switch ($action) {
                 $apilist['header'] = $header;
                 $apilist['safe_token'] = $safe_token;
                 $apilist['referer'] = $referer;
-                $apilist['action'] = $action;
+                $apilist['action'] = $form_action;
                 $conf['api_on'] ? message(0, $apilist) : message(0, lang('closed'));
             } else {
                 include _include(theme_load('user_create'));
@@ -250,9 +252,9 @@ switch ($action) {
 
             unset($_SESSION['user_create_email'], $_SESSION['user_create_code']);
             $_SESSION['uid'] = $uid;
-            user_token_set($uid);
-
-            $extra = array('token' => user_token_gen($uid));
+            $token = user_token_set($uid);
+            unset($user['password'], $user['salt'], $user['password_sms'], $user['create_ip'], $user['create_ip_fmt'], $user['create_date'], $user['login_ip'], $user['login_date'], $user['login_ip_fmt'], $user['avatar_path']);
+            $extra = array('user' => $user, 'token_key' => $conf['cookie_pre'] . 'token', 'token' => $token);
 
             // hook user_create_post_end.php
 

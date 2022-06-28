@@ -311,6 +311,16 @@ function user_safe_info($user)
     return $user;
 }
 
+// 支持 Token 接口（token 与 session 双重登入机制，方便 REST 接口设计，也方便 $_SESSION 使用）
+// Support Token interface (token and session dual match, to facilitate the design of the REST interface, but also to facilitate the use of $_SESSION)
+function user_rest()
+{
+    $uid = intval(_SESSION('uid'));
+    empty($uid) and $uid = user_token_get() and $_SESSION['uid'] = $uid;
+    $user = user_read($uid);
+    return $user;
+}
+
 function user_token_get()
 {
     global $conf, $time;
@@ -320,16 +330,6 @@ function user_token_get()
     empty($_uid) and user_token_clear(); // 退出登录
     // hook model_user_token_get_end.php
     return $_uid;
-}
-
-// 支持 Token 接口（token 与 session 双重登入机制，方便 REST 接口设计，也方便 $_SESSION 使用）
-// Support Token interface (token and session dual match, to facilitate the design of the REST interface, but also to facilitate the use of $_SESSION)
-function user_rest()
-{
-    $uid = intval(_SESSION('uid'));
-    empty($uid) and $uid = user_token_get() and $_SESSION['uid'] = $uid;
-    $user = user_read($uid);
-    return $user;
 }
 
 // 用户
@@ -360,10 +360,13 @@ function user_token_get_do()
 function user_token_set($uid)
 {
     global $conf, $time;
-    if (empty($uid)) return;
+    if (empty($uid)) return '';
+    // hook model_user_token_set_start.php
     $token = user_token_gen($uid);
+    // hook model_user_token_set_before.php
     setcookie($conf['cookie_pre'] . 'token', $token, $time + 8640000, $conf['cookie_path'], $conf['cookie_domain'], '', TRUE);
     // hook model_user_token_set_end.php
+    return $token;
 }
 
 function user_token_clear()
@@ -376,14 +379,17 @@ function user_token_clear()
 function user_token_gen($uid)
 {
     global $conf, $time, $ip, $useragent;
+    $key = 'user_token' . $uid;
+    static $cache = array();
+    if (isset($cache[$key])) return $cache[$key];
     // hook model_user_token_gen_start.php
     $user = user_read($uid);
     $pwd = md5($user['password']);
     $ua_md5 = md5($useragent);
     $tokenkey = md5(xn_key());
-    $token = xn_encrypt("$ip	$time	$uid	$pwd	$ua_md5", $tokenkey);
+    $cache[$key] = xn_encrypt("$ip	$time	$uid	$pwd	$ua_md5", $tokenkey);
     // hook model_user_token_gen_end.php
-    return $token;
+    return $cache[$key];
 }
 
 // 前台登录验证

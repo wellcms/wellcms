@@ -123,7 +123,7 @@ function data_find($tid, $pagesize = 20)
     $arrlist = data__find(array('tid' => $tid), array('tid' => -1), 1, $pagesize);
     if (!$arrlist) return NULL;
     // hook model_data_find_before.php
-    foreach ($arrlist as $val) {
+    foreach ($arrlist as &$val) {
         data_format($val);
     }
     // hook model_data_find_end.php
