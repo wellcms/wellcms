@@ -153,7 +153,7 @@ switch ($thread['type']) {
                     }
                 }
             }
-            $apilist['comment'] = array('num' => $num, 'page' => $page, 'page_url' => $page_url, 'postlist' => $postlist, 'comment_action' => $comment_action);
+            $apilist['comment'] = array('num' => $num, 'page' => $page, 'pagesize' => $pagesize, 'page_url' => $page_url, 'postlist' => $postlist, 'comment_action' => $comment_action);
 
             message(0, $apilist);
         } else {

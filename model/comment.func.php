@@ -252,6 +252,7 @@ function comment_find($pidarr, $pagesize = 20, $desc = TRUE)
         data_format($post);
         comment_format($post);
         comment_format_message($post); // 云储存
+        // hook model_comment_find_after.php
     }
 
     // hook model_comment_find_end.php
