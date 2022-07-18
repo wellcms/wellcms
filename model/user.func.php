@@ -364,7 +364,7 @@ function user_token_set($uid)
     // hook model_user_token_set_start.php
     $token = user_token_gen($uid);
     // hook model_user_token_set_before.php
-    setcookie($conf['cookie_pre'] . 'token', $token, $time + 8640000, $conf['cookie_path'], $conf['cookie_domain'], '', TRUE);
+    setcookie($conf['cookie_pre'] . 'token', $token, $time + 86400000, $conf['cookie_path'], $conf['cookie_domain'], '', TRUE);
     // hook model_user_token_set_end.php
     return $token;
 }
