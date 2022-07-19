@@ -209,6 +209,12 @@ if (0 == $website_mode) {
 
     $pagination = pagination($page_url, $num, $page, $pagesize);
 
+    $allowdelete = group_access($gid, 'allowdelete');
+    $allowtop = group_access($gid, 'allowtop');
+    $allowmove = group_access($gid, 'allowmove');
+
+    $apilist['access'] = $access = array('allowdelete' => $allowdelete, 'allowtop' => $allowtop, 'allowmove' => $allowmove);
+
     // hook index_flat_end.php
 }
 

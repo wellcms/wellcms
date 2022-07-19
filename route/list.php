@@ -93,14 +93,20 @@ if (1 == $forum['type']) {
             $header['description'] = strip_tags($forum['brief']);
             $_SESSION['fid'] = $fid;
 
+            $allowdelete = forum_access_mod($fid, $gid, 'allowdelete');
+            $allowtop = forum_access_mod($fid, $gid, 'allowtop');
+            $allowmove = forum_access_mod($fid, $gid, 'allowmove');
+
+            $access = array('allowdelete' => $allowdelete, 'allowtop' => $allowtop, 'allowmove' => $allowmove);
             // 管理时使用
-            (forum_access_mod($fid, $gid, 'allowdelete') or forum_access_mod($fid, $gid, 'allowtop')) and $extra['fid'] = $fid;
+            ($allowdelete || $allowtop) and $extra['fid'] = $fid;
 
             // hook list_header_after.php
 
             if ($ajax) {
                 $apilist['header'] = $header;
                 $apilist['extra'] = $extra;
+                $apilist['access'] = $access;
                 $apilist['num'] = $num;
                 $apilist['page'] = $page;
                 $apilist['pagesize'] = $pagesize;

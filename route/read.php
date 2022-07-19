@@ -115,8 +115,9 @@ switch ($thread['type']) {
         $allowpost = $forum['comment'] && $thread['closed'] < 2 && 0 == $thread['status'] && forum_access_user($fid, $gid, 'allowpost');
         $allowupdate = $uid == $thread['uid'] || forum_access_mod($thread['fid'], $gid, 'allowupdate');
         $allowdelete = ($uid == $thread['uid'] and forum_access_mod($fid, $gid, 'allowuserdelete')) || forum_access_mod($fid, $gid, 'allowdelete');
+        $allowtop = forum_access_mod($thread['fid'], $gid, 'allowtop');
 
-        $access = array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete);
+        $access = array('allowpost' => $allowpost, 'allowupdate' => $allowupdate, 'allowdelete' => $allowdelete, 'allowtop' => $allowtop);
 
         $comment_action = url('comment-create-' . $tid, array('safe_token' => $safe_token));
 

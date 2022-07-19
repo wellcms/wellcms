@@ -139,6 +139,12 @@ switch ($forum['model']) {
 
             $pagination = pagination($page_url, $num, $page, $pagesize);
 
+            $allowdelete = forum_access_mod($fid, $gid, 'allowdelete');
+            $allowtop = forum_access_mod($fid, $gid, 'allowtop');
+            $allowmove = forum_access_mod($fid, $gid, 'allowmove');
+
+            $apilist['access'] = $access = array('allowdelete' => $allowdelete, 'allowtop' => $allowtop, 'allowmove' => $allowmove);
+
             // hook category_article_flat_end.php
         }
 
