@@ -66,6 +66,10 @@ switch ($action) {
             $sticky = param('sticky', 0);
 
             $tidarr = param('tidarr', array(0));
+            if ('1' == _GET('ajax') && empty($tidarr)) {
+                $tidarr = _POST('tidarr');
+                !is_array($tidarr) && $tidarr = xn_json_decode($tidarr);
+            }
             empty($tidarr) and message(1, lang('please_choose_thread'));
 
             // hook operate_sticky_before.php
@@ -185,6 +189,10 @@ switch ($action) {
             $close = param('close', 0);
 
             $tidarr = param('tidarr', array(0));
+            if ('1' == _GET('ajax') && empty($tidarr)) {
+                $tidarr = _POST('tidarr');
+                !is_array($tidarr) && $tidarr = xn_json_decode($tidarr);
+            }
             empty($tidarr) and message(1, lang('please_choose_thread'));
             $threadlist = well_thread_find_by_tids($tidarr);
 
@@ -273,6 +281,10 @@ switch ($action) {
             } else {
                 // 选择框批量删除
                 $tidarr = param('tidarr', array(0));
+                if ('1' == _GET('ajax') && empty($tidarr)) {
+                    $tidarr = _POST('tidarr');
+                    !is_array($tidarr) && $tidarr = xn_json_decode($tidarr);
+                }
                 empty($tidarr) and message(1, lang('please_choose_thread'));
                 // hook operate_delete_tidarr.php
                 well_thread_delete_all($tidarr);
@@ -326,6 +338,10 @@ switch ($action) {
             FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
             $tidarr = param('tidarr', array(0));
+            if ('1' == _GET('ajax') && empty($tidarr)) {
+                    $tidarr = _POST('tidarr');
+                    !is_array($tidarr) && $tidarr = xn_json_decode($tidarr);
+                }
             empty($tidarr) and message(1, lang('please_choose_thread'));
             //$threadlist = well_thread_find_by_tids($tidarr);
             $threadlist = well_thread__find(array('tid' => $tidarr), array('tid' => 1), 1, count($tidarr));
