@@ -49,42 +49,45 @@ if (0 == $website_mode) {
     // hook index_custom_center.php
     /************ 在这之前合并所有tid 二维数组 *************/
 
-    $tidarr = arrlist_values($tidlist, 'tid');
+    $threadlist = '';
+    if (!empty($tidlist)) {
+        $tidarr = arrlist_values($tidlist, 'tid');
 
-    // 在这之前使用array_merge()前合并所有一维数组 tid/array(1,2,3)
-    // hook index_custom_thread_find_before.php
+        // 在这之前使用array_merge()前合并所有一维数组 tid/array(1,2,3)
+        // hook index_custom_thread_find_before.php
 
-    // 主题相关统一遍历后再归类
-    $arrlist = well_thread_find(array_unique($tidarr), count($tidarr));
+        // 主题相关统一遍历后再归类
+        $arrlist = well_thread_find(array_unique($tidarr), count($tidarr));
 
-    // 过滤没有权限访问的主题 / filter no permission thread
-    well_thread_list_access_filter($arrlist, $gid);
+        // 过滤没有权限访问的主题 / filter no permission thread
+        well_thread_list_access_filter($arrlist, $gid);
 
-    $threadlist = array();
-    foreach ($arrlist as $_tid => &$_thread) {
-        // 归类列表数据
-        isset($tidlist[$_thread['tid']]) and $threadlist[$_tid] = well_thread_safe_info($_thread);
+        $threadlist = array();
+        foreach ($arrlist as $_tid => &$_thread) {
+            // 归类列表数据
+            isset($tidlist[$_thread['tid']]) and $threadlist[$_tid] = well_thread_safe_info($_thread);
 
-        // hook index_custom_threadlist.php
+            // hook index_custom_threadlist.php
 
-        // flag thread
-        if (!empty($flaglist)) {
-            foreach ($flaglist as $key => $val) {
-                if (in_array($_thread['tid'], $val['tids'])) {
-                    $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
-                    ksort($flaglist[$key]['list']);
-                    // hook index_custom_flag.php
+            // flag thread
+            if (!empty($flaglist)) {
+                foreach ($flaglist as $key => $val) {
+                    if (in_array($_thread['tid'], $val['tids'])) {
+                        $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
+                        ksort($flaglist[$key]['list']);
+                        // hook index_custom_flag.php
+                    }
                 }
             }
+
+            // hook index_custom_flaglist.php
         }
 
-        // hook index_custom_flaglist.php
+        // hook index_custom_middle.php
+        // 按之前tidlist排序
+        $threadlist = array2_sort_key($threadlist, $tidlist, 'tid');
+        unset($tidlist);
     }
-
-    // hook index_custom_middle.php
-    // 按之前tidlist排序
-    $threadlist = array2_sort_key($threadlist, $tidlist, 'tid');
-    unset($tidlist);
 
     // hook index_custom_after.php
 
