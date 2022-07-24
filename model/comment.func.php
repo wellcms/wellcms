@@ -383,7 +383,7 @@ function comment_delete_by_tid($tid)
 
         user_big_update(array('uid' => $uids), $user_update);
 
-        // hook model_comment_delete_by_tid_after.php
+        // hook model_comment_delete_by_tid_user_update_after.php
 
         // 删除所有回复和小表
         comment_delete($pidarr);

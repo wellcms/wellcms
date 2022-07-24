@@ -129,7 +129,7 @@ switch ($action) {
             $input['manageplugin'] = form_checkbox('manageplugin', $_group['manageplugin'], lang('manage_plugin'));
             $input['manageother'] = form_checkbox('manageother', $_group['manageother'], lang('manage_other'));
             $input['managesetting'] = form_checkbox('managesetting', $_group['managesetting'], lang('manage_setting'));
-            $safe_token = well_token_set($uid);
+            $safe_token = well_token_set($uid, 'admin_update_group');
             $input['safe_token'] = form_hidden('safe_token', $safe_token);
             // hook admin_group_update_get_end.php
 
@@ -138,7 +138,7 @@ switch ($action) {
         } elseif ('POST' == $method) {
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token, 'admin_update_group') AND message(1, lang('illegal_operation'));
 
             $name = param('name');
             !$name and message(1, lang('group_name_empty'));

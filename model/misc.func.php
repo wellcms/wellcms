@@ -396,7 +396,7 @@ function admin_attach_path()
 }
 
 // 设置token
-function well_token_set($uid = 0)
+function well_token_set($uid = 0, $safe_key = '')
 {
     $key = 'safe_token_' . $uid;
     static $cache = array();
@@ -410,19 +410,22 @@ function well_token_set($uid = 0)
         $pwd = md5($useragent);
     }
     $cache[$key] = well_token_gen($uid, $pwd);
+    $safe_key and $_SESSION[$safe_key] = md5($cache[$key]);
     return $cache[$key];
 }
 
 /*
  * @param $uid 当前用户UID
  * @param $token 获取的token
- * @param int $verify cookie中的token 0不比对 / 1比对 2,3比对使用次数
+ * @param int $safe_key 验证当前页token 为空不验证
  * @param int $life token 生命期
  * @return bool|mixed|string 返回 token 验证成功 / FALSE 验证失败
  */
-function well_token_verify($uid, $token, $life = 3600)
+function well_token_verify($uid, $token, $safe_key = '', $life = 3600)
 {
     if (empty($token)) return FALSE;
+    if ($safe_key && (empty($_SESSION[$safe_key]) || $_SESSION[$safe_key] != md5($token))) return FALSE;
+
     $useragent = _SERVER('HTTP_USER_AGENT');
     if ($uid) {
         $user = user_read_cache($uid);
@@ -432,7 +435,7 @@ function well_token_verify($uid, $token, $life = 3600)
         if (empty($useragent)) return FALSE;
         $pwd = md5($useragent);
     }
-    return well_token_decrypt($token, $uid, $pwd, $life);
+    return well_token_decrypt($token, $uid, $pwd, $safe_key, $life);
 }
 
 // 生成token / salt 混淆码用于加解密
@@ -448,7 +451,7 @@ function well_token_gen($uid, $salt = '')
 }
 
 // 解密token 正确则返回新token 错误返回FALSE
-function well_token_decrypt($token, $uid, $salt = '', $life = 3600)
+function well_token_decrypt($token, $uid, $salt = '', $safe_key = '', $life = 3600)
 {
     $ip = ip();
     $time = time();
@@ -461,7 +464,9 @@ function well_token_decrypt($token, $uid, $salt = '', $life = 3600)
     list($_ip, $_uid, $_time, $ua_md5) = $arr;
     $life < 10 and $life = 1800;
     if ($ua_md5 != md5($useragent) || $time - $_time > $life || $uid != $_uid || $ip != $_ip) return FALSE;
-    return well_token_gen($uid, $salt);
+    $new_token = well_token_gen($uid, $salt);
+    if ($safe_key) $_SESSION[$safe_key] = $new_token;
+    return $new_token;
 }
 
 // 清理token

@@ -67,7 +67,7 @@ switch ($action) {
             $grouparr = arrlist_key_values($grouplist, 'gid', 'name');
             $input['_gid'] = form_select('_gid', $grouparr, 0);
 
-            $safe_token = well_token_set($uid);
+            $safe_token = well_token_set($uid, 'admin_create_user');
             $input['safe_token'] = form_hidden('safe_token', $safe_token);
 
             // hook admin_user_create_get_end.php
@@ -79,7 +79,7 @@ switch ($action) {
             FALSE === group_access($gid, 'managecreateuser') and message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token, 'admin_create_user') and message(1, lang('illegal_operation'));
 
             $email = param('email');
             $username = param('username');
@@ -142,7 +142,7 @@ switch ($action) {
             $grouparr = arrlist_key_values($grouplist, 'gid', 'name');
             $input['_gid'] = form_select('_gid', $grouparr, $_user['gid']);
 
-            $safe_token = well_token_set($uid);
+            $safe_token = well_token_set($uid, 'admin_update_user');
             $input['safe_token'] = form_hidden('safe_token', $safe_token);
 
             // hook admin_user_update_get_end.php
@@ -154,7 +154,7 @@ switch ($action) {
             3 != DEBUG && FALSE === group_access($gid, 'manageupdateuser') and message(1, lang('user_group_insufficient_privilege'));
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token, 'admin_update_user') and message(1, lang('illegal_operation'));
 
             $email = param('email');
             $username = param('username');

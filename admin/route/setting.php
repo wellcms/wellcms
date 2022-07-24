@@ -29,7 +29,7 @@ switch ($action) {
             $input['user_create_email_on'] = form_radio_yes_no('user_create_email_on', $conf['user_create_email_on']);
             $input['user_resetpw_on'] = form_radio_yes_no('user_resetpw_on', $conf['user_resetpw_on']);
             $input['lang'] = form_select('lang', array('zh-cn' => lang('lang_zh_cn'), 'zh-tw' => lang('lang_zh_tw'), 'en-us' => lang('lang_en_us')), $conf['lang']);
-            $safe_token = well_token_set($uid);
+            $safe_token = well_token_set($uid, 'admin_setting_base');
             $input['safe_token'] = form_hidden('safe_token', $safe_token);
 
             $header['title'] = lang('admin_setting_base');
@@ -42,7 +42,7 @@ switch ($action) {
         } elseif ('POST' == $method) {
 
             $safe_token = param('safe_token');
-            FALSE === well_token_verify($uid, $safe_token) AND message(1, lang('illegal_operation'));
+            FALSE === well_token_verify($uid, $safe_token, 'admin_setting_base') AND message(1, lang('illegal_operation'));
 
             FALSE === group_access($gid, 'managesetting') AND message(1, lang('user_group_insufficient_privilege'));
 
