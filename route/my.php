@@ -54,7 +54,7 @@ switch ($action) {
             empty($data) and message(-1, lang('data_is_empty'));
             $data = base64_decode_file_data($data);
             $size = strlen($data);
-            $size > 40000 and message(-1, lang('filesize_too_large', array('maxsize' => '40K', 'size' => $size)));
+            $size > 204800 and message(-1, lang('filesize_too_large', array('maxsize' => '200K', 'size' => $size)));
 
             // hook my_avatar_post_save_center.php
 

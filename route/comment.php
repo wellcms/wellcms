@@ -296,7 +296,13 @@ switch ($action) {
         FALSE === well_token_verify($uid, $safe_token) and message(1, lang('illegal_operation'));
 
         $type = param('type', 0);
-        $pid = $type ? param('pid', array()) : param(2, 0);
+        if (0 == $type) {
+            $pid = param(2, 0); 
+        } else {
+            $pid = _POST('pid');
+            !is_int($pid) && !is_array($pid) && $pid = xn_json_decode($pid);
+        }
+        empty($pid) and message(-4, lang('data_is_empty'));
 
         // hook comment_delete_start.php
 
