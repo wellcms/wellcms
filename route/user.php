@@ -70,6 +70,7 @@ switch ($action) {
                 $apilist['header'] = $header;
                 $apilist['extra'] = $extra;
                 $apilist['menulist'] = $menulist;
+                $apilist['this_user'] = user_safe_info($_user);
                 $apilist['num'] = $num;
                 $apilist['page'] = $page;
                 $apilist['pagesize'] = $pagesize;
@@ -540,3 +541,5 @@ switch ($action) {
 }
 
 // hook user_end.php
+
+?>

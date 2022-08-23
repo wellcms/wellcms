@@ -642,7 +642,7 @@ switch ($action) {
             $upload_thumbnail = well_attach_assoc_type('thumbnail');
             if (!empty($upload_thumbnail) || $thumbnail) {
                 // Ym变更删除旧图
-                $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
+                $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
                 $old_day = $thread['icon'] ? date($attach_dir_save_rule, $thread['icon']) : '';
 
                 // hook admin_content_update_post_unlink_before.php
@@ -834,7 +834,7 @@ switch ($action) {
             // 删除
             if ($thread['icon']) {
                 // Ym变更删除旧图
-                $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
+                $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
                 $day = date($attach_dir_save_rule, $thread['icon']);
 
                 $file = $conf['upload_path'] . 'thumbnail/' . $day . '/' . $thread['uid'] . '_' . $tid . '_' . $thread['icon'] . '.jpeg';

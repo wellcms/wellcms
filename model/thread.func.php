@@ -742,7 +742,7 @@ function well_thread_delete_all($tid)
     $threadlist = well_thread__find(array('tid' => $tid), array('tid' => 1), 1, $n, 'tid');
     if (empty($threadlist)) return FALSE;
 
-    $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
+    $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
 
     // hook model_thread_delete_all_before.php
 
@@ -1141,7 +1141,7 @@ function well_thread_format(&$thread)
 
     if ($thread['icon']) {
 
-        $attach_dir_save_rule = array_value($conf, 'well_attach_dir_save_rule', 'Ym');
+        $attach_dir_save_rule = array_value($conf, 'attach_dir_save_rule', 'Ym');
         $day = date($attach_dir_save_rule, $thread['icon']);
 
         $thread_format_icon_default = 1;

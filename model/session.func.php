@@ -24,9 +24,29 @@ $g_session_invalid = FALSE; // 0: 有效， 1：无效
 function session_create($arr, $d = NULL)
 {
     // hook model_session_create_start.php
+    if (!isset($arr['sid'])) return FALSE;
+    $key = $arr['sid'];
+    static $cache = array();
+    if (isset($cache[$key])) return $cache[$key];
+    // hook model_session_create_before.php
     $r = db_insert('session', $arr, $d);
     // hook model_session_create_end.php
-    return $r;
+    $cache[$key] = $r ? $r : NULL;
+    return $cache[$key];
+}
+
+function session_replace($arr, $d = NULL)
+{
+    // hook model_session_replace_start.php
+    if (!isset($arr['sid'])) return FALSE;
+    $key = $arr['sid'];
+    static $cache = array();
+    if (isset($cache[$key])) return $cache[$key];
+    // hook model_session_replace_before.php
+    $r = db_replace('session', $arr, $d);
+    // hook model_session_replace_end.php
+    $cache[$key] = $r ? $r : NULL;
+    return $cache[$key];
 }
 
 function session_update($sid, $update, $d = NULL)
@@ -127,11 +147,13 @@ function sess_read($sid)
         sess_new($sid);
         return '';
     }
+
     $arr = session_read($sid);
     if (empty($arr)) {
         sess_new($sid);
         return '';
     }
+    
     if (1 == $arr['bigdata']) {
         $arr2 = session_data_read($sid);
         $arr['data'] = $arr2['data'];
@@ -178,7 +200,8 @@ function sess_new($sid)
         'bigdata' => 0,
     );
     $g_session = $arr;
-    session_create($arr);
+    //session_create($arr);
+    session_replace($arr);
 }
 
 // 重新启动 session，降低并发写入数据的问题，这回抛弃前面的 _SESSION 数据
