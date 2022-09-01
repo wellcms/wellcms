@@ -167,6 +167,8 @@ function data_format(&$val)
 
                 $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
 
+                // hook model_data_format_center.php
+
                 // 替换成图床
                 $val['message'] = FALSE !== strpos($val['message'], $url) && $attach['image_url'] ? str_replace($url, $attach['image_url'], $val['message']) : $val['message'];
             }
@@ -202,6 +204,9 @@ function data_message_replace_url($tid, $message)
 
             foreach ($imagelist as $key => $attach) {
                 $url = $conf['upload_url'] . 'website_attach/' . $attach['filename'];
+
+                // hook model_data_message_replace_url_center.php
+
                 // 替换回相对链接
                 $message = $attach['image_url'] && FALSE !== strpos($message, $attach['image_url']) ? str_replace($attach['image_url'], $url, $message) : $message;
             }
