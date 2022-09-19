@@ -19,7 +19,8 @@ body.on('click', '#user-logout', function () {
 /* 搜索使用 */
 body.on('submit', '#form-search', function () {
     var jthis = $(this);
-    var range = jthis.find('input[name="range"]').val();
+	var range = jthis.find('input[name="range"]:checked').val();
+	range || range = jthis.find('input[name="range"]').val();
     var keyword = jthis.find('input[name="keyword"]').val();
     window.location = xn.url('operate-search-' + xn.urlencode(keyword) + '-' + range);
     return false;

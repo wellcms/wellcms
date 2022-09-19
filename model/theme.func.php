@@ -172,6 +172,8 @@ function theme_load($type = '', $id = 0, $dir = '')
     // 风格不存在加载适配端
     (empty($path_file) || !is_file($path_file)) and $path_file = APP_PATH . ($dir ? 'plugin/' . $dir . '/view/htm/' : 'view/htm/') . $default_pre;
 
+    // hook theme_load_end.php
+
     return $path_file;
 }
 

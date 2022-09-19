@@ -82,7 +82,6 @@ switch ($action) {
 
         // hook tag_middle.php
 
-        $count = well_tag_count();
         $page_url = url('tag-' . $tagid . '-{page}', $extra);
         $num = $read['count'] > $pagesize * $conf['listsize'] ? $pagesize * $conf['listsize'] : $read['count'];
 
