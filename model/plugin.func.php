@@ -2,7 +2,8 @@
 // 本地插件
 $plugin_paths = array();
 $plugins = array(); // 合并官方插件
-$themes = array(); // 初始化主题 作者上传后再根据作者增加uid
+$themes = array(); // 初始化主题
+$themelist = array();
 
 // 我的仓库列表
 $official_plugins = array();
@@ -71,7 +72,7 @@ function _include_callback_1($m)
 // 在安装、卸载插件的时候，需要先初始化
 function plugin_init()
 {
-    global $plugin_paths, $themes, $plugins, $official_plugins, $conf;
+    global $plugin_paths, $themes, $themelist, $plugins, $official_plugins, $conf;
 
     $official_plugins = kv_cache_get('plugin_official_list');
     empty($official_plugins) and $official_plugins = array();
@@ -111,7 +112,20 @@ function plugin_init()
             $arr = xn_json_decode(file_get_contents($conffile));
             if (empty($arr)) continue;
             $themes[$dir] = $arr;
-            $themes[$dir]['icon'] = '../view/template/' . $dir . '/icon.png';
+            $themelist[$dir] = $arr;
+            $icon = '../view/template/' . $dir . '/icon.png';
+            $themes[$dir]['icon'] = is_file($icon) ? $icon : '';
+            $themelist[$dir]['icon'] = is_file($icon) ? $icon : '';
+        }
+
+        // 风格二叉树
+        foreach ($themelist as $dir => $theme) {
+            $dependencies_theme = array_value($theme, 'dependencies_theme');
+            if ($dependencies_theme) {
+                $dependencies_dir = key($dependencies_theme);
+                $themelist[$dependencies_dir]['child'][$dir] = $themelist[$dir];
+                unset($themelist[$dir]);
+            }
         }
     }
 }
@@ -124,21 +138,36 @@ function plugin_init()
 		'umeditor'=>'1.0',
 	);
 */
-function plugin_dependencies($dir)
+function plugin_dependencies($dir, $type = 'plugin')
 {
     global $plugin_paths, $plugins, $themes;
 
-    $plugin = isset($plugins[$dir]) ? $plugins[$dir] : $themes[$dir];
-    $dependencies = $plugin['dependencies'];
+    if ('plugin' == $type) {
+        $action = 'plugin';
+        $plugin = $plugins[$dir];
+    } else {
+        $action = 'theme';
+        $plugin = $themes[$dir];
+        $dependencies_theme = array_value($plugin, 'dependencies_theme');
+    }
+
+    $arr = array();
+    if ('theme' == $action && $dependencies_theme) {
+        foreach ($dependencies_theme as $_dir => $version) {
+            if (!isset($themes[$_dir]) || 1 != $themes[$_dir]['installed'] || -1 == version_compare($themes[$_dir]['version'], $version)) {
+                $arr[$_dir] = $version;
+            }
+        }
+    }
 
     // 检查插件依赖关系
-    $arr = array();
+    $dependencies = $plugin['dependencies'];
     foreach ($dependencies as $_dir => $version) {
         if (!isset($plugins[$_dir]) || !$plugins[$_dir]['enable'] || -1 == version_compare($plugins[$_dir]['version'], $version)) {
             $arr[$_dir] = $version;
         }
     }
-    
+
     return $arr;
 }
 
@@ -149,15 +178,27 @@ function plugin_dependencies($dir)
 		'umeditor'=>'1.0',
 	);
 */
-function plugin_by_dependencies($dir)
+function plugin_by_dependencies($dir, $type = 'plugin')
 {
-    global $plugins;
+    global $plugins, $themes;
     $arr = array();
-    foreach ($plugins as $_dir => $plugin) {
-        if (isset($plugin['dependencies'][$dir]) && $plugin['enable']) {
-            $arr[$_dir] = $plugin['version'];
+    if ('plugin' == $type) {
+        foreach ($plugins as $_dir => $plugin) {
+            if (isset($plugin['dependencies'][$dir]) && $plugin['enable']) {
+                $arr[$_dir] = $plugin['version'];
+            }
+        }
+    } else {
+        foreach ($themes as $_dir => $theme) {
+            if (isset($theme['dependencies'][$dir]) && $theme['enable']) {
+                $arr[$_dir] = $theme['version'];
+            }
+            if (isset($theme['dependencies_theme'][$dir]) && $theme['enable']) {
+                $arr[$_dir] = $theme['version'];
+            }
         }
     }
+
     return $arr;
 }
 
@@ -441,11 +482,18 @@ function plugin_official_read($dir)
 
 // -------------------> 本地插件列表缓存到本地
 // TRUE:插件 FALSE:主题风格
-function plugin_list($cond = array(), $orderby = array(), $page = 1, $pagesize = 20, $type = TRUE)
+function plugin_list($cond = array(), $orderby = array(), $page = 1, $pagesize = 20, $type = 1)
 {
-    global $plugins, $themes;
-    $arrlist = TRUE === $type ? $plugins : $themes;
-    $offlist = arrlist_cond_orderby($arrlist, $cond, $orderby, $page, $pagesize);
+    global $plugins, $themes, $themelist;
+
+    if (1 == $type) {
+        $offlist = arrlist_cond_orderby($plugins, $cond, $orderby, $page, $pagesize);
+    } elseif (2 == $type) {
+        $offlist = arrlist_cond_orderby($themelist, $cond, $orderby, $page, $pagesize);
+    } elseif (3 == $type) {
+        $offlist = arrlist_cond_orderby($themes, $cond, $orderby, $page, $pagesize);
+    }
+
     return $offlist;
 }
 

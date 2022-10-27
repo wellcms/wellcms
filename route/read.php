@@ -13,7 +13,16 @@ $extra = array(); // 插件预留
 
 $thread = 1 == array_value($conf, 'cache_thread') ? well_thread_read_cache($tid) : well_thread_read($tid);
 // hook read_cache_after.php
-empty($thread) and message(-1, lang('thread_not_exists'));
+if (empty($thread)) {
+    if ('1' == _GET('ajax')) {
+        message(-2, lang('thread_not_exists'));
+    } else {
+        header('HTTP/1.1 404 Not Found');
+        header('Status: 404 Not Found');
+        include _include(theme_load('read_404'), array_value($thread, 'fid'));
+		exit;
+    }
+}
 
 // hook read_status_before.php
 
@@ -23,7 +32,16 @@ empty($thread) and message(-1, lang('thread_not_exists'));
 
 $fid = $thread['fid'];
 $forum = isset($forumlist[$fid]) ? $forumlist[$fid] : NULL;
-empty($forum) and message(-1, lang('forum_not_exists'));
+if (empty($forum)) {
+    if ('1' == _GET('ajax')) {
+        message(-2, lang('forum_not_exists'));
+    } else {
+        header('HTTP/1.1 404 Not Found');
+        header('Status: 404 Not Found');
+        include _include(theme_load('list_404', $fid));
+        exit;
+    }
+}
 
 // hook read_center.php
 

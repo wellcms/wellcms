@@ -18,7 +18,16 @@ empty($safe_token) and $safe_token = well_token_set($uid);
 
 $forum = forum_read($fid);
 // hook list_read_after.php
-empty($forum) and message(1, lang('forum_not_exists'));
+if (empty($forum)) {
+    if ('1' == _GET('ajax')) {
+        message(-2, lang('forum_not_exists'));
+    } else {
+        header('HTTP/1.1 404 Not Found');
+        header('Status: 404 Not Found');
+        include _include(theme_load('list_404', $fid));
+        exit;
+    }
+}
 
 // hook list_forum_after.php
 

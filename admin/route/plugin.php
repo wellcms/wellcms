@@ -50,8 +50,8 @@ switch ($action) {
             $pagesize = 30;
             $extra = array('page' => '{page}');
             $cond = array();
-            $pluginlist = plugin_list($cond, $orderby = array(), $page, $pagesize, FALSE);
-            $total = arrlist_cond_orderby($themes, $cond, array(), 1, 1000);
+            $pluginlist = plugin_list($cond, $orderby = array(), $page, $pagesize, 2);
+            $total = arrlist_cond_orderby($themelist, $cond, array(), 1, 1000);
 
             $read = array_value($pluginlist, $config['theme']);
             if (!array_value($read, 'installed')) {
@@ -82,17 +82,18 @@ switch ($action) {
 
             $dir = param_word('dir');
             $type = param('type', 0);
+            $child = param('child', 0);
 
             empty($dir) and message(1, lang('data_malformation'));
 
             if (1 == $type) {
-                plugin_check_dependency($dir);
-                theme_install($dir);
+                plugin_check_dependency($dir, 'install', 'theme');
+                theme_install($dir, $child);
 
                 plugin_clear_tmp_dir();
                 message(0, lang('install_successfully'));
             } else {
-                theme_uninstall($config['theme']);
+                theme_uninstall($dir, $child);
                 plugin_clear_tmp_dir();
                 message(0, lang('uninstall_successfully'));
             }
@@ -534,19 +535,25 @@ switch ($action) {
         break;
 }
 
-function plugin_check_dependency($dir, $action = 'install')
+function plugin_check_dependency($dir, $action = 'install', $type = 'plugin')
 {
     global $plugins, $themes;
-    $name = isset($plugins[$dir]) ? $plugins[$dir]['name'] : $themes[$dir]['name'];
+
+    if ('plugin' == $type) {
+        $name = $plugins[$dir]['name'];
+    } else {
+        $name = $themes[$dir]['name'];
+    }
+
     if ('install' == $action) {
-        $arr = plugin_dependencies($dir);
+        $arr = plugin_dependencies($dir, $type);
         if (!empty($arr)) {
             plugin_lock_end();
             $s = plugin_dependency_arr_to_links($arr);
             message(-1, lang('plugin_dependency_following', array('name' => $name, 's' => $s)));
         }
     } else {
-        $arr = plugin_by_dependencies($dir);
+        $arr = plugin_by_dependencies($dir, $type);
         if (!empty($arr)) {
             plugin_lock_end();
             $s = plugin_dependency_arr_to_links($arr);
@@ -827,13 +834,13 @@ function plugin_lock_end()
     xn_lock_end($route . '_' . $action);
 }
 
-function theme_install($dir)
+function theme_install($dir, $child = 0)
 {
     global $conf, $config;
 
     $dir = trim($dir);
-    if (!empty($config['theme']) && $config['theme'] != $dir) {
-        is_file(APP_PATH . 'view/template/' . $dir . '/conf.json') and theme_uninstall($config['theme']);
+    if ((isset($config['theme']) && $config['theme'] != $dir) || !isset($config['theme_child'][$dir])) {
+        is_file(APP_PATH . 'view/template/' . $dir . '/conf.json') and theme_uninstall($dir, $child);
     }
 
     $path = APP_PATH . 'view/template/' . $dir;
@@ -848,7 +855,12 @@ function theme_install($dir)
     // 写入配置文件
     file_replace_var($conffile, $arr, TRUE);
 
-    $config['theme'] = $dir;
+    if (0 == $child) {
+        $config['theme'] = $dir;
+    } else {
+        $config['theme_child'][$dir] = $dir;
+    }
+
     setting_set('conf', $config);
 
     $installfile = $path . '/install.php';
@@ -859,14 +871,35 @@ function theme_install($dir)
     return TRUE;
 }
 
-function theme_uninstall($dir)
+function theme_uninstall($dir, $child = 0)
 {
     global $conf, $config;
 
+    if (0 == $child) {
+        $config['theme'] = '';
+        theme_uninstall_handle($dir);
+        if ($config['theme_child'] && !empty($config['theme_child'])) {
+            foreach ($config['theme_child'] as $child_dir) {
+                theme_uninstall_handle($child_dir);
+                unset($config['theme_child'][$child_dir]);
+            }
+        }
+    } else {
+        theme_uninstall_handle($dir);
+        unset($config['theme_child'][$dir]);
+    }
+    setting_set('conf', $config);
+
+    rmdir_recusive($conf['tmp_path'], 1);
+
+    return TRUE;
+}
+
+function theme_uninstall_handle($dir)
+{
     $path = APP_PATH . 'view/template/' . $dir;
 
     $conffile = $path . '/conf.json';
-    //FALSE === is_file($conffile) and message(1, lang('not_exists'));
 
     if (is_file($conffile)) {
         $arr = xn_json_decode(file_get_contents($conffile));
@@ -877,15 +910,8 @@ function theme_uninstall($dir)
         file_replace_var($conffile, $arr, TRUE);
     }
 
-    $config['theme'] = '';
-    setting_set('conf', $config);
-
     $uninstallfile = $path . '/uninstall.php';
     is_file($uninstallfile) and include _include($uninstallfile);
-
-    rmdir_recusive($conf['tmp_path'], 1);
-
-    return TRUE;
 }
 
 ?>

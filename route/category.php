@@ -15,7 +15,16 @@ $extra = array(); // 插件预留
 
 $apilist['forum'] = $forum = array_value($forumlist_show, $fid);
 // hook category_read.php
-empty($forum) and message(-1, lang('forum_not_exists'));
+if (empty($forum)) {
+    if ('1' == _GET('ajax')) {
+        message(-2, lang('forum_not_exists'));
+    } else {
+        header('HTTP/1.1 404 Not Found');
+        header('Status: 404 Not Found');
+        include _include(theme_load('list_404', $fid));
+        exit;
+    }
+}
 
 // 管理时使用
 (forum_access_mod($fid, $gid, 'allowdelete') or forum_access_mod($fid, $gid, 'allowtop')) and $extra['fid'] = $fid;

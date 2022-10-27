@@ -150,6 +150,12 @@ function theme_load($type = '', $id = 0, $dir = '')
         case '404':
             $pre .= $default_pre .= '404.htm';
             break;
+        case 'read_404':
+            $pre .= $default_pre .= 'read_404.htm';
+            break;
+        case 'list_404':
+            $pre .= $default_pre .= 'list_404.htm';
+            break;
         // hook theme_load_case_end.php
         default:
             // 首页
@@ -169,8 +175,21 @@ function theme_load($type = '', $id = 0, $dir = '')
     // 加载安装风格
     (empty($path_file) || !is_file($path_file)) and $path_file = APP_PATH . 'view/template/' . $config['theme'] . '/htm/' . $pre;
 
+    // 主风格下可安装多个子风格
+    if (!empty($config['theme_child']) && is_array($config['theme_child'])) {
+        foreach ($config['theme_child'] as $theme) {
+            if (empty($theme) || is_array($theme)) continue;
+
+            // 加载绑定ID安装风格
+            $path_file = APP_PATH . 'view/template/' . $theme . '/htm/' . ($id ? $id . '_' : '') . $pre;
+
+            // 加载安装风格
+            !is_file($path_file) and $path_file = APP_PATH . 'view/template/' . $theme . '/htm/' . $pre;
+        }
+    }
+
     // 风格不存在加载适配端
-    (empty($path_file) || !is_file($path_file)) and $path_file = APP_PATH . ($dir ? 'plugin/' . $dir . '/view/htm/' : 'view/htm/') . $default_pre;
+    !is_file($path_file) and $path_file = APP_PATH . ($dir ? 'plugin/' . $dir . '/view/htm/' : 'view/htm/') . $default_pre;
 
     // hook theme_load_end.php
 
