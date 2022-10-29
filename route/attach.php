@@ -178,8 +178,7 @@ switch ($action) {
             $aid = intval($aid);
             if (empty($t)) {
                 $attach = well_attach_read($aid);
-                $thread = well_thread_read($attach['tid']);
-                $comment = comment__read(array('pid' => $attach['pid']));
+                $thread = $attach['tid'] ? well_thread_read($attach['tid']) : comment__read(array('pid' => $attach['pid']), array(), array('pid', 'tid', 'fid'));
             }
             // hook attach_delete_middle.php
             empty($attach) and message(-1, lang('attach_not_exists'));
@@ -208,7 +207,7 @@ switch ($action) {
         if (empty($t)) {
             $attach = well_attach_read($aid);
             empty($attach) and message(-1, lang('attach_not_exists'));
-            $thread = well_thread_read($attach['tid']);
+            $thread = $attach['tid'] ? well_thread_read($attach['tid']) : comment__read(array('pid' => $attach['pid']), array(), array('pid', 'tid', 'fid'));
             $path = 'website_attach/';
         }
         // hook attach_download_before.php
