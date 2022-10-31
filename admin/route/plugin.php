@@ -840,7 +840,7 @@ function theme_install($dir, $child = 0)
 
     $dir = trim($dir);
     if ((isset($config['theme']) && $config['theme'] != $dir) || !isset($config['theme_child'][$dir])) {
-        is_file(APP_PATH . 'view/template/' . $dir . '/conf.json') and theme_uninstall($dir, $child);
+        is_file(APP_PATH . 'view/template/' . $dir . '/conf.json') and theme_uninstall($config['theme'], $child);
     }
 
     $path = APP_PATH . 'view/template/' . $dir;
@@ -878,7 +878,7 @@ function theme_uninstall($dir, $child = 0)
     if (0 == $child) {
         $config['theme'] = '';
         theme_uninstall_handle($dir);
-        if ($config['theme_child'] && !empty($config['theme_child'])) {
+        iif (isset($config['theme_child']) && !empty($config['theme_child'])) {
             foreach ($config['theme_child'] as $child_dir) {
                 theme_uninstall_handle($child_dir);
                 unset($config['theme_child'][$child_dir]);
