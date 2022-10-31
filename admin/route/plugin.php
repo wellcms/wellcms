@@ -878,7 +878,7 @@ function theme_uninstall($dir, $child = 0)
     if (0 == $child) {
         $config['theme'] = '';
         theme_uninstall_handle($dir);
-        iif (isset($config['theme_child']) && !empty($config['theme_child'])) {
+        if (isset($config['theme_child']) && !empty($config['theme_child'])) {
             foreach ($config['theme_child'] as $child_dir) {
                 theme_uninstall_handle($child_dir);
                 unset($config['theme_child'][$child_dir]);
