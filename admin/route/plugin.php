@@ -836,12 +836,14 @@ function plugin_lock_end()
 
 function theme_install($dir, $child = 0)
 {
-    global $conf, $config;
+    global $themes, $conf, $config;
 
     $dir = trim($dir);
-    if ((isset($config['theme']) && $config['theme'] != $dir) || !isset($config['theme_child'][$dir])) {
-        is_file(APP_PATH . 'view/template/' . $dir . '/conf.json') and theme_uninstall($config['theme'], $child);
-    }
+	if  (isset($themes[$dir]['dependencies_theme']) && !empty($themes[$dir]['dependencies_theme'])) {
+		if (isset($config['theme_child'][$dir])) is_file(APP_PATH . 'view/template/' . $dir . '/conf.json') and theme_uninstall($dir, 1);
+	} else {
+		if (isset($config['theme']) && $config['theme'] != $dir && empty($themes[$dir]['dependencies_theme'])) is_file(APP_PATH . 'view/template/' . $dir . '/conf.json') and theme_uninstall($config['theme'], 0);
+	}
 
     $path = APP_PATH . 'view/template/' . $dir;
 
