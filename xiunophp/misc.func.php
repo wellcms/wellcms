@@ -1024,7 +1024,7 @@ function xn_url_parse($request_url, $conf = array(), $access = '')
 
             $arr = parse_url($request_url);
             $q = array_value($arr, 'path');
-            substr_count($q,'/') > 2 and http_location('/');
+            substr_count($q,'/') > 2 && FALSE === stripos($q, '/install') and http_location('/');
             $pos = strrpos($q, '/');
             FALSE === $pos && $pos = -1;
             $q = substr($q, $pos + 1); // 截取最后一个 / 后面的内容
