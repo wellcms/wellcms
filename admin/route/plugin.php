@@ -697,7 +697,7 @@ function plugin_bought($storeid)
     $siteip < 0 and $siteip = sprintf("%u", $siteip);
     $post = array('storeid' => $storeid, 'siteid' => plugin_siteid(), 'siteip' => $siteip, 'longip' => $longip, 'app_url' => $app_url, 'domain' => $domain, 'token' => $data[4], 'uid' => $data[0]);
     $url = PLUGIN_OFFICIAL_URL . 'plugin-bought.html';
-    $s = https_request($url, $post);;
+    $s = https_request($url, $post);
     $arr = xn_json_decode($s);
     empty($arr) and message(-1, $url . lang('plugin_return_data_error') . $s);
     if (0 == $arr['code']) {

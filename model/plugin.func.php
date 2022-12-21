@@ -113,9 +113,9 @@ function plugin_init()
             if (empty($arr)) continue;
             $themes[$dir] = $arr;
             $themelist[$dir] = $arr;
-            $icon = '../view/template/' . $dir . '/icon.png';
-            $themes[$dir]['icon'] = is_file($icon) ? $icon : '';
-            $themelist[$dir]['icon'] = is_file($icon) ? $icon : '';
+            $icon = 'view/template/' . $dir . '/icon.png';
+            $themes[$dir]['icon'] = is_file(APP_PATH . $icon) ? '../' . $icon : '';
+            $themelist[$dir]['icon'] = is_file(APP_PATH . $icon) ? '../' . $icon : '';
         }
 
         // 风格二叉树

@@ -270,13 +270,18 @@ body.on('click', 'a.ajax', function () {
             let postdata = jthis.data('json');
             $.xpost(href, postdata, function (code, message) {
                 if (0 == code) {
-                    if ('undefined' === message.text) {
-                        window.location.reload();
-                    } else {
+                    if (message.text) {
                         jthis.html(message.text);
                         if (message.url) jthis.attr('href', message.url); /*url*/
                         if (message.method) jthis.attr('data-method', message.method); /*data-method*/
                         if (message.modal) jthis.attr('data-method', message.modal); /*data-modal-title*/
+                    } else if (undefined == message.text) {
+                        window.location.reload();
+                    } else if (message) {
+                        $.alert(message);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
                     }
                 } else if ('url' == code) {
                     window.location = message;

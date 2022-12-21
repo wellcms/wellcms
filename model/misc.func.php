@@ -770,6 +770,7 @@ function filter_keyword($keyword, $type, &$error)
     if (0 == $enable || empty($wordarr)) return FALSE;
 
     foreach ($wordarr as $_keyword) {
+        if (!$_keyword) continue;
         $r = strpos(strtolower($keyword), strtolower($_keyword));
         if (FALSE !== $r) {
             $error = $_keyword;

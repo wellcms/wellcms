@@ -114,7 +114,7 @@ function get_last_version()
     if (empty($json)) return;
 
     $official = xn_json_decode($json);
-    if (empty($official)) return;
+    if (empty($official) || !isset($official['code'])) return;
 
     // 可更新
     if (0 == $official['code'] && $version = array_value($official, 'version')) {
