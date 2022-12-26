@@ -68,8 +68,8 @@ switch ($action) {
 
         !isset($_SESSION[$key]) and $_SESSION[$key] = array();
 
-        // 超过30则删除之前上传的所有附件
-        if (count($_SESSION[$key]) > 50) {
+        // 超过则删除之前上传的所有附件
+        if (count($_SESSION[$key]) > intval(array_value($conf, 'upload_attach_total', 30))) {
             foreach ($_SESSION[$key] as $_file) is_file($_file['path']) and unlink($_file['path']);
             $_SESSION[$key] = array();
         }
@@ -78,7 +78,9 @@ switch ($action) {
 
         empty($data) and message(1, lang('data_is_empty'));
         $size = strlen($data);
-        $size > 20480000 and message(1, lang('filesize_too_large', array('maxsize' => '20M', 'size' => $size)));
+        $conf_attch_size = intval(array_value($conf, 'upload_attach_size', 20));
+        $conf_attch_byte = ceil($conf_attch_size * 1024);
+        $size > $conf_attch_byte and message(1, lang('filesize_too_large', array('maxsize' => $conf_attch_size, 'size' => $size)));
 
         // hook attach_create_center.php
 

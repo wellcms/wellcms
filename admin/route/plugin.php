@@ -111,8 +111,13 @@ switch ($action) {
 
             $srchtype = param('srchtype', 'name');
             $keyword = trim(xn_urldecode(param('keyword')));
-            $keyword and $cond['name'] = array('LIKE' => $keyword);
-            $keyword and $cond['author'] = array('author' => $keyword);
+            if ($keyword) {
+                if ('name' == $srchtype) {
+                    $cond['name'] = array('LIKE' => $keyword);
+                } else {
+                    $cond['author'] = array('==' => $keyword);
+                }
+            }
 
             // plugin category
             $plugin_cates = array(0 => lang('plugin_cate_0'), 1 => lang('plugin_cate_1'), 2 => lang('plugin_cate_2'), 3 => lang('plugin_cate_3'), 4 => lang('plugin_cate_4'));

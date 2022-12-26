@@ -69,6 +69,8 @@ return array(
     'upload_url' => 'upload/',    // 本地文件上传目录，
     'upload_path' => './upload/',    // 物理路径，可以用 NFS 存入到单独的文件服务器
     'upload_quick' => 0,  // 文件秒传 0关闭 1开启
+    'upload_attach_size' => 20,   // 上传文件大小 20M ，文件过大会导致超时
+    'upload_attach_total' => 30,   // 正文图片和附件单次上传文件数量
     'attach_on' => 0,     // 0本地储存 1云储存 2图床
     'attach_delete' => 0, // 开启云储存后本地附件 0不删除 1删除
     'cloud_url' => '',    // 云储存域名或单独CDN域名，本地upload目录和目录下的文件上传至云储存，域名绑定的目录必须对应程序的upload，如http://upload.domain.com/upload/thumbnail/201912/***.jpg，如无法绑定目录，https://img.wellcms.net/file/wellcms/upload/website_attach/202111/1257_ERQJAYTYYDXJ6UC.png 这种则填写 https://img.wellcms.net/file/wellcms/

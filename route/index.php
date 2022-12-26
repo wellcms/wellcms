@@ -72,7 +72,7 @@ if (0 == $website_mode) {
             // flag thread
             if (!empty($flaglist)) {
                 foreach ($flaglist as $key => $val) {
-                    if (in_array($_thread['tid'], $val['tids'])) {
+                    if (!empty($val['tids']) && in_array($_thread['tid'], $val['tids'])) {
                         $flaglist[$key]['list'][array_search($_thread['tid'], $val['tids'])] = $_thread;
                         ksort($flaglist[$key]['list']);
                         // hook index_custom_flag.php
