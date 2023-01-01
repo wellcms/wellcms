@@ -22,7 +22,7 @@ $lang = include APP_PATH . "lang/$conf[lang]/lang.php";
 $lang += include APP_PATH . "lang/$conf[lang]/lang_install.php";
 include INSTALL_PATH . 'install.func.php';
 $_SERVER['lang'] = $lang;
-$version = '2.2.0';
+$version = $conf['version'];
 
 is_file(APP_PATH . 'install/install.lock') AND message(0, jump(lang('already_installed'), '../'));
 
