@@ -79,7 +79,7 @@ switch ($action) {
         empty($data) and message(1, lang('data_is_empty'));
         $size = strlen($data);
         $conf_attch_size = intval(array_value($conf, 'upload_attach_size', 20));
-        $conf_attch_byte = ceil($conf_attch_size * 1024);
+        $conf_attch_byte = ceil($conf_attch_size * 1024 * 1024);
         $size > $conf_attch_byte and message(1, lang('filesize_too_large', array('maxsize' => $conf_attch_size, 'size' => $size)));
 
         // hook attach_create_center.php
