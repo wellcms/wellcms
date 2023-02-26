@@ -329,9 +329,12 @@ function view_path()
 function file_path($attach_on = NULL)
 {
     $conf = include APP_PATH . 'conf/conf.php';
-    if ($attach_on && $conf['attach_on']) {
-        if ($attach_on == $conf['attach_on']) {
+    if (NULL !== $attach_on && $conf['attach_on']) {
+        if (0 == $attach_on && 1 == $conf['attach_on']) {
             // 云储存
+            $path = $conf['cloud_url'] . $conf['upload_url'];
+        } elseif ($attach_on && $attach_on == $conf['attach_on']) {
+            // 云储存接口
             $path = $conf['cloud_url'] . $conf['upload_url'];
         } else {
             // 本地
