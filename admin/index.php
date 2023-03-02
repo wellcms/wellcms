@@ -12,6 +12,7 @@ include '../index.php';
 
 $lang += include _include(APP_PATH . "lang/$conf[lang]/lang_admin.php");
 $_SERVER['lang'] = $lang;
+$_REQUEST = array_merge($_COOKIE, $_POST, $_GET);
 
 include _include(ADMIN_PATH . 'admin.func.php');
 $menu = include _include(ADMIN_PATH . 'menu.conf.php');

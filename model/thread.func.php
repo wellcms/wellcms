@@ -1271,9 +1271,10 @@ function thread_unified_pull($arr)
     // hook model_thread_unified_pull_merge_after.php
 
     if (empty($tidarr)) return NULL;
+    $tidarr = array_unique($tidarr);
 
     // 主题相关统一遍历后再归类
-    $arrlist = well_thread_find(array_unique($tidarr), count($tidarr));
+    $arrlist = well_thread_find($tidarr, count($tidarr));
 
     // 过滤没有权限访问的主题 / filter no permission thread
     well_thread_list_access_filter($arrlist, $gid);
@@ -1349,9 +1350,10 @@ function thread_other_pull($thread)
     // hook model_thread_other_pull_after.php
 
     if (empty($tidarr)) return NULL;
+    $tidarr = array_unique($tidarr);
 
     // 主题相关统一遍历后再归类
-    $threadlist = well_thread_find(array_unique($tidarr), count($tidarr));
+    $threadlist = well_thread_find($tidarr, count($tidarr));
 
     // 过滤没有权限访问的主题 / filter no permission thread
     well_thread_list_access_filter($threadlist, $gid);
