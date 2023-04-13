@@ -976,8 +976,10 @@ function http_url_path()
     $conf = _SERVER('conf');
     $port = _SERVER('SERVER_PORT');
     $host = _SERVER('HTTP_HOST');
-    $https = strtolower(_SERVER('HTTPS', 'off'));
-    $proto = strtolower(_SERVER('HTTP_X_FORWARDED_PROTO'));
+	$https_off = _SERVER('HTTPS', 'off');
+    $https = $https_off ? strtolower($https_off) : '';
+	$http_proto = _SERVER('HTTP_X_FORWARDED_PROTO');
+    $proto = $http_proto ? strtolower(_SERVER('HTTP_X_FORWARDED_PROTO')) : '';
     $len = strrpos($_SERVER['PHP_SELF'], '//');
     FALSE === $len and $len = strrpos($_SERVER['PHP_SELF'], '/');
     $path = substr($_SERVER['PHP_SELF'], 0, $len);

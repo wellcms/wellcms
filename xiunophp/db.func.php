@@ -343,6 +343,7 @@ function db_cond_to_sqladd($cond)
     if (!empty($cond)) {
         $s = ' WHERE ';
         foreach ($cond as $k => $v) {
+            if (!$v) continue;
             if (!is_array($v)) {
                 $v = (is_int($v) || is_float($v)) ? $v : "'" . addslashes($v) . "'";
                 $s .= "`$k`=$v AND ";
@@ -409,6 +410,7 @@ function db_array_to_update_sqladd($arr)
 {
     $s = '';
     foreach ($arr as $k => $v) {
+        if (!$v) continue;
         $v = addslashes($v);
         $op = substr($k, -1);
         if ('+' == $op || '-' == $op) {
@@ -435,6 +437,7 @@ function db_array_to_insert_sqladd($arr)
     $keys = array();
     $values = array();
     foreach ($arr as $k => $v) {
+        if (!$v) continue;
         $k = addslashes($k);
         $v = addslashes($v);
         $keys[] = '`' . $k . '`';
@@ -453,6 +456,7 @@ function db_big_array_to_insert_sqladd($arr)
     $valstr = '';
     $i = 0;
     foreach ($arr as $key => $v) {
+        if (!$v) continue;
         $values = array();
         $n = count($v);
         foreach ($v as $k => $v1) {
