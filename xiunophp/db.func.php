@@ -86,7 +86,7 @@ function db_exec($sql, $d = NULL)
     $d = $d ? $d : $db;
     if (!$d) return FALSE;
 
-    DEBUG AND xn_log($sql, 'db_exec');
+    DEBUG and xn_log($sql, 'db_exec');
 
     $n = $d->exec($sql);
 
@@ -232,13 +232,13 @@ function db_big_update($table, $cond, $update, $d = NULL)
             $val = (is_int($val) || is_float($val)) ? $val : "'$val'";
             $op = substr($field, -1);
             if ($op == '+' || $op == '-') {
-                $then = $field.$val.' ';
-                $field = str_replace(array('+','-'), '', $field);
+                $then = $field . $val . ' ';
+                $field = str_replace(array('+', '-'), '', $field);
             } else {
-                $then = $val.' ';
+                $then = $val . ' ';
             }
-            $s = 'WHEN '.$_cond.' THEN '.$then;
-            $arr[$field] = isset($arr[$field]) ? $arr[$field].$s : "`$field` = CASE `$cond_key` $s";
+            $s = 'WHEN ' . $_cond . ' THEN ' . $then;
+            $arr[$field] = isset($arr[$field]) ? $arr[$field] . $s : "`$field` = CASE `$cond_key` $s";
         }
     }
 
@@ -343,7 +343,6 @@ function db_cond_to_sqladd($cond)
     if (!empty($cond)) {
         $s = ' WHERE ';
         foreach ($cond as $k => $v) {
-            if (!$v) continue;
             if (!is_array($v)) {
                 $v = (is_int($v) || is_float($v)) ? $v : "'" . addslashes($v) . "'";
                 $s .= "`$k`=$v AND ";
@@ -360,14 +359,13 @@ function db_cond_to_sqladd($cond)
                 $s .= "`$k` IN (";
                 foreach ($v as $v1) {
                     $v1 = (is_int($v1) || is_float($v1)) ? $v1 : "'" . addslashes($v1) . "'";
-                    $s .= $v1.',';
+                    $s .= $v1 . ',';
                 }
                 $s = substr($s, 0, -1);
                 $s .= ') AND ';
 
                 /*$ids = implode(',', $v);
                 $s .= "$k IN ($ids) AND ";*/
-
             } else {
                 foreach ($v as $k1 => $v1) {
                     if ('LIKE' == $k1) {
@@ -410,7 +408,6 @@ function db_array_to_update_sqladd($arr)
 {
     $s = '';
     foreach ($arr as $k => $v) {
-        if (!$v) continue;
         $v = addslashes($v);
         $op = substr($k, -1);
         if ('+' == $op || '-' == $op) {
@@ -437,8 +434,6 @@ function db_array_to_insert_sqladd($arr)
     $keys = array();
     $values = array();
     foreach ($arr as $k => $v) {
-        if (!$v) continue;
-        $k = addslashes($k);
         $v = addslashes($v);
         $keys[] = '`' . $k . '`';
         $v = (is_int($v) || is_float($v)) ? $v : "'$v'";
@@ -456,14 +451,13 @@ function db_big_array_to_insert_sqladd($arr)
     $valstr = '';
     $i = 0;
     foreach ($arr as $key => $v) {
-        if (!$v) continue;
         $values = array();
         $n = count($v);
         foreach ($v as $k => $v1) {
             $i++;
             $k = addslashes($k);
             $v1 = addslashes($v1);
-            $i <= $n AND $keys[] = '`' . $k . '`';
+            $i <= $n and $keys[] = '`' . $k . '`';
             $v1 = (is_int($v1) || is_float($v1)) ? $v1 : "'$v1'";
             $values[] = $v1;
         }
@@ -475,5 +469,3 @@ function db_big_array_to_insert_sqladd($arr)
 
     return $sqladd;
 }
-
-?>
