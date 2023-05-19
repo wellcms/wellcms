@@ -469,3 +469,5 @@ function db_big_array_to_insert_sqladd($arr)
 
     return $sqladd;
 }
+
+?>
