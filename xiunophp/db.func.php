@@ -344,6 +344,7 @@ function db_cond_to_sqladd($cond)
         $s = ' WHERE ';
         foreach ($cond as $k => $v) {
             if (!is_array($v)) {
+                $v = isset($v) ? $v : '';
                 $v = (is_int($v) || is_float($v)) ? $v : "'" . addslashes($v) . "'";
                 $s .= "`$k`=$v AND ";
             } elseif (isset($v[0])) {
@@ -358,6 +359,7 @@ function db_cond_to_sqladd($cond)
 
                 $s .= "`$k` IN (";
                 foreach ($v as $v1) {
+                    $v1 = isset($v1) ? $v1 : '';
                     $v1 = (is_int($v1) || is_float($v1)) ? $v1 : "'" . addslashes($v1) . "'";
                     $s .= $v1 . ',';
                 }
@@ -368,6 +370,7 @@ function db_cond_to_sqladd($cond)
                 $s .= "$k IN ($ids) AND ";*/
             } else {
                 foreach ($v as $k1 => $v1) {
+                    $v1 = isset($v1) ? $v1 : '';
                     if ('LIKE' == $k1) {
                         $k1 = ' LIKE ';
                         $v1 = "%$v1%";
@@ -408,6 +411,7 @@ function db_array_to_update_sqladd($arr)
 {
     $s = '';
     foreach ($arr as $k => $v) {
+        $v = isset($v) ? $v : '';
         $v = addslashes($v);
         $op = substr($k, -1);
         if ('+' == $op || '-' == $op) {
@@ -434,6 +438,7 @@ function db_array_to_insert_sqladd($arr)
     $keys = array();
     $values = array();
     foreach ($arr as $k => $v) {
+        $v = isset($v) ? $v : '';
         $v = addslashes($v);
         $keys[] = '`' . $k . '`';
         $v = (is_int($v) || is_float($v)) ? $v : "'$v'";
@@ -455,7 +460,9 @@ function db_big_array_to_insert_sqladd($arr)
         $n = count($v);
         foreach ($v as $k => $v1) {
             $i++;
+            $k = isset($k) ? $k : '';
             $k = addslashes($k);
+            $v1 = isset($v1) ? $v1 : '';
             $v1 = addslashes($v1);
             $i <= $n and $keys[] = '`' . $k . '`';
             $v1 = (is_int($v1) || is_float($v1)) ? $v1 : "'$v1'";

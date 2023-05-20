@@ -174,7 +174,7 @@ function param_force($val, $defval, $htmlspecialchars = TRUE, $addslashes = FALS
                 } else {
                     if (is_string($defval)) {
                         //$v = trim($v);
-                        $addslashes and !$get_magic_quotes_gpc && $v = addslashes($v);
+                        $addslashes and !$get_magic_quotes_gpc && $v = addslashes(isset($v) ? $v : '');
                         !$addslashes and $get_magic_quotes_gpc && $v = stripslashes($v);
                         $htmlspecialchars and $v = htmlspecialchars($v, ENT_QUOTES);
                     } else {
@@ -191,7 +191,7 @@ function param_force($val, $defval, $htmlspecialchars = TRUE, $addslashes = FALS
         } else {
             if (is_string($defval)) {
                 //$val = trim($val);
-                $addslashes and !$get_magic_quotes_gpc && $val = addslashes($val);
+                $addslashes and !$get_magic_quotes_gpc && $val = addslashes(isset($val) ? $val : '');
                 !$addslashes and $get_magic_quotes_gpc && $val = stripslashes($val);
                 $htmlspecialchars and $val = htmlspecialchars($val, ENT_QUOTES);
             } else {

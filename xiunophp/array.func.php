@@ -27,6 +27,7 @@ function array_addslashes(&$var)
             array_addslashes($v);
         }
     } else {
+        $var = isset($var) ? $var : '';
         $var = addslashes($var);
     }
     return $var;

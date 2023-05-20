@@ -575,6 +575,7 @@ function well_safe($val, $defval, $htmlspecialchars, $addslashes)
     // 处理字符串
     if (1 == $defval) {
         //$val = trim($val);
+        $val = isset($val) ? $val : '';
         $addslashes and empty($get_magic_quotes_gpc) && $val = addslashes($val);
         empty($addslashes) and $get_magic_quotes_gpc && $val = stripslashes($val);
         $htmlspecialchars and $val = htmlspecialchars($val, ENT_QUOTES);
